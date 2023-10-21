@@ -1,17 +1,19 @@
 import React from "react";
 import styled from "styled-components";
 import { FaAlignLeft, FaShoppingBag, FaUserCircle } from "react-icons/fa";
+import { Search, Notifications, Menu, Close } from "@mui/icons-material";
 import { useDashboardContext } from "../pages/Home";
 import LogoutContainer from "./LogoutContainer";
 import ThemeToggle from "./ThemeToggle";
 import NavLinks from "./NavLinks";
 import { NavLink } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 const Wrapper = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: var(--nav-height);
+  height: 10vh;
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
   background: var(--background-secondary-color);
   .nav-center {
@@ -38,6 +40,10 @@ const Wrapper = styled.section`
     display: flex;
     align-items: center;
   }
+  .nav-links {
+    display: flex;
+    gap: 1.2rem;
+  }
   .logo-text {
     display: none;
   }
@@ -54,6 +60,16 @@ const Wrapper = styled.section`
     margin-right: 0.5rem;
     display: grid;
     place-items: center;
+  }
+  .search-bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 10px;
+    border: 1px solid grey;
+    border-radius: 8px;
+    padding: 0.2rem 0.5rem;
+    width: 20vw;
+    min-width: 50px;
   }
   @media (min-width: 992px) {
     position: sticky;
@@ -79,14 +95,17 @@ const Navbar = () => {
           <h4 className="logo">Put logo here</h4>
           <h4 className="logo-text">dashboard</h4>
         </div>
-        <button type="button" className="toggle-btn" onClick={toggleSideBar}>
-          <span className="icon">
-            <FaAlignLeft />
-          </span>
-          Danh mục
-        </button>
-        <NavLinks text="Giỏ hàng" icon={<FaShoppingBag />} path="#" />
-        <NavLinks text="Đăng nhập" icon={<FaUserCircle />} path="/login" />
+        <SearchBar />
+        <div className="nav-links">
+          <button type="button" className="toggle-btn" onClick={toggleSideBar}>
+            <span className="icon">
+              <FaAlignLeft />
+            </span>
+            Danh mục
+          </button>
+          <NavLinks text="Giỏ hàng" icon={<FaShoppingBag />} path="#" />
+          <NavLinks text="Đăng nhập" icon={<FaUserCircle />} path="/login" />
+        </div>
       </div>
     </Wrapper>
   );

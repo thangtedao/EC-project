@@ -1,6 +1,6 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home, HomeLayout, Login, Register } from "./pages";
+import { Home, HomeLayout, Landing, Login, Register } from "./pages";
 
 const checkDefaultTheme = () => {
   const isDarkTheme = localStorage.getItem("darkTheme") === "true";
