@@ -2,37 +2,46 @@ import React from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  margin-top: 4rem;
-  h2 {
-    text-transform: none;
-  }
-  & > h5 {
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-  .products {
-    display: flex;
-    flex-direction: column;
-  }
+  border: 2px solid white;
+  width: 200px;
+  height: 350px;
+  padding: 5px;
+  border-radius: 10px;
   img {
-    width: 100%;
-    height: 30%;
+    min-width: 100%;
+    height: 10rem;
+    margin-bottom: 2px;
   }
-  @media (min-width: 1120px) {
-    .jobs {
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
+  .name {
+    margin: 5px 0;
+    font-size: large;
+  }
+  .price {
+    margin-top: 20%;
+    font-size: large;
+    color: red;
+  }
+  .descript {
+    margin-top: 10%;
+    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+    background: var(--background-secondary-color);
+    padding: 0.5rem 0.25rem;
+    border-radius: 5px;
+    font-size: small;
   }
 `;
 
 const ProductContainer = ({ img, name, price, descript }) => {
   return (
     <Wrapper>
-      <div className="products">
-        <img src={img} alt={name} />
-        <h3> {name}</h3>
-        <h3> {price}</h3>
+      <img src={img} alt={name} />
+      <div className="name">
+        <p> {name}</p>
+      </div>
+      <div className="price">
+        <p> {price && price + " đ"}</p>
+      </div>
+      <div className="descript">
         <p>{descript}</p>
       </div>
     </Wrapper>

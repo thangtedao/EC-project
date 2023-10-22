@@ -1,6 +1,6 @@
 import { FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { useState } from "react";
-import { useDashboardContext } from "../pages/Home";
+import { useHomeLayoutContext } from "../pages/HomeLayout";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -46,7 +46,7 @@ const Wrapper = styled.div`
 
 const LogoutContainer = () => {
   const [showLogout, setShowLogout] = useState(false);
-  const { user, logoutUser } = useDashboardContext();
+  const { user, logoutUser } = useHomeLayoutContext();
   return (
     <Wrapper>
       <button

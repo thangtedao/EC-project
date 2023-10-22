@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useDashboardContext } from "../pages/Home";
+import { useHomeLayoutContext } from "../pages/HomeLayout";
 import NavLinks from "./NavLinks";
 
 const Wrapper = styled.aside`
@@ -61,7 +61,7 @@ const Wrapper = styled.aside`
 `;
 
 const BigSideBar = () => {
-  const { showSideBar } = useDashboardContext();
+  const { showSideBar } = useHomeLayoutContext();
   return (
     <Wrapper>
       <div

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { FaAlignLeft, FaShoppingBag, FaUserCircle } from "react-icons/fa";
 import { Search, Notifications, Menu, Close } from "@mui/icons-material";
-import { useDashboardContext } from "../pages/Home";
+import { useHomeLayoutContext } from "../pages/HomeLayout";
 import LogoutContainer from "./LogoutContainer";
 import ThemeToggle from "./ThemeToggle";
 import NavLinks from "./NavLinks";
@@ -87,7 +87,7 @@ const Wrapper = styled.section`
 `;
 
 const Navbar = () => {
-  const { toggleSideBar } = useDashboardContext();
+  const { toggleSideBar } = useHomeLayoutContext();
   return (
     <Wrapper>
       <div className="nav-center">

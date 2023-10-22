@@ -4,6 +4,9 @@ import { BigSideBar, Navbar, SmallSideBar } from "../components";
 import { Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import NavContainer from "../components/NavContainer";
+import ProductContainer from "../components/ProductContainer";
+import Product from "../components/Product";
 
 const Wrapper = styled.section`
   .dashboard {
@@ -25,54 +28,15 @@ const Wrapper = styled.section`
   }
 `;
 
-const DashboardContext = createContext();
-
-const DashboardLayout = ({ isDarkThemeEnabled }) => {
-  const navigate = useNavigate();
-
-  const user = { name: "thang" };
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(isDarkThemeEnabled);
-
-  const toggleDarkTheme = () => {
-    const newDarkTheme = !isDarkTheme;
-    setIsDarkTheme(!isDarkTheme);
-    document.body.classList.toggle("dark-theme", newDarkTheme);
-    localStorage.setItem("dark-theme", newDarkTheme);
-  };
-
-  const toggleSideBar = () => {
-    setShowSideBar(!showSideBar);
-  };
-
-  const logoutUser = async () => {};
-
+const HomeLayout = () => {
   return (
-    <DashboardContext.Provider
-      value={{
-        user,
-        showSideBar,
-        isDarkTheme,
-        toggleDarkTheme,
-        toggleSideBar,
-        logoutUser,
-      }}
-    >
-      <Wrapper>
-        <main className="dashboard">
-          <BigSideBar />
-          <SmallSideBar />
-          <div>
-            <Navbar />
-            <div className="dashboard-page">
-              <Outlet context={{ user }} />
-            </div>
-          </div>
-        </main>
-      </Wrapper>
-    </DashboardContext.Provider>
+    <Wrapper>
+      <main className="dashboard">
+        <NavContainer />
+        <Product />
+      </main>
+    </Wrapper>
   );
 };
 
-export const useDashboardContext = () => useContext(DashboardContext);
-export default DashboardLayout;
+export default HomeLayout;

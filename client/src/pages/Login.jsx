@@ -9,8 +9,6 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    // lỗi 409 conflict ngày trước xảy ra nhưng ko hiện toast là do toast show "msg"
-    // mà trong file controller trong server return error thì lại để object là message thay vì msg
     await customFetch.post("/auth/login", data);
     toast.success("Login successful");
     return redirect("/dashboard");
@@ -21,7 +19,7 @@ export const action = async ({ request }) => {
 };
 
 const Wrapper = styled.section`
-  min-height: 100vh;
+  min-height: 100%;
   display: grid;
   align-items: center;
   .logo {

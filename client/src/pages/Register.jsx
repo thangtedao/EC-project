@@ -22,7 +22,7 @@ export const action = async ({ request }) => {
 /* CSS */
 const Wrapper = styled.section`
   align-items: center;
-  min-height: 100vh;
+  min-height: 100%;
   display: grid;
   .form {
     max-width: 400px;

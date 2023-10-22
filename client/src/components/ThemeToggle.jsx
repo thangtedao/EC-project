@@ -1,5 +1,5 @@
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
-import { useDashboardContext } from "../pages/Home";
+import { useHomeLayoutContext } from "../pages/HomeLayout";
 import styled from "styled-components";
 
 const Wrapper = styled.button`
@@ -19,7 +19,7 @@ const Wrapper = styled.button`
 `;
 
 const ThemeToggle = () => {
-  const { isDarkTheme, toggleDarkTheme } = useDashboardContext();
+  const { isDarkTheme, toggleDarkTheme } = useHomeLayoutContext();
   return (
     <Wrapper onClick={toggleDarkTheme}>
       {isDarkTheme ? (

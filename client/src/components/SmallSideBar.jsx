@@ -1,7 +1,7 @@
 import React from "react";
 import { FaTimes } from "react-icons/fa";
 import styled from "styled-components";
-import { useDashboardContext } from "../pages/Home";
+import { useHomeLayoutContext } from "../pages/HomeLayout";
 import NavLinks from "./NavLinks";
 
 const Wrapper = styled.aside`
@@ -76,7 +76,7 @@ const Wrapper = styled.aside`
 `;
 
 const SmallSideBar = () => {
-  const { showSideBar, toggleSideBar } = useDashboardContext();
+  const { showSideBar, toggleSideBar } = useHomeLayoutContext();
   return (
     <Wrapper>
       <div
