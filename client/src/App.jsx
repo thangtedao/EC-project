@@ -4,7 +4,7 @@ import { Home, HomeLayout, Landing, Login, Register } from "./pages";
 import ProductDetail from "./pages/ProductDetail";
 
 const checkDefaultTheme = () => {
-  const isDarkTheme = true;
+  const isDarkTheme = false;
   //const isDarkTheme = localStorage.getItem("darkTheme") === "true";
   document.body.classList.toggle("dark-theme", isDarkTheme);
   return isDarkTheme;

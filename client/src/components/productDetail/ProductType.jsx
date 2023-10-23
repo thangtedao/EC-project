@@ -5,10 +5,10 @@ const Wrapper = styled.section`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid white;
+  border: 1px solid lightgray;
   border-radius: 5px;
   min-width: 100px;
-  width: 10vw;
+  width: 150px;
   height: 50px;
   gap: 0.5rem;
   padding: 2px;

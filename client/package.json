@@ -16,6 +16,7 @@
     "@mui/material": "^5.14.14",
     "@tanstack/react-query": "^4.29.5",
     "@tanstack/react-query-devtools": "^4.29.6",
+    "@trendyol-js/react-carousel": "^3.0.2",
     "axios": "^1.3.6",
     "dayjs": "^1.11.7",
     "react": "^18.2.0",
