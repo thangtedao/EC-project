@@ -1,6 +1,7 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home, HomeLayout, Landing, Login, Register } from "./pages";
+import ProductDetail from "./pages/ProductDetail";
 
 const checkDefaultTheme = () => {
   const isDarkTheme = true;
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "product-detail",
+        element: <ProductDetail />,
       },
     ],
   },

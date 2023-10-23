@@ -3,10 +3,11 @@ import styled from "styled-components";
 
 const Wrapper = styled.section`
   border: 2px solid white;
-  width: 200px;
+  width: 230px;
   height: 350px;
   padding: 5px;
   border-radius: 10px;
+  margin-bottom: 10px;
   img {
     min-width: 100%;
     height: 10rem;
@@ -20,6 +21,16 @@ const Wrapper = styled.section`
     margin-top: 20%;
     font-size: large;
     color: red;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 10%;
+    font-weight: 700;
+  }
+  .old-price {
+    font-size: medium;
+    color: gray;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
   }
   .descript {
     margin-top: 10%;
@@ -31,7 +42,7 @@ const Wrapper = styled.section`
   }
 `;
 
-const ProductContainer = ({ img, name, price, descript }) => {
+const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
   return (
     <Wrapper>
       <img src={img} alt={name} />
@@ -39,7 +50,8 @@ const ProductContainer = ({ img, name, price, descript }) => {
         <p> {name}</p>
       </div>
       <div className="price">
-        <p> {price && price + " đ"}</p>
+        <p> {price && price + "đ"}</p>
+        <p className="old-price">{oldPrice && oldPrice + "đ"}</p>
       </div>
       <div className="descript">
         <p>{descript}</p>

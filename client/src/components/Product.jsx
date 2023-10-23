@@ -15,6 +15,7 @@ const Product = () => {
         img={img}
         name="Laptop"
         price="999"
+        oldPrice="9999"
         descript="ngon lành cành đào ngon lành cành đào"
       />
       <ProductContainer
