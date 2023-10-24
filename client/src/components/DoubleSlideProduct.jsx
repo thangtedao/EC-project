@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProductContainer from "../ProductContainer";
+import ProductContainer from "./ProductContainer";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 const Wrapper = styled.section`
   width: 1100px;
   .product-container {
-    width: 13rem;
+    width: 13.5rem;
   }
   @media (max-width: 1100px) {
     width: 100vw;
@@ -29,17 +29,19 @@ const Wrapper = styled.section`
     }
   }
   //border: 1px solid white;
-  height: 380px;
+  .slide {
+  }
 `;
 
 const RelatedProduct = ({ img }) => {
   const settings = {
+    className: "slide",
     infinite: true,
     speed: 1000,
     slidesToShow: 5,
-    slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
+    rows: 2,
     responsive: [
       {
         breakpoint: 1070,
@@ -64,6 +66,48 @@ const RelatedProduct = ({ img }) => {
   return (
     <Wrapper>
       <Slider {...settings}>
+        <ProductContainer
+          img={img}
+          name="Laptop"
+          price="999"
+          oldPrice="9999"
+          descript="ngon lành cành đào ngon lành cành đào"
+        />
+        <ProductContainer
+          img={img}
+          name="Laptop"
+          price="999"
+          oldPrice="9999"
+          descript="ngon lành cành đào ngon lành cành đào"
+        />
+        <ProductContainer
+          img={img}
+          name="Laptop"
+          price="999"
+          oldPrice="9999"
+          descript="ngon lành cành đào ngon lành cành đào"
+        />
+        <ProductContainer
+          img={img}
+          name="Laptop"
+          price="999"
+          oldPrice="9999"
+          descript="ngon lành cành đào ngon lành cành đào"
+        />
+        <ProductContainer
+          img={img}
+          name="Laptop"
+          price="999"
+          oldPrice="9999"
+          descript="ngon lành cành đào ngon lành cành đào"
+        />
+        <ProductContainer
+          img={img}
+          name="Laptop"
+          price="999"
+          oldPrice="9999"
+          descript="ngon lành cành đào ngon lành cành đào"
+        />
         <ProductContainer
           img={img}
           name="Laptop"

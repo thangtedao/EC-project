@@ -1,7 +1,15 @@
 import React, { createContext, useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../components";
+import styled from "styled-components";
 
+const Wrapper = styled.div`
+  .main-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
 const HomeLayoutContext = createContext();
 
 const HomeLayout = ({ isDarkThemeEnabled }) => {
@@ -33,10 +41,12 @@ const HomeLayout = ({ isDarkThemeEnabled }) => {
         logoutUser,
       }}
     >
-      <Navbar />
-      <div>
-        <Outlet />
-      </div>
+      <Wrapper>
+        <Navbar />
+        <div className="main-layout">
+          <Outlet />
+        </div>
+      </Wrapper>
     </HomeLayoutContext.Provider>
   );
 };

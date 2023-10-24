@@ -7,13 +7,18 @@ const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid lightgray;
+  box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  padding: 0 5px;
+  width: 200px;
   .nav-link {
     display: flex;
     align-items: center;
     color: var(--primary-500);
+    padding: 3px 2px;
+    :hover {
+      background: #efecec;
+    }
   }
   .icon {
     margin-right: 10px;

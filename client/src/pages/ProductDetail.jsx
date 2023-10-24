@@ -3,46 +3,48 @@ import styled from "styled-components";
 import img from "../assets/react.svg";
 import ProductType from "../components/productDetail/ProductType";
 import RelatedProduct from "../components/productDetail/RelatedProduct";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { SlideProduct } from "../components";
 
 const Wrapper = styled.section`
-  width: 100%;
+  width: 1200px;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   flex-direction: column;
   padding: 20px;
+  border: 0.5px solid lightgrey;
   .container {
-    //border: 0.5px solid lightgrey;
+    width: 1100px;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
     gap: 0.75rem;
   }
   .main-img {
-    width: 30vw;
-    height: 40vh;
+    height: 350px;
   }
   .column-first {
-    width: 30vw;
-    border: 0.5px solid lightgrey;
+    width: 55%;
+    //border: 0.5px solid lightgrey;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin-right: 1rem;
     border-radius: 10px;
   }
   .column-second {
+    width: 45%;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 10px;
-    border: 0.5px solid lightgrey;
   }
   .list-item {
     display: grid;
-    gap: 8px;
+    row-gap: 8px;
+    column-gap: 8px;
     grid-template-columns: 1fr 1fr 1fr;
   }
   .main-price {
@@ -63,9 +65,67 @@ const Wrapper = styled.section`
     text-decoration: line-through;
     text-decoration-thickness: 1px;
   }
+  .btn-buy {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .btn-buynow {
+    width: 90%;
+    border-radius: 10px;
+    border: none;
+    background: red;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: white;
+    text-transform: uppercase;
+  }
+  .btn-addtocart {
+    border-color: red;
+    color: red;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding: 0.2rem;
+    align-self: flex-end;
+    p {
+      font-size: 0.6rem;
+    }
+  }
 `;
 
 const ProductDetail = () => {
+  const products = [
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+  ];
+  const numOfProduct = 3;
+
   const settings = {
     infinite: true,
     speed: 1000,
@@ -85,55 +145,45 @@ const ProductDetail = () => {
           </Slider>
         </div>
         <div className="column-second">
-          <div>
-            <ul className="list-item">
-              <li>
-                <ProductType text="8GB - 256GB" price="9999đ" />
-              </li>
-              <li>
-                <ProductType text="8GB - 256GB" price="9999đ" />
-              </li>
-              <li>
-                <ProductType text="8GB - 256GB" price="9999đ" />
-              </li>
-              <li>
-                <ProductType text="8GB - 256GB" price="9999đ" />
-              </li>
-              <li>
-                <ProductType text="8GB - 256GB" price="9999đ" />
-              </li>
-              <li>
-                <ProductType text="8GB - 256GB" price="9999đ" />
-              </li>
-            </ul>
+          <div className="list-item">
+            <ProductType text="8GB - 256GB" price="9999đ" />
+
+            <ProductType text="8GB - 256GB" price="9999đ" />
+
+            <ProductType text="8GB - 256GB" price="9999đ" />
+
+            <ProductType text="8GB - 256GB" price="9999đ" />
+
+            <ProductType text="8GB - 256GB" price="9999đ" />
+
+            <ProductType text="8GB - 256GB" price="9999đ" />
           </div>
           <p>Chọn màu</p>
-          <div>
-            <ul className="list-item">
-              <li>
-                <ProductType img={img} text="Vàng" price="9999đ" />
-              </li>
-              <li>
-                <ProductType img={img} text="Vàng" price="9999đ" />
-              </li>
-              <li>
-                <ProductType text="Vàng" price="9999đ" />
-              </li>
-            </ul>
+          <div className="list-item">
+            <ProductType img={img} text="Vàng" price="9999đ" />
+
+            <ProductType img={img} text="Vàng" price="9999đ" />
+
+            <ProductType text="Vàng" price="9999đ" />
           </div>
           <div className="main-price">
             <p>999đ</p>
             <p className="old-price">9999đ</p>
           </div>
-          <div>
-            <button>Mua ngay</button>
-            <button>Thâm vào giỏ</button>
+          <div className="btn-buy">
+            <button className="btn-buynow">Mua ngay</button>
+            <button className="btn-addtocart">
+              <AddShoppingCartIcon />
+              <p>Thêm vào giỏ</p>
+            </button>
           </div>
         </div>
       </div>
 
       <div>
-        <RelatedProduct img={img} />
+        {numOfProduct > 0 && (
+          <SlideProduct numOfProduct={numOfProduct} products={products} />
+        )}
       </div>
     </Wrapper>
   );

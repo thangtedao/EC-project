@@ -8,7 +8,7 @@ const Wrapper = styled.section`
   border: 1px solid lightgray;
   border-radius: 5px;
   min-width: 100px;
-  width: 150px;
+  width: 100%;
   height: 50px;
   gap: 0.5rem;
   padding: 2px;
