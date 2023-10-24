@@ -4,6 +4,7 @@ import ProductContainer from "./ProductContainer";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Box } from "@mui/material";
 
 const Wrapper = styled.section`
   width: 1100px;
@@ -33,58 +34,67 @@ const Wrapper = styled.section`
 
 const SlideProduct = ({ products, numOfProduct }) => {
   const check = numOfProduct <= 5;
-  const slideToShow = check ? numOfProduct : 5;
-  const settings = check
-    ? {
-        infinite: true,
-        speed: 1000,
-        slidesToShow: slideToShow,
-        slidesToScroll: slideToShow,
-      }
-    : {
-        infinite: true,
-        speed: 1000,
-        slidesToShow: slideToShow,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 2000,
-        responsive: [
-          {
-            breakpoint: 1070,
-            settings: {
-              slidesToShow: 4,
-            },
-          },
-          {
-            breakpoint: 970,
-            settings: {
-              slidesToShow: 3,
-            },
-          },
-          {
-            breakpoint: 690,
-            settings: {
-              slidesToShow: 2,
-            },
-          },
-        ],
-      };
+  const settings = {
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    responsive: [
+      {
+        breakpoint: 1070,
+        settings: {
+          slidesToShow: 4,
+        },
+      },
+      {
+        breakpoint: 970,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 690,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+    ],
+  };
   return (
     <Wrapper>
-      <Slider {...settings}>
-        {products.map((product) => {
-          return (
-            <ProductContainer
-              key={product._id}
-              img={product.img}
-              name={product.name}
-              price={product.price}
-              oldPrice={product.oldPrice}
-              descript={product.descript}
-            />
-          );
-        })}
-      </Slider>
+      {!check ? (
+        <Slider {...settings}>
+          {products.map((product) => {
+            return (
+              <ProductContainer
+                key={product._id}
+                img={product.img}
+                name={product.name}
+                price={product.price}
+                oldPrice={product.oldPrice}
+                descript={product.descript}
+              />
+            );
+          })}
+        </Slider>
+      ) : (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          {products.map((product) => {
+            return (
+              <ProductContainer
+                key={product._id}
+                img={product.img}
+                name={product.name}
+                price={product.price}
+                oldPrice={product.oldPrice}
+                descript={product.descript}
+              />
+            );
+          })}
+        </Box>
+      )}
     </Wrapper>
   );
 };

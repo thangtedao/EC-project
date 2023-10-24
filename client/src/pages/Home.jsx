@@ -47,7 +47,33 @@ const Wrapper = styled.section`
 `;
 
 const HomeLayout = () => {
-  const numOfProduct = 1;
+  const products = [
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+  ];
+  const numOfProduct = products.length;
 
   const settings = {
     infinite: true,
@@ -70,14 +96,7 @@ const HomeLayout = () => {
       </main>
       <div>
         {numOfProduct > 0 && (
-          <SlideProduct
-            numOfProduct={numOfProduct}
-            img={img}
-            name="Laptop"
-            price="999"
-            oldPrice="9999"
-            descript="ngon lành cành đào ngon lành cành đào"
-          />
+          <SlideProduct numOfProduct={numOfProduct} products={products} />
         )}
       </div>
       <h5>ĐIỆN THOẠI NỔI BẬT NHẤT</h5>
