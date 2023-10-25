@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import ProductContainer from "./ProductContainer";
+import ProductContainer from "../ProductContainer";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Box } from "@mui/material";
 
 const Wrapper = styled.section`
   width: 1100px;
@@ -29,18 +28,18 @@ const Wrapper = styled.section`
       width: 48vw;
     }
   }
-  //border: 1px solid white;
 `;
 
-const SlideProduct = ({ products, numOfProduct }) => {
-  const check = numOfProduct <= 5;
+const DoubleSlideProduct = ({ products }) => {
+  const check = products.length >= 12;
+  console.log(check);
   const settings = {
     infinite: true,
     speed: 1000,
     slidesToShow: 5,
-    slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
+    rows: 2,
     responsive: [
       {
         breakpoint: 1070,
@@ -64,9 +63,9 @@ const SlideProduct = ({ products, numOfProduct }) => {
   };
   return (
     <Wrapper>
-      {!check ? (
+      {check && (
         <Slider {...settings}>
-          {products.map((product) => {
+          {products?.map((product) => {
             return (
               <ProductContainer
                 key={product._id}
@@ -79,24 +78,9 @@ const SlideProduct = ({ products, numOfProduct }) => {
             );
           })}
         </Slider>
-      ) : (
-        <Box sx={{ display: "flex", gap: "1rem" }}>
-          {products.map((product) => {
-            return (
-              <ProductContainer
-                key={product._id}
-                img={product.img}
-                name={product.name}
-                price={product.price}
-                oldPrice={product.oldPrice}
-                descript={product.descript}
-              />
-            );
-          })}
-        </Box>
       )}
     </Wrapper>
   );
 };
 
-export default SlideProduct;
+export default DoubleSlideProduct;

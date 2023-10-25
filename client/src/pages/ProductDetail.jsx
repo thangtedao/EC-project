@@ -212,8 +212,6 @@ const ProductDetail = () => {
     ],
   };
 
-  const numOfProduct = 3;
-
   const settings = {
     infinite: true,
     speed: 1000,
@@ -270,9 +268,7 @@ const ProductDetail = () => {
 
       <div>
         <h5>SẢN PHẨM TƯƠNG TỰ</h5>
-        {numOfProduct > 0 && (
-          <SlideProduct numOfProduct={numOfProduct} products={products} />
-        )}
+        {products.length > 0 && <SlideProduct products={products} />}
       </div>
 
       <div className="container-bottom">

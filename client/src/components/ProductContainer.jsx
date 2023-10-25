@@ -13,13 +13,16 @@ const Wrapper = styled.section`
     align-items: center;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
   }
-  .product {
-    width: 13rem;
-  }
-  img {
+
+  .img {
     width: 100%;
     height: 10rem;
     margin-bottom: 2px;
+    img {
+      width: 50px;
+      height: 50px;
+      border: 0.5px solid lightgrey;
+    }
   }
   .name {
     margin: 5px 0;
@@ -55,7 +58,9 @@ const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
     <Wrapper>
       <div className="product-container">
         <div className="product">
-          <img src={img} alt={name} />
+          <div className="img">
+            <img src={img} alt={name} />
+          </div>
           <div className="name">
             <p> {name}</p>
           </div>

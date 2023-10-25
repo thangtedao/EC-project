@@ -1,6 +1,6 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home, HomeLayout, Landing, Login, Register } from "./pages";
+import { Home, HomeLayout, Login, Register } from "./pages";
 import ProductDetail from "./pages/ProductDetail";
 
 const checkDefaultTheme = () => {
