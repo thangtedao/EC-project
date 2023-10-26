@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,6 +12,7 @@ const Wrapper = styled.section`
   height: 50px;
   gap: 0.5rem;
   padding: 2px;
+
   .small-img {
     width: 30px;
     height: 30px;

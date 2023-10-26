@@ -9,50 +9,49 @@ import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
 
 const Wrapper = styled.section`
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  height: 60px;
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
   background: var(--background-secondary-color);
+  background: #ff3636;
   z-index: 99;
+
   .nav-center {
     display: flex;
-    width: 90vw;
+    width: 90%;
+    height: 3.5rem;
     align-items: center;
     justify-content: space-between;
-  }
-  .toggle-btn {
-    background: transparent;
-    border-color: transparent;
-    font-size: 1rem;
-    color: var(--primary-500);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  .nav-link {
-    background: transparent;
-    border-color: transparent;
-    font-size: 1.1rem;
-    color: var(--primary-500);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  .nav-links {
-    display: flex;
-    gap: 1.2rem;
-  }
-  .logo-text {
-    display: none;
   }
   .logo {
     display: flex;
     align-items: center;
     width: 100px;
   }
-  .btn-container {
+
+  .search-bar {
+    background: white;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 0.75rem;
+    border: 1px solid gray;
+    border-radius: 10px;
+    padding: 0 0.5rem;
+    width: 20vw;
+    min-width: 50px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.2rem;
+  }
+  .toggle-btn {
+    background: transparent;
+    border-color: transparent;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
     display: flex;
     align-items: center;
   }
@@ -61,30 +60,19 @@ const Wrapper = styled.section`
     display: grid;
     place-items: center;
   }
-  .search-bar {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    column-gap: 10px;
-    border: 1px solid gray;
-    border-radius: 8px;
-    padding: 0.2rem 0.5rem;
-    width: 20vw;
-    min-width: 50px;
+  .nav-link {
+    background: transparent;
+    border-color: transparent;
+    font-size: 1.1rem;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
   }
+
   @media (min-width: 992px) {
     position: sticky;
     top: 0;
-    .nav-center {
-      width: 90%;
-    }
-    .logo {
-      display: none;
-    }
-    .logo-text {
-      display: block;
-    }
-  }
-  @media (min-width: 410px) {
   }
 `;
 
@@ -93,11 +81,10 @@ const Navbar = () => {
   return (
     <Wrapper>
       <div className="nav-center">
-        <div>
-          <h4 className="logo">Put logo here</h4>
-          <h4 className="logo-text">dashboard</h4>
-        </div>
+        <h4 className="logo">Logo</h4>
+
         <SearchBar />
+
         <div className="nav-links">
           <button type="button" className="toggle-btn" onClick={toggleSideBar}>
             <span className="icon">

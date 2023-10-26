@@ -7,7 +7,6 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ProductSpecifications, SlideProduct } from "../components";
-import { Box } from "@mui/material";
 
 const Wrapper = styled.section`
   width: 1100px;
@@ -69,21 +68,21 @@ const Wrapper = styled.section`
       text-decoration-thickness: 1px;
     }
   }
-
   .btn-buy {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 0.75rem;
   }
   .btn-buynow {
     width: 90%;
     border-radius: 10px;
-    border: none;
+    border: transparent;
     background: red;
     font-weight: 700;
     font-size: 1.3rem;
     color: white;
     text-transform: uppercase;
+    cursor: pointer;
   }
   .btn-addtocart {
     border-color: red;
@@ -95,22 +94,29 @@ const Wrapper = styled.section`
     align-items: center;
     border-radius: 10px;
     padding: 0.2rem;
-    align-self: flex-end;
+    cursor: pointer;
     p {
       font-size: 0.6rem;
     }
   }
 
-  .container-bottom {
-    width: 1100px;
+  /* MID */
+  .mid-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* BOT */
+  .bot-container {
+    width: 100%;
     display: flex;
     gap: 1rem;
-    justify-content: space-between;
   }
-  .container-bottom-column-1 {
+  .bot-container-column-1 {
     flex: 2;
   }
-  .container-bottom-column-2 {
+  .bot-container-column-2 {
     flex: 1;
   }
   .product-description {
@@ -119,44 +125,36 @@ const Wrapper = styled.section`
     border-radius: 10px;
     padding: 1rem;
   }
-  .product-specifications-container {
-    border: 0.5px solid lightgrey;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+
+  /* MEDIA QUERIES */
+  @media (max-width: 1100px) {
+    width: 100%;
   }
-  .product-specifications {
-    padding: 0.5rem;
-    border-radius: 10px;
-    border: 0.5px solid lightgrey;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+  @media (max-width: 950px) {
+    /* TOP */
+    .top-container-column-1 {
+      width: 40%;
+    }
+    .top-container-column-2 {
+      width: 60%;
+    }
   }
-  .technical-content {
-    display: flex;
-    flex-direction: column;
-  }
-  .technical-content-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 1rem;
-    padding: 0.5rem;
-  }
-  .button-show-model-technical {
-    border-radius: 10px;
-    border: 0.5px solid lightgrey;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    cursor: pointer;
-    :hover {
-      border-color: red;
-      color: red;
-      background: #ffebeb;
+  @media (max-width: 750px) {
+    /* TOP */
+    .top-container {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .top-container-column-1 {
+      width: 100%;
+    }
+    .top-container-column-2 {
+      width: 100%;
+    }
+
+    /* BOT */
+    .bot-container-column-2 {
+      display: none;
     }
   }
 `;
@@ -251,6 +249,7 @@ const ProductDetail = () => {
 
   return (
     <Wrapper>
+      {/* TOP */}
       <h3>Apple MacBook Air M1 256GB 2020 I Chính hãng Apple Việt Nam</h3>
       <div className="top-container">
         <div className="top-container-column-1">
@@ -298,30 +297,29 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <Box display="none">
-        <div>
-          <h5>SẢN PHẨM TƯƠNG TỰ</h5>
-          {products.length > 0 && <SlideProduct products={products} />}
-        </div>
+      {/* MID */}
+      <div className="mid-container">
+        <h5>SẢN PHẨM TƯƠNG TỰ</h5>
+        {products.length > 0 && <SlideProduct products={products} />}
+      </div>
 
-        <div className="container-bottom">
-          <div className="container-bottom-column-1">
-            <div className="product-description">
-              <p>
-                Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
-                xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản
-                phẩm tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những
-                gì để đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng
-                CellphoneS đánh giá kỹ hơn về mẫu điện thoại gaming này trong
-                bài viết đây.
-              </p>
-            </div>
-          </div>
-          <div className="container-bottom-column-2">
-            <ProductSpecifications />
+      {/* BOT */}
+      <div className="bot-container">
+        <div className="bot-container-column-1">
+          <div className="product-description">
+            <p>
+              Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
+              xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản phẩm
+              tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những gì để
+              đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng CellphoneS
+              đánh giá kỹ hơn về mẫu điện thoại gaming này trong bài viết đây.
+            </p>
           </div>
         </div>
-      </Box>
+        <div className="bot-container-column-2">
+          <ProductSpecifications />
+        </div>
+      </div>
     </Wrapper>
   );
 };
