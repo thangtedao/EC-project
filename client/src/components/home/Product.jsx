@@ -2,9 +2,32 @@ import React from "react";
 import styled from "styled-components";
 import SlideProduct from "../slider/SlideProduct";
 import { DoubleSlideProduct } from "..";
-import { Box } from "@mui/material";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width: 100%;
+
+  /* PRODUCTS */
+  .product-list-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .product-list-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .product-list-category {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .category {
+    border-radius: 10px;
+    padding: 0.5rem;
+    border: 0.5px solid lightgrey;
+  }
+`;
 
 const Product = ({ title, categories, products }) => {
   let newCategory = categories;
@@ -23,33 +46,15 @@ const Product = ({ title, categories, products }) => {
             {categories.length < 5 ? (
               <div className="product-list-category">
                 {newCategory.map((category) => {
-                  return (
-                    <Box borderRadius="10px" padding="0.5rem">
-                      {category}
-                    </Box>
-                  );
+                  return <div className="category">{category}</div>;
                 })}
               </div>
             ) : (
               <div className="product-list-category">
                 {newCategory.map((category) => {
-                  return (
-                    <Box
-                      borderRadius="10px"
-                      border="0.5px solid lightgrey"
-                      padding="0.5rem"
-                    >
-                      {category}
-                    </Box>
-                  );
+                  return <div className="category">{category}</div>;
                 })}
-                <Box
-                  borderRadius="10px"
-                  border="0.5px solid lightgrey"
-                  padding="0.5rem"
-                >
-                  Xem tất cả
-                </Box>
+                <div className="category">Xem tất cả</div>
               </div>
             )}
           </div>

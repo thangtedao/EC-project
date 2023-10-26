@@ -1,27 +1,34 @@
 import React from "react";
 import styled from "styled-components";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
+  width: 100%;
   .product-container {
-    border: 0.5px solid lightgrey;
+    width: 98%;
     height: 380px;
-    padding: 5px;
+    border: 0.5px solid lightgrey;
     border-radius: 10px;
     margin-bottom: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 0.5rem;
   }
-
-  .img {
+  .product-content {
     width: 100%;
-    height: 10rem;
-    margin-bottom: 2px;
+    height: 100%;
+  }
+  .image {
+    width: 100%;
+    height: 50%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
     img {
-      width: 50px;
-      height: 50px;
-      border: 0.5px solid lightgrey;
+      width: 10rem;
+      height: 10rem;
     }
   }
   .name {
@@ -57,8 +64,8 @@ const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
   return (
     <Wrapper>
       <div className="product-container">
-        <div className="product">
-          <div className="img">
+        <div className="product-content">
+          <div className="image">
             <img src={img} alt={name} />
           </div>
           <div className="name">

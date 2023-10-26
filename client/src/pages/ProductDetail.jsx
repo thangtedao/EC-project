@@ -7,63 +7,69 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ProductSpecifications, SlideProduct } from "../components";
+import { Box } from "@mui/material";
 
 const Wrapper = styled.section`
-  width: 1200px;
+  width: 1100px;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  flex-direction: column;
-  padding: 20px;
-  border: 0.5px solid lightgrey;
-  .container {
-    width: 1100px;
+  padding: 1rem 0;
+  border: 0.5px solid green;
+
+  /* TOP */
+  .top-container {
+    width: 100%;
     display: flex;
-    justify-content: space-between;
     gap: 0.75rem;
+    border: 0.5px solid red;
   }
-  .main-img {
-    height: 350px;
+  .top-container-column-1 {
+    border: 0.5px solid yellow;
+    width: 60%;
   }
-  .column-first {
-    width: 55%;
-    //border: 0.5px solid lightgrey;
+  .top-container-column-2 {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 40%;
+    border: 0.5px solid green;
+  }
+  .sliding-product-image {
+    width: 100%;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin-right: 1rem;
     border-radius: 10px;
   }
-  .column-second {
-    width: 45%;
+  .product-img {
+    height: 350px;
+  }
+  .box-product-variants {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
-  .list-item {
-    display: grid;
-    row-gap: 8px;
-    column-gap: 8px;
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-  .main-price {
+  .box-product-price {
     padding: 0.5rem 0;
-    border: 1px solid white;
     border-radius: 5px;
     display: flex;
-    gap: 10px;
+    gap: 1rem;
     align-items: center;
     font-weight: 700;
     color: red;
-    width: 30%;
+    .old-price {
+      font-size: 0.8rem;
+      font-weight: 5;
+      color: gray;
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+    }
   }
-  .old-price {
-    font-size: 0.8rem;
-    font-weight: 5;
-    color: gray;
-    text-decoration: line-through;
-    text-decoration-thickness: 1px;
-  }
+
   .btn-buy {
     display: flex;
     justify-content: space-between;
@@ -181,6 +187,30 @@ const ProductDetail = () => {
       descript: "ngon lành cành đào ngon lành cành đào",
       img: img,
     },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
+    {
+      _id: Math.random(),
+      name: "Laptop",
+      price: "999",
+      oldPrice: "9999",
+      descript: "ngon lành cành đào ngon lành cành đào",
+      img: img,
+    },
   ];
   const product = {
     _id: Math.random(),
@@ -222,24 +252,26 @@ const ProductDetail = () => {
   return (
     <Wrapper>
       <h3>Apple MacBook Air M1 256GB 2020 I Chính hãng Apple Việt Nam</h3>
-      <div className="container">
-        <div className="column-first">
-          <Slider {...settings}>
-            <img className="main-img" src={img} />
-            <img className="main-img" src={img} />
-            <img className="main-img" src={img} />
-          </Slider>
+      <div className="top-container">
+        <div className="top-container-column-1">
+          <div className="sliding-product-image">
+            <Slider {...settings}>
+              <img className="product-img" src={img} />
+              <img className="product-img" src={img} />
+              <img className="product-img" src={img} />
+            </Slider>
+          </div>
         </div>
 
-        <div className="column-second">
-          <div className="list-item">
+        <div className="top-container-column-2">
+          <div className="box-product-variants">
             {product.type.map((type) => {
               return <ProductType text={type.name} price={type.price} />;
             })}
           </div>
 
           <p>Chọn màu</p>
-          <div className="list-item">
+          <div className="box-product-variants">
             {product.color.map((color) => {
               return (
                 <ProductType
@@ -251,7 +283,7 @@ const ProductDetail = () => {
             })}
           </div>
 
-          <div className="main-price">
+          <div className="box-product-price">
             <p>{product && product.price + " đ"}</p>
             <p className="old-price">{product && product.oldPrice + " đ"}</p>
           </div>
@@ -266,27 +298,30 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <div>
-        <h5>SẢN PHẨM TƯƠNG TỰ</h5>
-        {products.length > 0 && <SlideProduct products={products} />}
-      </div>
+      <Box display="none">
+        <div>
+          <h5>SẢN PHẨM TƯƠNG TỰ</h5>
+          {products.length > 0 && <SlideProduct products={products} />}
+        </div>
 
-      <div className="container-bottom">
-        <div className="container-bottom-column-1">
-          <div className="product-description">
-            <p>
-              Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
-              xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản phẩm
-              tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những gì để
-              đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng CellphoneS
-              đánh giá kỹ hơn về mẫu điện thoại gaming này trong bài viết đây.
-            </p>
+        <div className="container-bottom">
+          <div className="container-bottom-column-1">
+            <div className="product-description">
+              <p>
+                Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
+                xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản
+                phẩm tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những
+                gì để đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng
+                CellphoneS đánh giá kỹ hơn về mẫu điện thoại gaming này trong
+                bài viết đây.
+              </p>
+            </div>
+          </div>
+          <div className="container-bottom-column-2">
+            <ProductSpecifications />
           </div>
         </div>
-        <div className="container-bottom-column-2">
-          <ProductSpecifications />
-        </div>
-      </div>
+      </Box>
     </Wrapper>
   );
 };

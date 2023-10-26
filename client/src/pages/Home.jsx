@@ -1,53 +1,45 @@
 import React, { createContext, useContext, useState } from "react";
 import styled from "styled-components";
-import {
-  DoubleSlideProduct,
-  Navbar,
-  SlideProduct,
-  SmallSideBar,
-} from "../components";
+import { SlideProduct } from "../components";
 import { Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import NavContainer from "../components/NavContainer";
-import ProductContainer from "../components/ProductContainer";
 import Product from "../components/home/Product";
 import img from "../assets/react.svg";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { products } from "../assets/data/data.js";
-import { Box } from "@mui/material";
+import { products, products_v2 } from "../assets/data/data.js";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  //width: 1200px;
+  padding: 1rem 0;
+  width: 1100px;
   height: 100%;
-  border: 0.5px solid lightgrey;
+  border: 0.5px solid green;
 
   /* TOP HOME */
   .block-top-home {
-    width: 1100px;
+    width: 100%;
     border: 1px solid red;
     display: flex;
     justify-content: space-between;
-
-    .right-banner {
-      border: 0.5px solid lightgrey;
-      width: 200px;
-    }
+  }
+  .right-banner {
+    border: 0.5px solid lightgrey;
+    width: 220px;
   }
   .sliding-banner {
-    width: calc(100% - 400px);
+    width: calc(100% - 420px);
     border: 0.5px solid lightgrey;
+    border-radius: 10px;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin: 0 0.75rem;
-    border-radius: 10px;
   }
   .sliding-banner-img {
     height: 350px;
@@ -55,14 +47,16 @@ const Wrapper = styled.section`
 
   /* FLASH SALE */
   .block-hot-sale {
+    width: 100%;
     border-radius: 10px;
-    border: 0.5px solid lightgrey;
+    border: 0.5px solid yellowgreen;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
   }
   .block-title {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 1rem 0;
   }
   .sale-title {
@@ -70,32 +64,35 @@ const Wrapper = styled.section`
     font-weight: 700;
     color: red;
   }
+  .box-countdown {
+  }
 
-  /* PRODUCT */
-  .product-list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .product-list-title {
-    display: flex;
-    justify-content: space-between;
-  }
-  .product-list-category {
-    display: flex;
-    gap: 0.5rem;
-  }
+  /* MEDIA QUERIES */
   @media (max-width: 1100px) {
-    width: 100vw;
-
-    .block-top-home {
-      width: 100%;
-    }
+    width: 100%;
+  }
+  @media (max-width: 960px) {
     .sliding-banner {
       width: calc(100% - 220px);
     }
   }
+  @media (max-width: 800px) {
+    .right-banner {
+      display: none;
+    }
+  }
+  @media (max-width: 700px) {
+    .sliding-banner {
+      width: calc(100% - 150px);
+    }
+    .menu-container {
+      width: 150px;
+    }
+  }
   @media (max-width: 550px) {
+    .sliding-banner {
+      width: 100%;
+    }
     .menu-container {
       display: none;
     }
@@ -134,31 +131,30 @@ const HomeLayout = () => {
         </div>
         <div className="right-banner"></div>
       </div>
-      <Box display="none">
-        <div className="block-hot-sale">
-          <div className="block-title">
-            <div className="sale-title">FLASH SALE</div>
-            <div className="box-countdown">00:11:22:33</div>
-          </div>
-          <div className="box-content">
-            {numOfProduct > 0 && <SlideProduct products={products} />}
-          </div>
+
+      {/* --------- FLASH SALE -------- */}
+      <div className="block-hot-sale">
+        <div className="block-title">
+          <div className="sale-title">FLASH SALE</div>
+          <div className="box-countdown">00:11:22:33</div>
         </div>
+        {numOfProduct > 0 && <SlideProduct products={products} />}
+      </div>
 
-        <Product
-          title="ĐIỆN THOẠI NỔI BẬT NHẤT"
-          categories={categories}
-          products={products}
-        />
+      {/* --------- PRODUCTS SALE -------- */}
+      <Product
+        title="ĐIỆN THOẠI NỔI BẬT NHẤT"
+        categories={categories}
+        products={products}
+      />
 
-        <Product title="LAPTOP" categories={categories} products={products} />
+      <Product title="LAPTOP" categories={categories} products={products_v2} />
 
-        <Product
-          title="MÀN HÌNH, MÁY TÍNH ĐỂ BÀN"
-          categories={categories}
-          products={products}
-        />
-      </Box>
+      <Product
+        title="MÀN HÌNH, MÁY TÍNH ĐỂ BÀN"
+        categories={categories}
+        products={products}
+      />
     </Wrapper>
   );
 };

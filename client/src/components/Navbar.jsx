@@ -6,14 +6,13 @@ import { useHomeLayoutContext } from "../pages/HomeLayout";
 import LogoutContainer from "./LogoutContainer";
 import ThemeToggle from "./ThemeToggle";
 import NavLinks from "./NavLinks";
-import { NavLink } from "react-router-dom";
 import SearchBar from "./SearchBar";
 
 const Wrapper = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 10vh;
+  height: 60px;
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
   background: var(--background-secondary-color);
   z-index: 99;
@@ -66,7 +65,7 @@ const Wrapper = styled.section`
     display: grid;
     grid-template-columns: 1fr auto;
     column-gap: 10px;
-    border: 1px solid grey;
+    border: 1px solid gray;
     border-radius: 8px;
     padding: 0.2rem 0.5rem;
     width: 20vw;
@@ -84,6 +83,8 @@ const Wrapper = styled.section`
     .logo-text {
       display: block;
     }
+  }
+  @media (min-width: 410px) {
   }
 `;
 
