@@ -3,14 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home, HomeLayout, Login, Register } from "./pages";
 import ProductDetail from "./pages/ProductDetail";
 
-const checkDefaultTheme = () => {
-  const isDarkTheme = false;
-  //const isDarkTheme = localStorage.getItem("darkTheme") === "true";
-  document.body.classList.toggle("dark-theme", isDarkTheme);
-  return isDarkTheme;
-};
-const isDarkThemeEnabled = checkDefaultTheme();
-
 const router = createBrowserRouter([
   {
     path: "/",

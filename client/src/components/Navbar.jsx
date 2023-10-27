@@ -16,11 +16,12 @@ const Wrapper = styled.section`
   background: var(--background-secondary-color);
   background: #ff3636;
   z-index: 99;
+  height: 3.5rem;
 
   .nav-center {
     display: flex;
     width: 90%;
-    height: 3.5rem;
+
     align-items: center;
     justify-content: space-between;
   }

@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Navbar } from "../components";
+import { CategorySideBar, Navbar } from "../components";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
+  width: 100%;
   .main-layout {
     display: flex;
     justify-content: center;
@@ -12,17 +13,9 @@ const Wrapper = styled.div`
 `;
 const HomeLayoutContext = createContext();
 
-const HomeLayout = ({ isDarkThemeEnabled }) => {
+const HomeLayout = () => {
   const user = { name: "thang" };
   const [showSideBar, setShowSideBar] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(isDarkThemeEnabled);
-
-  const toggleDarkTheme = () => {
-    const newDarkTheme = !isDarkTheme;
-    setIsDarkTheme(!isDarkTheme);
-    document.body.classList.toggle("dark-theme", newDarkTheme);
-    localStorage.setItem("dark-theme", newDarkTheme);
-  };
 
   const toggleSideBar = () => {
     setShowSideBar(!showSideBar);
@@ -35,14 +28,13 @@ const HomeLayout = ({ isDarkThemeEnabled }) => {
       value={{
         user,
         showSideBar,
-        isDarkTheme,
-        toggleDarkTheme,
         toggleSideBar,
         logoutUser,
       }}
     >
       <Wrapper>
         <Navbar />
+        <CategorySideBar />
         <div className="main-layout">
           <Outlet />
         </div>
