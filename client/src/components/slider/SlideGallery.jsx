@@ -1,7 +1,23 @@
-import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-const SlideGallery = () => {
-  return <div>SlideGallery</div>;
+const SlideGallery = ({ image }) => {
+  const settings = {
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+  };
+
+  return (
+    <Slider {...settings}>
+      <img className="product-img" src={image} />
+      <img className="product-img" src={image} />
+      <img className="product-img" src={image} />
+    </Slider>
+  );
 };
 
 export default SlideGallery;

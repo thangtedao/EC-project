@@ -6,33 +6,21 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const Wrapper = styled.section`
-  width: 1100px;
-  .product-container {
-    width: 13.5rem;
-  }
+  width: 100%;
+
   @media (max-width: 1100px) {
-    width: 100vw;
   }
   @media (max-width: 1070px) {
-    .product-container {
-      width: 24vw;
-    }
   }
   @media (max-width: 970px) {
-    .product-container {
-      width: 31vw;
-    }
   }
   @media (max-width: 690px) {
-    .product-container {
-      width: 48vw;
-    }
   }
 `;
 
 const DoubleSlideProduct = ({ products }) => {
   const check = products.length >= 12;
-  console.log(check);
+
   const settings = {
     infinite: true,
     speed: 1000,
@@ -40,6 +28,7 @@ const DoubleSlideProduct = ({ products }) => {
     autoplay: true,
     autoplaySpeed: 2000,
     rows: 2,
+    arrows: false,
     responsive: [
       {
         breakpoint: 1070,

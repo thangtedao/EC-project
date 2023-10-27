@@ -5,3 +5,4 @@ export { default as FormRowSelect } from "./FormRowSelect";
 export { default as SlideProduct } from "./slider/SlideProduct";
 export { default as DoubleSlideProduct } from "./slider/DoubleSlideProduct";
 export { default as ProductSpecifications } from "./productDetail/ProductSpecifications";
+export { default as MenuBottom } from "./MenuBottom";

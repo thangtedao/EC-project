@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { CategorySideBar, Navbar } from "../components";
+import { CategorySideBar, MenuBottom, Navbar } from "../components";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
   width: 100%;
+  position: relative;
   .main-layout {
     display: flex;
     justify-content: center;
@@ -38,6 +39,7 @@ const HomeLayout = () => {
         <div className="main-layout">
           <Outlet />
         </div>
+        <MenuBottom />
       </Wrapper>
     </HomeLayoutContext.Provider>
   );

@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import NavContainer from "../components/NavContainer";
 import Product from "../components/home/Product";
 import img from "../assets/react.svg";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { products, products_v2 } from "../assets/data/data.js";
+import SlideGallery from "../components/slider/SlideGallery";
 
 const Wrapper = styled.div`
   display: flex;
@@ -21,12 +21,13 @@ const Wrapper = styled.div`
   padding: 1rem 0;
   width: 1100px;
   height: 100%;
-  border: 0.5px solid green;
+  //border: 0.5px solid green;
 
   /* TOP HOME */
   .block-top-home {
     width: 100%;
-    border: 1px solid red;
+    //height: 350px;
+    //border: 1px solid red;
     display: flex;
     justify-content: space-between;
   }
@@ -36,12 +37,15 @@ const Wrapper = styled.div`
   }
   .sliding-banner {
     width: calc(100% - 420px);
-    border: 0.5px solid lightgrey;
+    //border: 0.5px solid lightgrey;
     border-radius: 10px;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin: 0 0.75rem;
   }
   .sliding-banner-img {
+    //height: 350px;
+  }
+  .product-img {
     height: 350px;
   }
 
@@ -49,7 +53,7 @@ const Wrapper = styled.div`
   .block-hot-sale {
     width: 100%;
     border-radius: 10px;
-    border: 0.5px solid yellowgreen;
+    //border: 0.5px solid yellowgreen;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
   }
@@ -75,23 +79,23 @@ const Wrapper = styled.div`
     .sliding-banner {
       width: calc(100% - 220px);
     }
-  }
-  @media (max-width: 800px) {
     .right-banner {
       display: none;
     }
   }
+  @media (max-width: 800px) {
+  }
   @media (max-width: 700px) {
-    .sliding-banner {
-      width: calc(100% - 150px);
-    }
     .menu-container {
       width: 150px;
+    }
+    .sliding-banner {
+      width: calc(100% - 170px);
     }
   }
   @media (max-width: 550px) {
     .sliding-banner {
-      width: 100%;
+      width: 95%;
     }
     .menu-container {
       display: none;
@@ -112,22 +116,12 @@ const HomeLayout = () => {
 
   const numOfProduct = products.length;
 
-  const settings = {
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
   return (
     <Wrapper>
       <div className="block-top-home">
         <NavContainer />
         <div className="sliding-banner">
-          <Slider {...settings}>
-            <img className="sliding-banner-img" src={img} />
-            <img className="sliding-banner-img" src={img} />
-            <img className="sliding-banner-img" src={img} />
-          </Slider>
+          <SlideGallery image={img} />
         </div>
         <div className="right-banner"></div>
       </div>

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import NavLinks from "./NavLinks";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import styled from "styled-components";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   .menu-container {
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -31,29 +32,59 @@ const Wrapper = styled.section`
 `;
 
 const NavContainer = () => {
+  const category = [
+    {
+      name: "Điện thoại",
+      categoryProduct: [
+        {
+          brandName: "Apple",
+          color: "Red",
+        },
+        {
+          brandName: "Samsung",
+          color: "Red",
+        },
+      ],
+    },
+    {
+      name: "Máy tính",
+      categoryProduct: [
+        {
+          brandName: "Oppo",
+          color: "White",
+        },
+        {
+          brandName: "Huwaei",
+          color: "Black",
+        },
+      ],
+    },
+    {
+      name: "Laptop",
+      categoryProduct: [
+        {
+          brandName: "Pokemon",
+          color: "Blue",
+        },
+        {
+          brandName: "Dragon Ball",
+          color: "Green",
+        },
+      ],
+    },
+  ];
+
   return (
     <Wrapper>
       <div className="menu-container">
-        <NavLinks
-          text="Điện thoại, Tablet"
-          icon={<SmartphoneIcon />}
-          path="#"
-        />
-        <NavLinks
-          text="Điện thoại, Tablet"
-          icon={<SmartphoneIcon />}
-          path="#"
-        />
-        <NavLinks
-          text="Điện thoại, Tablet"
-          icon={<SmartphoneIcon />}
-          path="#"
-        />
-        <NavLinks
-          text="Điện thoại, Tablet"
-          icon={<SmartphoneIcon />}
-          path="#"
-        />
+        {/* MENU TREE */}
+        {category?.map((item) => {
+          return (
+            <div className="item">
+              <NavLinks text={item.name} icon={<SmartphoneIcon />} path="#" />
+            </div>
+          );
+        })}
       </div>
     </Wrapper>
   );

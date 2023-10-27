@@ -8,7 +8,7 @@ import ThemeToggle from "./ThemeToggle";
 import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;

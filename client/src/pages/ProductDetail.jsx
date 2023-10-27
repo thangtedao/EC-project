@@ -7,6 +7,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ProductSpecifications, SlideProduct } from "../components";
+import SlideGallery from "../components/slider/SlideGallery";
 
 const Wrapper = styled.section`
   width: 1100px;
@@ -240,13 +241,6 @@ const ProductDetail = () => {
     ],
   };
 
-  const settings = {
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-
   return (
     <Wrapper>
       {/* TOP */}
@@ -254,11 +248,7 @@ const ProductDetail = () => {
       <div className="top-container">
         <div className="top-container-column-1">
           <div className="sliding-product-image">
-            <Slider {...settings}>
-              <img className="product-img" src={img} />
-              <img className="product-img" src={img} />
-              <img className="product-img" src={img} />
-            </Slider>
+            <SlideGallery image={img} />
           </div>
         </div>
 
