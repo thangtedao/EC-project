@@ -7,3 +7,4 @@ export { default as DoubleSlideProduct } from "./slider/DoubleSlideProduct";
 export { default as ProductSpecifications } from "./productDetail/ProductSpecifications";
 export { default as MenuBottom } from "./MenuBottom";
 export { default as ProductReview } from "./productDetail/ProductReview";
+export { default as AllProduct } from "./productCategory/AllProduct";

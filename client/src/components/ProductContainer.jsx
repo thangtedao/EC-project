@@ -6,6 +6,7 @@ const Wrapper = styled.div`
   .product-container {
     width: 98%;
     height: 380px;
+    background-color: var(--background-secondary-color);
     border: 0.5px solid lightgrey;
     border-radius: 10px;
     margin-bottom: 10px;
@@ -62,7 +63,7 @@ const Wrapper = styled.div`
 
 const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
   return (
-    <Wrapper>
+    <Wrapper className="super-container">
       <div className="product-container">
         <div className="product-content">
           <div className="image">

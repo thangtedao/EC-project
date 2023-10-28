@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import SlideProduct from "../slider/SlideProduct";
-import { DoubleSlideProduct } from "..";
+import DoubleSlideProduct from "../slider/DoubleSlideProduct";
 
 const Wrapper = styled.div`
   width: 100%;

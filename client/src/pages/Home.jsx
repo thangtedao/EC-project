@@ -53,6 +53,7 @@ const Wrapper = styled.div`
   .block-hot-sale {
     width: 100%;
     border-radius: 10px;
+    background-color: #580f0f;
     //border: 0.5px solid yellowgreen;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
@@ -69,6 +70,7 @@ const Wrapper = styled.div`
     color: red;
   }
   .box-countdown {
+    color: white;
   }
 
   /* MEDIA QUERIES */

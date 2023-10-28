@@ -31,13 +31,13 @@ const DoubleSlideProduct = ({ products }) => {
     arrows: false,
     responsive: [
       {
-        breakpoint: 1070,
+        breakpoint: 1020,
         settings: {
           slidesToShow: 4,
         },
       },
       {
-        breakpoint: 970,
+        breakpoint: 850,
         settings: {
           slidesToShow: 3,
         },

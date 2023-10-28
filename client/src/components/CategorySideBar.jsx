@@ -31,7 +31,6 @@ const Wrapper = styled.div`
     visibility: visible;
   }
   .menu-tree {
-    height: 800px;
     border-radius: var(--border-radius);
     background: var(--background-secondary-color);
     display: flex;
@@ -41,6 +40,7 @@ const Wrapper = styled.div`
     border-radius: 10px;
     width: 200px;
     height: 350px;
+    overflow: scroll;
   }
   .menu-tree-child {
     width: calc(100% - 200px);
