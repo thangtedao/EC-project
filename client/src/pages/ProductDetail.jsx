@@ -3,13 +3,14 @@ import styled from "styled-components";
 import img from "../assets/react.svg";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { ProductSpecifications, SlideProduct } from "../components";
+import {
+  ProductReview,
+  ProductSpecifications,
+  SlideProduct,
+} from "../components";
 import SlideGallery from "../components/slider/SlideGallery";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   width: 1100px;
   height: 100%;
   display: flex;
@@ -18,17 +19,24 @@ const Wrapper = styled.section`
   align-items: center;
   gap: 1rem;
   padding: 1rem 0;
-  border: 0.5px solid green;
+  //border: 0.5px solid green;
+
+  .top-product-title {
+    width: 100%;
+    h5 {
+      font-weight: 500;
+    }
+  }
 
   /* TOP */
   .top-container {
     width: 100%;
     display: flex;
     gap: 0.75rem;
-    border: 0.5px solid red;
+    //border: 0.5px solid red;
   }
   .top-container-column-1 {
-    border: 0.5px solid yellow;
+    //border: 0.5px solid yellow;
     width: 60%;
   }
   .top-container-column-2 {
@@ -36,11 +44,11 @@ const Wrapper = styled.section`
     flex-direction: column;
     gap: 1rem;
     width: 40%;
-    border: 0.5px solid green;
+    //border: 0.5px solid green;
   }
   .sliding-product-image {
     width: 100%;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     margin-right: 1rem;
     border-radius: 10px;
   }
@@ -77,7 +85,7 @@ const Wrapper = styled.section`
   .btn-buynow {
     width: 90%;
     border-radius: 10px;
-    border: transparent;
+    border: none;
     background: red;
     font-weight: 700;
     font-size: 1.3rem;
@@ -106,6 +114,12 @@ const Wrapper = styled.section`
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid lightgray;
+    h5 {
+      font-weight: 500;
+    }
   }
 
   /* BOT */
@@ -113,16 +127,21 @@ const Wrapper = styled.section`
     width: 100%;
     display: flex;
     gap: 1rem;
+    border-top: 1px solid lightgray;
+    padding: 1rem 0;
   }
   .bot-container-column-1 {
     flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
   .bot-container-column-2 {
     flex: 1;
   }
   .product-description {
     border: 0.5px solid lightgrey;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 1rem;
   }
@@ -244,7 +263,10 @@ const ProductDetail = () => {
   return (
     <Wrapper>
       {/* TOP */}
-      <h3>Apple MacBook Air M1 256GB 2020 I Chính hãng Apple Việt Nam</h3>
+      <div className="top-product-title">
+        <h5>Apple MacBook Air M1 256GB 2020 I Chính hãng Apple Việt Nam</h5>
+      </div>
+
       <div className="top-container">
         <div className="top-container-column-1">
           <div className="sliding-product-image">
@@ -305,6 +327,7 @@ const ProductDetail = () => {
               đánh giá kỹ hơn về mẫu điện thoại gaming này trong bài viết đây.
             </p>
           </div>
+          <ProductReview />
         </div>
         <div className="bot-container-column-2">
           <ProductSpecifications />

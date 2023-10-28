@@ -4,7 +4,6 @@ import { FaAlignLeft, FaShoppingBag, FaUserCircle } from "react-icons/fa";
 import { Search, Notifications, Menu, Close } from "@mui/icons-material";
 import { useHomeLayoutContext } from "../pages/HomeLayout";
 import LogoutContainer from "./LogoutContainer";
-import ThemeToggle from "./ThemeToggle";
 import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
 

@@ -6,7 +6,7 @@ const Wrapper = styled.div`
 
   .product-specifications-container {
     border: 0.5px solid lightgrey;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 1rem;
     display: flex;
