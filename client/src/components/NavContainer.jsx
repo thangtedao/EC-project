@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import NavLinks from "./NavLinks";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import styled from "styled-components";
+import { useHomeContext } from "../pages/Home";
 
 const Wrapper = styled.div`
   .menu-container {
@@ -32,6 +33,8 @@ const Wrapper = styled.div`
 `;
 
 const NavContainer = () => {
+  const categories = useHomeContext();
+  //console.log(categories);
   const category = [
     {
       name: "Điện thoại",
@@ -78,10 +81,14 @@ const NavContainer = () => {
     <Wrapper>
       <div className="menu-container">
         {/* MENU TREE */}
-        {category?.map((item) => {
+        {categories?.map((category) => {
           return (
             <div className="item">
-              <NavLinks text={item.name} icon={<SmartphoneIcon />} path="#" />
+              <NavLinks
+                text={category.name}
+                icon={<SmartphoneIcon />}
+                path="#"
+              />
             </div>
           );
         })}

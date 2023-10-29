@@ -105,54 +105,54 @@ const Wrapper = styled.div`
   }
 `;
 
+export const loader = async () => {
+  try {
+    const { data } = await customFetch.get("/category/get/parent");
+    return { data };
+  } catch (error) {
+    toast.error(error?.response?.data?.msg);
+    return error;
+  }
+};
+
+const HomeContext = createContext();
+
 const HomeLayout = () => {
-  const categories = [
-    "Apple",
-    "Samsung",
-    "Xiaomi",
-    "OPPO",
-    "ViVo",
-    "Nokia",
-    "Huwaei",
-  ];
+  const data = useLoaderData();
+  const { categories } = data;
 
   const numOfProduct = products.length;
 
   return (
-    <Wrapper>
-      <div className="block-top-home">
-        <NavContainer />
-        <div className="sliding-banner">
-          <SlideGallery image={img} />
+    <HomeContext.Provider value={{ categories }}>
+      <Wrapper>
+        <div className="block-top-home">
+          <NavContainer />
+          <div className="sliding-banner">
+            <SlideGallery image={img} />
+          </div>
+          <div className="right-banner"></div>
         </div>
-        <div className="right-banner"></div>
-      </div>
 
-      {/* --------- FLASH SALE -------- */}
-      <div className="block-hot-sale">
-        <div className="block-title">
-          <div className="sale-title">FLASH SALE</div>
-          <div className="box-countdown">00:11:22:33</div>
+        {/* --------- FLASH SALE -------- */}
+        <div className="block-hot-sale">
+          <div className="block-title">
+            <div className="sale-title">FLASH SALE</div>
+            <div className="box-countdown">00:11:22:33</div>
+          </div>
+          {numOfProduct > 0 && <SlideProduct products={products} />}
         </div>
-        {numOfProduct > 0 && <SlideProduct products={products} />}
-      </div>
 
-      {/* --------- PRODUCTS SALE -------- */}
-      <Product
-        title="ĐIỆN THOẠI NỔI BẬT NHẤT"
-        categories={categories}
-        products={products}
-      />
+        {/* --------- PRODUCTS SALE -------- */}
+        <Product title="ĐIỆN THOẠI NỔI BẬT NHẤT" products={products} />
 
-      <Product title="LAPTOP" categories={categories} products={products_v2} />
+        <Product title="LAPTOP" products={products_v2} />
 
-      <Product
-        title="MÀN HÌNH, MÁY TÍNH ĐỂ BÀN"
-        categories={categories}
-        products={products}
-      />
-    </Wrapper>
+        <Product title="MÀN HÌNH, MÁY TÍNH ĐỂ BÀN" products={products} />
+      </Wrapper>
+    </HomeContext.Provider>
   );
 };
 
+export const useHomeContext = () => useContext(HomeContext);
 export default HomeLayout;

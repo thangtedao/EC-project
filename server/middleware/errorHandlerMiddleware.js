@@ -1,4 +1,4 @@
-import HttpStatus from "http-status-code";
+import HttpStatus from "http-status-codes";
 const { StatusCodes } = HttpStatus;
 
 const errorHandlerMiddleware = (err, req, res, next) => {

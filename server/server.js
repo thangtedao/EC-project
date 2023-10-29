@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 import jobRouter from "../server/routes/jobRoute.js";
 import authRouter from "../server/routes/authRoute.js";
 import userRouter from "../server/routes/userRoute.js";
+import categoryRouter from "../server/routes/categoryRoute.js";
+import productRouter from "../server/routes/productRoute.js";
 import mongoose from "mongoose";
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware.js";
 import { authenticateUser } from "./middleware/authMiddleware.js";
 import cookieParser from "cookie-parser";
-import cors from "cors";
+//import cors from "cors";
 import helmet from "helmet";
 
 dotenv.config();
@@ -18,7 +20,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(cors());
+//app.use(cors());
 
 app.get("/api/test", (req, res) => {
   res.json({ msg: "test route" });
@@ -33,6 +35,8 @@ app.get("/api/test", (req, res) => {
 app.use("/api/job", authenticateUser, jobRouter);
 app.use("/api/user", authenticateUser, userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/product", productRouter);
 
 // Not Found Middleware
 app.use("*", (req, res) => {

@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import SlideProduct from "../slider/SlideProduct";
 import DoubleSlideProduct from "../slider/DoubleSlideProduct";
+import { useHomeContext } from "../../pages/Home";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -29,7 +30,9 @@ const Wrapper = styled.div`
   }
 `;
 
-const Product = ({ title, categories, products }) => {
+const Product = ({ title, products }) => {
+  const categories = useHomeContext();
+
   let newCategory = categories;
   if (categories.length > 5) {
     newCategory = categories.slice(0, 5);
@@ -45,14 +48,14 @@ const Product = ({ title, categories, products }) => {
           <div>
             {categories.length < 5 ? (
               <div className="product-list-category">
-                {newCategory.map((category) => {
-                  return <div className="category">{category}</div>;
+                {categories.map((category) => {
+                  return <div className="category">{category.name}</div>;
                 })}
               </div>
             ) : (
               <div className="product-list-category">
                 {newCategory.map((category) => {
-                  return <div className="category">{category}</div>;
+                  return <div className="category">{category.name}</div>;
                 })}
                 <div className="category">Xem tất cả</div>
               </div>
