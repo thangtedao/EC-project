@@ -9,6 +9,8 @@ import {
   SlideProduct,
 } from "../components";
 import SlideGallery from "../components/slider/SlideGallery";
+import customFetch from "../utils/customFetch";
+import { useLoaderData } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -51,6 +53,7 @@ const Wrapper = styled.div`
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     margin-right: 1rem;
     border-radius: 10px;
+    overflow: hidden;
   }
   .product-img {
     height: 350px;
@@ -179,8 +182,23 @@ const Wrapper = styled.div`
   }
 `;
 
+export const loader = async ({ params }) => {
+  try {
+    const { productId } = params;
+    const { data } = await customFetch.get(`/product/${productId}`);
+    const { product } = data;
+
+    return { product };
+  } catch (error) {
+    return error;
+  }
+};
+
 const ProductDetail = () => {
-  const products = [
+  const { product } = useLoaderData();
+  console.log(product);
+
+  const products2 = [
     {
       _id: Math.random(),
       name: "Laptop",
@@ -230,7 +248,7 @@ const ProductDetail = () => {
       img: img,
     },
   ];
-  const product = {
+  const product2 = {
     _id: Math.random(),
     name: "Laptop",
     price: "999",
@@ -270,20 +288,20 @@ const ProductDetail = () => {
       <div className="top-container">
         <div className="top-container-column-1">
           <div className="sliding-product-image">
-            <SlideGallery image={img} />
+            <SlideGallery image={product.image} />
           </div>
         </div>
 
         <div className="top-container-column-2">
           <div className="box-product-variants">
-            {product.type.map((type) => {
+            {product2.type.map((type) => {
               return <ProductType text={type.name} price={type.price} />;
             })}
           </div>
 
           <p>Chọn màu</p>
           <div className="box-product-variants">
-            {product.color.map((color) => {
+            {product2.color.map((color) => {
               return (
                 <ProductType
                   img={color?.img}
@@ -295,8 +313,8 @@ const ProductDetail = () => {
           </div>
 
           <div className="box-product-price">
-            <p>{product && product.price + " đ"}</p>
-            <p className="old-price">{product && product.oldPrice + " đ"}</p>
+            <p>{product2 && product2.price + " đ"}</p>
+            <p className="old-price">{product2 && product2.oldPrice + " đ"}</p>
           </div>
 
           <div className="btn-buy">
@@ -312,7 +330,7 @@ const ProductDetail = () => {
       {/* MID */}
       <div className="mid-container">
         <h5>SẢN PHẨM TƯƠNG TỰ</h5>
-        {products.length > 0 && <SlideProduct products={products} />}
+        {products2.length > 0 && <SlideProduct products={products2} />}
       </div>
 
       {/* BOT */}

@@ -17,3 +17,14 @@ export const getAllProduct = async (req, res) => {
     res.status(409).json({ msg: error.message });
   }
 };
+
+export const getSingleProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!job) throw new NotFoundError(`no product with id ${id}`);
+    res.status(200).json({ product });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};

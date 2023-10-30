@@ -13,9 +13,9 @@ const SlideGallery = ({ image }) => {
 
   return (
     <Slider {...settings}>
-      <img className="product-img" src={image} />
-      <img className="product-img" src={image} />
-      <img className="product-img" src={image} />
+      {image.map((img) => {
+        return <img className="product-img" src={img} />;
+      })}
     </Slider>
   );
 };

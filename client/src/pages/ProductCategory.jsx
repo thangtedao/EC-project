@@ -26,7 +26,7 @@ const Wrapper = styled.div`
     gap: 0.5rem;
   }
   .nav-link {
-    width: 10%;
+    width: 110px;
     height: 35px;
     display: flex;
     align-items: center;
@@ -67,7 +67,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    //width: 100%;
+    width: 100%;
   }
   .block-filter-sort-title {
     font-size: large;
@@ -115,7 +115,25 @@ const Wrapper = styled.div`
   @media (max-width: 1100px) {
     width: 100%;
   }
+  @media (max-width: 750px) {
+    /* BOT */
+    .bot-container-column-1 {
+      flex: none;
+      width: 100%;
+    }
+    .bot-container-column-2 {
+      display: none;
+    }
+  }
 `;
+
+export const loader = async () => {
+  try {
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
 
 const ProductCategory = () => {
   const numOfProduct = products.length;

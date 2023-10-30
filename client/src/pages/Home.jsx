@@ -37,13 +37,11 @@ const Wrapper = styled.div`
   }
   .sliding-banner {
     width: calc(100% - 420px);
-    //border: 0.5px solid lightgrey;
+    //border: 0.5px solid red;
     border-radius: 10px;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin: 0 0.75rem;
-  }
-  .sliding-banner-img {
-    //height: 350px;
+    overflow: hidden;
   }
   .product-img {
     height: 350px;
@@ -108,7 +106,18 @@ const Wrapper = styled.div`
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/category/get/parent");
-    return { data };
+    const { categories } = data;
+
+    const childCategoriesPromises = data.categories.map(async (category) => {
+      const { data } = await customFetch.get(
+        `/category/get/child/${category._id}`
+      );
+      const { categories } = data;
+      return categories;
+    });
+    const childCategories = await Promise.all(childCategoriesPromises);
+
+    return { categories, childCategories };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -122,31 +131,14 @@ const HomeLayout = () => {
   //thg component con nó "const categories = useHomeContext();" thay vì "const { categories } = useHomeContext();"
   //khi thg cha truyền vào là value={{categories}} thay vì value={categories} và ngược lại
 
-  const { data } = useLoaderData();
-  const { categories } = data;
-
-  const [childCategories, setChildCategories] = useState([]);
-
-  const fetchChildCategories = async (id) => {
-    const { data } = await customFetch.get(`/category/get/child/${id}`);
-    const { categories } = data;
-    return categories;
-  };
-
-  // fetch child categories from parent categories
-  useEffect(() => {
-    const loadChildCategories = async () => {
-      const childCategoriesPromises = categories.map((category) =>
-        fetchChildCategories(category._id)
-      );
-      const childCategories = await Promise.all(childCategoriesPromises);
-      setChildCategories(childCategories);
-    };
-
-    loadChildCategories();
-  }, [categories]);
+  const { categories, childCategories } = useLoaderData();
 
   const numOfProduct = products.length;
+  const img = [
+    "https://fptshop.com.vn/Uploads/Originals/2023/3/24/638152764193595966_asus-vivobook-flip-tn3402y-bac-dd.jpg",
+    "https://techzones.vn/Data/Sites/1/Product/37708/techzones-asus-vivobook-s-14-flip-tn3402-7.jpg",
+    "https://cdn1.viettelstore.vn/images/Product/ProductImage/medium/MTXT-HP-Pavilion-14-dv2070TU-7C0V9PA-1.jpg",
+  ];
 
   return (
     <HomeContext.Provider value={{ categories }}>
@@ -174,7 +166,7 @@ const HomeLayout = () => {
             <Product
               key={index}
               title={category.name}
-              categories={childCategories[index] || []}
+              categories={childCategories[index] || []} // thứ tự item categories tương ứng thứ tự item childCategories
               products={products}
             />
           );

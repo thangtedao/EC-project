@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useHomeLayoutContext } from "../pages/HomeLayout";
 import NavLinks from "./NavLinks";
@@ -40,7 +40,7 @@ const Wrapper = styled.div`
     border-radius: 10px;
     width: 200px;
     height: 350px;
-    overflow: scroll;
+    overflow: hidden;
   }
   .menu-tree-child {
     width: calc(100% - 200px);
@@ -90,13 +90,13 @@ const CategorySideBar = () => {
   // show khi hover
   const [showCategory, setShowCategory] = useState(false);
   const [isHoverItemTree, setIsHoverItemTree] = useState(false);
-  const [activeItem, setActiveItem] = useState(null);
+  const [activeItem, setActiveItem] = useState({});
 
   // useCallback để tránh tạo lại hàm khi re-render trong event onMouseEnter, .....
   const handleItemHover = useCallback(
-    (item) => {
+    ({ item, index }) => {
       setIsHoverItemTree(true);
-      setActiveItem(item);
+      setActiveItem({ item, index });
       setShowCategory(true);
     },
     [setActiveItem, setShowCategory, setIsHoverItemTree]
@@ -109,8 +109,8 @@ const CategorySideBar = () => {
     }
   };
 
-  const categories = categoryData;
-  //const { categories } = useHomeLayoutContext();
+  //const categories = categoryData;
+  const { categories, childCategories } = useHomeLayoutContext();
 
   return (
     <Wrapper>
@@ -118,7 +118,7 @@ const CategorySideBar = () => {
         className={
           showSideBar ? "menu-container show-sidebar" : "menu-container"
         }
-        onClick={toggleSideBar}
+        //onClick={toggleSideBar}
       >
         <div className="container-menu">
           {/* MENU TREE */}
@@ -128,7 +128,7 @@ const CategorySideBar = () => {
                 <div
                   key={index}
                   className="item"
-                  onMouseEnter={() => handleItemHover(item)}
+                  onMouseEnter={() => handleItemHover({ item, index })}
                   onMouseLeave={() => [
                     setShowCategory(false),
                     setIsHoverItemTree(false),
@@ -155,13 +155,18 @@ const CategorySideBar = () => {
           >
             <div className="category-product">
               <p>Thương hiệu</p>
-              {activeItem?.categoryProduct?.map((item) => {
-                return <h5>{item.brandName}</h5>;
+
+              {childCategories[activeItem.index]?.map((item) => {
+                return <h5 key={item._id}>{item?.name} </h5>;
               })}
+
+              {/*{activeItem?.categoryProduct?.map((item) => {
+                return <h5>{item.brandName}</h5>;
+              })} */}
             </div>
 
             <div className="category-product">
-              <p>Màu sắc</p>
+              <p>Bla bla</p>
               {/* {activeItem?.categoryProduct?.map((item) => {
                 return <h5>{item.color}</h5>;
               })} */}

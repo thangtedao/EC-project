@@ -6,6 +6,8 @@ import ProductDetail from "./pages/ProductDetail";
 /* LOADER */
 import { loader as homeLayoutLoader } from "./pages/HomeLayout";
 import { loader as homeLoader } from "./pages/Home";
+import { loader as productDetailLoader } from "./pages/ProductDetail";
+import { loader as productCategoryLoader } from "./pages/ProductCategory";
 
 const router = createBrowserRouter([
   {
@@ -28,12 +30,14 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "product",
+        path: "product/:productId",
         element: <ProductDetail />,
+        loader: productDetailLoader,
       },
       {
         path: "category",
         element: <ProductCategory />,
+        loader: productCategoryLoader,
       },
     ],
   },

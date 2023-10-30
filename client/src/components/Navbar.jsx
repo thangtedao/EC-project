@@ -28,6 +28,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     width: 100px;
+    height: 80%;
   }
 
   .search-bar {
@@ -81,7 +82,9 @@ const Navbar = () => {
   return (
     <Wrapper>
       <div className="nav-center">
-        <h4 className="logo">Logo</h4>
+        <a href="/" className="logo">
+          Logo
+        </a>
 
         <SearchBar />
 
