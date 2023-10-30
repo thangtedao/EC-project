@@ -33,8 +33,8 @@ const Wrapper = styled.div`
 `;
 
 const NavContainer = () => {
-  const categories = useHomeContext();
-  //console.log(categories);
+  const { categories } = useHomeContext();
+
   const category = [
     {
       name: "Điện thoại",
@@ -81,9 +81,9 @@ const NavContainer = () => {
     <Wrapper>
       <div className="menu-container">
         {/* MENU TREE */}
-        {categories?.map((category) => {
+        {categories?.map((category, index) => {
           return (
-            <div className="item">
+            <div key={index} className="item">
               <NavLinks
                 text={category.name}
                 icon={<SmartphoneIcon />}

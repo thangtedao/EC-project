@@ -109,7 +109,8 @@ const CategorySideBar = () => {
     }
   };
 
-  const category = categoryData;
+  const categories = categoryData;
+  //const { categories } = useHomeLayoutContext();
 
   return (
     <Wrapper>
@@ -122,9 +123,10 @@ const CategorySideBar = () => {
         <div className="container-menu">
           {/* MENU TREE */}
           <div className="menu-tree">
-            {category?.map((item) => {
+            {categories?.map((item, index) => {
               return (
                 <div
+                  key={index}
                   className="item"
                   onMouseEnter={() => handleItemHover(item)}
                   onMouseLeave={() => [
@@ -160,16 +162,9 @@ const CategorySideBar = () => {
 
             <div className="category-product">
               <p>Màu sắc</p>
-              {activeItem?.categoryProduct?.map((item) => {
+              {/* {activeItem?.categoryProduct?.map((item) => {
                 return <h5>{item.color}</h5>;
-              })}
-            </div>
-
-            <div className="category-product">
-              <p>Màu sắc</p>
-              {activeItem?.categoryProduct?.map((item) => {
-                return <h5>{item.color}</h5>;
-              })}
+              })} */}
             </div>
           </div>
         </div>

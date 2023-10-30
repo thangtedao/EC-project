@@ -30,8 +30,8 @@ const Wrapper = styled.div`
   }
 `;
 
-const Product = ({ title, products }) => {
-  const categories = useHomeContext();
+const Product = ({ title, categories, products }) => {
+  //const categories = ["Apple", "Samsung", "Huawei", "OPPO", "DELL"];
 
   let newCategory = categories;
   if (categories.length > 5) {
@@ -46,16 +46,14 @@ const Product = ({ title, products }) => {
         <div className="product-list-title">
           <h5>{title}</h5>
           <div>
-            {categories.length < 5 ? (
+            {categories.length <= 5 && (
               <div className="product-list-category">
-                {categories.map((category) => {
-                  return <div className="category">{category.name}</div>;
-                })}
-              </div>
-            ) : (
-              <div className="product-list-category">
-                {newCategory.map((category) => {
-                  return <div className="category">{category.name}</div>;
+                {newCategory.map((category, index) => {
+                  return (
+                    <div key={index} className="category">
+                      {category.name}
+                    </div>
+                  );
                 })}
                 <div className="category">Xem tất cả</div>
               </div>

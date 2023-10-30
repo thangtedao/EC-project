@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLoaderData } from "react-router-dom";
 import { CategorySideBar, MenuBottom, Navbar } from "../components";
 import styled from "styled-components";
+import customFetch from "../utils/customFetch";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -12,9 +13,23 @@ const Wrapper = styled.div`
     align-items: center;
   }
 `;
+
+export const loader = async () => {
+  try {
+    const { data } = await customFetch.get("/category/get/parent");
+    return { data };
+  } catch (error) {
+    toast.error(error?.response?.data?.msg);
+    return error;
+  }
+};
+
 const HomeLayoutContext = createContext();
 
 const HomeLayout = () => {
+  const { data } = useLoaderData();
+  const { categories } = data;
+
   const user = { name: "thang" };
   const [showSideBar, setShowSideBar] = useState(false);
 
@@ -27,6 +42,7 @@ const HomeLayout = () => {
   return (
     <HomeLayoutContext.Provider
       value={{
+        categories,
         user,
         showSideBar,
         toggleSideBar,
@@ -37,7 +53,7 @@ const HomeLayout = () => {
         <Navbar />
         <CategorySideBar />
         <div className="main-layout">
-          <Outlet />
+          <Outlet context={{ user }} />
         </div>
         <MenuBottom />
       </Wrapper>

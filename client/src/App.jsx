@@ -4,6 +4,7 @@ import { Home, HomeLayout, Login, ProductCategory, Register } from "./pages";
 import ProductDetail from "./pages/ProductDetail";
 
 /* LOADER */
+import { loader as homeLayoutLoader } from "./pages/HomeLayout";
 import { loader as homeLoader } from "./pages/Home";
 
 const router = createBrowserRouter([
@@ -11,6 +12,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <HomeLayout />,
     errorElement: <Error />,
+    loader: homeLayoutLoader,
     children: [
       {
         index: true,
@@ -26,7 +28,7 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "product-detail",
+        path: "product",
         element: <ProductDetail />,
       },
       {

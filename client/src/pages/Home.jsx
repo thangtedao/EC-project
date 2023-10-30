@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { SlideProduct } from "../components";
 import { Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
@@ -118,8 +118,33 @@ export const loader = async () => {
 const HomeContext = createContext();
 
 const HomeLayout = () => {
-  const data = useLoaderData();
+  //Bị lỗi destructure là do
+  //thg component con nó "const categories = useHomeContext();" thay vì "const { categories } = useHomeContext();"
+  //khi thg cha truyền vào là value={{categories}} thay vì value={categories} và ngược lại
+
+  const { data } = useLoaderData();
   const { categories } = data;
+
+  const [childCategories, setChildCategories] = useState([]);
+
+  const fetchChildCategories = async (id) => {
+    const { data } = await customFetch.get(`/category/get/child/${id}`);
+    const { categories } = data;
+    return categories;
+  };
+
+  // fetch child categories from parent categories
+  useEffect(() => {
+    const loadChildCategories = async () => {
+      const childCategoriesPromises = categories.map((category) =>
+        fetchChildCategories(category._id)
+      );
+      const childCategories = await Promise.all(childCategoriesPromises);
+      setChildCategories(childCategories);
+    };
+
+    loadChildCategories();
+  }, [categories]);
 
   const numOfProduct = products.length;
 
@@ -144,11 +169,16 @@ const HomeLayout = () => {
         </div>
 
         {/* --------- PRODUCTS SALE -------- */}
-        <Product title="ĐIỆN THOẠI NỔI BẬT NHẤT" products={products} />
-
-        <Product title="LAPTOP" products={products_v2} />
-
-        <Product title="MÀN HÌNH, MÁY TÍNH ĐỂ BÀN" products={products} />
+        {categories.map((category, index) => {
+          return (
+            <Product
+              key={index}
+              title={category.name}
+              categories={childCategories[index] || []}
+              products={products}
+            />
+          );
+        })}
       </Wrapper>
     </HomeContext.Provider>
   );
