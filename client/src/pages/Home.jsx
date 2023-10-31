@@ -105,10 +105,11 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const { data } = await customFetch.get("/category/get/parent");
-    const { categories } = data;
+    const categories = await customFetch
+      .get("/category/get/parent")
+      .then(({ data }) => data.categories);
 
-    const childCategoriesPromises = data.categories.map(async (category) => {
+    const childCategoriesPromises = categories.map(async (category) => {
       const { data } = await customFetch.get(
         `/category/get/child/${category._id}`
       );

@@ -34,7 +34,7 @@ const Wrapper = styled.div`
   .top-container {
     width: 100%;
     display: flex;
-    gap: 0.75rem;
+    gap: 1.5rem;
     //border: 0.5px solid red;
   }
   .top-container-column-1 {
@@ -185,69 +185,26 @@ const Wrapper = styled.div`
 export const loader = async ({ params }) => {
   try {
     const { productId } = params;
-    const { data } = await customFetch.get(`/product/${productId}`);
-    const { product } = data;
+    const product = await customFetch
+      .get(`/product/${productId}`)
+      .then(({ data }) => data.product);
 
-    return { product };
+    console.log(product);
+
+    const relatedProducts = await customFetch
+      .get(`/product/${product.category}/${product.brand}`)
+      .then(({ data }) => data.products);
+
+    return { product, relatedProducts };
   } catch (error) {
     return error;
   }
 };
 
 const ProductDetail = () => {
-  const { product } = useLoaderData();
-  console.log(product);
+  const { product, relatedProducts } = useLoaderData();
+  console.log(relatedProducts);
 
-  const products2 = [
-    {
-      _id: Math.random(),
-      name: "Laptop",
-      price: "999",
-      oldPrice: "9999",
-      descript: "ngon lành cành đào ngon lành cành đào",
-      img: img,
-    },
-    {
-      _id: Math.random(),
-      name: "Laptop",
-      price: "999",
-      oldPrice: "9999",
-      descript: "ngon lành cành đào ngon lành cành đào",
-      img: img,
-    },
-    {
-      _id: Math.random(),
-      name: "Laptop",
-      price: "999",
-      oldPrice: "9999",
-      descript: "ngon lành cành đào ngon lành cành đào",
-      img: img,
-    },
-    {
-      _id: Math.random(),
-      name: "Laptop",
-      price: "999",
-      oldPrice: "9999",
-      descript: "ngon lành cành đào ngon lành cành đào",
-      img: img,
-    },
-    {
-      _id: Math.random(),
-      name: "Laptop",
-      price: "999",
-      oldPrice: "9999",
-      descript: "ngon lành cành đào ngon lành cành đào",
-      img: img,
-    },
-    {
-      _id: Math.random(),
-      name: "Laptop",
-      price: "999",
-      oldPrice: "9999",
-      descript: "ngon lành cành đào ngon lành cành đào",
-      img: img,
-    },
-  ];
   const product2 = {
     _id: Math.random(),
     name: "Laptop",
@@ -282,7 +239,7 @@ const ProductDetail = () => {
     <Wrapper>
       {/* TOP */}
       <div className="top-product-title">
-        <h5>Apple MacBook Air M1 256GB 2020 I Chính hãng Apple Việt Nam</h5>
+        <h5>{product.name}</h5>
       </div>
 
       <div className="top-container">
@@ -313,8 +270,8 @@ const ProductDetail = () => {
           </div>
 
           <div className="box-product-price">
-            <p>{product2 && product2.price + " đ"}</p>
-            <p className="old-price">{product2 && product2.oldPrice + " đ"}</p>
+            <p>{product.salePrice + " đ"}</p>
+            <p className="old-price">{product.price + " đ"}</p>
           </div>
 
           <div className="btn-buy">
@@ -330,7 +287,9 @@ const ProductDetail = () => {
       {/* MID */}
       <div className="mid-container">
         <h5>SẢN PHẨM TƯƠNG TỰ</h5>
-        {products2.length > 0 && <SlideProduct products={products2} />}
+        {relatedProducts.length > 0 && (
+          <SlideProduct products={relatedProducts} />
+        )}
       </div>
 
       {/* BOT */}

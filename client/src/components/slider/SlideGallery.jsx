@@ -13,8 +13,8 @@ const SlideGallery = ({ image }) => {
 
   return (
     <Slider {...settings}>
-      {image.map((img) => {
-        return <img className="product-img" src={img} />;
+      {image.map((img, index) => {
+        return <img key={index} className="product-img" src={img} />;
       })}
     </Slider>
   );

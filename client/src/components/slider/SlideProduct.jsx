@@ -57,11 +57,11 @@ const SlideProduct = ({ products }) => {
             return (
               <ProductContainer
                 key={product._id}
-                img={product.img}
+                img={product.image[0]}
                 name={product.name}
-                price={product.price}
-                oldPrice={product.oldPrice}
-                descript={product.descript}
+                price={product.salePrice || product.price}
+                oldPrice={product.salePrice && product.price}
+                descript={product.description}
               />
             );
           })}
@@ -78,11 +78,11 @@ const SlideProduct = ({ products }) => {
             return (
               <ProductContainer
                 key={product._id}
-                img={product.img}
+                img={product.image[0]}
                 name={product.name}
-                price={product.price}
-                oldPrice={product.oldPrice}
-                descript={product.descript}
+                price={product.salePrice || product.price}
+                oldPrice={product.salePrice && product.price}
+                descript={product.description}
               />
             );
           })}

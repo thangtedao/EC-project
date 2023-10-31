@@ -14,6 +14,9 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    salePrice: {
+      type: String,
+    },
     quantity: {
       type: Number,
     },
@@ -44,7 +47,6 @@ const productSchema = mongoose.Schema(
     image: {
       type: Array,
       default: [],
-      //required: true,
     },
     review: {
       type: Array,
