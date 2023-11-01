@@ -8,8 +8,8 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/create", createCategory);
-router.get("/get/all", getAllCategory);
+router.post("/", createCategory);
+router.get("/", getAllCategory);
 router.get("/get/parent", getParentCategory);
 router.get("/get/child/:id", getChildCategory);
 

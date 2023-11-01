@@ -8,9 +8,10 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/create", createProduct);
-router.get("/all-products", getAllProduct);
+router.post("/", createProduct);
+router.get("/", getAllProduct);
 router.get("/:id", getSingleProduct);
-router.get("/:category/:brand", getRelatedProduct);
+// có req.query rồi nên ko cần làm thủ công như này nữa
+//router.get("/:category/:brand", getRelatedProduct);
 
 export default router;
