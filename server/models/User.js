@@ -50,7 +50,7 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    wishtlist: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    wishlist: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
   },
   { timestamps: true }
 );

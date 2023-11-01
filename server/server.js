@@ -5,6 +5,7 @@ import authRouter from "../server/routes/authRoute.js";
 import userRouter from "../server/routes/userRoute.js";
 import categoryRouter from "../server/routes/categoryRoute.js";
 import productRouter from "../server/routes/productRoute.js";
+import blogRouter from "../server/routes/blogRoute.js";
 import mongoose from "mongoose";
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware.js";
 import { authenticateUser } from "./middleware/authMiddleware.js";
@@ -37,6 +38,7 @@ app.use("/api/user", authenticateUser, userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
+app.use("/api/blog", blogRouter);
 
 // Not Found Middleware
 app.use("*", (req, res) => {
