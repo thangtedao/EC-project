@@ -110,7 +110,7 @@ const CategorySideBar = () => {
   };
 
   //const categories = categoryData;
-  const { categories, childCategories } = useHomeLayoutContext();
+  //const { categories, childCategories } = useHomeLayoutContext();
 
   return (
     <Wrapper>
@@ -123,7 +123,7 @@ const CategorySideBar = () => {
         <div className="container-menu">
           {/* MENU TREE */}
           <div className="menu-tree">
-            {categories?.map((item, index) => {
+            {/* {categories?.map((item, index) => {
               return (
                 <div
                   key={index}
@@ -142,7 +142,7 @@ const CategorySideBar = () => {
                   />
                 </div>
               );
-            })}
+            })} */}
           </div>
 
           {/* MENU TREE CHILD*/}
@@ -156,9 +156,9 @@ const CategorySideBar = () => {
             <div className="category-product">
               <p>Thương hiệu</p>
 
-              {childCategories[activeItem.index]?.map((item) => {
+              {/* {childCategories[activeItem.index]?.map((item) => {
                 return <h5 key={item._id}>{item?.name} </h5>;
-              })}
+              })} */}
 
               {/*{activeItem?.categoryProduct?.map((item) => {
                 return <h5>{item.brandName}</h5>;
@@ -172,6 +172,8 @@ const CategorySideBar = () => {
               })} */}
             </div>
           </div>
+
+          <div></div>
         </div>
       </div>
     </Wrapper>

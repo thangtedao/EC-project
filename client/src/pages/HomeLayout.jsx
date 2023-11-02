@@ -16,20 +16,21 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const categories = await customFetch
-      .get("/category/get/parent")
-      .then(({ data }) => data.categories);
+    // const categories = await customFetch
+    //   .get("/category/get/parent")
+    //   .then(({ data }) => data.categories);
 
-    const childCategoriesPromises = categories.map(async (category) => {
-      const { data } = await customFetch.get(
-        `/category/get/child/${category._id}`
-      );
-      const { categories } = data;
-      return categories;
-    });
-    const childCategories = await Promise.all(childCategoriesPromises);
+    // const childCategoriesPromises = categories.map(async (category) => {
+    //   const { data } = await customFetch.get(
+    //     `/category/get/child/${category._id}`
+    //   );
+    //   const { categories } = data;
+    //   return categories;
+    // });
+    // const childCategories = await Promise.all(childCategoriesPromises);
 
-    return { categories, childCategories };
+    // return { categories, childCategories };
+    return null;
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -39,7 +40,7 @@ export const loader = async () => {
 const HomeLayoutContext = createContext();
 
 const HomeLayout = () => {
-  const { categories, childCategories } = useLoaderData();
+  //const { categories, childCategories } = useLoaderData();
 
   const user = { name: "thang" };
   const [showSideBar, setShowSideBar] = useState(false);
@@ -53,8 +54,6 @@ const HomeLayout = () => {
   return (
     <HomeLayoutContext.Provider
       value={{
-        categories,
-        childCategories,
         user,
         showSideBar,
         toggleSideBar,

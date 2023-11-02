@@ -20,6 +20,7 @@ const productSchema = mongoose.Schema(
     },
     quantity: {
       type: Number,
+      default: 0,
     },
     sku: {
       type: String,
@@ -64,9 +65,17 @@ const productSchema = mongoose.Schema(
       type: String,
       default: 0,
     },
-    ordered: {
+    sold: {
       type: Number,
       default: 0,
+    },
+    color: {
+      type: Array,
+      default: [],
+    },
+    tags: {
+      type: Array,
+      default: [],
     },
     viewed: {
       type: Number,

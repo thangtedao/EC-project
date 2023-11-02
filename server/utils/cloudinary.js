@@ -13,8 +13,36 @@ export const cloudinaryUploadImage = async (fileToUploads) => {
 
   return {
     url: result.secure_url,
+    asset_id: result.asset_id,
+    public_id: result.public_id,
   };
 };
+
+export const cloudinaryDeleteImage = async (publicId) => {
+  const result = await cloudinary.uploader.destroy(publicId);
+
+  return {
+    asset_id: result.asset_id,
+    public_id: result.public_id,
+  };
+};
+
+// export const cloudinaryDeleteImage = async (fileToUploads) => {
+//   return new Promise((resolve) => {
+//     cloudinary.uploader.destroy(fileToUploads, (result) => {
+//       resolve(
+//         {
+//           url: result.secure_url,
+//           asset_id: result.asset_id,
+//           public_id: result.public_id,
+//         },
+//         {
+//           resource_type: "auto",
+//         }
+//       );
+//     });
+//   });
+// };
 
 // export const cloudinaryUploadImage = async (fileToUploads) => {
 //   return new Promise((resolve) => {

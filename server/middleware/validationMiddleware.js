@@ -1,5 +1,5 @@
 import { body, param, validationResult } from "express-validator";
-import { JOB_STATUS, JOB_TYPE } from "../utils/constants.js";
+import { ORDER_STATUS, JOB_TYPE } from "../utils/constants.js";
 import {
   BadRequestError,
   NotFoundError,
@@ -40,7 +40,7 @@ export const validateJobInput = withValidationErrors([
   body("position").notEmpty().withMessage("position is required"),
   body("jobLocation").notEmpty().withMessage("job location is required"),
   body("jobStatus")
-    .isIn(Object.values(JOB_STATUS))
+    .isIn(Object.values(ORDER_STATUS))
     .withMessage("invalid status value"),
   body("jobType")
     .isIn(Object.values(JOB_TYPE))
