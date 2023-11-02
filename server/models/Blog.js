@@ -39,10 +39,9 @@ const BlogSchema = mongoose.Schema(
         ref: "User",
       },
     ],
-    image: {
-      type: String,
-      default:
-        "https://static.wikia.nocookie.net/otonari-no-tenshisama-tieng-viet/images/b/b1/JP-Manga-Vol1-Cover.jpeg/revision/latest?cb=20220730165728&path-prefix=vi",
+    images: {
+      type: Array,
+      default: [],
     },
   },
   {

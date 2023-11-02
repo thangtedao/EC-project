@@ -8,7 +8,6 @@ import {
 } from "../errors/customErrors.js";
 import mongoose, { mongo } from "mongoose";
 import User from "../models/User.js";
-import Job from "../models/Job.js";
 
 const withValidationErrors = (validationValues) => {
   return [
@@ -81,25 +80,25 @@ export const validateLoginInput = withValidationErrors([
 ]);
 
 // Validate input from params
-export const validateIdParam = withValidationErrors([
-  param("id").custom(async (value, { req }) => {
-    const isValidMongoId = mongoose.Types.ObjectId.isValid(value);
-    if (!isValidMongoId) {
-      throw new BadRequestError("invalid Mongo Id");
-    }
+// export const validateIdParam = withValidationErrors([
+//   param("id").custom(async (value, { req }) => {
+//     const isValidMongoId = mongoose.Types.ObjectId.isValid(value);
+//     if (!isValidMongoId) {
+//       throw new BadRequestError("invalid Mongo Id");
+//     }
 
-    const job = await Job.findById(value);
-    if (!job) {
-      throw new NotFoundError(`no job with id ${value}`);
-    }
+//     const job = await Job.findById(value);
+//     if (!job) {
+//       throw new NotFoundError(`no job with id ${value}`);
+//     }
 
-    const isAdmin = req.user.role === "admin";
-    const isOwner = req.user.userId === job.createBy.toString();
-    if (!isAdmin && !isOwner) {
-      throw new UnauthorizedError("not authorized to access this route");
-    }
-  }),
-]);
+//     const isAdmin = req.user.role === "admin";
+//     const isOwner = req.user.userId === job.createBy.toString();
+//     if (!isAdmin && !isOwner) {
+//       throw new UnauthorizedError("not authorized to access this route");
+//     }
+//   }),
+// ]);
 
 export const validateUpdateInput = withValidationErrors([
   body("firstName").notEmpty().withMessage("firstName is required"),
@@ -109,7 +108,7 @@ export const validateUpdateInput = withValidationErrors([
     .withMessage("email is required")
     .isEmail()
     .withMessage("invalid email format")
-    .custom(async (email, {req}) => {
+    .custom(async (email, { req }) => {
       const user = await User.findOne({ email });
       if (user && user._id.toString() !== req.user.userId) {
         throw new BadRequestError("email already exists");

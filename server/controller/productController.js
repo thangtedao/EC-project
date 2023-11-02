@@ -1,12 +1,40 @@
-import { json } from "express";
 import { NotFoundError } from "../errors/customErrors.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
+import { cloudinaryUploadImage } from "../utils/cloudinary.js";
+import fs from "fs";
 
 export const createProduct = async (req, res) => {
   try {
     const newProduct = await Product.create(req.body);
     res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const uploadImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const uploader = (path) => cloudinaryUploadImage(path, "images");
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+      fs.unlinkSync(path);
+    }
+    const findProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        images: urls.map((file) => {
+          return file;
+        }),
+      },
+      { new: true }
+    );
+    res.status(201).json(findProduct);
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }
@@ -151,7 +179,7 @@ export const addToWishlist = async (req, res) => {
 export const rating = async (req, res) => {
   try {
     const { _id } = req.user;
-    const { star, productId } = req.body;
+    const { star, productId, comment } = req.body;
     const product = await Product.findById(productId);
     let alreadyRated = product.ratings.find(
       (userId) => userId.postedby.toString() === _id.toString()
@@ -162,7 +190,7 @@ export const rating = async (req, res) => {
           ratings: { $elemMatch: alreadyRated },
         },
         {
-          $set: { "ratings.$.star": star },
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
         },
         { new: true }
       );
@@ -173,6 +201,7 @@ export const rating = async (req, res) => {
           $push: {
             ratings: {
               star: star,
+              comment: comment,
               postedby: _id,
             },
           },

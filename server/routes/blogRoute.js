@@ -6,15 +6,23 @@ import {
   deleteBlog,
   likeBlog,
   dislikeBlog,
-} from "../controller/blogController";
+  uploadImages,
+} from "../controller/blogController.js";
+import { blogImgResize, uploadPhoto } from "../middleware/uploadImages.js";
 
 const router = Router();
 
 router.post("/", createBlog);
+router.patch(
+  "/upload/:id",
+  uploadPhoto.array("images", 2),
+  blogImgResize,
+  uploadImages
+);
 router.patch("/update/:id", updateBlog);
 router.get("/:id", getBlog);
 router.delete("/:id", deleteBlog);
-router.put("/likes", likeBlog);
-router.put("/dislikes", dislikeBlog);
+router.patch("/likes", likeBlog);
+router.patch("/dislikes", dislikeBlog);
 
 export default router;

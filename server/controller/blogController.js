@@ -1,10 +1,39 @@
 import { NotFoundError } from "../errors/customErrors.js";
 import Blog from "../models/Blog.js";
+import fs from "fs";
+import { cloudinaryUploadImage } from "../utils/cloudinary.js";
 
 export const createBlog = async (req, res) => {
   try {
     const newBlog = await Blog.create(req.body);
     res.status(201).json(newBlog);
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const uploadImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const uploader = (path) => cloudinaryUploadImage(path, "images");
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+      fs.unlinkSync(path);
+    }
+    const findBlog = await Blog.findByIdAndUpdate(
+      id,
+      {
+        images: urls.map((file) => {
+          return file;
+        }),
+      },
+      { new: true }
+    );
+    res.status(201).json(findBlog);
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }
