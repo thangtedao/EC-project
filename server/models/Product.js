@@ -6,6 +6,12 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
     description: {
       type: String,
       default: "",
@@ -27,20 +33,19 @@ const productSchema = mongoose.Schema(
       //unique: true,
       default: "",
     },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      default: null,
-    },
+    category: [
+      {
+        type: String,
+      },
+    ],
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       default: null,
     },
-    type: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      default: null,
+    types: {
+      type: Array,
+      default: [],
     },
     stockQuantity: {
       type: Number,
@@ -69,7 +74,7 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    color: {
+    colors: {
       type: Array,
       default: [],
     },

@@ -7,12 +7,25 @@ const categorySchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+  },
   image: {
     type: String,
   },
   description: {
     type: String,
   },
+  child: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      default: null,
+    },
+  ],
   parent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",

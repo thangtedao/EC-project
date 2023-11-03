@@ -49,6 +49,8 @@ const Wrapper = styled.div`
     //border: 0.5px solid green;
   }
   .sliding-product-image {
+    border: 0.5px solid green;
+    height: 400px;
     width: 100%;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     margin-right: 1rem;
@@ -58,6 +60,16 @@ const Wrapper = styled.div`
   .product-img {
     height: 350px;
   }
+  .other-product-img {
+    display: flex;
+    gap: 1rem;
+    div {
+      border: 0.5px solid green;
+      width: 50px;
+      height: 50px;
+    }
+  }
+
   .box-product-variants {
     width: 100%;
     display: flex;
@@ -184,28 +196,25 @@ const Wrapper = styled.div`
 
 export const loader = async ({ params }) => {
   try {
-    const { productId } = params;
+    const { slug } = params;
     const product = await customFetch
-      .get(`/product/${productId}`)
+      .get(`/product/${slug}`)
       .then(({ data }) => data.product);
 
+    // const relatedProducts = await customFetch
+    //   .get(`/product/${product.category}/${product.brand}`)
+    //   .then(({ data }) => data.products);
     console.log(product);
-
-    const relatedProducts = await customFetch
-      .get(`/product/${product.category}/${product.brand}`)
-      .then(({ data }) => data.products);
-
-    return { product, relatedProducts };
+    return { product };
   } catch (error) {
     return error;
   }
 };
 
 const ProductDetail = () => {
-  const { product, relatedProducts } = useLoaderData();
-  console.log(relatedProducts);
+  const { product } = useLoaderData();
 
-  const product2 = {
+  const productsss = {
     _id: Math.random(),
     name: "Laptop",
     price: "999",
@@ -239,33 +248,32 @@ const ProductDetail = () => {
     <Wrapper>
       {/* TOP */}
       <div className="top-product-title">
-        <h5>{product.name}</h5>
+        <h5>{product?.name}</h5>
       </div>
 
       <div className="top-container">
         <div className="top-container-column-1">
           <div className="sliding-product-image">
-            <SlideGallery image={product.image} />
+            <SlideGallery image={product?.images} />
+          </div>
+          <div className="other-product-img">
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
         </div>
 
         <div className="top-container-column-2">
           <div className="box-product-variants">
-            {product2.type.map((type) => {
-              return <ProductType text={type.name} price={type.price} />;
+            {product.types.map((type) => {
+              return <ProductType text={type} />;
             })}
           </div>
 
           <p>Chọn màu</p>
           <div className="box-product-variants">
-            {product2.color.map((color) => {
-              return (
-                <ProductType
-                  img={color?.img}
-                  text={color.colorType}
-                  price={color.price}
-                />
-              );
+            {product.colors.map((color) => {
+              return <ProductType text={color} />;
             })}
           </div>
 
@@ -285,12 +293,12 @@ const ProductDetail = () => {
       </div>
 
       {/* MID */}
-      <div className="mid-container">
+      {/* <div className="mid-container">
         <h5>SẢN PHẨM TƯƠNG TỰ</h5>
         {relatedProducts.length > 0 && (
           <SlideProduct products={relatedProducts} />
         )}
-      </div>
+      </div> */}
 
       {/* BOT */}
       <div className="bot-container">

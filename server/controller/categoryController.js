@@ -1,7 +1,9 @@
 import Category from "../models/Category.js";
+import slugify from "slugify";
 
 export const createCategory = async (req, res) => {
   try {
+    req.body.slug = slugify(req.body.name);
     const newCategory = await Category.create(req.body);
     res.status(201).json(newCategory);
   } catch (error) {
@@ -13,6 +15,16 @@ export const getAllCategory = async (req, res) => {
   try {
     const categories = await Category.find();
     res.status(200).json({ categories });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const getSingleCategory = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+    res.status(200).json({ category });
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }

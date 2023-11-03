@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { FormRow } from "../components";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 /* ACTION */
 export const action = async ({ request }) => {
@@ -50,6 +51,11 @@ const Register = () => {
 
   return (
     <Wrapper>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Register</title>
+      </Helmet>
+
       <Form method="post" className="form">
         <h4>Register</h4>
         <FormRow

@@ -6,9 +6,11 @@ import {
   cloudinaryUploadImage,
 } from "../utils/cloudinary.js";
 import fs from "fs";
+import slugify from "slugify";
 
 export const createProduct = async (req, res) => {
   try {
+    req.body.slug = slugify(req.body.name);
     const newProduct = await Product.create(req.body);
     res.status(201).json(newProduct);
   } catch (error) {
@@ -106,11 +108,28 @@ export const getAllProduct = async (req, res) => {
   }
 };
 
+export const getProductByCategory = async (req, res) => {
+  try {
+    const { category } = req.query;
+    if (category) {
+      const categories = category.split(",");
+      const queryObj = { category: { $in: categories } };
+      const products = await Product.find(queryObj);
+
+      res.status(200).json({ products });
+    } else {
+      res.status(200).json({ products: [] });
+    }
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
 export const getSingleProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const product = await Product.findById(id);
-    if (!product) throw new NotFoundError(`no product with id ${id}`);
+    const { slug } = req.params;
+    const product = await Product.findOne({ slug: slug });
+    if (!product) throw new NotFoundError(`no product`);
     res.status(200).json({ product });
   } catch (error) {
     res.status(409).json({ msg: error.message });

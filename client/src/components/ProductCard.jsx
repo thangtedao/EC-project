@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import ReactStars from "react-rating-stars-component";
-import NavLinks from "./NavLinks";
 
 const Wrapper = styled.div`
   width: 100%;

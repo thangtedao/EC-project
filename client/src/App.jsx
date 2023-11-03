@@ -1,6 +1,13 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home, HomeLayout, Login, ProductCategory, Register } from "./pages";
+import {
+  Contact,
+  Home,
+  HomeLayout,
+  Login,
+  ProductCategory,
+  Register,
+} from "./pages";
 import ProductDetail from "./pages/ProductDetail";
 
 /* LOADER */
@@ -30,14 +37,18 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "product/:productId",
+        path: "product/:slug",
         element: <ProductDetail />,
         loader: productDetailLoader,
       },
       {
-        path: "category",
+        path: "category/:slug",
         element: <ProductCategory />,
         loader: productCategoryLoader,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
       },
     ],
   },

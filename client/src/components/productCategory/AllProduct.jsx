@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import ProductContainer from "../ProductContainer";
+import NavLinks from "../NavLinks";
+import { NavLink } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -33,14 +35,16 @@ const AllProduct = ({ products }) => {
     <Wrapper>
       {products.map((product) => {
         return (
-          <ProductContainer
-            key={product._id}
-            img={product.img}
-            name={product.name}
-            price={product.price}
-            oldPrice={product.oldPrice}
-            descript={product.descript}
-          />
+          <NavLink to={`/product/${product.slug}`}>
+            <ProductContainer
+              key={product._id}
+              img={product.images}
+              name={product.name}
+              price={product.price}
+              oldPrice={product.oldPrice}
+              descript={product.descript}
+            />
+          </NavLink>
         );
       })}
     </Wrapper>

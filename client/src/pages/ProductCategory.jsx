@@ -4,6 +4,8 @@ import NavLinks from "../components/NavLinks";
 import { products } from "../assets/data/data";
 import { categoryData } from "../assets/data/categoryData";
 import { AllProduct, FAQ, SlideProduct } from "../components";
+import customFetch from "../utils/customFetch";
+import { useLoaderData } from "react-router-dom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -127,23 +129,28 @@ const Wrapper = styled.div`
   }
 `;
 
-export const loader = async () => {
+export const loader = async ({ params }) => {
   try {
-    return null;
+    const { slug } = params;
+    const products = await customFetch
+      .get(`/product/?category=${slug}`)
+      .then(({ data }) => data.products);
+    return { products };
   } catch (error) {
     return error;
   }
 };
 
 const ProductCategory = () => {
+  const { products } = useLoaderData();
   const numOfProduct = products.length;
 
   return (
     <Wrapper>
       <div className="block-top-filter-brands">
         <div className="brands-list">
-          {categoryData.map((item) => {
-            return <NavLinks image={item.image} />;
+          {categoryData.map((item, index) => {
+            return <NavLinks key={index} image={item.image} />;
           })}
         </div>
       </div>

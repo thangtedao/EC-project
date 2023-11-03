@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Box } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 const Wrapper = styled.section`
   width: 100%;
@@ -55,14 +56,16 @@ const SlideProduct = ({ products }) => {
         <Slider {...settings}>
           {products?.map((product) => {
             return (
-              <ProductContainer
-                key={product._id}
-                img={product.image[0]}
-                name={product.name}
-                price={product.salePrice || product.price}
-                oldPrice={product.salePrice && product.price}
-                descript={product.description}
-              />
+              <NavLink to={`/product/${product.slug}`}>
+                <ProductContainer
+                  key={product._id}
+                  img={product.images[0]}
+                  name={product.name}
+                  price={product.salePrice || product.price}
+                  oldPrice={product.salePrice && product.price}
+                  descript={product.description}
+                />
+              </NavLink>
             );
           })}
         </Slider>
@@ -74,16 +77,18 @@ const SlideProduct = ({ products }) => {
             width: "100%",
           }}
         >
-          {products.map((product) => {
+          {products?.map((product) => {
             return (
-              <ProductContainer
-                key={product._id}
-                img={product.image[0]}
-                name={product.name}
-                price={product.salePrice || product.price}
-                oldPrice={product.salePrice && product.price}
-                descript={product.description}
-              />
+              <NavLink to={`/product/${product.slug}`}>
+                <ProductContainer
+                  key={product._id}
+                  img={product.images[0]}
+                  name={product.name}
+                  price={product.salePrice || product.price}
+                  oldPrice={product.salePrice && product.price}
+                  descript={product.description}
+                />
+              </NavLink>
             );
           })}
         </Box>

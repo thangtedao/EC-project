@@ -105,7 +105,10 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    return null;
+    const products = await customFetch
+      .get("/product/")
+      .then(({ data }) => data.products);
+    return { products };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -115,10 +118,7 @@ export const loader = async () => {
 const HomeContext = createContext();
 
 const HomeLayout = () => {
-  //Bị lỗi destructure là do
-  //thg component con nó "const categories = useHomeContext();" thay vì "const { categories } = useHomeContext();"
-  //khi thg cha truyền vào là value={{categories}} thay vì value={categories} và ngược lại
-
+  const { products } = useLoaderData();
   const numOfProduct = products.length;
   const img = [
     "https://fptshop.com.vn/Uploads/Originals/2023/3/24/638152764193595966_asus-vivobook-flip-tn3402y-bac-dd.jpg",

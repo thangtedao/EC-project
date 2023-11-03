@@ -4,6 +4,7 @@ import { FormRow } from "../components";
 import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -56,6 +57,11 @@ const Login = () => {
 
   return (
     <Wrapper>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Login</title>
+      </Helmet>
+
       <Form method="post" className="form">
         <h4>Login</h4>
         <FormRow type="text" name="email" defaultValue="thang@gmail.com" />

@@ -3,6 +3,7 @@ import {
   createProduct,
   deleteImages,
   getAllProduct,
+  getProductByCategory,
   getRelatedProduct,
   getSingleProduct,
   rating,
@@ -21,7 +22,8 @@ router.patch(
   uploadImages
 );
 router.get("/", getAllProduct);
-router.get("/:id", getSingleProduct);
+router.get("/category", getProductByCategory);
+router.get("/:slug", getSingleProduct);
 router.patch("/wishlist", addToWishlist);
 router.patch("/rating", rating);
 router.delete("/delete-img/:id", deleteImages);

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useHomeLayoutContext } from "../pages/HomeLayout";
 import NavLinks from "./NavLinks";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
-import { categoryData } from "../assets/data/categoryData.js";
 
 const Wrapper = styled.div`
   .menu-container {
@@ -87,7 +86,6 @@ const Wrapper = styled.div`
 const CategorySideBar = () => {
   const { showSideBar, toggleSideBar } = useHomeLayoutContext();
 
-  // show khi hover
   const [showCategory, setShowCategory] = useState(false);
   const [isHoverItemTree, setIsHoverItemTree] = useState(false);
   const [activeItem, setActiveItem] = useState({});
@@ -109,8 +107,7 @@ const CategorySideBar = () => {
     }
   };
 
-  //const categories = categoryData;
-  //const { categories, childCategories } = useHomeLayoutContext();
+  const { categories } = useHomeLayoutContext();
 
   return (
     <Wrapper>
@@ -118,12 +115,12 @@ const CategorySideBar = () => {
         className={
           showSideBar ? "menu-container show-sidebar" : "menu-container"
         }
-        //onClick={toggleSideBar}
+        onClick={toggleSideBar}
       >
         <div className="container-menu">
           {/* MENU TREE */}
           <div className="menu-tree">
-            {/* {categories?.map((item, index) => {
+            {categories?.map((item, index) => {
               return (
                 <div
                   key={index}
@@ -142,7 +139,7 @@ const CategorySideBar = () => {
                   />
                 </div>
               );
-            })} */}
+            })}
           </div>
 
           {/* MENU TREE CHILD*/}

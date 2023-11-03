@@ -4,6 +4,7 @@ import {
   getAllCategory,
   getChildCategory,
   getParentCategory,
+  getSingleCategory,
   updateCategory,
 } from "../controller/categoryController.js";
 import { Router } from "express";
@@ -12,6 +13,7 @@ const router = Router();
 
 router.post("/", createCategory);
 router.get("/", getAllCategory);
+router.get("/:name", getSingleCategory);
 router.patch("/update/:id", updateCategory);
 router.delete("/delete/:id", deleteCategory);
 router.get("/get/parent", getParentCategory);
