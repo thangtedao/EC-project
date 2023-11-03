@@ -33,9 +33,9 @@ const Wrapper = styled.div`
 `;
 
 const NavContainer = () => {
-  const { categories } = useHomeContext();
+  // const { categories } = useHomeContext();
 
-  const category = [
+  const categories = [
     {
       name: "Điện thoại",
       categoryProduct: [

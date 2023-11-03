@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import ReactStars from "react-rating-stars-component";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -79,6 +80,13 @@ const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
           <div className="descript">
             <p>{descript}</p>
           </div>
+          <ReactStars
+            count={5}
+            //onChange={ratingChanged}
+            size={24}
+            edit={false}
+            activeColor="#ffd700"
+          />
         </div>
       </div>
     </Wrapper>

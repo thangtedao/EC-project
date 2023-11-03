@@ -24,12 +24,6 @@ const Wrapper = styled.div`
     align-items: center;
     justify-content: space-between;
   }
-  .logo {
-    display: flex;
-    align-items: center;
-    width: 100px;
-    height: 80%;
-  }
 
   .search-bar {
     background: white;
@@ -55,6 +49,7 @@ const Wrapper = styled.div`
     cursor: pointer;
     display: flex;
     align-items: center;
+    font-family: "Rubik", sans-serif;
   }
   .icon {
     margin-right: 0.5rem;
@@ -71,10 +66,10 @@ const Wrapper = styled.div`
     align-items: center;
   }
 
-  @media (min-width: 992px) {
+  /* @media (min-width: 992px) {
     position: sticky;
     top: 0;
-  }
+  } */
 `;
 
 const Navbar = () => {
@@ -82,9 +77,7 @@ const Navbar = () => {
   return (
     <Wrapper>
       <div className="nav-center">
-        <a href="/" className="logo">
-          Logo
-        </a>
+        <NavLinks path="/" text="Logo" />
 
         <SearchBar />
 

@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState } from "react";
 import { Outlet, useLoaderData } from "react-router-dom";
-import { CategorySideBar, MenuBottom, Navbar } from "../components";
+import {
+  CategorySideBar,
+  Footer,
+  Header,
+  MenuBottom,
+  Navbar,
+} from "../components";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
 
@@ -16,20 +22,6 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    // const categories = await customFetch
-    //   .get("/category/get/parent")
-    //   .then(({ data }) => data.categories);
-
-    // const childCategoriesPromises = categories.map(async (category) => {
-    //   const { data } = await customFetch.get(
-    //     `/category/get/child/${category._id}`
-    //   );
-    //   const { categories } = data;
-    //   return categories;
-    // });
-    // const childCategories = await Promise.all(childCategoriesPromises);
-
-    // return { categories, childCategories };
     return null;
   } catch (error) {
     toast.error(error?.response?.data?.msg);
@@ -40,8 +32,6 @@ export const loader = async () => {
 const HomeLayoutContext = createContext();
 
 const HomeLayout = () => {
-  //const { categories, childCategories } = useLoaderData();
-
   const user = { name: "thang" };
   const [showSideBar, setShowSideBar] = useState(false);
 
@@ -61,12 +51,11 @@ const HomeLayout = () => {
       }}
     >
       <Wrapper>
-        <Navbar />
-        <CategorySideBar />
+        <Header />
         <div className="main-layout">
           <Outlet context={{ user }} />
         </div>
-        <MenuBottom />
+        <Footer />
       </Wrapper>
     </HomeLayoutContext.Provider>
   );

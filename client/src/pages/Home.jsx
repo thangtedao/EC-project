@@ -105,20 +105,7 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const categories = await customFetch
-      .get("/category/get/parent")
-      .then(({ data }) => data.categories);
-
-    const childCategoriesPromises = categories.map(async (category) => {
-      const { data } = await customFetch.get(
-        `/category/get/child/${category._id}`
-      );
-      const { categories } = data;
-      return categories;
-    });
-    const childCategories = await Promise.all(childCategoriesPromises);
-
-    return { categories, childCategories };
+    return null;
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -132,8 +119,6 @@ const HomeLayout = () => {
   //thg component con nó "const categories = useHomeContext();" thay vì "const { categories } = useHomeContext();"
   //khi thg cha truyền vào là value={{categories}} thay vì value={categories} và ngược lại
 
-  const { categories, childCategories } = useLoaderData();
-
   const numOfProduct = products.length;
   const img = [
     "https://fptshop.com.vn/Uploads/Originals/2023/3/24/638152764193595966_asus-vivobook-flip-tn3402y-bac-dd.jpg",
@@ -142,7 +127,7 @@ const HomeLayout = () => {
   ];
 
   return (
-    <HomeContext.Provider value={{ categories }}>
+    <HomeContext.Provider value={null}>
       <Wrapper>
         <div className="block-top-home">
           <NavContainer />
@@ -162,7 +147,7 @@ const HomeLayout = () => {
         </div>
 
         {/* --------- PRODUCTS SALE -------- */}
-        {categories.map((category, index) => {
+        {/* {categories.map((category, index) => {
           return (
             <Product
               key={index}
@@ -171,7 +156,7 @@ const HomeLayout = () => {
               products={products}
             />
           );
-        })}
+        })} */}
       </Wrapper>
     </HomeContext.Provider>
   );
