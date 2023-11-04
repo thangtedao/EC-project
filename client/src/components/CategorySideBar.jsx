@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import NavLinks from "./NavLinks";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
+import { NavLink } from "react-router-dom";
 
 const Wrapper = styled.div`
   .menu-container {
@@ -56,11 +57,11 @@ const Wrapper = styled.div`
   .nav-link {
     display: flex;
     align-items: center;
-    color: var(--primary-500);
-    padding: 3px 2px;
+    color: #4a4a4a;
+    padding: 0.5rem 0.2rem;
     border-radius: 5px 5px 0 0;
     :hover {
-      background: #efecec;
+      background-color: lightgray;
     }
   }
   .icon {
@@ -107,7 +108,7 @@ const CategorySideBar = () => {
     }
   };
 
-  const { categories } = useMainLayoutContext();
+  const { categories, categoryChild } = useMainLayoutContext();
 
   return (
     <Wrapper>
@@ -133,9 +134,8 @@ const CategorySideBar = () => {
                   ]}
                 >
                   <NavLinks
-                    text={item.name}
-                    icon={<SmartphoneIcon />}
-                    path="#"
+                    path={`/category/${item?.slug}`}
+                    text={item?.name}
                   />
                 </div>
               );
@@ -153,9 +153,17 @@ const CategorySideBar = () => {
             <div className="category-product">
               <p>Thương hiệu</p>
 
-              {/* {childCategories[activeItem.index]?.map((item) => {
-                return <h5 key={item._id}>{item?.name} </h5>;
-              })} */}
+              {categoryChild[activeItem.index]?.map((item) => {
+                return (
+                  <NavLinks
+                    path={`/category/${categories[activeItem.index].slug}/${
+                      item.slug
+                    }`}
+                    key={item?._id}
+                    text={item?.name}
+                  />
+                );
+              })}
 
               {/*{activeItem?.categoryProduct?.map((item) => {
                 return <h5>{item.brandName}</h5>;

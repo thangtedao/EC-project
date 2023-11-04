@@ -17,9 +17,20 @@ const Wrapper = styled.div`
 export const loader = async () => {
   try {
     const categories = await customFetch
-      .get("/category/")
+      .get("/category/get/parent")
       .then(({ data }) => data.categories);
-    return { categories };
+
+    const categoryChild = await Promise.all(
+      categories.map(async (category) => {
+        const children = await customFetch
+          .get(`/category/get/child/${category._id}`)
+          .then(({ data }) => data.categories);
+
+        return children;
+      })
+    );
+
+    return { categories, categoryChild };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -29,7 +40,7 @@ export const loader = async () => {
 const MainLayoutContext = createContext();
 
 const MainLayout = () => {
-  const { categories } = useLoaderData();
+  const { categories, categoryChild } = useLoaderData();
   const user = { name: "thang" };
   const [showSideBar, setShowSideBar] = useState(false);
 
@@ -43,6 +54,7 @@ const MainLayout = () => {
     <MainLayoutContext.Provider
       value={{
         categories,
+        categoryChild,
         user,
         showSideBar,
         toggleSideBar,

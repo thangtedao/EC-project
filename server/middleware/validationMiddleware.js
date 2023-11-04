@@ -1,12 +1,10 @@
 import { body, param, validationResult } from "express-validator";
-import { ORDER_STATUS, JOB_TYPE } from "../utils/constants.js";
 import {
   BadRequestError,
   NotFoundError,
   UnauthenticatedError,
   UnauthorizedError,
 } from "../errors/customErrors.js";
-import mongoose, { mongo } from "mongoose";
 import User from "../models/User.js";
 
 const withValidationErrors = (validationValues) => {
@@ -35,22 +33,21 @@ const withValidationErrors = (validationValues) => {
 */
 
 // Validate job input from body
-export const validateJobInput = withValidationErrors([
-  body("company").notEmpty().withMessage("company is required"),
-  body("position").notEmpty().withMessage("position is required"),
-  body("jobLocation").notEmpty().withMessage("job location is required"),
-  body("jobStatus")
-    .isIn(Object.values(ORDER_STATUS))
-    .withMessage("invalid status value"),
-  body("jobType")
-    .isIn(Object.values(JOB_TYPE))
-    .withMessage("invalid type value"),
-]);
+// export const validateJobInput = withValidationErrors([
+//   body("company").notEmpty().withMessage("company is required"),
+//   body("position").notEmpty().withMessage("position is required"),
+//   body("jobLocation").notEmpty().withMessage("job location is required"),
+//   body("jobStatus")
+//     .isIn(Object.values(ORDER_STATUS))
+//     .withMessage("invalid status value"),
+//   body("jobType")
+//     .isIn(Object.values(JOB_TYPE))
+//     .withMessage("invalid type value"),
+// ]);
 
 // Validate user input from body
 export const validateRegisterInput = withValidationErrors([
-  body("firstName").notEmpty().withMessage("firstName is required"),
-  body("lastName").notEmpty().withMessage("lastName is required"),
+  body("fullName").notEmpty().withMessage("FullName is required"),
   body("email")
     .notEmpty()
     .withMessage("email is required")
@@ -67,7 +64,6 @@ export const validateRegisterInput = withValidationErrors([
     .withMessage("password is required")
     .isLength({ min: 8 })
     .withMessage("password must be at least 8 characters long"),
-  body("location").notEmpty().withMessage("location is required"),
 ]);
 
 export const validateLoginInput = withValidationErrors([
@@ -101,8 +97,7 @@ export const validateLoginInput = withValidationErrors([
 // ]);
 
 export const validateUpdateInput = withValidationErrors([
-  body("firstName").notEmpty().withMessage("firstName is required"),
-  body("lastName").notEmpty().withMessage("lastName is required"),
+  body("fullName").notEmpty().withMessage("FullName is required"),
   body("email")
     .notEmpty()
     .withMessage("email is required")
@@ -114,5 +109,4 @@ export const validateUpdateInput = withValidationErrors([
         throw new BadRequestError("email already exists");
       }
     }),
-  body("location").notEmpty().withMessage("location is required"),
 ]);

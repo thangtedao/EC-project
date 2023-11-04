@@ -10,6 +10,10 @@ import {
 } from "./pages";
 import ProductDetail from "./pages/ProductDetail";
 
+/* ACTION */
+import { action as loginAction } from "./pages/Login";
+import { action as registerAction } from "./pages/Register";
+
 /* LOADER */
 import { loader as mainLayoutLoader } from "./pages/MainLayout";
 import { loader as homeLoader } from "./pages/Home";
@@ -31,10 +35,12 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+        action: registerAction,
       },
       {
         path: "login",
         element: <Login />,
+        action: loginAction,
       },
       {
         path: "product/:slug",

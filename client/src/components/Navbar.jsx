@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   justify-content: center;
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
   background: var(--background-secondary-color);
-  background: #ff3636;
+  background: #d70018;
   z-index: 99;
   height: 3.5rem;
 
