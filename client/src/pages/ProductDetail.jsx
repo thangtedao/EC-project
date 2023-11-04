@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import img from "../assets/react.svg";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {
@@ -40,6 +39,9 @@ const Wrapper = styled.div`
   .top-container-column-1 {
     //border: 0.5px solid yellow;
     width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
   .top-container-column-2 {
     display: flex;
@@ -49,8 +51,8 @@ const Wrapper = styled.div`
     //border: 0.5px solid green;
   }
   .sliding-product-image {
-    border: 0.5px solid green;
-    height: 400px;
+    //border: 0.5px solid green;
+    //height: 400px;
     width: 100%;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     margin-right: 1rem;
@@ -133,7 +135,8 @@ const Wrapper = styled.div`
     padding-top: 1rem;
     border-top: 1px solid lightgray;
     h5 {
-      font-weight: 500;
+      font-size: 1.3rem;
+      font-weight: bold;
     }
   }
 
@@ -201,48 +204,18 @@ export const loader = async ({ params }) => {
       .get(`/product/${slug}`)
       .then(({ data }) => data.product);
 
-    // const relatedProducts = await customFetch
-    //   .get(`/product/${product.category}/${product.brand}`)
-    //   .then(({ data }) => data.products);
-    console.log(product);
-    return { product };
+    const relatedProducts = await customFetch
+      .get(`/product/category/?category=${product.category}`)
+      .then(({ data }) => data.products);
+
+    return { product, relatedProducts };
   } catch (error) {
     return error;
   }
 };
 
 const ProductDetail = () => {
-  const { product } = useLoaderData();
-
-  const productsss = {
-    _id: Math.random(),
-    name: "Laptop",
-    price: "999",
-    oldPrice: "9999",
-    descript: "ngon lành cành đào ngon lành cành đào",
-    img: img,
-    color: [
-      {
-        colorType: "Red",
-        price: "99999",
-        img: img,
-      },
-      {
-        colorType: "Green",
-        price: "99999",
-        img: img,
-      },
-      {
-        colorType: "Blue",
-        price: "99999",
-      },
-    ],
-    type: [
-      { name: "8GB - 256GB", price: "99999" },
-      { name: "8GB - 256GB", price: "99999" },
-      { name: "8GB - 256GB", price: "99999" },
-    ],
-  };
+  const { product, relatedProducts } = useLoaderData();
 
   return (
     <Wrapper>
@@ -265,21 +238,21 @@ const ProductDetail = () => {
 
         <div className="top-container-column-2">
           <div className="box-product-variants">
-            {product.types.map((type) => {
+            {product?.types?.map((type) => {
               return <ProductType text={type} />;
             })}
           </div>
 
           <p>Chọn màu</p>
           <div className="box-product-variants">
-            {product.colors.map((color) => {
+            {product?.colors?.map((color) => {
               return <ProductType text={color} />;
             })}
           </div>
 
           <div className="box-product-price">
-            <p>{product.salePrice + " đ"}</p>
-            <p className="old-price">{product.price + " đ"}</p>
+            <p>{product?.salePrice + " đ"}</p>
+            <p className="old-price">{product?.price + " đ"}</p>
           </div>
 
           <div className="btn-buy">
@@ -293,12 +266,12 @@ const ProductDetail = () => {
       </div>
 
       {/* MID */}
-      {/* <div className="mid-container">
+      <div className="mid-container">
         <h5>SẢN PHẨM TƯƠNG TỰ</h5>
         {relatedProducts.length > 0 && (
           <SlideProduct products={relatedProducts} />
         )}
-      </div> */}
+      </div>
 
       {/* BOT */}
       <div className="bot-container">

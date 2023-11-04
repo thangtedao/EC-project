@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { FaAlignLeft, FaShoppingBag, FaUserCircle } from "react-icons/fa";
 import { Search, Notifications, Menu, Close } from "@mui/icons-material";
-import { useHomeLayoutContext } from "../pages/HomeLayout";
+import { useMainLayoutContext } from "../pages/MainLayout";
 import LogoutContainer from "./LogoutContainer";
 import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
@@ -73,7 +73,7 @@ const Wrapper = styled.div`
 `;
 
 const Navbar = () => {
-  const { toggleSideBar } = useHomeLayoutContext();
+  const { toggleSideBar } = useMainLayoutContext();
   return (
     <Wrapper>
       <div className="nav-center">

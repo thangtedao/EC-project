@@ -26,9 +26,9 @@ export const loader = async () => {
   }
 };
 
-const HomeLayoutContext = createContext();
+const MainLayoutContext = createContext();
 
-const HomeLayout = () => {
+const MainLayout = () => {
   const { categories } = useLoaderData();
   const user = { name: "thang" };
   const [showSideBar, setShowSideBar] = useState(false);
@@ -40,7 +40,7 @@ const HomeLayout = () => {
   const logoutUser = async () => {};
 
   return (
-    <HomeLayoutContext.Provider
+    <MainLayoutContext.Provider
       value={{
         categories,
         user,
@@ -56,9 +56,9 @@ const HomeLayout = () => {
         </div>
         <Footer />
       </Wrapper>
-    </HomeLayoutContext.Provider>
+    </MainLayoutContext.Provider>
   );
 };
 
-export const useHomeLayoutContext = () => useContext(HomeLayoutContext);
-export default HomeLayout;
+export const useMainLayoutContext = () => useContext(MainLayoutContext);
+export default MainLayout;

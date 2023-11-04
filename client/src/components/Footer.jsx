@@ -5,15 +5,19 @@ import MenuBottom from "./MenuBottom";
 const Wrapper = styled.div`
   width: 100%;
   position: relative;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid lightgray;
+  padding-top: 1rem;
   .footer-container {
+    width: 1100px;
     height: 300px;
-    padding: 1rem;
-    border: 1px solid red;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    //border: 1px solid red;
+    display: flex;
+    justify-content: space-between;
   }
   .footer-items {
-    border: 1px solid green;
+    //border: 1px solid green;
     display: flex;
     flex-direction: column;
   }

@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import NavLinks from "../components/NavLinks";
-import { products } from "../assets/data/data";
 import { categoryData } from "../assets/data/categoryData";
-import { AllProduct, FAQ, SlideProduct } from "../components";
+import { FAQ, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
 import { useLoaderData } from "react-router-dom";
 
@@ -131,10 +130,19 @@ const Wrapper = styled.div`
 
 export const loader = async ({ params }) => {
   try {
-    const { slug } = params;
-    const products = await customFetch
-      .get(`/product/?category=${slug}`)
-      .then(({ data }) => data.products);
+    const { slug1, slug2 } = params;
+    let products = null;
+
+    if (slug2) {
+      products = await customFetch
+        .get(`/product/category/?category=${slug1},${slug2}`)
+        .then(({ data }) => data.products);
+    } else {
+      products = await customFetch
+        .get(`/product/?category=${slug1}`)
+        .then(({ data }) => data.products);
+    }
+
     return { products };
   } catch (error) {
     return error;
@@ -143,7 +151,7 @@ export const loader = async ({ params }) => {
 
 const ProductCategory = () => {
   const { products } = useLoaderData();
-  const numOfProduct = products.length;
+  const numOfProduct = products?.length;
 
   return (
     <Wrapper>
@@ -177,7 +185,7 @@ const ProductCategory = () => {
           <div className="btn-filter">Giá Thấp - Cao</div>
           <div className="btn-filter">Xem nhiều</div>
         </div>
-        <AllProduct products={products} />
+        <ProductList products={products} />
       </div>
 
       {/* BOT */}

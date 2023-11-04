@@ -3,7 +3,7 @@ import styled from "styled-components";
 import NavLinks from "./NavLinks";
 import HomeIcon from "@mui/icons-material/Home";
 import { FaAlignLeft } from "react-icons/fa";
-import { useHomeLayoutContext } from "../pages/HomeLayout";
+import { useMainLayoutContext } from "../pages/MainLayout";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -42,7 +42,7 @@ const Wrapper = styled.div`
 `;
 
 const MenuBottom = () => {
-  const { toggleSideBar } = useHomeLayoutContext();
+  const { toggleSideBar } = useMainLayoutContext();
   return (
     <Wrapper>
       <div className="menu-bottom-tab">

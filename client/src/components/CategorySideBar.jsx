@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useHomeLayoutContext } from "../pages/HomeLayout";
+import { useMainLayoutContext } from "../pages/MainLayout";
 import NavLinks from "./NavLinks";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 
@@ -84,7 +84,7 @@ const Wrapper = styled.div`
 `;
 
 const CategorySideBar = () => {
-  const { showSideBar, toggleSideBar } = useHomeLayoutContext();
+  const { showSideBar, toggleSideBar } = useMainLayoutContext();
 
   const [showCategory, setShowCategory] = useState(false);
   const [isHoverItemTree, setIsHoverItemTree] = useState(false);
@@ -107,7 +107,7 @@ const CategorySideBar = () => {
     }
   };
 
-  const { categories } = useHomeLayoutContext();
+  const { categories } = useMainLayoutContext();
 
   return (
     <Wrapper>

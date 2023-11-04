@@ -1,15 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { SlideProduct } from "../components";
-import { Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  redirect,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
-import NavContainer from "../components/NavContainer";
-import Product from "../components/home/Product";
-import img from "../assets/react.svg";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { products, products_v2 } from "../assets/data/data.js";
 import SlideGallery from "../components/slider/SlideGallery";
 
 const Wrapper = styled.div`
@@ -31,6 +34,20 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
   }
+  .menu-container {
+    border: 1px solid lightgray;
+    width: 200px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem;
+    a {
+      color: black;
+    }
+  }
+
   .right-banner {
     border: 0.5px solid lightgrey;
     width: 220px;
@@ -71,6 +88,20 @@ const Wrapper = styled.div`
     color: white;
   }
 
+  /* PRODUCTS SALE  */
+  .product-by-category {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    width: 100%;
+  }
+  .product-by-category-title {
+    color: black;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
   /* MEDIA QUERIES */
   @media (max-width: 1100px) {
     width: 100%;
@@ -105,10 +136,25 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const products = await customFetch
-      .get("/product/")
+    const categories = await customFetch
+      .get("/category/get/parent")
+      .then(({ data }) => data.categories);
+
+    const saleProducts = await customFetch
+      .get("/product/?category=laptop")
       .then(({ data }) => data.products);
-    return { products };
+
+    const productsArray = await Promise.all(
+      categories.map(async (category) => {
+        const products = await customFetch
+          .get(`/product/?category=${category.slug}`)
+          .then(({ data }) => data.products);
+
+        return products;
+      })
+    );
+
+    return { saleProducts, categories, productsArray };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -117,50 +163,64 @@ export const loader = async () => {
 
 const HomeContext = createContext();
 
-const HomeLayout = () => {
-  const { products } = useLoaderData();
-  const numOfProduct = products.length;
+const Home = () => {
+  const { saleProducts, categories, productsArray } = useLoaderData();
+
   const img = [
-    "https://fptshop.com.vn/Uploads/Originals/2023/3/24/638152764193595966_asus-vivobook-flip-tn3402y-bac-dd.jpg",
-    "https://techzones.vn/Data/Sites/1/Product/37708/techzones-asus-vivobook-s-14-flip-tn3402-7.jpg",
-    "https://cdn1.viettelstore.vn/images/Product/ProductImage/medium/MTXT-HP-Pavilion-14-dv2070TU-7C0V9PA-1.jpg",
+    "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
+    "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
+    "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
   ];
 
   return (
     <HomeContext.Provider value={null}>
       <Wrapper>
         <div className="block-top-home">
-          <NavContainer />
+          {/* MENU TREE */}
+          <div className="menu-container">
+            {categories?.map((category, index) => {
+              return (
+                <a key={index} href={`/category/${category.slug}`}>
+                  {category.name}
+                </a>
+              );
+            })}
+          </div>
+
+          {/* SLIDE */}
           <div className="sliding-banner">
             <SlideGallery image={img} />
           </div>
           <div className="right-banner"></div>
         </div>
 
-        {/* --------- FLASH SALE -------- */}
+        {/* FLASH SALE */}
         <div className="block-hot-sale">
           <div className="block-title">
             <div className="sale-title">FLASH SALE</div>
             <div className="box-countdown">00:11:22:33</div>
           </div>
-          {numOfProduct > 0 && <SlideProduct products={products} />}
+          {saleProducts?.length > 0 && <SlideProduct products={saleProducts} />}
         </div>
 
-        {/* --------- PRODUCTS SALE -------- */}
-        {/* {categories.map((category, index) => {
+        {/* PRODUCTS SALE */}
+        {categories.map((category, index) => {
           return (
-            <Product
-              key={index}
-              title={category.name}
-              categories={childCategories[index] || []} // thứ tự item categories tương ứng thứ tự item childCategories
-              products={products}
-            />
+            <div key={index} className="product-by-category">
+              <NavLink
+                to={`/category/${category.slug}`}
+                className="product-by-category-title"
+              >
+                {category.name}
+              </NavLink>
+              <SlideProduct products={productsArray[index] || []} />
+            </div>
           );
-        })} */}
+        })}
       </Wrapper>
     </HomeContext.Provider>
   );
 };
 
 export const useHomeContext = () => useContext(HomeContext);
-export default HomeLayout;
+export default Home;

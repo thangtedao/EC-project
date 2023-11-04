@@ -35,7 +35,9 @@ const productSchema = mongoose.Schema(
     },
     category: [
       {
-        type: String,
+        type: mongoose.Schema.Types.String,
+        ref: "Category",
+        default: [],
       },
     ],
     brand: {

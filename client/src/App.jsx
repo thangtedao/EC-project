@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
   Contact,
   Home,
-  HomeLayout,
+  MainLayout,
   Login,
   ProductCategory,
   Register,
@@ -11,7 +11,7 @@ import {
 import ProductDetail from "./pages/ProductDetail";
 
 /* LOADER */
-import { loader as homeLayoutLoader } from "./pages/HomeLayout";
+import { loader as mainLayoutLoader } from "./pages/MainLayout";
 import { loader as homeLoader } from "./pages/Home";
 import { loader as productDetailLoader } from "./pages/ProductDetail";
 import { loader as productCategoryLoader } from "./pages/ProductCategory";
@@ -19,9 +19,9 @@ import { loader as productCategoryLoader } from "./pages/ProductCategory";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomeLayout />,
+    element: <MainLayout />,
     errorElement: <Error />,
-    loader: homeLayoutLoader,
+    loader: mainLayoutLoader,
     children: [
       {
         index: true,
@@ -42,9 +42,16 @@ const router = createBrowserRouter([
         loader: productDetailLoader,
       },
       {
-        path: "category/:slug",
+        path: "category/:slug1",
         element: <ProductCategory />,
         loader: productCategoryLoader,
+        children: [
+          {
+            path: ":slug2",
+            element: <ProductCategory />,
+            loader: productCategoryLoader,
+          },
+        ],
       },
       {
         path: "contact",

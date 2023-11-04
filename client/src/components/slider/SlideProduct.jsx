@@ -1,97 +1,106 @@
 import styled from "styled-components";
-import ProductContainer from "../ProductContainer";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { Box } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import ProductCard from "../ProductCard";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Grid, Autoplay, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/grid";
+import "swiper/css/navigation";
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   width: 100%;
 
+  .swiper {
+    width: 100%;
+  }
+  .double-slide {
+    height: 780px;
+  }
+  .product-not-slide {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
+    width: 100%;
+  }
   @media (max-width: 1100px) {
   }
-  @media (max-width: 1070px) {
+  @media (max-width: 1080px) {
+    .product-not-slide {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
   }
-  @media (max-width: 970px) {
+  @media (max-width: 865px) {
+    .product-not-slide {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
   }
   @media (max-width: 690px) {
+    .product-not-slide {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 `;
 
 const SlideProduct = ({ products }) => {
   const check = products.length <= 5;
-  const settings = {
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    arrows: false,
-    responsive: [
-      {
-        breakpoint: 1020,
-        settings: {
-          slidesToShow: 4,
-        },
-      },
-      {
-        breakpoint: 850,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 690,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-    ],
-  };
+  let doubleSlide = 1;
+  if (products.length > 12) doubleSlide = 2;
+  else doubleSlide = 1;
+
   return (
     <Wrapper>
       {!check ? (
-        <Slider {...settings}>
-          {products?.map((product) => {
-            return (
-              <NavLink to={`/product/${product.slug}`}>
-                <ProductContainer
-                  key={product._id}
-                  img={product.images[0]}
-                  name={product.name}
-                  price={product.salePrice || product.price}
-                  oldPrice={product.salePrice && product.price}
-                  descript={product.description}
-                />
-              </NavLink>
-            );
-          })}
-        </Slider>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
+        <Swiper
+          slidesPerView={5}
+          grid={{
+            rows: 2,
           }}
+          spaceBetween={10}
+          navigation={true}
+          breakpoints={{
+            1100: {
+              slidesPerView: 5,
+              grid: { rows: 2 },
+            },
+            1020: {
+              slidesPerView: 4,
+              grid: { rows: 2 },
+            },
+            850: {
+              slidesPerView: 3,
+              grid: { rows: 2 },
+            },
+            690: {
+              slidesPerView: 2,
+              grid: { rows: 2 },
+            },
+            10: {
+              slidesPerView: 2,
+              grid: { rows: 2 },
+            },
+          }}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          loop={true}
+          modules={[Autoplay, Navigation, Grid]}
+          className={doubleSlide === 2 ? "double-slide" : "mySwiper"}
         >
-          {products?.map((product) => {
+          {products?.map((product, index) => {
             return (
-              <NavLink to={`/product/${product.slug}`}>
-                <ProductContainer
-                  key={product._id}
-                  img={product.images[0]}
-                  name={product.name}
-                  price={product.salePrice || product.price}
-                  oldPrice={product.salePrice && product.price}
-                  descript={product.description}
-                />
-              </NavLink>
+              <SwiperSlide key={index}>
+                <ProductCard product={product} />
+              </SwiperSlide>
             );
           })}
-        </Box>
+        </Swiper>
+      ) : (
+        <div className="product-not-slide">
+          {products?.map((product, index) => {
+            return <ProductCard key={index} product={product} />;
+          })}
+        </div>
       )}
     </Wrapper>
   );

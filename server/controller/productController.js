@@ -113,7 +113,7 @@ export const getProductByCategory = async (req, res) => {
     const { category } = req.query;
     if (category) {
       const categories = category.split(",");
-      const queryObj = { category: { $in: categories } };
+      const queryObj = { category: { $all: categories } };
       const products = await Product.find(queryObj);
 
       res.status(200).json({ products });
@@ -162,13 +162,10 @@ export const deleteProduct = async (req, res) => {
 
 export const getRelatedProduct = async (req, res) => {
   try {
-    const { category, brand } = req.params;
-    const products = await Product.find({ category: category, brand: brand });
-    if (products.length > 8) {
-      products.shuffle();
-      const relatedProducts = products.slice(0, 8);
-      res.status(200).json({ relatedProducts });
-    }
+    const products = await Product.find({
+      $all: { category: req.query.category },
+      limit: 10,
+    });
     res.status(200).json({ products });
   } catch (error) {
     res.status(409).json({ msg: error.message });

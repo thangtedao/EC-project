@@ -1,28 +1,28 @@
 import React from "react";
 import styled from "styled-components";
 import ReactStars from "react-rating-stars-component";
+import { NavLink } from "react-router-dom";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import { IconButton } from "@mui/material";
 
 const Wrapper = styled.div`
   width: 100%;
-  .product-container {
-    width: 98%;
+  .product-card-container {
+    width: 100%;
     height: 380px;
     background-color: var(--background-secondary-color);
     border: 0.5px solid lightgrey;
     border-radius: 10px;
-    margin-bottom: 10px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     padding: 0.5rem;
+    gap: 1rem;
   }
-  .product-content {
-    width: 100%;
-    height: 100%;
-  }
-  .image {
+  .product-card-image {
     width: 100%;
     height: 50%;
     display: grid;
@@ -33,52 +33,64 @@ const Wrapper = styled.div`
       height: 10rem;
     }
   }
-  .name {
-    margin: 5px 0;
+  .product-card-name {
     font-size: large;
+    color: black;
   }
-  .price {
-    margin-top: 20%;
+  .product-card-price {
     font-size: large;
     color: red;
     display: grid;
     grid-template-columns: auto 1fr;
-    column-gap: 10%;
-    font-weight: 700;
+    column-gap: 1rem;
+    font-weight: 500;
   }
-  .old-price {
+  .strike {
     font-size: medium;
     color: gray;
     text-decoration: line-through;
     text-decoration-thickness: 1px;
   }
-  .descript {
-    margin-top: 10%;
-    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
-    background: lightgray;
+  .product-card-description {
+    border: transparent;
+    background: #ebebeb;
     padding: 0.5rem 0.25rem;
-    border-radius: 5px;
+    border-radius: 3px;
     font-size: small;
+    color: black;
+  }
+  .wishlist-btn {
+    color: black;
+    font-size: small;
+    display: flex;
+    align-items: center;
+    .heart {
+      color: red;
+    }
   }
 `;
 
-const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
+const ProductCard = ({ product }) => {
   return (
-    <Wrapper className="super-container">
-      <div className="product-container">
-        <div className="product-content">
-          <div className="image">
-            <img src={img} alt={name} />
+    <NavLink to={`/product/${product.slug}`}>
+      <Wrapper>
+        <div className="product-card-container">
+          <div className="product-card-image">
+            <img src={product.images[0]} alt={product.name} />
           </div>
-          <div className="name">
-            <p> {name}</p>
+          <div className="product-card-name">
+            <p> {product.name}</p>
           </div>
-          <div className="price">
-            <p> {price && price + "đ"}</p>
-            <p className="old-price">{oldPrice && oldPrice + "đ"}</p>
+          <div className="product-card-price">
+            <p>
+              {product.salePrice
+                ? product.salePrice + "đ"
+                : product.price + "đ"}
+            </p>
+            <p className="strike">{product.salePrice && product.price + "đ"}</p>
           </div>
-          <div className="descript">
-            <p>{descript}</p>
+          <div className="product-card-description">
+            <p>{product.description}</p>
           </div>
           <ReactStars
             count={5}
@@ -87,10 +99,16 @@ const ProductContainer = ({ img, name, price, oldPrice, descript }) => {
             edit={false}
             activeColor="#ffd700"
           />
+          <div className="wishlist-btn">
+            Yêu Thích
+            <IconButton className="heart">
+              <FavoriteIcon />
+            </IconButton>
+          </div>
         </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </NavLink>
   );
 };
 
-export default ProductContainer;
+export default ProductCard;
