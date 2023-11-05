@@ -20,9 +20,12 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const getCurrentUser = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId });
-  const userWithoutPassword = user.toJSON();
-  res.status(StatusCodes.OK).json({ user: userWithoutPassword });
+  if (req.user.userId) {
+    const user = await User.findOne({ _id: req.user.userId });
+    const userWithoutPassword = user.toJSON();
+    res.status(StatusCodes.OK).json({ user: userWithoutPassword });
+  }
+  res.json({ user: null });
 };
 
 export const updateUser = async (req, res) => {

@@ -34,7 +34,7 @@ app.get("/api/test", (req, res) => {
     })
 */
 
-app.use("/api/user", authenticateUser, userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);

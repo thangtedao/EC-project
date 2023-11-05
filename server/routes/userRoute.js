@@ -16,12 +16,15 @@ import {
   userCart,
 } from "../controller/userController.js";
 import { validateUpdateInput } from "../middleware/validationMiddleware.js";
-import { authorizePermissions } from "../middleware/authMiddleware.js";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middleware/authMiddleware.js";
 
 const router = Router();
 
+router.get("/current-user", authenticateUser, getCurrentUser);
 router.get("/all-users", getAllUsers);
-router.get("/current-user", getCurrentUser);
 router.get("/wishlist", getWishlist);
 router.post("/cart", userCart);
 router.delete("/empty-cart", emptyCart);

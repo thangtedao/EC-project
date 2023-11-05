@@ -3,5 +3,7 @@ export { default as Error } from "../pages/Error";
 export { default as Login } from "../pages/Login";
 export { default as Register } from "../pages/Register";
 export { default as Home } from "../pages/Home";
-export { default as ProductCategory } from "../pages/ProductCategory";
+export { default as Category } from "../pages/Category";
 export { default as Contact } from "../pages/Contact";
+export { default as Product } from "../pages/Product";
+export { default as Cart } from "../pages/Cart";

@@ -153,17 +153,18 @@ const CategorySideBar = () => {
             <div className="category-product">
               <p>Thương hiệu</p>
 
-              {categoryChild[activeItem.index]?.map((item) => {
-                return (
-                  <NavLinks
-                    path={`/category/${categories[activeItem.index].slug}/${
-                      item.slug
-                    }`}
-                    key={item?._id}
-                    text={item?.name}
-                  />
-                );
-              })}
+              {categoryChild &&
+                categoryChild[activeItem.index]?.map((item) => {
+                  return (
+                    <NavLinks
+                      path={`/category/${categories[activeItem.index].slug}/${
+                        item.slug
+                      }`}
+                      key={item?._id}
+                      text={item?.name}
+                    />
+                  );
+                })}
 
               {/*{activeItem?.categoryProduct?.map((item) => {
                 return <h5>{item.brandName}</h5>;

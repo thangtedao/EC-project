@@ -1,9 +1,23 @@
 import React from "react";
 import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
 
 const Wrapper = styled.div``;
 
+export const loader = async ({ params }) => {
+  try {
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
+
 const Cart = () => {
+  const cart = useSelector((state) => state.cart.cart);
+  const token = useSelector((state) => state.user.token);
+  console.log(cart);
+  console.log(token);
+
   return (
     <Wrapper>
       <div className="cart-header"></div>

@@ -73,7 +73,7 @@ const Wrapper = styled.div`
 `;
 
 const Navbar = () => {
-  const { toggleSideBar } = useMainLayoutContext();
+  const { toggleSideBar, user } = useMainLayoutContext();
   return (
     <Wrapper>
       <div className="nav-center">
@@ -88,8 +88,12 @@ const Navbar = () => {
             </span>
             Danh mục
           </button>
-          <NavLinks text="Giỏ hàng" icon={<FaShoppingBag />} path="#" />
-          <NavLinks text="Đăng nhập" icon={<FaUserCircle />} path="/login" />
+          <NavLinks text="Giỏ hàng" icon={<FaShoppingBag />} path="/cart" />
+          {user ? (
+            <LogoutContainer />
+          ) : (
+            <NavLinks text="Đăng nhập" icon={<FaUserCircle />} path="/login" />
+          )}
         </div>
       </div>
     </Wrapper>

@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-import { Outlet, useLoaderData } from "react-router-dom";
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { Footer, Header } from "../components";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
+import { toast } from "react-toastify";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -16,6 +17,10 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data.categories);
@@ -30,7 +35,7 @@ export const loader = async () => {
       })
     );
 
-    return { categories, categoryChild };
+    return { user, categories, categoryChild };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -40,15 +45,24 @@ export const loader = async () => {
 const MainLayoutContext = createContext();
 
 const MainLayout = () => {
-  const { categories, categoryChild } = useLoaderData();
-  const user = { name: "thang" };
+  const navigate = useNavigate();
+  const { user, categories, categoryChild } = useLoaderData();
   const [showSideBar, setShowSideBar] = useState(false);
 
   const toggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
 
-  const logoutUser = async () => {};
+  const logoutUser = async () => {
+    navigate("/");
+    await customFetch.get("/auth/logout");
+    toast.success("Logged out", {
+      position: "top-center",
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
 
   return (
     <MainLayoutContext.Provider

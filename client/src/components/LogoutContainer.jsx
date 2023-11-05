@@ -5,6 +5,9 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
+  .btn {
+    background-color: green;
+  }
   .logout-btn {
     display: flex;
     align-items: center;
@@ -24,7 +27,7 @@ const Wrapper = styled.div`
     box-shadow: var(--shadow-2);
     text-align: center;
     border-radius: var(--border-radius);
-    background: var(--primary-500);
+    background: green;
     visibility: hidden;
   }
   .show-dropdown {
@@ -55,7 +58,7 @@ const LogoutContainer = () => {
         onClick={() => setShowLogout(!showLogout)}
       >
         <FaUserCircle />
-        {user?.firstName}
+        {user?.fullName}
         <FaCaretDown />
       </button>
       <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>

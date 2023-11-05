@@ -10,6 +10,8 @@ import {
 import SlideGallery from "../components/slider/SlideGallery";
 import customFetch from "../utils/customFetch";
 import { useLoaderData } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -214,7 +216,8 @@ export const loader = async ({ params }) => {
   }
 };
 
-const ProductDetail = () => {
+const Product = () => {
+  const dispatch = useDispatch();
   const { product, relatedProducts } = useLoaderData();
 
   return (
@@ -257,7 +260,10 @@ const ProductDetail = () => {
 
           <div className="btn-buy">
             <button className="btn-buynow">Mua ngay</button>
-            <button className="btn-addtocart">
+            <button
+              className="btn-addtocart"
+              onClick={() => dispatch(addToCart({ product }))}
+            >
               <AddShoppingCartIcon />
               <p>Thêm vào giỏ</p>
             </button>
@@ -295,4 +301,4 @@ const ProductDetail = () => {
   );
 };
 
-export default ProductDetail;
+export default Product;

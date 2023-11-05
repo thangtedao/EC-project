@@ -28,13 +28,6 @@ export const login = async (req, res) => {
     if (!isValidUser)
       throw new UnauthenticatedError("email or password is not correct");
 
-    // if (!user) {
-    //   return res.json({ msg: "user is not exist" });
-    // }
-    // const isMatch = await comparePassword(password, user.password);
-    // console.log(`${password} --${isMatch}-- ${user.password}`);
-    // if (!isMatch) throw new UnauthenticatedError("password is not correct ");
-
     const token = createJWT({ userId: user.id, role: user.role });
 
     const oneDay = 1000 * 60 * 60 * 24;
@@ -45,7 +38,7 @@ export const login = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-    res.status(StatusCodes.OK).json({ msg: "user logged in" });
+    res.status(StatusCodes.OK).json({ msg: "user logged in", token: token });
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }

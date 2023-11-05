@@ -5,10 +5,11 @@ import {
   Home,
   MainLayout,
   Login,
-  ProductCategory,
+  Category,
   Register,
+  Product,
+  Cart,
 } from "./pages";
-import ProductDetail from "./pages/ProductDetail";
 
 /* ACTION */
 import { action as loginAction } from "./pages/Login";
@@ -17,8 +18,9 @@ import { action as registerAction } from "./pages/Register";
 /* LOADER */
 import { loader as mainLayoutLoader } from "./pages/MainLayout";
 import { loader as homeLoader } from "./pages/Home";
-import { loader as productDetailLoader } from "./pages/ProductDetail";
-import { loader as productCategoryLoader } from "./pages/ProductCategory";
+import { loader as productLoader } from "./pages/Product";
+import { loader as categoryLoader } from "./pages/Category";
+import { loader as cartLoader } from "./pages/Cart";
 
 const router = createBrowserRouter([
   {
@@ -44,18 +46,23 @@ const router = createBrowserRouter([
       },
       {
         path: "product/:slug",
-        element: <ProductDetail />,
-        loader: productDetailLoader,
+        element: <Product />,
+        loader: productLoader,
+      },
+      {
+        path: "cart",
+        element: <Cart />,
+        loader: cartLoader,
       },
       {
         path: "category/:slug1",
-        element: <ProductCategory />,
-        loader: productCategoryLoader,
+        element: <Category />,
+        loader: categoryLoader,
         children: [
           {
             path: ":slug2",
-            element: <ProductCategory />,
-            loader: productCategoryLoader,
+            element: <Category />,
+            loader: categoryLoader,
           },
         ],
       },

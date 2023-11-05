@@ -149,7 +149,7 @@ export const loader = async ({ params }) => {
   }
 };
 
-const ProductCategory = () => {
+const Category = () => {
   const { products } = useLoaderData();
   const numOfProduct = products?.length;
 
@@ -208,4 +208,4 @@ const ProductCategory = () => {
   );
 };
 
-export default ProductCategory;
+export default Category;
