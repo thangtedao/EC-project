@@ -17,7 +17,7 @@ const router = Router();
 
 router.post("/", createProduct);
 router.patch(
-  "/upload",
+  "/upload/:id",
   uploadPhoto.array("images", 10),
   productImgResize,
   uploadImages

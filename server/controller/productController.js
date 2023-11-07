@@ -20,7 +20,7 @@ export const createProduct = async (req, res) => {
 
 export const uploadImages = async (req, res) => {
   try {
-    //const { id } = req.params;
+    const { id } = req.params;
     const uploader = (path) => cloudinaryUploadImage(path, "images");
     const urls = [];
     const files = req.files;
@@ -33,15 +33,13 @@ export const uploadImages = async (req, res) => {
     const images = urls.map((file) => {
       return file;
     });
-    // const findProduct = await Product.findByIdAndUpdate(
-    //   id,
-    //   {
-    //     images: urls.map((file) => {
-    //       return file;
-    //     }),
-    //   },
-    //   { new: true }
-    // );
+    const findProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        images: images,
+      },
+      { new: true }
+    );
     res.status(201).json(images);
   } catch (error) {
     res.status(409).json({ msg: error.message });

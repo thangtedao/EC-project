@@ -7,25 +7,24 @@ cloudinary.config({
 });
 
 export const cloudinaryUploadImage = async (fileToUploads) => {
-  const result = await cloudinary.uploader.upload(fileToUploads, {
-    resource_type: "auto",
-  });
-
-  return {
-    url: result.secure_url,
-    asset_id: result.asset_id,
-    public_id: result.public_id,
-  };
+  await cloudinary.uploader.upload(fileToUploads);
 };
 
 export const cloudinaryDeleteImage = async (publicId) => {
-  const result = await cloudinary.uploader.destroy(publicId);
-
-  return {
-    asset_id: result.asset_id,
-    public_id: result.public_id,
-  };
+  await cloudinary.uploader.destroy(publicId);
 };
+
+// export const cloudinaryUploadImage = async (fileToUploads) => {
+//   const result = await cloudinary.uploader.upload(fileToUploads, {
+//     resource_type: "auto",
+//   });
+
+//   return {
+//     url: result.secure_url,
+//     asset_id: result.asset_id,
+//     public_id: result.public_id,
+//   };
+// };
 
 // export const cloudinaryDeleteImage = async (fileToUploads) => {
 //   return new Promise((resolve) => {

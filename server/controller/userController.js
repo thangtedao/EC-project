@@ -6,6 +6,11 @@ import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
 import Coupon from "../models/Coupon.js";
 import Order from "../models/Order.js";
+import {
+  cloudinaryDeleteImage,
+  cloudinaryUploadImage,
+} from "../utils/cloudinary.js";
+import fs from "fs";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -20,22 +25,39 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const getCurrentUser = async (req, res) => {
-  if (req.user.userId) {
-    const user = await User.findOne({ _id: req.user.userId });
-    const userWithoutPassword = user.toJSON();
-    res.status(StatusCodes.OK).json({ user: userWithoutPassword });
+  try {
+    if (req.user.userId) {
+      const user = await User.findOne({ _id: req.user.userId });
+      const userWithoutPassword = user.toJSON();
+      res.status(StatusCodes.OK).json({ user: userWithoutPassword });
+    } else {
+      res.json({ user: null });
+    }
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
   }
-  res.json({ user: null });
 };
 
 export const updateUser = async (req, res) => {
   try {
     const data = { ...req.body };
-    delete obj.password;
-    const updatedUser = await User.findByIdAndUpdate(id, data, {
-      new: true,
-    });
-    if (!updatedUser) throw new NotFoundError(`no product with id ${id}`);
+    delete data.password;
+
+    if (req.file) {
+      const response = await cloudinaryUploadImage(req.file.path);
+      fs.unlinkSync(req.file.path);
+      data.avatar = response.secure_url;
+      data.avatarPublicId = response.public_id;
+    }
+
+    // nào có {new: true} mới là cái mới
+    const updatedUser = await User.findByIdAndUpdate(id, data);
+
+    if (req.file && updatedUser.avatarPublicId) {
+      // xóa avatar cũ trên cloudinary
+      await cloudinaryDeleteImage(updatedUser.avatarPublicId);
+    }
+
     res.status(StatusCodes.OK).json({ msg: "updated user" });
   } catch (error) {
     res.status(409).json({ msg: error.message });

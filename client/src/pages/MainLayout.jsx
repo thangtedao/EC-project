@@ -54,7 +54,6 @@ const MainLayout = () => {
   };
 
   const logoutUser = async () => {
-    navigate("/");
     await customFetch.get("/auth/logout");
     toast.success("Logged out", {
       position: "top-center",
@@ -62,6 +61,7 @@ const MainLayout = () => {
       pauseOnHover: false,
       theme: "colored",
     });
+    navigate("/");
   };
 
   return (
