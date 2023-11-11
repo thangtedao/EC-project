@@ -24,13 +24,12 @@ const Wrapper = styled.div`
   }
   .product-card-image {
     width: 100%;
-    height: 50%;
     display: grid;
     place-items: center;
     overflow: hidden;
     img {
-      width: 10rem;
-      height: 10rem;
+      width: 80%;
+      height: 100%;
     }
   }
   .product-card-name {
@@ -92,6 +91,7 @@ const ProductCard = ({ product }) => {
           <div className="product-card-description">
             <p>{product.description}</p>
           </div>
+
           <ReactStars
             count={5}
             //onChange={ratingChanged}

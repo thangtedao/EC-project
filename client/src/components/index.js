@@ -13,3 +13,4 @@ export { default as Footer } from "./Footer";
 export { default as ProductCard } from "./ProductCard";
 export { default as ScrollToTop } from "./ScrollToTop";
 export { default as ProductList } from "./ProductList";
+export { default as ProductCart } from "./ProductCart";

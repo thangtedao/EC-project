@@ -1,9 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import img from "../assets/data/image/laptop002.jpg";
-import DeleteIcon from "@mui/icons-material/Delete";
+import Checkbox from "@mui/material/Checkbox";
+import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { ProductCart } from "../components";
+import { pink } from "@mui/material/colors";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -22,11 +25,15 @@ const Wrapper = styled.div`
     border-bottom: 1px solid lightgray;
   }
   .cart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
   .header-action {
-    padding: 1rem 0;
+    //padding: 1rem 0;
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.5rem;
   }
   .product-item-outer {
     background-color: white;
@@ -39,12 +46,11 @@ const Wrapper = styled.div`
   .product-item {
     position: relative;
     display: flex;
-    padding-left: 1rem;
+    //padding-left: 1rem;
   }
-  .checkbox-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .checkbox-btn {
+    width: 30px;
+    height: 30px;
   }
   .product-image {
     width: 20%;
@@ -87,6 +93,7 @@ const Wrapper = styled.div`
       background-color: lightgray;
       display: grid;
       place-items: center;
+      cursor: pointer;
     }
   }
 `;
@@ -101,9 +108,7 @@ export const loader = async ({ params }) => {
 
 const Cart = () => {
   const cart = useSelector((state) => state.cart.cart);
-  const token = useSelector((state) => state.user.token);
   console.log(cart);
-  console.log(token);
 
   return (
     <Wrapper>
@@ -112,41 +117,22 @@ const Cart = () => {
       </div>
       <div className="cart-container">
         <div className="header-action">
-          <input type="checkbox" name="product" />
-          <label htmlFor="product">Chọn tất cả</label>
+          <Checkbox
+            sx={{
+              color: pink[800],
+              "&.Mui-checked": {
+                color: pink[600],
+              },
+            }}
+            className="checkbox-btn"
+            icon={<CircleOutlinedIcon />}
+            checkedIcon={<CheckCircleIcon />}
+          />
+          Chọn tất cả
         </div>
-
-        <div className="product-item-outer">
-          <div className="product-item">
-            <div className="checkbox-wrapper">
-              <input type="checkbox" />
-            </div>
-
-            <div className="product-image">
-              <img src={img} alt="product image" />
-            </div>
-
-            <div className="product-info">
-              <div className="product-info-name">
-                Samsung Galaxy Fold5 12GB 1TB-Kem
-                <DeleteIcon />
-              </div>
-              <div className="product-info-price">
-                47.990.000đ
-                <div className="product-count">
-                  <span className="count-btn">-</span>
-                  <input type="text" readOnly="readonly" defaultValue="1" />
-                  <span className="count-btn">+</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="block-combo-promotion">
-            <div className="combo-promotion-title"></div>
-            <div className="list-combo"></div>
-          </div>
-        </div>
+        {cart?.map((item, index) => {
+          return <ProductCart key={index} product={item} />;
+        })}
       </div>
     </Wrapper>
   );

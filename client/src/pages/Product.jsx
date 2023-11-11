@@ -262,7 +262,9 @@ const Product = () => {
             <button className="btn-buynow">Mua ngay</button>
             <button
               className="btn-addtocart"
-              onClick={() => dispatch(addToCart({ product }))}
+              onClick={() =>
+                dispatch(addToCart({ product: { ...product, count: 1 } }))
+              }
             >
               <AddShoppingCartIcon />
               <p>Thêm vào giỏ</p>
