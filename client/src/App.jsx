@@ -9,6 +9,8 @@ import {
   Register,
   Product,
   Cart,
+  Payment,
+  PaymentInfo,
 } from "./pages";
 
 /* ACTION */
@@ -21,6 +23,7 @@ import { loader as homeLoader } from "./pages/Home";
 import { loader as productLoader } from "./pages/Product";
 import { loader as categoryLoader } from "./pages/Category";
 import { loader as cartLoader } from "./pages/Cart";
+import { loader as paymentInfoLoader } from "./pages/PaymentInfo";
 
 const router = createBrowserRouter([
   {
@@ -51,8 +54,22 @@ const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: <Cart />,
-        loader: cartLoader,
+        children: [
+          {
+            index: true,
+            element: <Cart />,
+            loader: cartLoader,
+          },
+          {
+            path: "payment-info",
+            element: <PaymentInfo />,
+            loader: paymentInfoLoader,
+          },
+          {
+            path: "payment",
+            element: <Payment />,
+          },
+        ],
       },
       {
         path: "category/:slug1",

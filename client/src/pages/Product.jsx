@@ -293,7 +293,7 @@ const Product = () => {
               đánh giá kỹ hơn về mẫu điện thoại gaming này trong bài viết đây.
             </p>
           </div>
-          <ProductReview />
+          <ProductReview product={product} />
         </div>
         <div className="bot-container-column-2">
           <ProductSpecifications />

@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import img from "../../assets/react.svg";
+import Rating from "@mui/material/Rating";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -62,8 +63,9 @@ const Wrapper = styled.div`
     place-items: center;
     background: red;
     color: white;
-    border-radius: 10px;
+    border-radius: 5px;
     border: transparent;
+    cursor: pointer;
   }
 
   // BOT
@@ -97,15 +99,15 @@ const Wrapper = styled.div`
   }
 `;
 
-const ProductReview = () => {
+const ProductReview = ({ product }) => {
   return (
     <Wrapper>
       <div className="product-review-container">
-        <p>Đánh giá & nhận xét ???</p>
+        <p>Đánh giá & nhận xét {product.name}</p>
         <div className="box-review">
           <div className="box-review-score">
             <p>5/5</p>
-            <div className="item-star">*****</div>
+            <Rating name="read-only" value="5" size="small" readOnly />
             <div className="number-of-review">99 đánh giá</div>
           </div>
           <div className="box-review-star">
@@ -139,7 +141,9 @@ const ProductReview = () => {
 
         <div className="btn-review-container">
           <p>Bạn đánh giá sao về sản phẩm này?</p>
-          <button className="btn-review">Đánh giá ngay</button>
+          <button className="btn-review" type="button">
+            Đánh giá ngay
+          </button>
         </div>
 
         <div className="box-review-filter"></div>
@@ -151,7 +155,7 @@ const ProductReview = () => {
               <p>27/8/2023 00:06</p>
             </div>
             <div className="box-review-comment-item-content">
-              <div className="item-star">*****</div>
+              <Rating name="read-only" value="5" size="small" readOnly />
               <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
             </div>
           </div>
@@ -163,7 +167,7 @@ const ProductReview = () => {
               <p>27/8/2023 00:06</p>
             </div>
             <div className="box-review-comment-item-content">
-              <div className="item-star">*****</div>
+              <Rating name="read-only" value="5" size="small" readOnly />
               <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
             </div>
           </div>
