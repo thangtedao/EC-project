@@ -330,3 +330,8 @@ button:disabled {
   background: #ffeeee;
   color: #d66a6a;
 }
+
+.is-flex {
+  display: flex;
+  gap: 1rem;
+}

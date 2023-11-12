@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   padding-top: 1rem;
   .footer-container {
     width: 1100px;
-    height: 300px;
+    //height: 300px;
     //border: 1px solid red;
     display: flex;
     justify-content: space-between;

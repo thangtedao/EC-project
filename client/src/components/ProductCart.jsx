@@ -11,23 +11,25 @@ import {
   removeFromCart,
 } from "../state/cartSlice";
 
-const ProductCart = ({ product }) => {
+const ProductCart = ({ product, isPayment }) => {
   const dispatch = useDispatch();
 
   return (
     <div className="product-item-outer">
       <div className="product-item">
-        <Checkbox
-          sx={{
-            color: pink[800],
-            "&.Mui-checked": {
-              color: pink[600],
-            },
-          }}
-          className="checkbox-btn"
-          icon={<CircleOutlinedIcon />}
-          checkedIcon={<CheckCircleIcon />}
-        />
+        {!isPayment && (
+          <Checkbox
+            sx={{
+              color: pink[800],
+              "&.Mui-checked": {
+                color: pink[600],
+              },
+            }}
+            className="checkbox-btn"
+            icon={<CircleOutlinedIcon />}
+            checkedIcon={<CheckCircleIcon />}
+          />
+        )}
 
         <div className="product-image">
           <img src={product?.images[0]} alt="product image" />
@@ -36,28 +38,34 @@ const ProductCart = ({ product }) => {
         <div className="product-info">
           <div className="product-info-name">
             {product?.name}
-            <DeleteIcon
-              sx={{ cursor: "pointer" }}
-              onClick={() => dispatch(removeFromCart({ id: product._id }))}
-            />
+            {!isPayment && (
+              <DeleteIcon
+                sx={{ cursor: "pointer" }}
+                onClick={() => dispatch(removeFromCart({ id: product._id }))}
+              />
+            )}
           </div>
           <div className="product-info-price">
             {product?.price}
-            <div className="product-count">
-              <span
-                className="count-btn"
-                onClick={() => dispatch(decreaseCount({ id: product._id }))}
-              >
-                -
-              </span>
-              <input type="text" readOnly="readonly" value={product?.count} />
-              <span
-                className="count-btn"
-                onClick={() => dispatch(increaseCount({ id: product._id }))}
-              >
-                +
-              </span>
-            </div>
+            {!isPayment ? (
+              <div className="product-count">
+                <span
+                  className="count-btn"
+                  onClick={() => dispatch(decreaseCount({ id: product._id }))}
+                >
+                  -
+                </span>
+                <input type="text" readOnly="readonly" value={product?.count} />
+                <span
+                  className="count-btn"
+                  onClick={() => dispatch(increaseCount({ id: product._id }))}
+                >
+                  +
+                </span>
+              </div>
+            ) : (
+              <p>Số lượng: {product?.count}</p>
+            )}
           </div>
         </div>
       </div>

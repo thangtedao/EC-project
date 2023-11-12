@@ -9,9 +9,9 @@ const Wrapper = styled.div`
   width: 100%;
   position: relative;
   .main-layout {
+    min-height: 800px;
     display: flex;
     justify-content: center;
-    align-items: center;
   }
 `;
 
@@ -80,7 +80,7 @@ const MainLayout = () => {
         <div className="main-layout">
           <Outlet context={{ user }} />
         </div>
-        <Footer />
+        <Footer className="footer" />
       </Wrapper>
     </MainLayoutContext.Provider>
   );

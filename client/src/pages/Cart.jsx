@@ -24,6 +24,15 @@ const Wrapper = styled.div`
     place-items: center;
     border-bottom: 1px solid lightgray;
   }
+  .cart-empty {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+  }
   .cart-container {
     display: flex;
     flex-direction: column;
@@ -115,25 +124,32 @@ const Cart = () => {
       <div className="cart-header">
         <ArrowBackIcon /> Giỏ hàng của bạn
       </div>
-      <div className="cart-container">
-        <div className="header-action">
-          <Checkbox
-            sx={{
-              color: pink[800],
-              "&.Mui-checked": {
-                color: pink[600],
-              },
-            }}
-            className="checkbox-btn"
-            icon={<CircleOutlinedIcon />}
-            checkedIcon={<CheckCircleIcon />}
-          />
-          Chọn tất cả
+      {cart.length <= 0 ? (
+        <div className="cart-empty">
+          <p>Giỏ hàng của bạn đang trống.</p>
+          <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
         </div>
-        {cart?.map((item, index) => {
-          return <ProductCart key={index} product={item} />;
-        })}
-      </div>
+      ) : (
+        <div className="cart-container">
+          <div className="header-action">
+            <Checkbox
+              sx={{
+                color: pink[800],
+                "&.Mui-checked": {
+                  color: pink[600],
+                },
+              }}
+              className="checkbox-btn"
+              icon={<CircleOutlinedIcon />}
+              checkedIcon={<CheckCircleIcon />}
+            />
+            Chọn tất cả
+          </div>
+          {cart?.map((item, index) => {
+            return <ProductCart key={index} product={item} />;
+          })}
+        </div>
+      )}
     </Wrapper>
   );
 };
