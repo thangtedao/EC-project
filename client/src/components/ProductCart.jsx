@@ -19,12 +19,12 @@ const ProductCart = ({ product, isPayment }) => {
       <div className="product-item">
         {!isPayment && (
           <Checkbox
-            sx={{
-              color: pink[800],
-              "&.Mui-checked": {
-                color: pink[600],
-              },
-            }}
+            // sx={{
+            //   color: pink[800],
+            //   "&.Mui-checked": {
+            //     color: pink[600],
+            //   },
+            // }}
             className="checkbox-btn"
             icon={<CircleOutlinedIcon />}
             checkedIcon={<CheckCircleIcon />}

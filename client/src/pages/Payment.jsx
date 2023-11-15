@@ -7,6 +7,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import { pink } from "@mui/material/colors";
+import TextField from "@mui/material/TextField";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -96,6 +98,59 @@ const Wrapper = styled.div`
       cursor: pointer;
     }
   }
+
+  .info-payment {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+  }
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem 1rem 1rem;
+    gap: 1rem;
+  }
+  .btn-apply {
+    width: 5rem;
+    margin-top: 0.75rem;
+    height: 2.3rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    background: red;
+    color: white;
+    cursor: pointer;
+  }
+  .bottom-bar {
+    width: 100%;
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    background-color: white;
+    gap: 1rem;
+    .btn {
+      height: 2.5rem;
+      border-radius: 5px;
+      border: none;
+      background: red;
+      font-size: medium;
+      color: white;
+      cursor: pointer;
+    }
+  }
+  .price-temp {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-weight: bold;
+  }
 `;
 
 export const loader = async ({ params }) => {
@@ -107,30 +162,78 @@ export const loader = async ({ params }) => {
 };
 
 const Payment = () => {
+  const navigate = useNavigate();
   const cart = useSelector((state) => state.cart.cart);
+
+  let totalPrice = 0;
+  cart?.map((item) => {
+    return (totalPrice += parseInt(item.price));
+  });
+
   return (
     <Wrapper>
       <div className="cart-header">
-        <ArrowBackIcon /> Thông tin
+        <a onClick={() => navigate("/cart/payment-info")}>
+          <ArrowBackIcon />
+        </a>
+        Thanh toán
       </div>
-      <div className="cart-container">
-        <div className="header-action">
-          <Checkbox
-            sx={{
-              color: pink[800],
-              "&.Mui-checked": {
-                color: pink[600],
-              },
-            }}
-            className="checkbox-btn"
-            icon={<CircleOutlinedIcon />}
-            checkedIcon={<CheckCircleIcon />}
+      <div className="info-payment">
+        <div className="flex-between">
+          <TextField
+            id=""
+            label="Mã giảm giá"
+            variant="standard"
+            placeholder="Nhập mã giảm giá (chỉ áp dụng 1 lần)"
+            sx={{ width: "85%" }}
           />
-          Chọn tất cả
+          <button className="btn-apply">Áp dụng</button>
         </div>
-        {cart?.map((item, index) => {
-          return <ProductCart key={index} product={item} />;
-        })}
+        <div className="flex-between">
+          <p>Số lượng sản phẩm</p>
+          {cart?.length}
+        </div>
+        <div className="flex-between">
+          <p>Tiền hàng (tạm tính)</p>
+          {totalPrice}đ
+        </div>
+        <div className="flex-between">
+          <p>Phí vận chuyển</p>
+          Miễn phí
+        </div>
+        <div className="flex-between">
+          <p>Tổng tiền (đã gồm VAT)</p>
+          {totalPrice}đ
+        </div>
+      </div>
+
+      <div className="info-payment">
+        <div className="flex-between">
+          <p>Khách hàng</p>
+          ????
+        </div>
+        <div className="flex-between">
+          <p>Số điện thoại</p>
+          ????
+        </div>
+        <div className="flex-between">
+          <p>Email</p>
+          ????
+        </div>
+        <div className="flex-between">
+          <p>Nhận hàng tại</p>
+          ????
+        </div>
+      </div>
+
+      <div className="bottom-bar">
+        <div className="price-temp">
+          <p>Tổng tiền tạm tính:</p>
+          {totalPrice}đ
+        </div>
+        <button className="btn" onClick={() => navigate("/cart/payment")}>
+          Thanh toán
+        </button>
       </div>
     </Wrapper>
   );

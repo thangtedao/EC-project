@@ -80,7 +80,7 @@ const MainLayout = () => {
         <div className="main-layout">
           <Outlet context={{ user }} />
         </div>
-        <Footer className="footer" />
+        <Footer />
       </Wrapper>
     </MainLayoutContext.Provider>
   );

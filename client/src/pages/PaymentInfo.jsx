@@ -19,7 +19,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 const Wrapper = styled.div`
   width: 650px;
   height: 100%;
-  padding: 1rem 0;
+  padding-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -124,6 +124,32 @@ const Wrapper = styled.div`
     border-radius: 10px;
     padding: 1rem;
   }
+  .bottom-bar {
+    width: 100%;
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    background-color: white;
+    gap: 1rem;
+    .btn {
+      height: 2.5rem;
+      border-radius: 5px;
+      border: none;
+      background: red;
+      font-size: medium;
+      color: white;
+      cursor: pointer;
+    }
+  }
+  .price-temp {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-weight: bold;
+  }
 `;
 
 export const loader = async ({ params }) => {
@@ -137,6 +163,11 @@ export const loader = async ({ params }) => {
 const PaymentInfo = () => {
   const cart = useSelector((state) => state.cart.cart);
   const navigate = useNavigate();
+
+  let totalPrice = 0;
+  cart?.map((item) => {
+    return (totalPrice += parseInt(item.price));
+  });
 
   useEffect(() => {
     if (cart.length <= 0) {
@@ -223,7 +254,10 @@ const PaymentInfo = () => {
   return (
     <Wrapper>
       <div className="cart-header">
-        <ArrowBackIcon /> Thông tin
+        <a onClick={() => navigate("/cart")}>
+          <ArrowBackIcon />
+        </a>
+        Thông tin
       </div>
       <div className="cart-container">
         {cart?.map((item, index) => {
@@ -331,6 +365,15 @@ const PaymentInfo = () => {
 
           <TextField id="" label="Số nhà, tên đường" variant="standard" />
         </div>
+      </div>
+      <div className="bottom-bar">
+        <div className="price-temp">
+          <p>Tổng tiền tạm tính:</p>
+          {totalPrice}đ
+        </div>
+        <button className="btn" onClick={() => navigate("/cart/payment")}>
+          Tiếp tục
+        </button>
       </div>
     </Wrapper>
   );

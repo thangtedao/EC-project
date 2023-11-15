@@ -7,6 +7,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import { pink } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -105,6 +106,33 @@ const Wrapper = styled.div`
       cursor: pointer;
     }
   }
+  .bottom-bar {
+    width: 100%;
+    align-self: flex-end;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    background-color: white;
+    .btn {
+      border-radius: 10px;
+      border: none;
+      background: red;
+      font-weight: bold;
+      color: white;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+  }
+  .price-temp {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+  }
 `;
 
 export const loader = async ({ params }) => {
@@ -116,13 +144,22 @@ export const loader = async ({ params }) => {
 };
 
 const Cart = () => {
+  const navigate = useNavigate();
   const cart = useSelector((state) => state.cart.cart);
   console.log(cart);
+
+  let totalPrice = 0;
+  cart?.map((item) => {
+    return (totalPrice += parseInt(item.price));
+  });
 
   return (
     <Wrapper>
       <div className="cart-header">
-        <ArrowBackIcon /> Giỏ hàng của bạn
+        <a onClick={() => navigate("/")}>
+          <ArrowBackIcon />
+        </a>
+        Giỏ hàng của bạn
       </div>
       {cart.length <= 0 ? (
         <div className="cart-empty">
@@ -133,12 +170,6 @@ const Cart = () => {
         <div className="cart-container">
           <div className="header-action">
             <Checkbox
-              sx={{
-                color: pink[800],
-                "&.Mui-checked": {
-                  color: pink[600],
-                },
-              }}
               className="checkbox-btn"
               icon={<CircleOutlinedIcon />}
               checkedIcon={<CheckCircleIcon />}
@@ -150,6 +181,15 @@ const Cart = () => {
           })}
         </div>
       )}
+      <div className="bottom-bar">
+        <div className="price-temp">
+          <p>Tạm tính</p>
+          {totalPrice}đ
+        </div>
+        <button className="btn" onClick={() => navigate("payment-info")}>
+          Mua ngay {`(${cart.length})`}
+        </button>
+      </div>
     </Wrapper>
   );
 };

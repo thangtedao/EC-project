@@ -126,7 +126,12 @@ export const getProductByCategory = async (req, res) => {
 export const getSingleProduct = async (req, res) => {
   try {
     const { slug } = req.params;
-    const product = await Product.findOne({ slug: slug });
+    // const product = await Product.findOne({ slug: slug });
+    const product = await Product.findOneAndUpdate(
+      { slug: slug },
+      { $inc: { viewed: 1 } },
+      { new: true }
+    );
     if (!product) throw new NotFoundError(`no product`);
     res.status(200).json({ product });
   } catch (error) {
