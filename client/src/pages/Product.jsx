@@ -218,6 +218,7 @@ export const loader = async ({ params }) => {
 };
 
 const Product = () => {
+  window.scrollTo(0, 0);
   const dispatch = useDispatch();
   const { product, relatedProducts } = useLoaderData();
 

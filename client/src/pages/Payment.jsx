@@ -9,6 +9,9 @@ import { ProductCart } from "../components";
 import { pink } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useMainLayoutContext } from "./MainLayout";
+import customFetch from "../utils/customFetch";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -104,14 +107,15 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-top: 1rem;
     border: 1px solid lightgray;
     border-radius: 10px;
+    padding: 0.5rem;
   }
   .flex-between {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 1rem 1rem 1rem;
+    //padding: 0.5rem 1rem 1rem 1rem;
+    padding: 0.25rem 1rem;
     gap: 1rem;
   }
   .btn-apply {
@@ -124,6 +128,13 @@ const Wrapper = styled.div`
     background: red;
     color: white;
     cursor: pointer;
+  }
+  .payment-title {
+    margin-top: 1rem;
+  }
+  .payment-method {
+    display: flex;
+    align-items: center;
   }
   .bottom-bar {
     width: 100%;
@@ -163,12 +174,25 @@ export const loader = async ({ params }) => {
 
 const Payment = () => {
   const navigate = useNavigate();
+  const { user } = useMainLayoutContext();
   const cart = useSelector((state) => state.cart.cart);
+  console.log(cart);
 
   let totalPrice = 0;
   cart?.map((item) => {
     return (totalPrice += parseInt(item.price));
   });
+
+  const handleCheckout = async () => {
+    await customFetch
+      .post(`/order/create-checkout-session`, { cart, userId: "1234567890" })
+      .then((res) => {
+        if (res.data.url) {
+          window.location.href = res.data.url;
+        }
+      })
+      .catch((err) => console.log(err.message));
+  };
 
   return (
     <Wrapper>
@@ -207,6 +231,17 @@ const Payment = () => {
         </div>
       </div>
 
+      <div className="payment-title">THÔNG TIN THANH TOÁN</div>
+      <div className="payment-method">
+        <Checkbox
+          className="checkbox-btn"
+          icon={<CircleOutlinedIcon />}
+          checkedIcon={<CheckCircleIcon />}
+        />
+        PayPal or Credit Card
+      </div>
+
+      <div className="payment-title">THÔNG TIN NHẬN HÀNG</div>
       <div className="info-payment">
         <div className="flex-between">
           <p>Khách hàng</p>
@@ -231,7 +266,7 @@ const Payment = () => {
           <p>Tổng tiền tạm tính:</p>
           {totalPrice}đ
         </div>
-        <button className="btn" onClick={() => navigate("/cart/payment")}>
+        <button className="btn" onClick={() => handleCheckout()}>
           Thanh toán
         </button>
       </div>

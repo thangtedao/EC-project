@@ -11,6 +11,7 @@ import {
   Cart,
   Payment,
   PaymentInfo,
+  Order,
 } from "./pages";
 
 /* ACTION */
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: "contact",
         element: <Contact />,
+      },
+      {
+        path: "checkout-success",
+        element: <Order />,
       },
     ],
   },

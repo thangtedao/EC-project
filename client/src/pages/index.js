@@ -9,3 +9,4 @@ export { default as Product } from "../pages/Product";
 export { default as Cart } from "../pages/Cart";
 export { default as Payment } from "../pages/Payment";
 export { default as PaymentInfo } from "../pages/PaymentInfo";
+export { default as Order } from "../pages/Order";
