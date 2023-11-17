@@ -5,6 +5,8 @@ import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { store } from "../state/store.js";
+import { login } from "../state/userSlice.js";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -17,6 +19,11 @@ export const action = async ({ request }) => {
       pauseOnHover: false,
       theme: "colored",
     });
+
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+    store.dispatch(login({ user: user }));
     return redirect("/");
   } catch (error) {
     toast.error(error?.response?.data?.msg, {

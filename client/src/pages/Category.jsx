@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import NavLinks from "../components/NavLinks";
 import { categoryData } from "../assets/data/categoryData";
 import { FAQ, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
-import { useLoaderData } from "react-router-dom";
+import { NavLink, useLoaderData } from "react-router-dom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -158,7 +157,11 @@ const Category = () => {
       <div className="block-top-filter-brands">
         <div className="brands-list">
           {categoryData.map((item, index) => {
-            return <NavLinks key={index} image={item.image} />;
+            return (
+              <NavLink key={index}>
+                <img src={item.image} />
+              </NavLink>
+            );
           })}
         </div>
       </div>

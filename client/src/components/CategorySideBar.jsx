@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
-import NavLinks from "./NavLinks";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import { NavLink } from "react-router-dom";
 
@@ -31,14 +30,14 @@ const Wrapper = styled.div`
     visibility: visible;
   }
   .menu-tree {
-    border-radius: var(--border-radius);
     background: var(--background-secondary-color);
+    border: 1px solid lightgray;
+    width: 200px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    width: 200px;
+    gap: 0.5rem;
     height: 350px;
     overflow: hidden;
   }
@@ -51,15 +50,15 @@ const Wrapper = styled.div`
     display: flex;
     gap: 5rem;
     flex-wrap: wrap;
-    //display: none;
     visibility: hidden;
   }
+
   .nav-link {
-    display: flex;
-    align-items: center;
-    color: #4a4a4a;
+    width: 100%;
     padding: 0.5rem 0.2rem;
-    border-radius: 5px 5px 0 0;
+    border-radius: 5px;
+    color: #4a4a4a;
+    font-weight: 700;
     :hover {
       background-color: lightgray;
     }
@@ -71,7 +70,6 @@ const Wrapper = styled.div`
   }
 
   .show-category {
-    //display: block;
     visibility: visible;
   }
   .category-product {
@@ -133,10 +131,9 @@ const CategorySideBar = () => {
                     handleItemLeave,
                   ]}
                 >
-                  <NavLinks
-                    path={`/category/${item?.slug}`}
-                    text={item?.name}
-                  />
+                  <NavLink className="nav-link" to={`/category/${item?.slug}`}>
+                    {item?.name}
+                  </NavLink>
                 </div>
               );
             })}
@@ -156,13 +153,14 @@ const CategorySideBar = () => {
               {categoryChild &&
                 categoryChild[activeItem.index]?.map((item) => {
                   return (
-                    <NavLinks
-                      path={`/category/${categories[activeItem.index].slug}/${
+                    <NavLink
+                      to={`/category/${categories[activeItem.index].slug}/${
                         item.slug
                       }`}
                       key={item?._id}
-                      text={item?.name}
-                    />
+                    >
+                      {item?.name}
+                    </NavLink>
                   );
                 })}
 

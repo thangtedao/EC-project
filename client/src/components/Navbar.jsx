@@ -1,26 +1,27 @@
 import React from "react";
 import styled from "styled-components";
-import { FaAlignLeft, FaShoppingBag, FaUserCircle } from "react-icons/fa";
-import { Search, Notifications, Menu, Close } from "@mui/icons-material";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import LogoutContainer from "./LogoutContainer";
-import NavLinks from "./NavLinks";
 import SearchBar from "./SearchBar";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import FormatAlignLeftOutlinedIcon from "@mui/icons-material/FormatAlignLeftOutlined";
+import Badge from "@mui/material/Badge";
+import Typography from "@mui/material/Typography";
+import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { HiOutlineShoppingBag } from "react-icons/hi2";
 
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
-  background: var(--background-secondary-color);
   background: #d70018;
   z-index: 99;
-  height: 3.5rem;
+  height: 3.8rem;
 
   .nav-center {
     display: flex;
     width: 90%;
-
     align-items: center;
     justify-content: space-between;
   }
@@ -41,29 +42,16 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1.2rem;
   }
-  .toggle-btn {
-    background: transparent;
-    border-color: transparent;
-    font-size: 1rem;
+  .nav-link {
     color: white;
     cursor: pointer;
     display: flex;
+    justify-content: center;
     align-items: center;
-    font-family: "Rubik", sans-serif;
+    gap: 0.5rem;
   }
   .icon {
-    margin-right: 0.5rem;
-    display: grid;
-    place-items: center;
-  }
-  .nav-link {
-    background: transparent;
-    border-color: transparent;
-    font-size: 1.1rem;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+    font-size: 1.8rem;
   }
 
   /* @media (min-width: 992px) {
@@ -72,27 +60,47 @@ const Wrapper = styled.div`
   } */
 `;
 
+const StyledBadge = styled(Badge)(() => ({
+  "& .MuiBadge-badge": {
+    right: 14,
+    top: 18,
+    padding: "0 4px",
+    fontSize: "10px",
+  },
+}));
+
 const Navbar = () => {
   const { toggleSideBar, user } = useMainLayoutContext();
+  const cart = useSelector((state) => state.cart.cart);
+
   return (
     <Wrapper>
       <div className="nav-center">
-        <NavLinks path="/" text="Logo" />
+        <NavLink to="/">
+          <Typography>Logo</Typography>
+        </NavLink>
 
         <SearchBar />
 
         <div className="nav-links">
-          <button type="button" className="toggle-btn" onClick={toggleSideBar}>
-            <span className="icon">
-              <FaAlignLeft />
-            </span>
-            Danh mục
-          </button>
-          <NavLinks text="Giỏ hàng" icon={<FaShoppingBag />} path="/cart" />
+          <div className="nav-link" onClick={toggleSideBar}>
+            <FormatAlignLeftOutlinedIcon />
+            <Typography>Danh mục</Typography>
+          </div>
+
+          <NavLink className="nav-link" to="/cart">
+            <StyledBadge badgeContent={cart.length > 0 && cart.length}>
+              <HiOutlineShoppingBag className="icon" />
+            </StyledBadge>
+            <Typography>Giỏ hàng</Typography>
+          </NavLink>
           {user ? (
             <LogoutContainer />
           ) : (
-            <NavLinks text="Đăng nhập" icon={<FaUserCircle />} path="/login" />
+            <NavLink to="/login" className="nav-link">
+              <AccountCircleIcon />
+              <Typography>Đăng nhập</Typography>
+            </NavLink>
           )}
         </div>
       </div>

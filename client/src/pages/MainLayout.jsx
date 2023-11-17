@@ -4,6 +4,7 @@ import { Footer, Header } from "../components";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -17,10 +18,6 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const user = await customFetch
-      .get("/user/current-user")
-      .then(({ data }) => data.user);
-
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data.categories);
@@ -34,8 +31,7 @@ export const loader = async () => {
         return children;
       })
     );
-
-    return { user, categories, categoryChild };
+    return { categories, categoryChild };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -45,24 +41,14 @@ export const loader = async () => {
 const MainLayoutContext = createContext();
 
 const MainLayout = () => {
-  const navigate = useNavigate();
-  const { user, categories, categoryChild } = useLoaderData();
+  const { categories, categoryChild } = useLoaderData();
   const [showSideBar, setShowSideBar] = useState(false);
 
   const toggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
 
-  const logoutUser = async () => {
-    await customFetch.get("/auth/logout");
-    toast.success("Logged out", {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-    navigate("/");
-  };
+  const user = useSelector((state) => state.user.user);
 
   return (
     <MainLayoutContext.Provider
@@ -72,7 +58,6 @@ const MainLayout = () => {
         user,
         showSideBar,
         toggleSideBar,
-        logoutUser,
       }}
     >
       <Wrapper>

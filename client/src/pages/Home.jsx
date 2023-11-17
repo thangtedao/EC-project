@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import SlideGallery from "../components/slider/SlideGallery";
-import NavLinks from "../components/NavLinks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -45,7 +44,7 @@ const Wrapper = styled.div`
   }
   .nav-link {
     width: 100%;
-    padding: 0.5rem 0.2rem;
+    padding: 0.3rem 0.2rem;
     border-radius: 5px;
     color: #4a4a4a;
     font-weight: 700;
@@ -185,11 +184,13 @@ const Home = () => {
           <div className="menu-container">
             {categories?.map((category, index) => {
               return (
-                <NavLinks
+                <NavLink
+                  className="nav-link"
                   key={index}
-                  path={`/category/${category.slug}`}
-                  text={category.name}
-                />
+                  to={`/category/${category.slug}`}
+                >
+                  {category.name}
+                </NavLink>
               );
             })}
           </div>

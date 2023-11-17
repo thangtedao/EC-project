@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import NavLinks from "./NavLinks";
 import HomeIcon from "@mui/icons-material/Home";
 import { FaAlignLeft } from "react-icons/fa";
 import { useMainLayoutContext } from "../pages/MainLayout";
+import { NavLink } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -46,7 +46,7 @@ const MenuBottom = () => {
   return (
     <Wrapper>
       <div className="menu-bottom-tab">
-        <NavLinks text="Trang chủ" icon={<HomeIcon />} path="/" />
+        <NavLink to="/">Trang chủ</NavLink>
         <button type="button" className="toggle-btn" onClick={toggleSideBar}>
           <span className="icon">
             <FaAlignLeft />

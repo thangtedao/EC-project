@@ -9,8 +9,15 @@ const initialState = {
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    login: (state, action) => {
+      state.user = action.payload.user;
+    },
+    logout: (state, action) => {
+      state.user = null;
+    },
+  },
 });
 
-export const {} = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 export default userSlice.reducer;
