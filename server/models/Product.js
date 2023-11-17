@@ -66,6 +66,7 @@ const productSchema = mongoose.Schema(
         star: Number,
         comment: String,
         postedby: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        default: [],
       },
     ],
     totalRating: {
