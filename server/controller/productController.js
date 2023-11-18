@@ -141,11 +141,15 @@ export const getSingleProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-    if (!updatedProduct) throw new NotFoundError(`no product with id ${id}`);
+    const { slug } = req.params;
+    const updatedProduct = await Product.findOneAndUpdate(
+      { slug: slug },
+      req.body,
+      {
+        new: true,
+      }
+    );
+    if (!updatedProduct) throw new NotFoundError(`no product ${slug}`);
     res.status(200).json({ updatedProduct });
   } catch (error) {
     res.status(409).json({ msg: error.message });

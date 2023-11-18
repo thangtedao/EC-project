@@ -3,14 +3,18 @@ import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
 import { useSelector } from "react-redux";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   width: 100%;
-  position: relative;
-  .main-layout {
-    min-height: 800px;
-    display: flex;
-    justify-content: center;
+  .dashboard {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+  .dashboard-page {
+    background-color: green;
+    width: 100%;
   }
 `;
 
@@ -22,26 +26,38 @@ export const loader = async () => {
   }
 };
 
-const DashboardLayoutContext = createContext();
+const DashboardContext = createContext();
 
 const DashboardLayout = () => {
   const user = useSelector((state) => state.user.user);
 
+  const [showSidebar, setShowSidebar] = useState(false);
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
   return (
-    <DashboardLayoutContext.Provider
+    <DashboardContext.Provider
       value={{
         user,
+        showSidebar,
+        toggleSidebar,
       }}
     >
       <Wrapper>
-        <div className="main-layout">
-          <Outlet context={{ user }} />
-        </div>
+        <main className="dashboard">
+          <Sidebar />
+          <div>
+            <Navbar />
+            <div className="dashboard-page">
+              <Outlet context={{ user }} />
+            </div>
+          </div>
+        </main>
       </Wrapper>
-    </DashboardLayoutContext.Provider>
+    </DashboardContext.Provider>
   );
 };
 
-export const useDashboardLayoutContext = () =>
-  useContext(DashboardLayoutContext);
+export const useDashboardContext = () => useContext(DashboardContext);
 export default DashboardLayout;

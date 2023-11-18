@@ -8,6 +8,7 @@ import {
   getRelatedProduct,
   getSingleProduct,
   rating,
+  updateProduct,
   uploadImages,
 } from "../controller/productController.js";
 import { Router } from "express";
@@ -26,6 +27,7 @@ router.get("/", getAllProduct);
 router.get("/category", getProductByCategory);
 router.delete("/delete/:id", deleteProduct);
 router.get("/:slug", getSingleProduct);
+router.patch("/update/:slug", updateProduct);
 router.patch("/wishlist", addToWishlist);
 router.patch("/rating", rating);
 router.delete("/delete-img/:id", deleteImages);
