@@ -90,7 +90,7 @@ const AddProduct = () => {
           <FormRowSelect
             name="category2"
             list={categoryC || []}
-            defaultValue={categoryC[0].name || "Non"}
+            defaultValue={categoryC.length > 0 && categoryC[0].name}
           />
           <div>
             <label htmlFor="images">image</label>

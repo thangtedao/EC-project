@@ -3,9 +3,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 /* ACTION */
 import Login, { action as loginAction } from "./pages/Login";
 import { action as addProductAction } from "./pages/AddProduct";
+import AddCategory, { action as addCategoryAction } from "./pages/AddCategory";
 
 /* LOADER */
 import { loader as addProductLoader } from "./pages/AddProduct";
+import { loader as addCategoryLoader } from "./pages/AddCategory";
 
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
@@ -32,6 +34,12 @@ const router = createBrowserRouter([
       {
         path: "edit-product",
         element: <EditProduct />,
+      },
+      {
+        path: "add-category",
+        element: <AddCategory />,
+        action: addCategoryAction,
+        loader: addCategoryLoader,
       },
     ],
   },
