@@ -101,6 +101,30 @@ const Sidebar = () => {
             </span>
             All Category
           </NavLink>
+          <NavLink to="add-coupon" end>
+            <span className="icon">
+              <MdAddToPhotos />
+            </span>
+            Add Coupon
+          </NavLink>
+          <NavLink to="all-coupon" end>
+            <span className="icon">
+              <MdAddToPhotos />
+            </span>
+            All Coupon
+          </NavLink>
+          <NavLink to="all-user" end>
+            <span className="icon">
+              <MdAddToPhotos />
+            </span>
+            All User
+          </NavLink>
+          <NavLink to="all-order" end>
+            <span className="icon">
+              <MdAddToPhotos />
+            </span>
+            All Order
+          </NavLink>
         </div>
       </div>
     </Wrapper>

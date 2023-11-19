@@ -8,6 +8,7 @@ import {
   getAllUsers,
   getCurrentUser,
   getOrders,
+  getSingleUser,
   getUserCart,
   getWishlist,
   unblockUser,
@@ -24,6 +25,7 @@ import {
 const router = Router();
 
 router.get("/current-user", authenticateUser, getCurrentUser);
+router.get("/single-user/:id", getSingleUser);
 router.get("/all-users", getAllUsers);
 router.get("/wishlist", getWishlist);
 router.post("/cart", userCart);
@@ -34,7 +36,7 @@ router.get("/cart", getUserCart);
 router.get("/get-orders", getOrders);
 router.patch("/order/update-order/:id", updateOrderStatus);
 router.get("/admin/app-stats", authorizePermissions("admin"), blockUser);
-router.patch("/update-user", validateUpdateInput, updateUser);
+router.patch("/update-user/:id", validateUpdateInput, updateUser);
 router.delete("/delete/:id", deleteUser);
 router.patch("/block-user", validateUpdateInput, blockUser);
 router.patch("/unblock-user", validateUpdateInput, unblockUser);

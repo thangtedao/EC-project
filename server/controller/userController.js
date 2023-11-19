@@ -24,6 +24,17 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+export const getSingleUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    res.status(StatusCodes.OK).json({ user });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
 export const getCurrentUser = async (req, res) => {
   try {
     if (req.user.userId) {
@@ -40,6 +51,7 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
+    const { id } = req.params;
     const data = { ...req.body };
     delete data.password;
 

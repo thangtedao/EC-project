@@ -185,13 +185,14 @@ const Payment = () => {
 
   const handleCheckout = async () => {
     await customFetch
-      .post(`/order/create-checkout-session`, { cart, userId: "1234567890" })
+      .post(`/order/create-checkout-session`, { cart, user })
       .then((res) => {
         if (res.data.url) {
           window.location.href = res.data.url;
         }
       })
       .catch((err) => console.log(err.message));
+    // console.log("cccccccccccccccccccccccccccccccc");
   };
 
   return (

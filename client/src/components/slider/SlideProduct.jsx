@@ -44,6 +44,7 @@ const Wrapper = styled.div`
 const SlideProduct = ({ products }) => {
   const check = products.length <= 5;
   let doubleSlide = 1;
+  if (products.length % 2 !== 0) delete products[products.length - 1];
   if (products.length > 12) doubleSlide = 2;
   else doubleSlide = 1;
 
@@ -60,23 +61,23 @@ const SlideProduct = ({ products }) => {
           breakpoints={{
             1100: {
               slidesPerView: 5,
-              grid: { rows: 2 },
+              grid: { rows: doubleSlide },
             },
             1020: {
               slidesPerView: 4,
-              grid: { rows: 2 },
+              grid: { rows: doubleSlide },
             },
             850: {
               slidesPerView: 3,
-              grid: { rows: 2 },
+              grid: { rows: doubleSlide },
             },
             690: {
               slidesPerView: 2,
-              grid: { rows: 2 },
+              grid: { rows: doubleSlide },
             },
             10: {
               slidesPerView: 2,
-              grid: { rows: 2 },
+              grid: { rows: doubleSlide },
             },
           }}
           autoplay={{

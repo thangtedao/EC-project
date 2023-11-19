@@ -16,7 +16,7 @@ export const action = async ({ request }) => {
       .get("/user/current-user")
       .then(({ data }) => data.user);
     store.dispatch(login({ user: user }));
-    return redirect("/add-product");
+    return redirect("/");
   } catch (error) {
     return error;
   }
