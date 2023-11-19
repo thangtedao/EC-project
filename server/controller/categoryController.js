@@ -22,8 +22,8 @@ export const getAllCategory = async (req, res) => {
 
 export const getSingleCategory = async (req, res) => {
   try {
-    const { name } = req.params;
-    const category = await Category.findOne({ name: name });
+    const { id } = req.params;
+    const category = await Category.findById(id);
     res.status(200).json({ category });
   } catch (error) {
     res.status(409).json({ msg: error.message });

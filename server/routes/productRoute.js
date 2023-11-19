@@ -25,7 +25,7 @@ router.patch(
 );
 router.get("/", getAllProduct);
 router.get("/category", getProductByCategory);
-router.delete("/delete/:id", deleteProduct);
+router.delete("/:id", deleteProduct);
 router.get("/:slug", getSingleProduct);
 router.patch("/update/:slug", updateProduct);
 router.patch("/wishlist", addToWishlist);
