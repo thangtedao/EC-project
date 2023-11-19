@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { IconButton } from "@mui/material";
+import { useDashboardContext } from "../pages/DashboardLayout";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -60,6 +61,7 @@ const Wrapper = styled.div`
 `;
 
 const ProductCard = ({ product }) => {
+  const { deleteProduct } = useDashboardContext();
   const navigate = useNavigate();
 
   return (
@@ -83,7 +85,7 @@ const ProductCard = ({ product }) => {
         <button onClick={() => navigate(`/edit-product/${product.slug}`)}>
           Edit
         </button>
-        <button>Delete</button>
+        <button onClick={() => deleteProduct(product._id)}>Delete</button>
       </div>
     </Wrapper>
   );

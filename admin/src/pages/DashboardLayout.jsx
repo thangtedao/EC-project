@@ -30,10 +30,17 @@ const DashboardContext = createContext();
 
 const DashboardLayout = () => {
   const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
 
   const [showSidebar, setShowSidebar] = useState(false);
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
+  };
+
+  const deleteProduct = async (id) => {
+    await customFetch.delete(`/product/${id}`);
+    console.log("deleted");
+    navigate("/all-product");
   };
 
   return (
@@ -42,6 +49,7 @@ const DashboardLayout = () => {
         user,
         showSidebar,
         toggleSidebar,
+        deleteProduct,
       }}
     >
       <Wrapper>

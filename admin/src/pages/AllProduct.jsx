@@ -16,6 +16,9 @@ const Wrapper = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 1rem;
   padding: 1rem;
+  @media (max-width: 1550px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
 `;
 
 export const loader = async () => {

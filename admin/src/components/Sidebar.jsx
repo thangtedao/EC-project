@@ -14,7 +14,7 @@ const Wrapper = styled.aside`
       background: var(--background-secondary-color);
       min-height: 100vh;
       height: 100%;
-      width: 250px;
+      width: 230px;
       margin-left: -250px;
       transition: margin-left 0.3s ease-in-out;
     }
@@ -94,6 +94,12 @@ const Sidebar = () => {
               <MdAddToPhotos />
             </span>
             Add Category
+          </NavLink>
+          <NavLink to="all-category" end>
+            <span className="icon">
+              <MdAddToPhotos />
+            </span>
+            All Category
           </NavLink>
         </div>
       </div>
