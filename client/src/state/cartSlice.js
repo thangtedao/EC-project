@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import customFetch from "../utils/customFetch";
 
 const initialState = {
   cart: [],
@@ -18,12 +19,27 @@ export const cartSlice = createSlice({
       } else {
         product.count++;
       }
+
+      const setCart = async () => {
+        await customFetch.post("/user/cart", { cart: state.cart });
+      };
+      setCart();
     },
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter((item) => item._id !== action.payload.id);
+
+      const setCart = async () => {
+        await customFetch.post("/user/cart", { cart: state.cart });
+      };
+      setCart();
     },
     deleteCart: (state, action) => {
       state.cart = [];
+
+      const setCart = async () => {
+        await customFetch.delete("/user/empty-cart");
+      };
+      setCart();
     },
     increaseCount: (state, action) => {
       state.cart = state.cart.map((item) => {
@@ -32,6 +48,11 @@ export const cartSlice = createSlice({
         }
         return item;
       });
+
+      const setCart = async () => {
+        await customFetch.post("/user/cart", { cart: state.cart });
+      };
+      setCart();
     },
     decreaseCount: (state, action) => {
       state.cart = state.cart.map((item) => {
@@ -40,6 +61,11 @@ export const cartSlice = createSlice({
         }
         return item;
       });
+
+      const setCart = async () => {
+        await customFetch.post("/user/cart", { cart: state.cart });
+      };
+      setCart();
     },
   },
 });

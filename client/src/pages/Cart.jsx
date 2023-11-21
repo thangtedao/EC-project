@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import Checkbox from "@mui/material/Checkbox";
@@ -8,6 +8,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import { pink } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
+import customFetch from "../utils/customFetch";
+import { addToCart, deleteCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -146,7 +148,6 @@ export const loader = async ({ params }) => {
 const Cart = () => {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
 
   let totalPrice = 0;
   cart?.map((item) => {

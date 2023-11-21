@@ -14,7 +14,7 @@ import {
   unblockUser,
   updateOrderStatus,
   updateUser,
-  userCart,
+  setUserCart,
 } from "../controller/userController.js";
 import { validateUpdateInput } from "../middleware/validationMiddleware.js";
 import {
@@ -28,11 +28,11 @@ router.get("/current-user", authenticateUser, getCurrentUser);
 router.get("/single-user/:id", getSingleUser);
 router.get("/all-users", getAllUsers);
 router.get("/wishlist", getWishlist);
-router.post("/cart", userCart);
-router.delete("/empty-cart", emptyCart);
+router.post("/cart", authenticateUser, setUserCart);
+router.get("/cart", authenticateUser, getUserCart);
+router.delete("/empty-cart", authenticateUser, emptyCart);
 router.post("/cart/apply-coupon", applyCoupon);
 router.post("/cart/cash-order", createOrder);
-router.get("/cart", getUserCart);
 router.get("/get-orders", getOrders);
 router.patch("/order/update-order/:id", updateOrderStatus);
 router.get("/admin/app-stats", authorizePermissions("admin"), blockUser);

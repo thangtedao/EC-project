@@ -127,37 +127,45 @@ export const getWishlist = async (req, res) => {
   }
 };
 
-export const userCart = async (req, res) => {
+export const setUserCart = async (req, res) => {
   try {
     const { cart } = req.body;
-    const { _id } = req.user;
-    let products = [];
-    const user = await User.findById(_id);
-    const alreadyExistCart = await Cart.findOne({ orderBy: _id });
+    const { userId } = req.user;
+
+    const alreadyExistCart = await Cart.findOne({ user: userId });
     if (alreadyExistCart) {
-      alreadyExistCart.remove();
+      await Cart.deleteOne({ _id: alreadyExistCart._id });
     }
-    cart.map(async (item) => {
-      let object = {};
-      object.product = item._id;
-      object.count = item.count;
-      object.color = item.color;
-      let getPrice = await Product.findById(item._id).select("price").exec();
-      object.price = getPrice.price;
-      products.push(object);
+
+    const productPromise = cart.map(async (item) => {
+      // const product = await Product.findById(item._id).select("price").exec();
+      const object = {
+        product: item._id,
+        count: item.count,
+        color: item.color,
+        price: item.price,
+      };
+      return object;
     });
-    let cartTotal = 0;
-    products.map((product) => {
-      cartTotal = cartTotal + product.price * product.count;
-    });
-    let newCart = await new Cart({
+
+    const products = await Promise.all(productPromise);
+
+    let cartTotal = products.reduce(
+      (acc, product) => acc + product.price * product.count,
+      0
+    );
+
+    const newCart = new Cart({
       products,
       cartTotal,
-      orderBy: _id,
-    }).save();
+      user: userId,
+    });
+
+    await newCart.save();
 
     res.status(StatusCodes.OK).json({ newCart });
   } catch (error) {
+    throw error;
     res.status(409).json({ msg: error.message });
   }
 };
@@ -176,10 +184,11 @@ export const getUserCart = async (req, res) => {
 
 export const emptyCart = async (req, res) => {
   try {
-    const { _id } = req.user;
-    const cart = await Cart.findOneAndRemove({ orderBy: _id });
+    const { userId } = req.user;
+    const cart = await Cart.findOneAndRemove({ user: userId });
     res.status(StatusCodes.OK).json({ cart });
   } catch (error) {
+    throw error;
     res.status(409).json({ msg: error.message });
   }
 };
