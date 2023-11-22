@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { categoryData } from "../assets/data/categoryData";
 import { FAQ, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
 import { NavLink, useLoaderData } from "react-router-dom";
+import { debounce } from "lodash";
 
 const Wrapper = styled.div`
   display: flex;
@@ -130,27 +131,54 @@ const Wrapper = styled.div`
 export const loader = async ({ params }) => {
   try {
     const { slug1, slug2 } = params;
-    let products = null;
+
+    let endpoint = `/product/category?category=${slug1}&page=1&limit=11`;
 
     if (slug2) {
-      products = await customFetch
-        .get(`/product/category/?category=${slug1},${slug2}`)
-        .then(({ data }) => data.products);
-    } else {
-      products = await customFetch
-        .get(`/product/?category=${slug1}`)
-        .then(({ data }) => data.products);
+      endpoint = `/product/category?category=${slug1},${slug2}&page=1&limit=6`;
     }
 
-    return { products };
+    const { data } = await customFetch.get(endpoint);
+    return { data, slug1 };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { products } = useLoaderData();
+  const { data, slug1, slug2 } = useLoaderData();
+  const [products, setProducts] = useState(data.products);
+  const [page, setPage] = useState(1);
   const numOfProduct = products?.length;
+  console.log(products.length);
+
+  const loadMore = debounce(async () => {
+    const updatedPage = page + 1;
+    setPage(updatedPage);
+
+    const fetchData = async () => {
+      try {
+        let endpoint = `/product/category?category=${slug1}&page=${
+          page + 1
+        }&limit=10`;
+
+        if (slug2) {
+          endpoint = `/product/category?category=${slug1},${slug2}&page=${page}&limit=6`;
+        }
+
+        const { data } = await customFetch.get(endpoint);
+
+        setProducts((prevProducts) => [...prevProducts, ...data.products]);
+
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+    console.log(page);
+    console.log(products);
+  }, 0);
 
   return (
     <Wrapper>
@@ -190,6 +218,7 @@ const Category = () => {
         </div>
         <ProductList products={products} />
       </div>
+      <button onClick={() => loadMore()}>Xem thêm</button>
 
       {/* BOT */}
       <div className="bot-container">

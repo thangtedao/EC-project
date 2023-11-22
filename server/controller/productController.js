@@ -56,21 +56,65 @@ export const deleteImages = async (req, res) => {
   }
 };
 
+// export const getAllProduct = async (req, res) => {
+//   try {
+//     // FILTERING
+//     // ex: localhost:..../product/?price=9999&brand=Apple
+//     const queryObj = { ...req.query };
+//     const excludeFields = ["page", "sort", "limit", "fields"];
+//     excludeFields.forEach((el) => delete queryObj[el]);
+//     let queryStr = JSON.stringify(queryObj);
+//     // filter price (gte = greater than or equal, .....)
+//     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+//     // ex: local..../product/?price[gte]=9999&price[lt]=12000
+//     let query = Product.find(JSON.parse(queryStr));
+
+//     // SORTING
+//     // ex: local..../product/?sort=category,-brand (sort theo chữ cái đầu, dấu - là sort ngược)
+//     if (req.query.sort) {
+//       const sortBy = req.query.sort.split(",").join(" ");
+//       query = query.sort(sortBy);
+//     } else {
+//       query = query.sort("-createdAt");
+//     }
+
+//     // LIMITING THE FIELDS
+//     // chức năng chọn lọc của mongodb
+//     // ex: local..../product/?fields=title,price
+//     if (req.query.fields) {
+//       const fields = req.query.fields.split(",").join(" ");
+//       query = query.select(fields);
+//     } else {
+//       query = query.select("-__v");
+//     }
+
+//     // PAGINATION
+//     const page = req.query.page;
+//     const limit = req.query.limit;
+//     const skip = (page - 1) * limit;
+//     query = query.skip(skip).limit(limit);
+//     if (req.query.page) {
+//       const productCount = await Product.countDocuments();
+//       if (skip >= productCount)
+//         throw new NotFoundError(`This page does not exists`);
+//     }
+
+//     const products = await query;
+//     res.status(200).json({ products });
+//   } catch (error) {
+//     res.status(409).json({ msg: error.message });
+//   }
+// };
+
 export const getAllProduct = async (req, res) => {
   try {
-    // FILTERING
-    // ex: localhost:..../product/?price=9999&brand=Apple
     const queryObj = { ...req.query };
     const excludeFields = ["page", "sort", "limit", "fields"];
     excludeFields.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
-    // filter price (gte = greater than or equal, .....)
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    // ex: local..../product/?price[gte]=9999&price[lt]=12000
     let query = Product.find(JSON.parse(queryStr));
 
-    // SORTING
-    // ex: local..../product/?sort=category,-brand (sort theo chữ cái đầu, dấu - là sort ngược)
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
@@ -78,25 +122,8 @@ export const getAllProduct = async (req, res) => {
       query = query.sort("-createdAt");
     }
 
-    // LIMITING THE FIELDS
-    // chức năng chọn lọc của mongodb
-    // ex: local..../product/?fields=title,price
-    if (req.query.fields) {
-      const fields = req.query.fields.split(",").join(" ");
-      query = query.select(fields);
-    } else {
-      query = query.select("-__v");
-    }
-
-    // PAGINATION
-    const page = req.query.page;
-    const limit = req.query.limit;
-    const skip = (page - 1) * limit;
-    query = query.skip(skip).limit(limit);
-    if (req.query.page) {
-      const productCount = await Product.countDocuments();
-      if (skip >= productCount)
-        throw new NotFoundError(`This page does not exists`);
+    if (req.query.limit) {
+      query = query.limit(req.query.limit);
     }
 
     const products = await query;
@@ -108,12 +135,29 @@ export const getAllProduct = async (req, res) => {
 
 export const getProductByCategory = async (req, res) => {
   try {
-    const { category } = req.query;
-    if (category) {
-      const categories = category.split(",");
-      const queryObj = { category: { $all: categories } };
-      const products = await Product.find(queryObj);
+    if (req.query.category) {
+      const categories = req.query.category.split(",");
 
+      let query = Product.find({ category: { $all: categories } });
+
+      if (req.query.sort) {
+        const sortBy = req.query.sort.split(",").join(" ");
+        query = query.sort(sortBy);
+      } else {
+        query = query.sort("-createdAt");
+      }
+
+      const page = req.query.page;
+      const limit = req.query.limit;
+      const skip = (page - 1) * limit;
+      query = query.skip(skip).limit(limit);
+      if (req.query.page) {
+        const productCount = await Product.countDocuments();
+        if (skip >= productCount)
+          throw new NotFoundError(`This page does not exists`);
+      }
+
+      const products = await query;
       res.status(200).json({ products });
     } else {
       res.status(200).json({ products: [] });

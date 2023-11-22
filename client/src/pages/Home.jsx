@@ -22,7 +22,7 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 1rem;
   padding: 1rem 0;
-  width: 1100px;
+  width: 1200px;
   height: 100%;
   //border: 0.5px solid green;
 
@@ -145,13 +145,13 @@ export const loader = async () => {
       .then(({ data }) => data.categories);
 
     const saleProducts = await customFetch
-      .get("/product/?category=laptop")
+      .get("/product/?category=mobile&limit=6")
       .then(({ data }) => data.products);
 
     const productsArray = await Promise.all(
       categories.map(async (category) => {
         const products = await customFetch
-          .get(`/product/?category=${category.slug}`)
+          .get(`/product/?category=${category.slug}&limit=20`)
           .then(({ data }) => data.products);
 
         return products;
