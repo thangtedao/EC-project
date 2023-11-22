@@ -107,7 +107,7 @@ const ProductReview = ({ product }) => {
         <div className="box-review">
           <div className="box-review-score">
             <p>5/5</p>
-            <Rating name="read-only" value="5" size="small" readOnly />
+            <Rating name="read-only" value={5} size="small" readOnly />
             <div className="number-of-review">99 đánh giá</div>
           </div>
           <div className="box-review-star">
@@ -155,7 +155,7 @@ const ProductReview = ({ product }) => {
               <p>27/8/2023 00:06</p>
             </div>
             <div className="box-review-comment-item-content">
-              <Rating name="read-only" value="5" size="small" readOnly />
+              <Rating name="read-only" value={5} size="small" readOnly />
               <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
             </div>
           </div>
@@ -167,7 +167,7 @@ const ProductReview = ({ product }) => {
               <p>27/8/2023 00:06</p>
             </div>
             <div className="box-review-comment-item-content">
-              <Rating name="read-only" value="5" size="small" readOnly />
+              <Rating name="read-only" value={5} size="small" readOnly />
               <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
             </div>
           </div>

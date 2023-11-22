@@ -18,6 +18,7 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import { deleteCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   position: relative;
@@ -75,6 +76,7 @@ const LogoutContainer = () => {
       theme: "colored",
     });
     dispatch(logout());
+    dispatch(deleteCart());
     navigate("/");
   };
 

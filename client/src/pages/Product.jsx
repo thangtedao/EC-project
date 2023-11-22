@@ -13,6 +13,7 @@ import { useLoaderData } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../state/cartSlice";
 import { toast } from "react-toastify";
+import { debounce } from "lodash";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -221,16 +222,17 @@ const Product = () => {
   window.scrollTo(0, 0);
   const dispatch = useDispatch();
   const { product, relatedProducts } = useLoaderData();
+  const user = useSelector((state) => state.user.user);
 
-  const addToCartBtn = () => {
-    dispatch(addToCart({ product: { ...product, count: 1 } }));
+  const debouncedAddToCartBtn = debounce((product, user) => {
+    dispatch(addToCart({ product: product, user }));
     toast.success("Thêm vào giỏ thành công", {
       position: "top-center",
       autoClose: 1000,
       pauseOnHover: false,
       theme: "colored",
     });
-  };
+  }, 300);
 
   return (
     <Wrapper>
@@ -272,7 +274,12 @@ const Product = () => {
 
           <div className="btn-buy">
             <button className="btn-buynow">Mua ngay</button>
-            <button className="btn-addtocart" onClick={() => addToCartBtn()}>
+            <button
+              className="btn-addtocart"
+              onClick={() =>
+                debouncedAddToCartBtn({ ...product, count: 1 }, user)
+              }
+            >
               <AddShoppingCartIcon />
               <p>Thêm vào giỏ</p>
             </button>

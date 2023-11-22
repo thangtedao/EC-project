@@ -219,7 +219,7 @@ const Home = () => {
                 to={`/category/${category.slug}`}
                 className="product-by-category-title"
               >
-                {category.name}
+                {productsArray[index].length > 0 && category.name}
               </NavLink>
               <SlideProduct products={productsArray[index] || []} />
             </div>

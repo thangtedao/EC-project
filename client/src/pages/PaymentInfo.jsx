@@ -71,10 +71,18 @@ const Wrapper = styled.div`
     align-items: center;
   }
   .product-info-price {
-    color: #cf0000;
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .main-price {
+    color: #cf0000;
+    display: flex;
+    gap: 1rem;
+    .strike {
+      color: black;
+      text-decoration: line-through;
+    }
   }
   .product-count {
     color: black;

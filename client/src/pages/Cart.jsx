@@ -9,11 +9,13 @@ import { ProductCart } from "../components";
 import { pink } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
-import { addToCart, deleteCart } from "../state/cartSlice";
+import { addToCart, deleteCart, setTotalPrice } from "../state/cartSlice";
+import { debounce } from "lodash";
 
 const Wrapper = styled.div`
   width: 650px;
-  height: 800px;
+  height: fit-content;
+  min-height: 800px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -28,7 +30,7 @@ const Wrapper = styled.div`
     border-bottom: 1px solid lightgray;
   }
   .cart-empty {
-    height: 100%;
+    height: 500px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -42,7 +44,6 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .header-action {
-    //padding: 1rem 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -53,18 +54,20 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    padding: 0.5rem 0;
+    padding: 1rem 0;
   }
   .product-item {
+    height: 120px;
     position: relative;
     display: flex;
-    //padding-left: 1rem;
+    align-items: center;
   }
   .checkbox-btn {
     width: 30px;
     height: 30px;
   }
   .product-image {
+    margin-left: 10px;
     width: 20%;
     img {
       width: 100%;
@@ -83,10 +86,17 @@ const Wrapper = styled.div`
     align-items: center;
   }
   .product-info-price {
-    color: #cf0000;
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .main-price {
+    color: #cf0000;
+    display: flex;
+    gap: 1rem;
+    .strike {
+      text-decoration: line-through;
+    }
   }
   .product-count {
     color: black;
@@ -147,12 +157,34 @@ export const loader = async ({ params }) => {
 
 const Cart = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
+  const user = useSelector((state) => state.user.user);
 
-  let totalPrice = 0;
-  cart?.map((item) => {
-    return (totalPrice += parseInt(item.price));
-  });
+  const debouncedGetUserCart = debounce(async () => {
+    if (user) {
+      const { data } = await customFetch.get("/user/cart");
+      dispatch(deleteCart());
+      data.cart?.products?.forEach((item) => {
+        dispatch(
+          addToCart({
+            product: { ...item.product, count: item.count },
+            user,
+          })
+        );
+      });
+    }
+  }, 300);
+
+  useEffect(() => {
+    debouncedGetUserCart();
+  }, []);
+
+  const totalPrice =
+    cart?.reduce(
+      (accumulator, item) => accumulator + item.salePrice * item.count,
+      0
+    ) || 0;
 
   return (
     <Wrapper>
@@ -169,28 +201,30 @@ const Cart = () => {
         </div>
       ) : (
         <div className="cart-container">
-          <div className="header-action">
+          {/* <div className="header-action">
             <Checkbox
               className="checkbox-btn"
               icon={<CircleOutlinedIcon />}
               checkedIcon={<CheckCircleIcon />}
             />
             Chọn tất cả
-          </div>
+          </div> */}
+
           {cart?.map((item, index) => {
             return <ProductCart key={index} product={item} />;
           })}
+
+          <div className="bottom-bar">
+            <div className="price-temp">
+              <p>Tạm tính</p>
+              {totalPrice}đ
+            </div>
+            <button className="btn" onClick={() => navigate("payment-info")}>
+              Mua ngay {`(${cart.length})`}
+            </button>
+          </div>
         </div>
       )}
-      <div className="bottom-bar">
-        <div className="price-temp">
-          <p>Tạm tính</p>
-          {totalPrice}đ
-        </div>
-        <button className="btn" onClick={() => navigate("payment-info")}>
-          Mua ngay {`(${cart.length})`}
-        </button>
-      </div>
     </Wrapper>
   );
 };

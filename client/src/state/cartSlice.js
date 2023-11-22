@@ -3,6 +3,7 @@ import customFetch from "../utils/customFetch";
 
 const initialState = {
   cart: [],
+  totalPrice: 0,
 };
 
 export const cartSlice = createSlice({
@@ -20,26 +21,25 @@ export const cartSlice = createSlice({
         product.count++;
       }
 
-      const setCart = async () => {
-        await customFetch.post("/user/cart", { cart: state.cart });
-      };
-      setCart();
+      if (action.payload.user) {
+        const setCart = async () => {
+          await customFetch.post("/user/cart", { cart: state.cart });
+        };
+        setCart();
+      }
     },
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter((item) => item._id !== action.payload.id);
 
-      const setCart = async () => {
-        await customFetch.post("/user/cart", { cart: state.cart });
-      };
-      setCart();
+      if (action.payload.user) {
+        const setCart = async () => {
+          await customFetch.post("/user/cart", { cart: state.cart });
+        };
+        setCart();
+      }
     },
     deleteCart: (state, action) => {
       state.cart = [];
-
-      const setCart = async () => {
-        await customFetch.delete("/user/empty-cart");
-      };
-      setCart();
     },
     increaseCount: (state, action) => {
       state.cart = state.cart.map((item) => {
@@ -49,10 +49,12 @@ export const cartSlice = createSlice({
         return item;
       });
 
-      const setCart = async () => {
-        await customFetch.post("/user/cart", { cart: state.cart });
-      };
-      setCart();
+      if (action.payload.user) {
+        const setCart = async () => {
+          await customFetch.post("/user/cart", { cart: state.cart });
+        };
+        setCart();
+      }
     },
     decreaseCount: (state, action) => {
       state.cart = state.cart.map((item) => {
@@ -62,10 +64,15 @@ export const cartSlice = createSlice({
         return item;
       });
 
-      const setCart = async () => {
-        await customFetch.post("/user/cart", { cart: state.cart });
-      };
-      setCart();
+      if (action.payload.user) {
+        const setCart = async () => {
+          await customFetch.post("/user/cart", { cart: state.cart });
+        };
+        setCart();
+      }
+    },
+    setTotalPrice: (state, action) => {
+      state.totalPrice = action.payload;
     },
   },
 });
@@ -76,5 +83,6 @@ export const {
   deleteCart,
   increaseCount,
   decreaseCount,
+  setTotalPrice,
 } = cartSlice.actions;
 export default cartSlice.reducer;
