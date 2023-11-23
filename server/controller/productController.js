@@ -142,6 +142,7 @@ export const getProductByCategory = async (req, res) => {
 
       if (req.query.sort) {
         const sortBy = req.query.sort.split(",").join(" ");
+        console.log(sortBy);
         query = query.sort(sortBy);
       } else {
         query = query.sort("-createdAt");

@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   }
 
   /* MEDIA QUERIES */
-  @media (max-width: 1080px) {
+  /* @media (max-width: 1080px) {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
   @media (max-width: 865px) {
@@ -27,7 +27,7 @@ const Wrapper = styled.div`
   @media (max-width: 350px) {
     display: flex;
     flex-wrap: wrap;
-  }
+  } */
 `;
 
 const ProductList = ({ products }) => {

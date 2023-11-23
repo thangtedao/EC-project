@@ -94,7 +94,11 @@ const AddProduct = () => {
           />
           <div>
             <label htmlFor="images">image</label>
-            <textarea type="text" name="images" />
+            <textarea
+              type="text"
+              name="images"
+              defaultValue="https://ae01.alicdn.com/kf/S63491542aed64655bfc0165f22beefe9w.jpg_640x640Q90.jpg_.webp"
+            />
           </div>
           <button type="submit" className="btn-block" disabled={isSubmitting}>
             {isSubmitting ? "Adding..." : "Add"}

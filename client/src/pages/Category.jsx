@@ -132,53 +132,61 @@ export const loader = async ({ params }) => {
   try {
     const { slug1, slug2 } = params;
 
-    let endpoint = `/product/category?category=${slug1}&page=1&limit=11`;
+    let endpoint = `/product/category?category=${slug1}&page=1&limit=10`;
 
-    if (slug2) {
-      endpoint = `/product/category?category=${slug1},${slug2}&page=1&limit=6`;
-    }
-
-    const { data } = await customFetch.get(endpoint);
-    return { data, slug1 };
+    const response = await customFetch.get(endpoint);
+    return { response, slug1 };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { data, slug1, slug2 } = useLoaderData();
-  const [products, setProducts] = useState(data.products);
+  const { response, slug1 } = useLoaderData();
+  const [products, setProducts] = useState(response.data.products);
+  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const [url, setUrl] = useState(
+    `/product/category?category=${slug1}&page=${page + 1}&limit=10`
+  );
   const numOfProduct = products?.length;
-  console.log(products.length);
 
   const loadMore = debounce(async () => {
-    const updatedPage = page + 1;
-    setPage(updatedPage);
+    try {
+      const updatedPage = page + 1;
+      setPage(updatedPage);
+      setUrl(
+        `/product/category?category=${slug1}&page=${updatedPage}&limit=10`
+      );
 
-    const fetchData = async () => {
-      try {
-        let endpoint = `/product/category?category=${slug1}&page=${
-          page + 1
-        }&limit=10`;
+      setIsLoading(true);
+      let endpoint = `/product/category?category=${slug1}&page=${updatedPage}&limit=10`;
+      const response = await customFetch.get(url);
+      setProducts([...products, ...response.data.products]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, 200);
 
-        if (slug2) {
-          endpoint = `/product/category?category=${slug1},${slug2}&page=${page}&limit=6`;
-        }
-
-        const { data } = await customFetch.get(endpoint);
-
-        setProducts((prevProducts) => [...prevProducts, ...data.products]);
-
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-    console.log(page);
-    console.log(products);
-  }, 0);
+  const filterHighToLow = async () => {
+    try {
+      setIsLoading(true);
+      setUrl(
+        `/product/category?category=laptop&page=${page}&limit=10&sort=salePrice`
+      );
+      setPage(1);
+      let endpoint = `/product/category?category=laptop&page=${page}&limit=10&sort=salePrice`;
+      const response = await customFetch.get(endpoint);
+      console.log(response.data);
+      setProducts(response.data.products);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Wrapper>
@@ -212,13 +220,19 @@ const Category = () => {
         <div className="block-filter-sort-title">Sắp xếp theo</div>
         <div className="filter-sort-list-filter">
           {/* if select, products = filter(products) */}
-          <div className="btn-filter">Giá Cao - Thấp</div>
-          <div className="btn-filter">Giá Thấp - Cao</div>
+          <button className="btn-filter" onClick={() => filterHighToLow()}>
+            Giá Cao - Thấp
+          </button>
+          <div className="btn-filter" onClick={() => filterLowToHigh()}>
+            Giá Thấp - Cao
+          </div>
           <div className="btn-filter">Xem nhiều</div>
         </div>
         <ProductList products={products} />
       </div>
-      <button onClick={() => loadMore()}>Xem thêm</button>
+      <button className="btn" onClick={() => loadMore()}>
+        {isLoading ? "Loading" : "Xem thêm"}
+      </button>
 
       {/* BOT */}
       <div className="bot-container">
