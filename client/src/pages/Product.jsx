@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
@@ -205,7 +205,9 @@ export const loader = async ({ params }) => {
   try {
     const { slug } = params;
     const product = await customFetch
-      .get(`/product/${slug}`)
+      .get(
+        `/product/${slug}?fields=_id,name,price,salePrice,category,images,review`
+      )
       .then(({ data }) => data.product);
 
     const relatedProducts = await customFetch
@@ -232,7 +234,7 @@ const Product = () => {
       pauseOnHover: false,
       theme: "colored",
     });
-  }, 300);
+  }, 0);
 
   return (
     <Wrapper>
@@ -276,9 +278,9 @@ const Product = () => {
             <button className="btn-buynow">Mua ngay</button>
             <button
               className="btn-addtocart"
-              onClick={() =>
-                debouncedAddToCartBtn({ ...product, count: 1 }, user)
-              }
+              onClick={() => [
+                debouncedAddToCartBtn({ ...product, count: 1 }, user),
+              ]}
             >
               <AddShoppingCartIcon />
               <p>Thêm vào giỏ</p>

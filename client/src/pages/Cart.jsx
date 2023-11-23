@@ -8,9 +8,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import { pink } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import customFetch from "../utils/customFetch";
-import { addToCart, deleteCart, setTotalPrice } from "../state/cartSlice";
-import { debounce } from "lodash";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -157,28 +154,7 @@ export const loader = async ({ params }) => {
 
 const Cart = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
-  const user = useSelector((state) => state.user.user);
-
-  const debouncedGetUserCart = debounce(async () => {
-    if (user) {
-      const { data } = await customFetch.get("/user/cart");
-      dispatch(deleteCart());
-      data.cart?.products?.forEach((item) => {
-        dispatch(
-          addToCart({
-            product: { ...item.product, count: item.count },
-            user,
-          })
-        );
-      });
-    }
-  }, 300);
-
-  useEffect(() => {
-    debouncedGetUserCart();
-  }, []);
 
   const totalPrice =
     cart?.reduce(

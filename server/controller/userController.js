@@ -139,19 +139,17 @@ export const setUserCart = async (req, res) => {
 
     const productPromise = cart.map(async (item) => {
       // const product = await Product.findById(item._id).select("price").exec();
-      const object = {
+      return {
         product: item._id,
         count: item.count,
-        color: item.color,
-        price: item.price,
+        salePrice: item.salePrice,
       };
-      return object;
     });
 
     const products = await Promise.all(productPromise);
 
     let cartTotal = products.reduce(
-      (acc, product) => acc + product.price * product.count,
+      (acc, product) => acc + product.salePrice * product.count,
       0
     );
 

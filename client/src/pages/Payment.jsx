@@ -192,7 +192,6 @@ const Payment = () => {
         }
       })
       .catch((err) => console.log(err.message));
-    // console.log("cccccccccccccccccccccccccccccccc");
   };
 
   return (

@@ -13,7 +13,10 @@ const orderSchema = mongoose.Schema(
         color: String,
       },
     ],
-    paymentIntent: {},
+    paymentIntent: {
+      type: String,
+      default: "",
+    },
     orderStatus: {
       type: String,
       enum: Object.values(ORDER_STATUS),

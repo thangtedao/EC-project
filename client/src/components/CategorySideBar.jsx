@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   .menu-container {
@@ -37,9 +37,17 @@ const Wrapper = styled.div`
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
     height: 350px;
     overflow: hidden;
+    .item {
+      width: 100%;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      :hover {
+        background-color: lightgray;
+      }
+    }
   }
   .menu-tree-child {
     width: calc(100% - 200px);
@@ -59,9 +67,6 @@ const Wrapper = styled.div`
     border-radius: 5px;
     color: #4a4a4a;
     font-weight: 700;
-    :hover {
-      background-color: lightgray;
-    }
   }
   .icon {
     margin-right: 10px;
@@ -107,6 +112,7 @@ const CategorySideBar = () => {
   };
 
   const { categories, categoryChild } = useMainLayoutContext();
+  const navigate = useNavigate();
 
   return (
     <Wrapper>
@@ -131,9 +137,9 @@ const CategorySideBar = () => {
                     handleItemLeave,
                   ]}
                 >
-                  <NavLink className="nav-link" to={`/category/${item?.slug}`}>
+                  <a className="nav-link" href={`/category/${item?.slug}`}>
                     {item?.name}
-                  </NavLink>
+                  </a>
                 </div>
               );
             })}

@@ -142,7 +142,6 @@ export const getProductByCategory = async (req, res) => {
 
       if (req.query.sort) {
         const sortBy = req.query.sort.split(",").join(" ");
-        console.log(sortBy);
         query = query.sort(sortBy);
       } else {
         query = query.sort("-createdAt");
@@ -171,13 +170,22 @@ export const getProductByCategory = async (req, res) => {
 export const getSingleProduct = async (req, res) => {
   try {
     const { slug } = req.params;
-    // const product = await Product.findOne({ slug: slug });
-    const product = await Product.findOneAndUpdate(
+    const updatedProduct = await Product.updateOne(
       { slug: slug },
-      { $inc: { viewed: 1 } },
-      { new: true }
+      { $inc: { viewed: 1 } }
     );
-    if (!product) throw new NotFoundError(`no product`);
+    if (updatedProduct.modifiedCount === 0)
+      throw new NotFoundError(`no product`);
+
+    let query = Product.findOne({ slug: slug });
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      query = query.select(fields);
+    }
+
+    const product = await query;
+
     res.status(200).json({ product });
   } catch (error) {
     res.status(409).json({ msg: error.message });

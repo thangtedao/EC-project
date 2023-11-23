@@ -145,48 +145,105 @@ const Category = () => {
   const { response, slug1 } = useLoaderData();
   const [products, setProducts] = useState(response.data.products);
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(2);
   const [url, setUrl] = useState(
-    `/product/category?category=${slug1}&page=${page + 1}&limit=10`
+    `/product/category?category=${slug1}&page=${page}&limit=10`
   );
-  const numOfProduct = products?.length;
+  const [lth, setLth] = useState(false);
+  const [htl, setHtl] = useState(false);
+  const [mv, setMv] = useState(false);
 
   const loadMore = debounce(async () => {
     try {
-      const updatedPage = page + 1;
-      setPage(updatedPage);
-      setUrl(
-        `/product/category?category=${slug1}&page=${updatedPage}&limit=10`
-      );
-
       setIsLoading(true);
-      let endpoint = `/product/category?category=${slug1}&page=${updatedPage}&limit=10`;
       const response = await customFetch.get(url);
       setProducts([...products, ...response.data.products]);
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setPage(page + 1);
     }
   }, 200);
 
-  const filterHighToLow = async () => {
+  const filterLowToHigh = debounce(async () => {
     try {
       setIsLoading(true);
+      setLth(true);
+      setMv(false);
+      setHtl(false);
       setUrl(
-        `/product/category?category=laptop&page=${page}&limit=10&sort=salePrice`
+        `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
       );
-      setPage(1);
-      let endpoint = `/product/category?category=laptop&page=${page}&limit=10&sort=salePrice`;
+
+      let endpoint = `/product/category?category=${slug1}&page=1&limit=10&sort=salePrice`;
       const response = await customFetch.get(endpoint);
-      console.log(response.data);
       setProducts(response.data.products);
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setPage(2);
     }
-  };
+  }, 300);
+
+  const filterHighToLow = debounce(async () => {
+    try {
+      setIsLoading(true);
+      setLth(false);
+      setMv(false);
+      setHtl(true);
+      setUrl(
+        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
+      );
+
+      let endpoint = `/product/category?category=${slug1}&page=1&limit=10&sort=-salePrice`;
+      const response = await customFetch.get(endpoint);
+      setProducts(response.data.products);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+      setPage(2);
+    }
+  }, 300);
+
+  const filterMostViewed = debounce(async () => {
+    try {
+      setIsLoading(true);
+      setLth(false);
+      setMv(true);
+      setHtl(false);
+      setUrl(
+        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
+      );
+
+      let endpoint = `/product/category?category=${slug1}&page=1&limit=10&sort=-viewed`;
+      const response = await customFetch.get(endpoint);
+      setProducts(response.data.products);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+      setPage(2);
+    }
+  }, 300);
+
+  useEffect(() => {
+    if (htl)
+      setUrl(
+        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
+      );
+    else if (lth)
+      setUrl(
+        `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
+      );
+    else if (mv)
+      setUrl(
+        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
+      );
+    else setUrl(`/product/category?category=${slug1}&page=${page}&limit=10`);
+  }, [page]);
 
   return (
     <Wrapper>
@@ -208,7 +265,7 @@ const Category = () => {
           <div className="sale-title">HOT SALE</div>
           <div className="box-countdown">00:11:22:33</div>
         </div>
-        {numOfProduct > 0 && <SlideProduct products={products} />}
+        {products?.length > 0 && <SlideProduct products={products} />}
       </div>
 
       {/* --------- ALL PRODUCTS -------- */}
@@ -223,10 +280,12 @@ const Category = () => {
           <button className="btn-filter" onClick={() => filterHighToLow()}>
             Giá Cao - Thấp
           </button>
-          <div className="btn-filter" onClick={() => filterLowToHigh()}>
+          <button className="btn-filter" onClick={() => filterLowToHigh()}>
             Giá Thấp - Cao
-          </div>
-          <div className="btn-filter">Xem nhiều</div>
+          </button>
+          <button className="btn-filter" onClick={() => filterMostViewed()}>
+            Xem nhiều
+          </button>
         </div>
         <ProductList products={products} />
       </div>

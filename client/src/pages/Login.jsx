@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
+import { setCart } from "../state/cartSlice.js";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -24,6 +25,20 @@ export const action = async ({ request }) => {
       .get("/user/current-user")
       .then(({ data }) => data.user);
     store.dispatch(login({ user: user }));
+
+    const response = await customFetch.get("/user/cart");
+    const cart = response.data.cart.products.map((item) => {
+      return {
+        _id: item.product._id,
+        name: item.product.name,
+        price: item.product.price,
+        salePrice: item.product.salePrice,
+        images: item.product.images,
+        count: item.count,
+      };
+    });
+    store.dispatch(setCart(cart));
+
     return redirect("/");
   } catch (error) {
     toast.error(error?.response?.data?.msg, {
