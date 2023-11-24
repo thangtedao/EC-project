@@ -40,7 +40,7 @@ export const stripePayment = async (req, res) => {
     customer: customer.id,
     line_items,
     mode: "payment",
-    success_url: "http://localhost:5173/checkout-success",
+    success_url: "http://localhost:5173/order",
     cancel_url: "http://localhost:5173/cart",
   });
 
@@ -146,6 +146,26 @@ export const getAllOrder = async (req, res) => {
       query = query.sort(sortBy);
     } else {
       query = query.sort("-createdAt");
+    }
+
+    if (req.query.userId) {
+      query.populate([
+        {
+          path: "orderBy",
+          select: ["fullName"],
+        },
+        {
+          path: "products.product",
+          select: [
+            "name",
+            "price",
+            "salePrice",
+            "description",
+            "category",
+            "images",
+          ],
+        },
+      ]);
     }
 
     query.populate({

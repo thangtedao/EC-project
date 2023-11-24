@@ -8,6 +8,7 @@ import { IconButton } from "@mui/material";
 
 const Wrapper = styled.div`
   width: 100%;
+  position: relative;
   .product-card-container {
     width: 100%;
     height: 380px;
@@ -50,6 +51,15 @@ const Wrapper = styled.div`
     text-decoration: line-through;
     text-decoration-thickness: 1px;
   }
+  .product-price-percent {
+    position: absolute;
+    width: 80px;
+    height: 31px;
+    top: 1px;
+    left: 0px;
+    background-color: red;
+    color: white;
+  }
   .product-card-description {
     border: transparent;
     background: #ebebeb;
@@ -87,6 +97,13 @@ const ProductCard = ({ product }) => {
                 : product.price + "đ"}
             </p>
             <p className="strike">{product.salePrice && product.price + "đ"}</p>
+            <div className="product-price-percent">
+              Giảm
+              {Math.round(
+                ((product.price - product.salePrice) / product.price) * 100
+              )}
+              %
+            </div>
           </div>
           <div className="product-card-description">
             <p>{product.description}</p>

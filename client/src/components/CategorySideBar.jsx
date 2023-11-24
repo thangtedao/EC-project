@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
-import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import { NavLink, useNavigate } from "react-router-dom";
+import { IoIosArrowForward } from "react-icons/io";
 
 const Wrapper = styled.div`
   .menu-container {
@@ -62,6 +62,8 @@ const Wrapper = styled.div`
   }
 
   .nav-link {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
     padding: 0.5rem 0.2rem;
     border-radius: 5px;
@@ -138,7 +140,7 @@ const CategorySideBar = () => {
                   ]}
                 >
                   <a className="nav-link" href={`/category/${item?.slug}`}>
-                    {item?.name}
+                    {item?.name} <IoIosArrowForward />
                   </a>
                 </div>
               );

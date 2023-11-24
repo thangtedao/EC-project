@@ -6,7 +6,6 @@ import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
-import { pink } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import customFetch from "../utils/customFetch";
 import axios from "axios";
@@ -170,12 +169,14 @@ export const loader = async ({ params }) => {
 
 const PaymentInfo = () => {
   const cart = useSelector((state) => state.cart.cart);
+  const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
 
-  let totalPrice = 0;
-  cart?.map((item) => {
-    return (totalPrice += parseInt(item.price));
-  });
+  const totalPrice =
+    cart?.reduce(
+      (accumulator, item) => accumulator + item.salePrice * item.count,
+      0
+    ) || 0;
 
   useEffect(() => {
     if (cart.length <= 0) {
@@ -279,17 +280,24 @@ const PaymentInfo = () => {
             <TextField
               id=""
               label="Họ và tên"
+              defaultValue={user?.fullName || ""}
               variant="standard"
               sx={{ width: "50%" }}
             />
             <TextField
               id=""
               label="Số điện thoại"
+              defaultValue={user?.phone || ""}
               variant="standard"
               sx={{ width: "50%" }}
             />
           </div>
-          <TextField id="" label="Email" variant="standard" />
+          <TextField
+            id=""
+            label="Email"
+            defaultValue={user?.email || ""}
+            variant="standard"
+          />
         </div>
       </div>
 

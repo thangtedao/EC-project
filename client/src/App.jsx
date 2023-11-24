@@ -13,6 +13,7 @@ import {
   PaymentInfo,
   Order,
 } from "./pages";
+import { useSelector } from "react-redux";
 
 /* ACTION */
 import { action as loginAction } from "./pages/Login";
@@ -25,6 +26,7 @@ import { loader as productLoader } from "./pages/Product";
 import { loader as categoryLoader } from "./pages/Category";
 import { loader as cartLoader } from "./pages/Cart";
 import { loader as paymentInfoLoader } from "./pages/PaymentInfo";
+import { loader as orderLoader } from "./pages/Order";
 
 const router = createBrowserRouter([
   {
@@ -89,8 +91,9 @@ const router = createBrowserRouter([
         element: <Contact />,
       },
       {
-        path: "checkout-success",
+        path: "order",
         element: <Order />,
+        loader: orderLoader,
       },
     ],
   },

@@ -5,11 +5,8 @@ import Checkbox from "@mui/material/Checkbox";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { ProductCart } from "../components";
-import { pink } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useMainLayoutContext } from "./MainLayout";
 import customFetch from "../utils/customFetch";
 
@@ -176,12 +173,12 @@ const Payment = () => {
   const navigate = useNavigate();
   const { user } = useMainLayoutContext();
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
 
-  let totalPrice = 0;
-  cart?.map((item) => {
-    return (totalPrice += parseInt(item.price));
-  });
+  const totalPrice =
+    cart?.reduce(
+      (accumulator, item) => accumulator + item.salePrice * item.count,
+      0
+    ) || 0;
 
   const handleCheckout = async () => {
     await customFetch
@@ -244,20 +241,20 @@ const Payment = () => {
       <div className="payment-title">THÔNG TIN NHẬN HÀNG</div>
       <div className="info-payment">
         <div className="flex-between">
-          <p>Khách hàng</p>
-          ????
+          <p>Khách hàng:</p>
+          {user?.fullName}
         </div>
         <div className="flex-between">
-          <p>Số điện thoại</p>
-          ????
+          <p>Số điện thoại:</p>
+          {user?.phone}
         </div>
         <div className="flex-between">
-          <p>Email</p>
-          ????
+          <p>Email:</p>
+          {user?.email}
         </div>
         <div className="flex-between">
-          <p>Nhận hàng tại</p>
-          ????
+          <p>Nhận hàng tại:</p>
+          {user?.address}
         </div>
       </div>
 

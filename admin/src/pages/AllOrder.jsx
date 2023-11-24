@@ -47,7 +47,10 @@ const AllOrder = () => {
           <div key={order._id} className="order-list">
             <span>Người đặt hàng: {order.orderBy.fullName}</span>
             <span>Ngày đặt hàng: {order.createdAt}</span>
-            <span>Số lượng sản phẩm: {order.products.length}</span>
+            <span>
+              Số lượng sản phẩm:{" "}
+              {order.products.reduce((acc, item) => acc + item.count, 0)}
+            </span>
             <span>Trạng thái đơn hàng: {order.orderStatus}</span>
             <button onClick={() => navigate(`/edit-order/${order._id}`)}>
               Xem chi tiết

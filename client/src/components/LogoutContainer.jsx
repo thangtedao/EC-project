@@ -173,11 +173,11 @@ const LogoutContainer = () => {
           <Avatar /> My account
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={() => navigate("/order")}>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
-          Add another account
+          Order
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>

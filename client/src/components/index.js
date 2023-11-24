@@ -7,9 +7,10 @@ export { default as ProductSpecifications } from "./productDetail/ProductSpecifi
 export { default as MenuBottom } from "./MenuBottom";
 export { default as ProductReview } from "./productDetail/ProductReview";
 export { default as AllProduct } from "./ProductList";
-export { default as FAQ } from "./productCategory/FAQ";
+export { default as FAQ } from "./FAQ";
 export { default as Header } from "./Header";
 export { default as Footer } from "./Footer";
 export { default as ProductCard } from "./ProductCard";
 export { default as ProductList } from "./ProductList";
 export { default as ProductCart } from "./ProductCart";
+export { default as OrderCard } from "./OrderCard";

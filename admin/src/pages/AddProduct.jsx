@@ -20,7 +20,7 @@ export const action = async ({ request }) => {
   delete data.category2;
   try {
     await customFetch.post("/product", data);
-    return redirect("/");
+    return redirect("/add-product");
   } catch (error) {
     return error;
   }
@@ -66,11 +66,7 @@ const AddProduct = () => {
 
         <Form method="post" className="form-login">
           <h4>Add Product</h4>
-          <FormRow
-            type="text"
-            name="name"
-            defaultValue="Macbook Pro Ultra Pro"
-          />
+          <FormRow type="text" name="name" defaultValue="Iphone " />
           <FormRow
             type="text"
             name="description"
@@ -97,7 +93,7 @@ const AddProduct = () => {
             <textarea
               type="text"
               name="images"
-              defaultValue="https://ae01.alicdn.com/kf/S63491542aed64655bfc0165f22beefe9w.jpg_640x640Q90.jpg_.webp"
+              defaultValue="https://media.very.co.uk/i/very/VPZ33_SQ1_0000000020_BLUE_SLf?$300x400_retinamobilex2$&$roundel_very$&p1_img=blank_apple"
             />
           </div>
           <button type="submit" className="btn-block" disabled={isSubmitting}>

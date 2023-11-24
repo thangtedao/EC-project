@@ -1,18 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext } from "react";
 import styled from "styled-components";
 import { SlideProduct } from "../components";
-import {
-  NavLink,
-  Outlet,
-  redirect,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { IoIosArrowForward } from "react-icons/io";
 import SlideGallery from "../components/slider/SlideGallery";
 
 const Wrapper = styled.div`
@@ -24,13 +16,11 @@ const Wrapper = styled.div`
   padding: 1rem 0;
   width: 1200px;
   height: 100%;
-  //border: 0.5px solid green;
 
   /* TOP HOME */
   .block-top-home {
     width: 100%;
     //height: 350px;
-    //border: 1px solid red;
     display: flex;
     justify-content: space-between;
   }
@@ -43,6 +33,8 @@ const Wrapper = styled.div`
     flex-direction: column;
   }
   .nav-link {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
     padding: 0.3rem 0.2rem;
     border-radius: 5px;
@@ -58,7 +50,6 @@ const Wrapper = styled.div`
   }
   .sliding-banner {
     width: calc(100% - 420px);
-    //border: 0.5px solid red;
     border-radius: 10px;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin: 0 0.75rem;
@@ -73,7 +64,6 @@ const Wrapper = styled.div`
     width: 100%;
     border-radius: 10px;
     background-color: #580f0f;
-    //border: 0.5px solid yellowgreen;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
   }
@@ -96,8 +86,8 @@ const Wrapper = styled.div`
   .product-by-category {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin: 1rem 0;
+    gap: 1rem;
+    margin-top: 1rem;
     width: 100%;
   }
   .product-by-category-title {
@@ -189,7 +179,7 @@ const Home = () => {
                   key={index}
                   to={`/category/${category.slug}`}
                 >
-                  {category.name}
+                  {category.name} <IoIosArrowForward />
                 </NavLink>
               );
             })}

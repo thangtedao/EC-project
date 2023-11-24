@@ -34,7 +34,12 @@ const SlideGallery = ({ image }) => {
 
   return (
     <Wrapper>
-      <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
+      <Swiper
+        loop={true}
+        navigation={true}
+        modules={[Navigation]}
+        className="mySwiper"
+      >
         {image.map((img, index) => {
           return (
             <SwiperSlide key={index}>
