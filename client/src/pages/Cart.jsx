@@ -156,6 +156,8 @@ const Cart = () => {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart.cart);
 
+  console.log(cart);
+
   const totalPrice =
     cart?.reduce(
       (accumulator, item) => accumulator + item.salePrice * item.count,

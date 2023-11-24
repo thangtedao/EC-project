@@ -1,8 +1,8 @@
-export const ORDER_STATUS = {
-  NOT_PROCESSED: "Not Processed",
-  CASH_ON_DELIVERY: "Cash on Delivery",
-  PROCESSING: "Processing",
-  DISPATCHED: "Dispatched",
-  CANCELLED: "Cancelled",
-  DELIVERED: "Delivered",
-};
+export const ORDER_STATUS = [
+  "Not Processed",
+  "Cash on Delivery",
+  "Processing",
+  "Dispatched",
+  "Cancelled",
+  "Delivered",
+];

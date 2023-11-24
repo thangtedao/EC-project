@@ -1,5 +1,11 @@
 import express from "express";
-import { stripePayment, stripeWebHook } from "../controller/orderController.js";
+import {
+  getAllOrder,
+  getSingleOrder,
+  stripePayment,
+  stripeWebHook,
+  updateOrder,
+} from "../controller/orderController.js";
 
 const router = express.Router();
 
@@ -9,5 +15,8 @@ router.post(
   express.raw({ type: "application/json" }),
   stripeWebHook
 );
+router.get("/", getAllOrder);
+router.get("/:id", getSingleOrder);
+router.patch("/update/:id", updateOrder);
 
 export default router;

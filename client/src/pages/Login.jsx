@@ -35,6 +35,7 @@ export const action = async ({ request }) => {
         salePrice: item.product.salePrice,
         images: item.product.images,
         count: item.count,
+        category: item.product.category,
       };
     });
     store.dispatch(setCart(cart));

@@ -9,6 +9,7 @@ import { action as addCategoryAction } from "./pages/AddCategory";
 import { action as addCouponAction } from "./pages/AddCoupon";
 import { action as editCategoryAction } from "./pages/EditCategory";
 import { action as editUserAction } from "./pages/EditUser";
+import { action as editOrderAction } from "./pages/EditOrder";
 
 /* LOADER */
 import { loader as addProductLoader } from "./pages/AddProduct";
@@ -21,6 +22,8 @@ import { loader as addCategoryLoader } from "./pages/AddCategory";
 import { loader as allCategoryLoader } from "./pages/AllCategory";
 import { loader as allUserLoader } from "./pages/AllUser";
 import { loader as editUserLoader } from "./pages/EditUser";
+import { loader as allOrderLoader } from "./pages/AllOrder";
+import { loader as editOrderLoader } from "./pages/EditOrder";
 
 /* PAGE */
 import AllProduct from "./pages/AllProduct";
@@ -34,6 +37,8 @@ import AllCoupon from "./pages/AllCoupon";
 import EditCoupon from "./pages/EditCoupon";
 import AllUser from "./pages/AllUser";
 import EditUser from "./pages/EditUser";
+import AllOrder from "./pages/AllOrder";
+import EditOrder from "./pages/EditOrder";
 import Login from "./pages/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
@@ -104,6 +109,17 @@ const router = createBrowserRouter([
         element: <EditUser />,
         action: editUserAction,
         loader: editUserLoader,
+      },
+      {
+        path: "all-order/",
+        element: <AllOrder />,
+        loader: allOrderLoader,
+      },
+      {
+        path: "edit-order/:id",
+        element: <EditOrder />,
+        action: editOrderAction,
+        loader: editOrderLoader,
       },
     ],
   },

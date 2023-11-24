@@ -227,14 +227,14 @@ const Product = () => {
   const user = useSelector((state) => state.user.user);
 
   const debouncedAddToCartBtn = debounce((product, user) => {
-    dispatch(addToCart({ product: product, user }));
+    dispatch(addToCart({ product: { ...product, count: 1 }, user }));
     toast.success("Thêm vào giỏ thành công", {
       position: "top-center",
       autoClose: 1000,
       pauseOnHover: false,
       theme: "colored",
     });
-  }, 0);
+  }, 100);
 
   return (
     <Wrapper>

@@ -163,7 +163,7 @@ export const setUserCart = async (req, res) => {
 
     res.status(StatusCodes.OK).json({ newCart });
   } catch (error) {
-    throw error;
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };

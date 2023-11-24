@@ -10,9 +10,11 @@ const orderSchema = mongoose.Schema(
           ref: "Product",
         },
         count: Number,
-        color: String,
       },
     ],
+    totalPrice: {
+      type: Number,
+    },
     paymentIntent: {
       type: String,
       default: "",

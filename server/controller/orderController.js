@@ -4,10 +4,18 @@ import Order from "../models/Order.js";
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const stripePayment = async (req, res) => {
+  const cart = req.body.cart.map((item) => {
+    return {
+      id: item._id,
+      count: item.count,
+      salePrice: item.salePrice,
+    };
+  });
+
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.user._id,
-      cart: JSON.stringify(req.body.cart),
+      cart: JSON.stringify(cart),
     },
   });
 
@@ -18,7 +26,6 @@ export const stripePayment = async (req, res) => {
         product_data: {
           name: item.name,
           images: [item.images[0]],
-          description: item.description,
           metadata: {
             id: item._id,
           },
@@ -98,21 +105,106 @@ const createOrder = async (customer, data) => {
     const cart = JSON.parse(customer.metadata.cart);
     const products = cart.map((product) => {
       return {
-        product: product._id,
+        product: product.id,
         count: product.count,
-        color: product.color,
       };
     });
+
+    const totalPrice =
+      cart?.reduce(
+        (accumulator, item) => accumulator + item.salePrice * item.count,
+        0
+      ) || 0;
 
     const newOrder = new Order({
       orderBy: customer.metadata.userId,
       products: products,
+      totalPrice: totalPrice,
       paymentIntent: data.payment_intent,
     });
 
     const savedOrder = await newOrder.save();
-    res.status(200).json(savedOrder);
+    console.log(savedOrder);
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getAllOrder = async (req, res) => {
+  try {
+    let query;
+
+    if (req.query.userId) {
+      const id = req.query.userId;
+      query = Order.find({ orderBy: id });
+    } else {
+      query = Order.find();
+    }
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort("-createdAt");
+    }
+
+    query.populate({
+      path: "orderBy",
+      select: ["fullName"],
+    });
+
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+    if (req.query.page) {
+      const orderCount = await Order.countDocuments();
+      if (skip >= orderCount)
+        throw new NotFoundError(`This page does not exists`);
+    }
+
+    const orders = await query;
+    res.status(200).json({ orders });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const getSingleOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.findOne({ _id: orderId }).populate([
+      {
+        path: "products.product",
+        select: [
+          "name",
+          "price",
+          "salePrice",
+          "description",
+          "category",
+          "images",
+        ],
+      },
+      {
+        path: "orderBy",
+        select: ["fullName", "email", "phone", "address"],
+      },
+    ]);
+    res.status(200).json({ order });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const updateOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, req.body, {
+      new: true,
+    });
+    if (!updatedOrder) throw new NotFoundError(`this order does not exist`);
+    res.status(200).json({ updatedOrder });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
   }
 };
