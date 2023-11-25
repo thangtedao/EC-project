@@ -117,16 +117,6 @@ export const unblockUser = async (req, res) => {
   }
 };
 
-export const getWishlist = async (req, res) => {
-  try {
-    const { _id } = req.user;
-    const wishlist = await User.findById(_id).populate("wishlist");
-    res.status(StatusCodes.OK).json({ wishlist });
-  } catch (error) {
-    res.status(409).json({ msg: error.message });
-  }
-};
-
 export const setUserCart = async (req, res) => {
   try {
     const { cart } = req.body;
@@ -286,6 +276,64 @@ export const updateOrderStatus = async (req, res) => {
     );
 
     res.status(StatusCodes.OK).json({ findOrder });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const addToWishlist = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { productId } = req.body;
+    const user = await User.findById(userId);
+
+    const alreadyAdded = user.wishlist.find(
+      (id) => id.toString() === productId
+    );
+    if (alreadyAdded) {
+      let user = await User.findByIdAndUpdate(
+        userId,
+        {
+          $pull: { wishlist: productId },
+        },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({ msg: "removed" });
+    } else {
+      let user = await User.findByIdAndUpdate(
+        userId,
+        {
+          $push: { wishlist: productId },
+        },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({ msg: "added" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const getWishlist = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const wishlist = await User.findById(userId).populate({
+      path: "wishlist",
+      select: [
+        "name",
+        "price",
+        "salePrice",
+        "description",
+        "category",
+        "images",
+      ],
+    });
+    res.status(StatusCodes.OK).json({ wishlist });
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }

@@ -168,6 +168,7 @@ export const loader = async ({ params }) => {
 };
 
 const PaymentInfo = () => {
+  window.scrollTo(0, 0);
   const cart = useSelector((state) => state.cart.cart);
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();

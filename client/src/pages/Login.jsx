@@ -9,49 +9,6 @@ import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
 import { setCart } from "../state/cartSlice.js";
 
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  try {
-    await customFetch.post("/auth/login", data);
-    toast.success("Login successful", {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-
-    const user = await customFetch
-      .get("/user/current-user")
-      .then(({ data }) => data.user);
-    store.dispatch(login({ user: user }));
-
-    const response = await customFetch.get("/user/cart");
-    const cart = response.data.cart.products.map((item) => {
-      return {
-        _id: item.product._id,
-        name: item.product.name,
-        price: item.product.price,
-        salePrice: item.product.salePrice,
-        images: item.product.images,
-        count: item.count,
-        category: item.product.category,
-      };
-    });
-    store.dispatch(setCart(cart));
-
-    return redirect("/");
-  } catch (error) {
-    toast.error(error?.response?.data?.msg, {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-    return error;
-  }
-};
-
 const Wrapper = styled.section`
   padding: 3rem;
   margin-bottom: 5rem;
@@ -102,7 +59,55 @@ const Wrapper = styled.section`
   }
 `;
 
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    await customFetch.post("/auth/login", data);
+    toast.success("Login successful", {
+      position: "top-center",
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+    store.dispatch(login({ user: user }));
+
+    const response = await customFetch.get("/user/cart");
+    if (response.data.cart) {
+      const cart = response.data.cart?.products?.map((item) => {
+        return {
+          _id: item.product._id,
+          name: item.product.name,
+          price: item.product.price,
+          salePrice: item.product.salePrice,
+          images: item.product.images,
+          count: item.count,
+          category: item.product.category,
+        };
+      });
+      store.dispatch(setCart(cart));
+    } else {
+      store.dispatch(setCart([]));
+    }
+
+    return redirect("/");
+  } catch (error) {
+    toast.error(error?.response?.data?.msg, {
+      position: "top-center",
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+    return error;
+  }
+};
+
 const Login = () => {
+  window.scrollTo(0, 0);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 

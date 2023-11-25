@@ -35,7 +35,7 @@ const SlideGallery = ({ image }) => {
   return (
     <Wrapper>
       <Swiper
-        loop={true}
+        loop={image.length > 1 ? true : false}
         navigation={true}
         modules={[Navigation]}
         className="mySwiper"

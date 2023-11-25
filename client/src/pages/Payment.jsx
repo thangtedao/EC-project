@@ -170,6 +170,7 @@ export const loader = async ({ params }) => {
 };
 
 const Payment = () => {
+  window.scrollTo(0, 0);
   const navigate = useNavigate();
   const { user } = useMainLayoutContext();
   const cart = useSelector((state) => state.cart.cart);

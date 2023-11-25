@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
+import { FaRegHeart } from "react-icons/fa";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -87,6 +88,11 @@ const Navbar = () => {
             <FormatAlignLeftOutlinedIcon />
             <Typography>Danh mục</Typography>
           </div>
+
+          <NavLink className="nav-link" to="/wishlist">
+            <FaRegHeart className="icon" />
+            <Typography>Yêu Thích</Typography>
+          </NavLink>
 
           <NavLink className="nav-link" to="/cart">
             <StyledBadge badgeContent={cart.length > 0 && cart.length}>

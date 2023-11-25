@@ -158,6 +158,7 @@ export const loader = async () => {
 const HomeContext = createContext();
 
 const Home = () => {
+  window.scrollTo(0, 0);
   const { saleProducts, categories, productsArray } = useLoaderData();
 
   const img = [

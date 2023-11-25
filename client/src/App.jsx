@@ -12,8 +12,8 @@ import {
   Payment,
   PaymentInfo,
   Order,
+  Wishlist,
 } from "./pages";
-import { useSelector } from "react-redux";
 
 /* ACTION */
 import { action as loginAction } from "./pages/Login";
@@ -27,6 +27,7 @@ import { loader as categoryLoader } from "./pages/Category";
 import { loader as cartLoader } from "./pages/Cart";
 import { loader as paymentInfoLoader } from "./pages/PaymentInfo";
 import { loader as orderLoader } from "./pages/Order";
+import { loader as wishlistLoader } from "./pages/Wishlist";
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,11 @@ const router = createBrowserRouter([
         path: "order",
         element: <Order />,
         loader: orderLoader,
+      },
+      {
+        path: "wishlist",
+        element: <Wishlist />,
+        loader: wishlistLoader,
       },
     ],
   },

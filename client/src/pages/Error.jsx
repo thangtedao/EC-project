@@ -30,6 +30,7 @@ const Wrapper = styled.main`
 `;
 
 const Error = () => {
+  window.scrollTo(0, 0);
   const error = useRouteError();
   if (error.status === 404) {
     return (

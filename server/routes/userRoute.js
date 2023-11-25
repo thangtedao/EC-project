@@ -15,6 +15,7 @@ import {
   updateOrderStatus,
   updateUser,
   setUserCart,
+  addToWishlist,
 } from "../controller/userController.js";
 import { validateUpdateInput } from "../middleware/validationMiddleware.js";
 import {
@@ -27,7 +28,8 @@ const router = Router();
 router.get("/current-user", authenticateUser, getCurrentUser);
 router.get("/single-user/:id", getSingleUser);
 router.get("/all-users", getAllUsers);
-router.get("/wishlist", getWishlist);
+router.patch("/wishlist", authenticateUser, addToWishlist);
+router.get("/wishlist", authenticateUser, getWishlist);
 router.post("/cart", authenticateUser, setUserCart);
 router.get("/cart", authenticateUser, getUserCart);
 router.delete("/empty-cart", authenticateUser, emptyCart);

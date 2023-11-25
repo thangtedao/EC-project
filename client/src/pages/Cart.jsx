@@ -153,10 +153,9 @@ export const loader = async ({ params }) => {
 };
 
 const Cart = () => {
+  window.scrollTo(0, 0);
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart.cart);
-
-  console.log(cart);
 
   const totalPrice =
     cart?.reduce(

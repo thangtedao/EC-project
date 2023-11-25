@@ -1,5 +1,4 @@
 import {
-  addToWishlist,
   createProduct,
   deleteImages,
   deleteProduct,
@@ -28,10 +27,7 @@ router.get("/category", getProductByCategory);
 router.delete("/:id", deleteProduct);
 router.get("/:slug", getSingleProduct);
 router.patch("/update/:slug", updateProduct);
-router.patch("/wishlist", addToWishlist);
 router.patch("/rating", rating);
 router.delete("/delete-img/:id", deleteImages);
-// có req.query rồi nên ko cần làm thủ công như này nữa
-//router.get("/:category/:brand", getRelatedProduct);
 
 export default router;

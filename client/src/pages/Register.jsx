@@ -77,6 +77,7 @@ const Wrapper = styled.section`
 `;
 
 const Register = () => {
+  window.scrollTo(0, 0);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 

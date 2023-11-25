@@ -142,6 +142,7 @@ export const loader = async ({ params }) => {
 };
 
 const Category = () => {
+  window.scrollTo(0, 0);
   const { response, slug1 } = useLoaderData();
   const [products, setProducts] = useState(response.data.products);
   const [isLoading, setIsLoading] = useState(false);

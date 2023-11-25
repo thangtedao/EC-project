@@ -111,6 +111,7 @@ export const loader = async () => {
 };
 
 const Order = () => {
+  window.scrollTo(0, 0);
   const orders = useLoaderData();
 
   return (

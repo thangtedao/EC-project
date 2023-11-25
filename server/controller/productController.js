@@ -232,42 +232,6 @@ export const getRelatedProduct = async (req, res) => {
   }
 };
 
-export const addToWishlist = async (req, res) => {
-  try {
-    const { _id } = req.user;
-    const { productId } = req.body;
-    const user = await User.findById(_id);
-    const alreadyAdded = user.wishlist.find(
-      (id) => id.toString() === productId
-    );
-    if (alreadyAdded) {
-      let user = await User.findByIdAndUpdate(
-        _id,
-        {
-          $pull: { wishlist: productId },
-        },
-        {
-          new: true,
-        }
-      );
-      res.status(200).json({ user });
-    } else {
-      let user = await User.findByIdAndUpdate(
-        _id,
-        {
-          $push: { wishlist: productId },
-        },
-        {
-          new: true,
-        }
-      );
-      res.status(200).json({ user });
-    }
-  } catch (error) {
-    res.status(409).json({ msg: error.message });
-  }
-};
-
 export const rating = async (req, res) => {
   try {
     const { _id } = req.user;
