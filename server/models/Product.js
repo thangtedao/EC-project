@@ -66,11 +66,11 @@ const productSchema = mongoose.Schema(
         star: Number,
         comment: String,
         postedby: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        default: [],
+        createdAt: { type: Date, default: Date.now },
       },
     ],
     totalRating: {
-      type: String,
+      type: Number,
       default: 0,
     },
     sold: {

@@ -122,7 +122,7 @@ const Wrapper = styled.div`
     padding: 0.5rem;
     border-radius: 5px;
     border: none;
-    background: red;
+    background: #d70018;
     color: white;
     cursor: pointer;
   }
@@ -147,7 +147,7 @@ const Wrapper = styled.div`
       height: 2.5rem;
       border-radius: 5px;
       border: none;
-      background: red;
+      background: #d70018;
       font-size: medium;
       color: white;
       cursor: pointer;

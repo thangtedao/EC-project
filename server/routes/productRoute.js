@@ -12,6 +12,7 @@ import {
 } from "../controller/productController.js";
 import { Router } from "express";
 import { productImgResize, uploadPhoto } from "../middleware/uploadImages.js";
+import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get("/category", getProductByCategory);
 router.delete("/:id", deleteProduct);
 router.get("/:slug", getSingleProduct);
 router.patch("/update/:slug", updateProduct);
-router.patch("/rating", rating);
+router.patch("/rating", authenticateUser, rating);
 router.delete("/delete-img/:id", deleteImages);
 
 export default router;

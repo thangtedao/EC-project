@@ -4,7 +4,10 @@ import img from "../../assets/react.svg";
 import Rating from "@mui/material/Rating";
 import { FaStar } from "react-icons/fa";
 import { Form } from "react-router-dom";
-import ReactStars from "react-rating-stars-component";
+import { FaRegStar } from "react-icons/fa";
+import Avatar from "@mui/material/Avatar";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -15,8 +18,9 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    border: 1px solid lightgray;
-    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
+    border: 0;
+    box-shadow: 0 0 10px 0 rgba(60, 64, 67, 0.1),
+      0 2px 6px 2px rgba(60, 64, 67, 0.15);
     gap: 1rem;
     padding: 1rem;
     .review-title {
@@ -53,7 +57,7 @@ const Wrapper = styled.div`
   }
   .rating-level {
     display: flex;
-    padding: 0.3rem;
+    padding: 0.4rem;
     gap: 0.3rem;
     align-items: center;
     .gold {
@@ -69,11 +73,9 @@ const Wrapper = styled.div`
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
+    display: grid;
+    place-items: center;
+    padding: 1.3rem;
     gap: 1rem;
   }
   .btn-review {
@@ -84,19 +86,44 @@ const Wrapper = styled.div`
     color: white;
     font-size: 1.05rem;
     border-radius: 5px;
-    border: transparent;
+    border: 0;
     cursor: pointer;
+  }
+  .form-rating {
+    width: 100%;
+    display: grid;
+    gap: 1rem;
+    p {
+      color: #4a4a4a;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    textarea {
+      width: 90%;
+      min-height: 8em;
+      max-height: 40em;
+      padding: 1rem;
+      font-size: 1.1rem;
+      resize: vertical;
+      border-radius: 10px;
+      border: 0;
+      box-shadow: 0 0 10px 0 rgba(60, 64, 67, 0.1),
+        0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    }
+    .btn {
+      width: 10%;
+      height: 35px;
+      background: #d7000e;
+    }
   }
 
   // BOT
   .box-review-comment {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 2rem;
   }
   .box-review-comment-item {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     padding-bottom: 1rem;
     border-bottom: 1px solid lightgray;
   }
@@ -106,13 +133,11 @@ const Wrapper = styled.div`
     padding: 0.3rem;
     gap: 1rem;
   }
-  .round-img {
-    border-radius: 50%;
+  .name {
+    text-transform: capitalize;
   }
   .box-review-comment-item-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
     gap: 1rem;
     padding-left: 3.5rem;
     padding-top: 1rem;
@@ -120,9 +145,19 @@ const Wrapper = styled.div`
 `;
 
 const ProductReview = ({ product }) => {
+  const user = useSelector((state) => state.user.user);
   const [isRating, setIsRating] = useState(false);
+  const [value, setValue] = useState(5);
 
   const handleRating = () => {
+    if (!user) {
+      toast.warning("Vui lòng đăng nhập để đánh giá", {
+        position: "top-center",
+        autoClose: 1000,
+        pauseOnHover: false,
+      });
+      return;
+    }
     setIsRating(!isRating);
   };
 
@@ -134,9 +169,16 @@ const ProductReview = ({ product }) => {
         </div>
         <div className="box-review">
           <div className="box-review-score">
-            <p>5/5</p>
-            <Rating name="read-only" value={5} size="small" readOnly />
-            <div className="number-of-review">99 đánh giá</div>
+            <p>{product?.totalRating}/5</p>
+            <Rating
+              value={product?.totalRating || 5}
+              icon={<FaStar />}
+              emptyIcon={<FaRegStar />}
+              readOnly
+            />
+            <div className="number-of-review">
+              {product?.ratings.length + " đánh giá"}
+            </div>
           </div>
           <div className="box-review-star">
             <div className="rating-level">
@@ -184,20 +226,24 @@ const ProductReview = ({ product }) => {
         </div>
 
         {isRating && (
-          <Form>
-            <ReactStars
-              count={5}
-              //onChange={ratingChanged}
-              size={24}
-              edit={true}
-              activeColor="#ffd700"
-              value={5}
+          <Form method="post" className="form-rating">
+            <p>Đánh giá</p>
+            <Rating
               name="star"
+              value={value}
+              onChange={(event, newValue) => {
+                setValue(newValue);
+              }}
+              icon={<FaStar />}
+              emptyIcon={<FaRegStar />}
             />
-            <textarea name="comment"></textarea>
-            <button type="submit" className="btn">
-              Gửi
-            </button>
+            <div className="is-flex">
+              <input name="productId" defaultValue={product?._id} hidden />
+              <textarea name="comment" defaultValue=""></textarea>
+              <button type="submit" className="btn">
+                Gửi
+              </button>
+            </div>
           </Form>
         )}
 
@@ -210,22 +256,48 @@ const ProductReview = ({ product }) => {
               <p>27/8/2023 00:06</p>
             </div>
             <div className="box-review-comment-item-content">
-              <Rating name="read-only" value={5} size="small" readOnly />
+              <Rating
+                name="read-only"
+                value={5}
+                icon={<FaStar />}
+                emptyIcon={<FaRegStar />}
+                size="small"
+                readOnly
+              />
               <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
             </div>
           </div>
-
-          <div className="box-review-comment-item">
-            <div className="box-review-comment-item-title">
-              <img src={img} alt="avatar" className="round-img" />
-              <p>Xuan Thang</p>
-              <p>27/8/2023 00:06</p>
-            </div>
-            <div className="box-review-comment-item-content">
-              <Rating name="read-only" value={5} size="small" readOnly />
-              <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
-            </div>
-          </div>
+          {product?.ratings.map((item) => {
+            return (
+              <div key={item._id} className="box-review-comment-item">
+                <div className="box-review-comment-item-title">
+                  <Avatar
+                    sx={{
+                      width: 31,
+                      height: 31,
+                    }}
+                    src={item?.postedby.avatar && item?.postedby.avatar}
+                  >
+                    {!item?.postedby.avatar &&
+                      item?.postedby.fullName.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <p className="name">{item?.postedby.fullName}</p>
+                  <p>{item?.createdAt}</p>
+                </div>
+                <div className="box-review-comment-item-content">
+                  <Rating
+                    name="read-only"
+                    icon={<FaStar />}
+                    emptyIcon={<FaRegStar />}
+                    value={item?.star}
+                    size="small"
+                    readOnly
+                  />
+                  <p>{item?.comment}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </Wrapper>

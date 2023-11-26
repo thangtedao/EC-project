@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
@@ -9,7 +9,7 @@ import {
 } from "../components";
 import SlideGallery from "../components/slider/SlideGallery";
 import customFetch from "../utils/customFetch";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../state/cartSlice";
 import { toast } from "react-toastify";
@@ -197,12 +197,30 @@ const Wrapper = styled.div`
   }
 `;
 
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    await customFetch.patch("/product/rating", data);
+    toast.success("Gửi đánh giá thành công", { autoClose: 1000 });
+    return null;
+  } catch (error) {
+    toast.error(error?.response?.data?.msg, {
+      position: "top-center",
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+    return error;
+  }
+};
+
 export const loader = async ({ params }) => {
   try {
     const { slug } = params;
     const product = await customFetch
       .get(
-        `/product/${slug}?fields=_id,name,price,salePrice,category,images,review`
+        `/product/${slug}?fields=_id,name,price,salePrice,category,images,review,ratings,totalRating&populate=ratings.postedby`
       )
       .then(({ data }) => data.product);
 
@@ -218,6 +236,7 @@ export const loader = async ({ params }) => {
 
 const Product = () => {
   const dispatch = useDispatch();
+
   const { product, relatedProducts } = useLoaderData();
   const user = useSelector((state) => state.user.user);
 

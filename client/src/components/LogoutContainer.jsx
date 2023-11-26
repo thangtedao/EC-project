@@ -122,7 +122,7 @@ const LogoutContainer = () => {
             }}
             src={user?.avatar && user.avatar}
           >
-            {!user?.avatar && user?.fullName.charAt(0)}
+            {!user?.avatar && user?.fullName.charAt(0).toUpperCase()}
           </Avatar>
           <Typography
             color="white"

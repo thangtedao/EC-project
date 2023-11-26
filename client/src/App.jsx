@@ -18,6 +18,7 @@ import {
 /* ACTION */
 import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
+import { action as productAction } from "./pages/Product";
 
 /* LOADER */
 import { loader as mainLayoutLoader } from "./pages/MainLayout";
@@ -55,6 +56,7 @@ const router = createBrowserRouter([
         path: "product/:slug",
         element: <Product />,
         loader: productLoader,
+        action: productAction,
       },
       {
         path: "cart",

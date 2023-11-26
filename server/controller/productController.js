@@ -184,6 +184,13 @@ export const getSingleProduct = async (req, res) => {
       query = query.select(fields);
     }
 
+    if (req.query.populate && req.query.populate === "ratings.postedby") {
+      query = query.populate({
+        path: "ratings.postedby",
+        select: ["fullName", "avatar"],
+      });
+    }
+
     const product = await query;
 
     res.status(200).json({ product });
@@ -234,14 +241,15 @@ export const getRelatedProduct = async (req, res) => {
 
 export const rating = async (req, res) => {
   try {
-    const { _id } = req.user;
+    const { userId } = req.user;
+
     const { star, productId, comment } = req.body;
     const product = await Product.findById(productId);
     let alreadyRated = product.ratings.find(
-      (userId) => userId.postedby.toString() === _id.toString()
+      (item) => item.postedby.toString() === userId.toString()
     );
     if (alreadyRated) {
-      const updateRating = await Product.updateOne(
+      await Product.updateOne(
         {
           ratings: { $elemMatch: alreadyRated },
         },
@@ -251,14 +259,14 @@ export const rating = async (req, res) => {
         { new: true }
       );
     } else {
-      const rateProduct = await Product.findByIdAndUpdate(
+      await Product.findByIdAndUpdate(
         productId,
         {
           $push: {
             ratings: {
               star: star,
               comment: comment,
-              postedby: _id,
+              postedby: userId,
             },
           },
         },
@@ -281,8 +289,7 @@ export const rating = async (req, res) => {
 
     res.status(200).json(finalProduct);
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };
-
-// 6:13:12

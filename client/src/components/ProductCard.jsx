@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import ReactStars from "react-rating-stars-component";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { FaStar } from "react-icons/fa";
+import { FaRegStar } from "react-icons/fa";
+import Rating from "@mui/material/Rating";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import customFetch from "../utils/customFetch";
@@ -92,7 +94,7 @@ const Wrapper = styled.div`
     align-items: center;
   }
   .product-rating {
-    min-width: 24px;
+    width: 24px;
   }
   .wishlist-btn {
     color: #777;
@@ -110,6 +112,7 @@ const Wrapper = styled.div`
 const ProductCard = ({ product }) => {
   const { user } = useMainLayoutContext();
   const navigate = useNavigate();
+
   const addToWishlist = async () => {
     if (!user) {
       navigate("/login");
@@ -166,12 +169,13 @@ const ProductCard = ({ product }) => {
 
       <div className="product-card-bottom">
         <div className="product-rating">
-          <ReactStars
-            count={5}
-            //onChange={ratingChanged}
-            size={24}
-            edit={false}
-            activeColor="#ffd700"
+          <Rating
+            name="star"
+            value={product?.totalRating || 0}
+            size="small"
+            icon={<FaStar />}
+            emptyIcon={<FaRegStar />}
+            readOnly
           />
         </div>
         <div className="wishlist-btn">

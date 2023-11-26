@@ -1,9 +1,5 @@
 import React from "react";
 import { debounce } from "lodash";
-import Checkbox from "@mui/material/Checkbox";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { pink } from "@mui/material/colors";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,20 +23,6 @@ const ProductCart = ({ product, isPayment }) => {
   return (
     <div className="product-item-outer">
       <div className="product-item">
-        {/* {!isPayment && (
-          <Checkbox
-            // sx={{
-            //   color: pink[800],
-            //   "&.Mui-checked": {
-            //     color: pink[600],
-            //   },
-            // }}
-            className="checkbox-btn"
-            icon={<CircleOutlinedIcon />}
-            checkedIcon={<CheckCircleIcon />}
-          />
-        )} */}
-
         <div className="product-image">
           <img src={product?.images[0]} alt="product image" />
         </div>
@@ -66,26 +48,20 @@ const ProductCart = ({ product, isPayment }) => {
               <div className="product-count">
                 <span
                   className="count-btn"
-                  onClick={
-                    () => debouncedDecreaseCount(product._id, user)
-                    //dispatch(decreaseCount({ id: product._id, user }))
-                  }
+                  onClick={() => debouncedDecreaseCount(product._id, user)}
                 >
                   -
                 </span>
                 <input type="text" readOnly="readonly" value={product?.count} />
                 <span
                   className="count-btn"
-                  onClick={
-                    () => debouncedIncreaseCount(product._id, user)
-                    //dispatch(increaseCount({ id: product._id, user }))
-                  }
+                  onClick={() => debouncedIncreaseCount(product._id, user)}
                 >
                   +
                 </span>
               </div>
             ) : (
-              <p>Số lượng: {product?.count}</p>
+              <div className="count">Số lượng: {product?.count}</div>
             )}
           </div>
         </div>

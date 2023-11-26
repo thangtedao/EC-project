@@ -122,6 +122,7 @@ const Wrapper = styled.div`
       background-color: #f3f3f3;
       display: grid;
       place-items: center;
+      font-weight: lighter;
       cursor: pointer;
     }
   }
@@ -137,7 +138,7 @@ const Wrapper = styled.div`
     .btn {
       border-radius: 10px;
       border: none;
-      background: red;
+      background: #d70018;
       font-weight: bold;
       color: white;
       text-transform: uppercase;

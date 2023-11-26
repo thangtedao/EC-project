@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   text-align: center;
 
   table {
-    width: 1000px;
+    width: 800px;
     font-size: 1.3rem;
     margin-top: 2rem;
   }
@@ -33,10 +33,18 @@ const Wrapper = styled.div`
   .product-card {
     display: flex;
     gap: 1rem;
+    height: 100px;
   }
   .product-info {
     display: grid;
     padding: 1rem 0;
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .product-description {
+      font-size: 1.05rem;
+    }
   }
   .product-price {
     font-size: 1.1rem;
@@ -52,14 +60,24 @@ const Wrapper = styled.div`
     text-decoration: line-through;
     text-decoration-thickness: 1px;
   }
-  img {
-    max-width: 110px;
+  .image {
+    width: 120px;
+    height: inherit;
+    img {
+      height: inherit;
+    }
   }
 
   .empty-wishlist {
     height: 600px;
     display: grid;
     place-items: center;
+  }
+
+  @media (max-width: 838px) {
+    table {
+      width: 100%;
+    }
   }
 `;
 
@@ -111,8 +129,8 @@ const Wishlist = () => {
           <table>
             <thead>
               <tr>
-                <th>Item</th>
-                <th>Price</th>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
                 <th>Status</th>
                 <th></th>
               </tr>
@@ -124,10 +142,15 @@ const Wishlist = () => {
                   <tr key={item._id}>
                     <td>
                       <div className="product-card">
-                        <img src={item?.images[0]} />
+                        <div className="image">
+                          <img src={item?.images[0]} />
+                        </div>
+
                         <div className="product-info">
-                          <p>{item?.name}</p>
-                          <p>{item?.description}</p>
+                          <span className="product-name">{item?.name}</span>
+                          <span className="product-description">
+                            {item?.description}
+                          </span>
                         </div>
                       </div>
                     </td>

@@ -49,12 +49,13 @@ const Wrapper = styled.div`
   .product-item {
     position: relative;
     display: flex;
-    //padding-left: 1rem;
+    height: 100px;
   }
   .product-image {
     width: 20%;
+    height: inherit;
     img {
-      width: 100%;
+      height: inherit;
     }
   }
   .product-info {
@@ -65,22 +66,32 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-info-name {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .product-info-price {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .count {
+      font-size: 1rem;
+      font-weight: 500;
+    }
   }
   .main-price {
     color: #cf0000;
     display: flex;
     gap: 1rem;
     .strike {
-      color: black;
+      font-size: 0.95rem;
+      color: #707070;
       text-decoration: line-through;
+      text-decoration-thickness: 1px;
     }
   }
   .product-count {
@@ -145,7 +156,7 @@ const Wrapper = styled.div`
       height: 2.5rem;
       border-radius: 5px;
       border: none;
-      background: red;
+      background: #d70018;
       font-size: medium;
       color: white;
       cursor: pointer;
