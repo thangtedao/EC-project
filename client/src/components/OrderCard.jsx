@@ -23,8 +23,8 @@ const OrderCard = ({ order }) => {
               <div className="product-info-name">{item.product?.name}</div>
               <div className="product-info-price">
                 <div className="main-price">
-                  <span>{item.product?.salePrice}đ</span>
-                  <span className="strike">{item.product?.price}đ</span>
+                  <span>{item.product?.salePrice}₫</span>
+                  <span className="strike">{item.product?.price}₫</span>
                 </div>
               </div>
               <p>Số lượng: {item.count}</p>

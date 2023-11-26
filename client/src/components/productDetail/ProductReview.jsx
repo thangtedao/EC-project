@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import img from "../../assets/react.svg";
 import Rating from "@mui/material/Rating";
+import { FaStar } from "react-icons/fa";
+import { Form } from "react-router-dom";
+import ReactStars from "react-rating-stars-component";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -16,6 +19,11 @@ const Wrapper = styled.div`
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     gap: 1rem;
     padding: 1rem;
+    .review-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #4a4a4a;
+    }
   }
   .box-review {
     width: 100%;
@@ -29,6 +37,11 @@ const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+    p {
+      font-size: 1.35rem;
+      font-weight: bold;
+      color: #4a4a4a;
+    }
   }
   .box-review-star {
     width: 60%;
@@ -43,6 +56,12 @@ const Wrapper = styled.div`
     padding: 0.3rem;
     gap: 0.3rem;
     align-items: center;
+    .gold {
+      color: #ffbf00;
+    }
+    p {
+      font-weight: bold;
+    }
   }
 
   // MID
@@ -61,8 +80,9 @@ const Wrapper = styled.div`
     padding: 0.6rem 1.5rem;
     display: grid;
     place-items: center;
-    background: red;
+    background: #d7000e;
     color: white;
+    font-size: 1.05rem;
     border-radius: 5px;
     border: transparent;
     cursor: pointer;
@@ -100,10 +120,18 @@ const Wrapper = styled.div`
 `;
 
 const ProductReview = ({ product }) => {
+  const [isRating, setIsRating] = useState(false);
+
+  const handleRating = () => {
+    setIsRating(!isRating);
+  };
+
   return (
     <Wrapper>
       <div className="product-review-container">
-        <p>Đánh giá & nhận xét {product.name}</p>
+        <div className="review-title">
+          {"Đánh giá & nhận xét " + product.name}
+        </div>
         <div className="box-review">
           <div className="box-review-score">
             <p>5/5</p>
@@ -113,38 +141,65 @@ const ProductReview = ({ product }) => {
           <div className="box-review-star">
             <div className="rating-level">
               <p>5</p>
+              <FaStar className="gold" />
               <progress max="10" value="5"></progress>
-              <p>10 đánh giá</p>
+              <span>10 đánh giá</span>
             </div>
             <div className="rating-level">
               <p>4</p>
+              <FaStar className="gold" />
               <progress max="10" value="0"></progress>
-              <p>10 đánh giá</p>
+              <span>10 đánh giá</span>
             </div>
             <div className="rating-level">
               <p>3</p>
+              <FaStar className="gold" />
               <progress max="10" value="0"></progress>
-              <p>10 đánh giá</p>
+              <span>10 đánh giá</span>
             </div>
             <div className="rating-level">
               <p>2</p>
+              <FaStar className="gold" />
               <progress max="10" value="0"></progress>
-              <p>10 đánh giá</p>
+              <span>10 đánh giá</span>
             </div>
             <div className="rating-level">
               <p>1</p>
+              <FaStar className="gold" />
               <progress max="10" value="0"></progress>
-              <p>10 đánh giá</p>
+              <span>10 đánh giá</span>
             </div>
           </div>
         </div>
 
         <div className="btn-review-container">
           <p>Bạn đánh giá sao về sản phẩm này?</p>
-          <button className="btn-review" type="button">
+          <button
+            className="btn-review"
+            type="button"
+            onClick={() => handleRating()}
+          >
             Đánh giá ngay
           </button>
         </div>
+
+        {isRating && (
+          <Form>
+            <ReactStars
+              count={5}
+              //onChange={ratingChanged}
+              size={24}
+              edit={true}
+              activeColor="#ffd700"
+              value={5}
+              name="star"
+            />
+            <textarea name="comment"></textarea>
+            <button type="submit" className="btn">
+              Gửi
+            </button>
+          </Form>
+        )}
 
         <div className="box-review-filter"></div>
         <div className="box-review-comment">

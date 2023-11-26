@@ -116,7 +116,10 @@ const LogoutContainer = () => {
           aria-expanded={open ? "true" : undefined}
         >
           <Avatar
-            sx={{ width: 31, height: 31 }}
+            sx={{
+              width: 31,
+              height: 31,
+            }}
             src={user?.avatar && user.avatar}
           >
             {!user?.avatar && user?.fullName.charAt(0)}

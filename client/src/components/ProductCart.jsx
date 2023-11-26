@@ -59,8 +59,8 @@ const ProductCart = ({ product, isPayment }) => {
           </div>
           <div className="product-info-price">
             <div className="main-price">
-              <span>{product?.salePrice}đ</span>
-              <span className="strike">{product?.price}đ</span>
+              <span>{product?.salePrice}₫</span>
+              <span className="strike">{product?.price}₫</span>
             </div>
             {!isPayment ? (
               <div className="product-count">

@@ -52,9 +52,10 @@ const Wrapper = styled.div`
     flex-direction: column;
     border-radius: 10px;
     padding: 1rem 0;
+    overflow: hidden;
   }
   .product-item {
-    height: 120px;
+    height: 100px;
     position: relative;
     display: flex;
     align-items: center;
@@ -64,10 +65,12 @@ const Wrapper = styled.div`
     height: 30px;
   }
   .product-image {
+    text-align: center;
     margin-left: 10px;
     width: 20%;
+    height: inherit;
     img {
-      width: 100%;
+      height: inherit;
     }
   }
   .product-info {
@@ -78,11 +81,15 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-info-name {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .product-info-price {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -92,7 +99,10 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1rem;
     .strike {
+      font-size: 0.95rem;
+      color: #707070;
       text-decoration: line-through;
+      text-decoration-thickness: 1px;
     }
   }
   .product-count {
@@ -109,7 +119,7 @@ const Wrapper = styled.div`
       width: 30px;
       height: 30px;
       border-radius: 3px;
-      background-color: lightgray;
+      background-color: #f3f3f3;
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -194,7 +204,7 @@ const Cart = () => {
           <div className="bottom-bar">
             <div className="price-temp">
               <p>Tạm tính</p>
-              {totalPrice}đ
+              {totalPrice}₫
             </div>
             <button className="btn" onClick={() => navigate("payment-info")}>
               Mua ngay {`(${cart.length})`}

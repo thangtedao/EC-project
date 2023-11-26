@@ -386,7 +386,7 @@ const PaymentInfo = () => {
       <div className="bottom-bar">
         <div className="price-temp">
           <p>Tổng tiền tạm tính:</p>
-          {totalPrice}đ
+          {totalPrice}₫
         </div>
         <button className="btn" onClick={() => navigate("/cart/payment")}>
           Tiếp tục

@@ -4,8 +4,6 @@ import ReactStars from "react-rating-stars-component";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import { IconButton } from "@mui/material";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 
@@ -19,7 +17,8 @@ const Wrapper = styled.div`
   background-color: var(--background-secondary-color);
   border: 0.5px solid lightgrey;
   border-radius: 10px;
-  box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
+    0 2px 6px 2px rgba(60, 64, 67, 0.15);
   padding: 0.5rem;
 
   .product-card-container {
@@ -36,15 +35,15 @@ const Wrapper = styled.div`
     width: 100%;
     text-align: center;
     overflow: hidden;
-    max-height: 190px;
+    height: 180px;
     img {
-      width: 80%;
+      height: inherit;
     }
   }
   .product-card-name {
     font-size: 1.05rem;
     font-weight: bold;
-    color: black;
+    color: #444;
   }
   .product-card-price {
     font-size: 1.1rem;
@@ -65,8 +64,8 @@ const Wrapper = styled.div`
     width: 80px;
     height: 31px;
     top: 5px;
-    left: 0px;
-    background: url("src/assets/percent.svg") no-repeat;
+    left: -2px;
+    background: url("/src/assets/percent.svg") 50% no-repeat;
     color: white;
     font-size: small;
     font-weight: bold;
@@ -85,20 +84,26 @@ const Wrapper = styled.div`
     font-size: 12px;
     color: #444;
   }
+  .product-card-bottom {
+    width: 100%;
+    max-height: 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .product-rating {
+    min-width: 24px;
+  }
   .wishlist-btn {
     color: #777;
     font-size: 12px;
     display: flex;
     align-items: center;
     .heart {
+      margin-left: 2px;
       color: #d70018;
+      cursor: pointer;
     }
-  }
-  .product-card-bottom {
-    max-height: 10%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 `;
 
@@ -160,18 +165,18 @@ const ProductCard = ({ product }) => {
       </NavLink>
 
       <div className="product-card-bottom">
-        <ReactStars
-          count={5}
-          //onChange={ratingChanged}
-          size={24}
-          edit={false}
-          activeColor="#ffd700"
-        />
+        <div className="product-rating">
+          <ReactStars
+            count={5}
+            //onChange={ratingChanged}
+            size={24}
+            edit={false}
+            activeColor="#ffd700"
+          />
+        </div>
         <div className="wishlist-btn">
           Yêu Thích
-          <IconButton className="heart" onClick={() => addToWishlist()}>
-            <FavoriteIcon />
-          </IconButton>
+          <FavoriteIcon className="heart" onClick={() => addToWishlist()} />
         </div>
       </div>
     </Wrapper>

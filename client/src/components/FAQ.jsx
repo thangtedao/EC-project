@@ -7,10 +7,10 @@ const Wrapper = styled.div`
   padding: 1rem;
 
   .title {
-    font-size: large;
-    font-weight: 500;
+    font-size: 1.3rem;
+    font-weight: bold;
     text-transform: uppercase;
-    color: red;
+    color: #d70018;
   }
 `;
 

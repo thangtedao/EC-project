@@ -50,10 +50,11 @@ const Wrapper = styled.div`
     overflow: hidden;
   }
   .product-image {
-    margin-left: 10px;
+    text-align: center;
     width: 20%;
+    height: inherit;
     img {
-      width: 100%;
+      height: inherit;
     }
   }
   .product-info {
@@ -64,11 +65,15 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-info-name {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .product-info-price {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -78,7 +83,10 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1rem;
     .strike {
+      font-size: 0.9rem;
+      color: #707070;
       text-decoration: line-through;
+      text-decoration-thickness: 1px;
     }
   }
   .order-status {

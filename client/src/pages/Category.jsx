@@ -5,6 +5,9 @@ import { FAQ, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
 import { NavLink, useLoaderData } from "react-router-dom";
 import { debounce } from "lodash";
+import { FaEye } from "react-icons/fa";
+import { FaSortAmountDown } from "react-icons/fa";
+import { FaSortAmountUp } from "react-icons/fa";
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,16 +18,20 @@ const Wrapper = styled.div`
   padding: 1rem 0;
   width: 1100px;
   height: 100%;
-  //border: 1px solid green;
 
   .block-top-filter-brands {
-    width: 100%;
-  }
-  .brands-list {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+  .brands-list {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 3px 0;
+    img {
+      height: 25px;
+    }
   }
   .nav-link {
     width: 110px;
@@ -45,7 +52,6 @@ const Wrapper = styled.div`
     width: 100%;
     border-radius: 10px;
     background-color: #580f0f;
-    //border: 0.5px solid yellowgreen;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
   }
@@ -56,6 +62,8 @@ const Wrapper = styled.div`
     padding: 1rem 0;
   }
   .sale-title {
+    width: 100%;
+    text-align: center;
     font-size: 2rem;
     font-weight: 700;
     color: red;
@@ -71,8 +79,8 @@ const Wrapper = styled.div`
     width: 100%;
   }
   .block-filter-sort-title {
-    font-size: large;
-    font-weight: 500;
+    font-size: 1.2rem;
+    font-weight: bold;
   }
   .filter-sort-list-filter {
     display: flex;
@@ -81,11 +89,30 @@ const Wrapper = styled.div`
   .btn-filter {
     height: 35px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
     padding: 0 0.5rem;
     background-color: #ebebeb;
+    cursor: pointer;
+  }
+  .btn-load {
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 8px;
+    padding: 0 4rem;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
+      0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    background-color: #fff;
+    cursor: pointer;
+    :hover {
+      background-color: rgba(217, 83, 79, 0.1);
+      color: #d70018;
+    }
   }
 
   /* BOT */
@@ -135,15 +162,20 @@ export const loader = async ({ params }) => {
     let endpoint = `/product/category?category=${slug1}&page=1&limit=10`;
 
     const response = await customFetch.get(endpoint);
-    return { response, slug1 };
+
+    const productsMostView = await customFetch
+      .get(`/product/category?category=${slug1}&sort=-viewed&limit=10`)
+      .then(({ data }) => data.products);
+
+    window.scrollTo(0, 0);
+    return { response, slug1, productsMostView };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  window.scrollTo(0, 0);
-  const { response, slug1 } = useLoaderData();
+  const { response, slug1, productsMostView } = useLoaderData();
   const [products, setProducts] = useState(response.data.products);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
@@ -249,24 +281,26 @@ const Category = () => {
   return (
     <Wrapper>
       <div className="block-top-filter-brands">
-        <div className="brands-list">
-          {categoryData.map((item, index) => {
-            return (
+        {categoryData.map((item, index) => {
+          return (
+            <div className="brands-list">
               <NavLink key={index}>
                 <img src={item.image} />
               </NavLink>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* --------- HOT SALE -------- */}
       <div className="block-hot-sale">
         <div className="block-title">
-          <div className="sale-title">HOT SALE</div>
-          <div className="box-countdown">00:11:22:33</div>
+          <div className="sale-title">TOP 10 NỔI BẬT NHẤT</div>
+          {/* <div className="box-countdown">00:11:22:33</div> */}
         </div>
-        {products?.length > 0 && <SlideProduct products={products} />}
+        {productsMostView?.length > 0 && (
+          <SlideProduct products={productsMostView} />
+        )}
       </div>
 
       {/* --------- ALL PRODUCTS -------- */}
@@ -277,22 +311,24 @@ const Category = () => {
         </div>
         <div className="block-filter-sort-title">Sắp xếp theo</div>
         <div className="filter-sort-list-filter">
-          {/* if select, products = filter(products) */}
-          <button className="btn-filter" onClick={() => filterHighToLow()}>
+          <div className="btn-filter" onClick={() => filterHighToLow()}>
+            <FaSortAmountDown />
             Giá Cao - Thấp
-          </button>
-          <button className="btn-filter" onClick={() => filterLowToHigh()}>
+          </div>
+          <div className="btn-filter" onClick={() => filterLowToHigh()}>
+            <FaSortAmountUp />
             Giá Thấp - Cao
-          </button>
-          <button className="btn-filter" onClick={() => filterMostViewed()}>
-            Xem nhiều
-          </button>
+          </div>
+          <div className="btn-filter" onClick={() => filterMostViewed()}>
+            <FaEye />
+            <span>Xem nhiều</span>
+          </div>
         </div>
         <ProductList products={products} />
       </div>
-      <button className="btn" onClick={() => loadMore()}>
+      <div className="btn-load" onClick={() => loadMore()}>
         {isLoading ? "Loading" : "Xem thêm"}
-      </button>
+      </div>
 
       {/* BOT */}
       <div className="bot-container">

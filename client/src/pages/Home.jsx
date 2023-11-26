@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 1rem;
   padding: 1rem 0;
-  width: 1200px;
+  width: 1100px;
   height: 100%;
 
   /* TOP HOME */

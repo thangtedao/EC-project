@@ -217,7 +217,7 @@ const Payment = () => {
         </div>
         <div className="flex-between">
           <p>Tiền hàng (tạm tính)</p>
-          {totalPrice}đ
+          {totalPrice}₫
         </div>
         <div className="flex-between">
           <p>Phí vận chuyển</p>
@@ -225,7 +225,7 @@ const Payment = () => {
         </div>
         <div className="flex-between">
           <p>Tổng tiền (đã gồm VAT)</p>
-          {totalPrice}đ
+          {totalPrice}₫
         </div>
       </div>
 
@@ -262,7 +262,7 @@ const Payment = () => {
       <div className="bottom-bar">
         <div className="price-temp">
           <p>Tổng tiền tạm tính:</p>
-          {totalPrice}đ
+          {totalPrice}₫
         </div>
         <button className="btn" onClick={() => handleCheckout()}>
           Thanh toán

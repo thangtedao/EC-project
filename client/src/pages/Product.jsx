@@ -24,13 +24,13 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 1rem;
   padding: 1rem 0;
-  //border: 0.5px solid green;
 
   .top-product-title {
     width: 100%;
-    h5 {
-      font-weight: 500;
-    }
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid lightgray;
   }
 
   /* TOP */
@@ -38,10 +38,8 @@ const Wrapper = styled.div`
     width: 100%;
     display: flex;
     gap: 1.5rem;
-    //border: 0.5px solid red;
   }
   .top-container-column-1 {
-    //border: 0.5px solid yellow;
     width: 60%;
     display: flex;
     flex-direction: column;
@@ -52,11 +50,8 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 1rem;
     width: 40%;
-    //border: 0.5px solid green;
   }
   .sliding-product-image {
-    //border: 0.5px solid green;
-    //height: 400px;
     width: 100%;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     margin-right: 1rem;
@@ -83,17 +78,16 @@ const Wrapper = styled.div`
     flex-wrap: wrap;
   }
   .box-product-price {
-    padding: 0.5rem 0;
-    border-radius: 5px;
+    padding: 1rem 0;
     display: flex;
     gap: 1rem;
     align-items: center;
-    font-weight: 700;
-    color: red;
-    .old-price {
-      font-size: 0.8rem;
-      font-weight: 5;
-      color: gray;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fd2424;
+    .strike {
+      font-size: 1rem;
+      color: #707070;
       text-decoration: line-through;
       text-decoration-thickness: 1px;
     }
@@ -107,7 +101,7 @@ const Wrapper = styled.div`
     width: 90%;
     border-radius: 10px;
     border: none;
-    background: red;
+    background: linear-gradient(#f52f32, #e11b1e);
     font-weight: 700;
     font-size: 1.3rem;
     color: white;
@@ -115,8 +109,8 @@ const Wrapper = styled.div`
     cursor: pointer;
   }
   .btn-addtocart {
-    border-color: red;
-    color: red;
+    border-color: #e04040;
+    color: #e04040;
     background: white;
     display: flex;
     flex-direction: column;
@@ -136,11 +130,13 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding-top: 1rem;
+    padding-top: 2rem;
+    margin-top: 1rem;
     border-top: 1px solid lightgray;
-    h5 {
+    .mid-title {
       font-size: 1.3rem;
       font-weight: bold;
+      color: #4a4a4a;
     }
   }
 
@@ -211,9 +207,9 @@ export const loader = async ({ params }) => {
       .then(({ data }) => data.product);
 
     const relatedProducts = await customFetch
-      .get(`/product/category/?category=${product.category}`)
+      .get(`/product/category/?category=${product.category}&limit=10`)
       .then(({ data }) => data.products);
-
+    window.scrollTo(0, 0);
     return { product, relatedProducts };
   } catch (error) {
     return error;
@@ -221,7 +217,6 @@ export const loader = async ({ params }) => {
 };
 
 const Product = () => {
-  window.scrollTo(0, 0);
   const dispatch = useDispatch();
   const { product, relatedProducts } = useLoaderData();
   const user = useSelector((state) => state.user.user);
@@ -239,9 +234,7 @@ const Product = () => {
   return (
     <Wrapper>
       {/* TOP */}
-      <div className="top-product-title">
-        <h5>{product?.name}</h5>
-      </div>
+      <div className="top-product-title">{product?.name}</div>
 
       <div className="top-container">
         <div className="top-container-column-1">
@@ -270,8 +263,8 @@ const Product = () => {
           </div>
 
           <div className="box-product-price">
-            <p>{product?.salePrice + " đ"}</p>
-            <p className="old-price">{product?.price + " đ"}</p>
+            <p>{product?.salePrice + "₫"}</p>
+            <p className="strike">{product?.price + "₫"}</p>
           </div>
 
           <div className="btn-buy">
@@ -291,7 +284,7 @@ const Product = () => {
 
       {/* MID */}
       <div className="mid-container">
-        <h5>SẢN PHẨM TƯƠNG TỰ</h5>
+        <span className="mid-title">SẢN PHẨM TƯƠNG TỰ</span>
         {relatedProducts.length > 0 && (
           <SlideProduct products={relatedProducts} />
         )}
