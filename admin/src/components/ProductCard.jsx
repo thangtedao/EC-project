@@ -5,9 +5,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { IconButton } from "@mui/material";
 import { useDashboardContext } from "../pages/DashboardLayout";
+import { MdModeEditOutline } from "react-icons/md";
 
 const Wrapper = styled.div`
   width: 100%;
+
   .product-card-container {
     width: 100%;
     height: 380px;
@@ -17,46 +19,60 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    padding: 0.5rem;
+    padding: 1rem;
     gap: 1rem;
   }
   .product-card-image {
-    width: 100%;
+    height: 120px;
     display: grid;
     place-items: center;
-    overflow: hidden;
     img {
-      width: 80%;
-      height: 100%;
+      border-radius: 10px;
+      height: inherit;
     }
   }
   .product-card-name {
-    font-size: large;
-    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    color: #031123;
   }
-  .product-card-price {
-    font-size: large;
-    color: red;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 1rem;
-    font-weight: 500;
+  .product-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    font-weight: bolder;
+    font-size: 0.9rem;
+    color: #515c6b;
   }
-  .strike {
-    font-size: medium;
-    color: gray;
-    text-decoration: line-through;
-    text-decoration-thickness: 1px;
-  }
-  .product-card-description {
-    border: transparent;
-    background: #ebebeb;
-    padding: 0.5rem 0.25rem;
-    border-radius: 3px;
-    font-size: small;
-    color: black;
+  .btn-action {
+    display: flex;
+    gap: 0.5rem;
+    button {
+      min-width: 80px;
+      font-weight: bolder;
+      border-radius: 23px;
+      background: white;
+      height: 38px;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+    }
+    .ed-btn {
+      border: 2px solid #035ecf;
+      color: #035ecf;
+      :hover {
+        background-color: #035ecf;
+        color: white;
+      }
+    }
+    .dl-btn {
+      border: 2px solid #ff5470;
+      color: #ff5470;
+      :hover {
+        background-color: #ff5470;
+        color: white;
+      }
+    }
   }
 `;
 
@@ -73,19 +89,29 @@ const ProductCard = ({ product }) => {
         <div className="product-card-name">
           <p> {product.name}</p>
         </div>
-        <div className="product-card-price">
-          <p>
-            {product.salePrice ? product.salePrice + "đ" : product.price + "đ"}
-          </p>
-          <p className="strike">{product.salePrice && product.price + "đ"}</p>
+        <div className="product-card-info">
+          <div className="item-info">
+            {"Available: " + product.stockQuantity}
+          </div>
+          <div className="item-info">{"Sold: " + product.sold + "₫"}</div>
+          <div className="item-info">
+            {"Regular price: " + product.price + "₫"}
+          </div>
+          <div className="item-info">
+            {"Sale price: " + product.salePrice + "₫"}
+          </div>
         </div>
-        <div className="product-card-description">
-          <p>{product.description}</p>
+        <div className="btn-action">
+          <button
+            className="ed-btn"
+            onClick={() => navigate(`/edit-product/${product.slug}`)}
+          >
+            <MdModeEditOutline /> Edit
+          </button>
+          <button className="dl-btn" onClick={() => deleteProduct(product._id)}>
+            Delete
+          </button>
         </div>
-        <button onClick={() => navigate(`/edit-product/${product.slug}`)}>
-          Edit
-        </button>
-        <button onClick={() => deleteProduct(product._id)}>Delete</button>
       </div>
     </Wrapper>
   );

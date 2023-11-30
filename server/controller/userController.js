@@ -11,6 +11,7 @@ import {
   cloudinaryUploadImage,
 } from "../utils/cloudinary.js";
 import fs from "fs";
+import { formatImage } from "../middleware/uploadImages.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -55,9 +56,16 @@ export const updateUser = async (req, res) => {
     const data = { ...req.body };
     delete data.password;
 
+    // if (req.file) {
+    //   const response = await cloudinaryUploadImage(req.file.path);
+    //   fs.unlinkSync(req.file.path);
+    //   data.avatar = response.secure_url;
+    //   data.avatarPublicId = response.public_id;
+    // }
+
     if (req.file) {
-      const response = await cloudinaryUploadImage(req.file.path);
-      fs.unlinkSync(req.file.path);
+      const file = formatImage(req.file);
+      const response = await cloudinaryUploadImage(file);
       data.avatar = response.secure_url;
       data.avatarPublicId = response.public_id;
     }

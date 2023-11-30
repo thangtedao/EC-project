@@ -2,6 +2,7 @@ import multer from "multer";
 import sharp from "sharp";
 import path from "path";
 import fs from "fs";
+import DataParser from "datauri/parser.js";
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -12,6 +13,14 @@ const multerStorage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + ".jpeg");
   },
 });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const parser = new DataParser();
+export const formatImage = (file) => {
+  const fileExtension = path.extname(file.originalname).toString();
+  return parser.format(fileExtension, file.buffer).content;
+};
 
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
