@@ -249,55 +249,43 @@ const ProductReview = ({ product }) => {
 
         <div className="box-review-filter"></div>
         <div className="box-review-comment">
-          <div className="box-review-comment-item">
-            <div className="box-review-comment-item-title">
-              <img src={img} alt="avatar" className="round-img" />
-              <p>Xuan Thang</p>
-              <p>27/8/2023 00:06</p>
+          {product?.ratings.length <= 0 ? (
+            <div className="btn-review-container">
+              <p>Không có đánh giá nào</p>
             </div>
-            <div className="box-review-comment-item-content">
-              <Rating
-                name="read-only"
-                value={5}
-                icon={<FaStar />}
-                emptyIcon={<FaRegStar />}
-                size="small"
-                readOnly
-              />
-              <p>Em đặt con Macbook air m1 đến tp hà tĩnh thì</p>
-            </div>
-          </div>
-          {product?.ratings.map((item) => {
-            return (
-              <div key={item._id} className="box-review-comment-item">
-                <div className="box-review-comment-item-title">
-                  <Avatar
-                    sx={{
-                      width: 31,
-                      height: 31,
-                    }}
-                    src={item?.postedby.avatar && item?.postedby.avatar}
-                  >
-                    {!item?.postedby.avatar &&
-                      item?.postedby.fullName.charAt(0).toUpperCase()}
-                  </Avatar>
-                  <p className="name">{item?.postedby.fullName}</p>
-                  <p>{item?.createdAt}</p>
+          ) : (
+            product?.ratings.map((item) => {
+              return (
+                <div key={item._id} className="box-review-comment-item">
+                  <div className="box-review-comment-item-title">
+                    <Avatar
+                      sx={{
+                        width: 31,
+                        height: 31,
+                      }}
+                      src={item?.postedby.avatar && item?.postedby.avatar}
+                    >
+                      {!item?.postedby.avatar &&
+                        item?.postedby.fullName.charAt(0).toUpperCase()}
+                    </Avatar>
+                    <p className="name">{item?.postedby.fullName}</p>
+                    <p>{item?.createdAt}</p>
+                  </div>
+                  <div className="box-review-comment-item-content">
+                    <Rating
+                      name="read-only"
+                      icon={<FaStar />}
+                      emptyIcon={<FaRegStar />}
+                      value={item?.star}
+                      size="small"
+                      readOnly
+                    />
+                    <p>{item?.comment}</p>
+                  </div>
                 </div>
-                <div className="box-review-comment-item-content">
-                  <Rating
-                    name="read-only"
-                    icon={<FaStar />}
-                    emptyIcon={<FaRegStar />}
-                    value={item?.star}
-                    size="small"
-                    readOnly
-                  />
-                  <p>{item?.comment}</p>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </Wrapper>

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import Checkbox from "@mui/material/Checkbox";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import TextField from "@mui/material/TextField";

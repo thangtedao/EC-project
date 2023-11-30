@@ -51,7 +51,7 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.user;
     const data = { ...req.body };
     delete data.password;
 
@@ -63,7 +63,7 @@ export const updateUser = async (req, res) => {
     }
 
     // nào có {new: true} mới là cái mới
-    const updatedUser = await User.findByIdAndUpdate(id, data);
+    const updatedUser = await User.findByIdAndUpdate(userId, data);
 
     if (req.file && updatedUser.avatarPublicId) {
       // xóa avatar cũ trên cloudinary

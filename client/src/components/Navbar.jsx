@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import LogoutContainer from "./LogoutContainer";
 import SearchBar from "./SearchBar";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { MdOutlineAccountCircle } from "react-icons/md";
 import FormatAlignLeftOutlinedIcon from "@mui/icons-material/FormatAlignLeftOutlined";
 import Badge from "@mui/material/Badge";
 import Typography from "@mui/material/Typography";
@@ -52,7 +52,7 @@ const Wrapper = styled.div`
     gap: 0.5rem;
   }
   .icon {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   /* @media (min-width: 992px) {
@@ -63,8 +63,8 @@ const Wrapper = styled.div`
 
 const StyledBadge = styled(Badge)(() => ({
   "& .MuiBadge-badge": {
-    right: 14,
-    top: 18,
+    right: 13,
+    top: 16,
     padding: "0 4px",
     fontSize: "10px",
   },
@@ -85,7 +85,7 @@ const Navbar = () => {
 
         <div className="nav-links">
           <div className="nav-link" onClick={toggleSideBar}>
-            <FormatAlignLeftOutlinedIcon />
+            <FormatAlignLeftOutlinedIcon className="icon" />
             <Typography>Danh mục</Typography>
           </div>
 
@@ -104,7 +104,7 @@ const Navbar = () => {
             <LogoutContainer />
           ) : (
             <NavLink to="/login" className="nav-link">
-              <AccountCircleIcon />
+              <MdOutlineAccountCircle className="icon" />
               <Typography>Đăng nhập</Typography>
             </NavLink>
           )}

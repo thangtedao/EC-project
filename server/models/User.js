@@ -20,8 +20,10 @@ const UserSchema = new mongoose.Schema(
       default: "",
     },
     address: {
-      type: String,
-      default: "",
+      city: { type: String, default: "" },
+      district: { type: String, default: "" },
+      ward: { type: String, default: "" },
+      home: { type: String, default: "" },
     },
     gender: {
       type: String,

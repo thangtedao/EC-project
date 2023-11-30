@@ -38,7 +38,7 @@ router.post("/cart/cash-order", createOrder);
 router.get("/get-orders", getOrders);
 router.patch("/order/update-order/:id", updateOrderStatus);
 router.get("/admin/app-stats", authorizePermissions("admin"), blockUser);
-router.patch("/update-user/:id", validateUpdateInput, updateUser);
+router.patch("/update-user", authenticateUser, validateUpdateInput, updateUser);
 router.delete("/delete/:id", deleteUser);
 router.patch("/block-user", validateUpdateInput, blockUser);
 router.patch("/unblock-user", validateUpdateInput, unblockUser);
