@@ -76,10 +76,14 @@ const Wrapper = styled.aside`
 const Sidebar = () => {
   const { showSidebar } = useDashboardContext();
 
+  const [openDashboard, setOpenDashboard] = useState(false);
   const [openProduct, setOpenProduct] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
   const [openCoupon, setOpenCoupon] = useState(false);
 
+  const handleClickOpenDashboard = () => {
+    setOpenDashboard(!openDashboard);
+  };
   const handleClickOpenProduct = () => {
     setOpenProduct(!openProduct);
   };
@@ -100,7 +104,35 @@ const Sidebar = () => {
         <div className="content">
           <header>Logo</header>
 
-          <List sx={{ width: "100%", maxWidth: 360, bgcolor: "green" }}>
+          <List sx={{ width: "100%", maxWidth: 360 }}>
+            <ListItemButton onClick={handleClickOpenDashboard}>
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+              {openDashboard ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openDashboard} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItemButton sx={{ pl: 4, m: 1 }}>
+                  <ListItemIcon>
+                    <StarBorder />
+                  </ListItemIcon>
+                  <NavLink to="" end>
+                    Sales Analytics
+                  </NavLink>
+                </ListItemButton>
+                <ListItemButton sx={{ pl: 4, m: 1 }}>
+                  <ListItemIcon>
+                    <StarBorder />
+                  </ListItemIcon>
+                  <NavLink to="" end>
+                    Revenue By Period
+                  </NavLink>
+                </ListItemButton>
+              </List>
+            </Collapse>
+
             <ListItemButton onClick={handleClickOpenProduct}>
               <ListItemIcon>
                 <InboxIcon />
@@ -110,7 +142,7 @@ const Sidebar = () => {
             </ListItemButton>
             <Collapse in={openProduct} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
+                <ListItemButton sx={{ pl: 4, m: 1 }}>
                   <ListItemIcon>
                     <StarBorder />
                   </ListItemIcon>
@@ -118,7 +150,7 @@ const Sidebar = () => {
                     All Product
                   </NavLink>
                 </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }}>
+                <ListItemButton sx={{ pl: 4, m: 1 }}>
                   <ListItemIcon>
                     <StarBorder />
                   </ListItemIcon>

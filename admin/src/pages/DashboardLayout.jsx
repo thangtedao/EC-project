@@ -15,6 +15,7 @@ const Wrapper = styled.section`
   .dashboard-page {
     background-color: green;
     width: 100%;
+    padding: 2rem;
   }
 `;
 
