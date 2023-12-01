@@ -12,7 +12,7 @@ import { setCart } from "../state/cartSlice.js";
 const Wrapper = styled.section`
   padding: 3rem;
   margin-bottom: 5rem;
-  //height: 60vh;
+
   .form-login {
     width: 30vw;
     background-color: var(--background-color);

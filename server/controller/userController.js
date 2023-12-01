@@ -54,7 +54,19 @@ export const updateUser = async (req, res) => {
   try {
     const { userId } = req.user;
     const data = { ...req.body };
+
     delete data.password;
+    const address = {
+      city: data.city,
+      district: data.district,
+      ward: data.ward,
+      home: data.home,
+    };
+    delete data.city;
+    delete data.district;
+    delete data.ward;
+    delete data.home;
+    data.address = address;
 
     // if (req.file) {
     //   const response = await cloudinaryUploadImage(req.file.path);
@@ -70,16 +82,15 @@ export const updateUser = async (req, res) => {
       data.avatarPublicId = response.public_id;
     }
 
-    // nào có {new: true} mới là cái mới
     const updatedUser = await User.findByIdAndUpdate(userId, data);
 
     if (req.file && updatedUser.avatarPublicId) {
-      // xóa avatar cũ trên cloudinary
       await cloudinaryDeleteImage(updatedUser.avatarPublicId);
     }
 
     res.status(StatusCodes.OK).json({ msg: "updated user" });
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };

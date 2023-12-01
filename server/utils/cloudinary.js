@@ -7,7 +7,8 @@ cloudinary.config({
 });
 
 export const cloudinaryUploadImage = async (fileToUploads) => {
-  await cloudinary.uploader.upload(fileToUploads);
+  const response = await cloudinary.uploader.upload(fileToUploads);
+  return response;
 };
 
 export const cloudinaryDeleteImage = async (publicId) => {

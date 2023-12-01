@@ -8,8 +8,10 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { Form, useLoaderData, useNavigate } from "react-router-dom";
-import img from "../assets/react.svg";
+import { toast } from "react-toastify";
+import { Form, useNavigate, useNavigation } from "react-router-dom";
+import { store } from "../state/store.js";
+import { login } from "../state/userSlice.js";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -27,12 +29,26 @@ const Wrapper = styled.div`
     gap: 0.5rem;
   }
   .form-image {
-    text-align: center;
+    display: grid;
+    place-items: center;
+    height: 300px;
     width: 35%;
-    img {
+    .avatar {
+      height: 250px;
+      width: 250px;
+      border-radius: 50%;
+      border: 1px solid black;
       margin-bottom: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    img {
       max-width: 400px;
-      height: 200px;
+      max-height: 400px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     input {
       width: 50%;
@@ -61,31 +77,20 @@ const Wrapper = styled.div`
 export const action = async ({ request }) => {
   try {
     const formData = await request.formData();
-    const data = Object.fromEntries(formData);
 
-    const address = {
-      city: data.city,
-      district: data.district,
-      ward: data.ward,
-      home: data.home,
-    };
-    delete data.city;
-    delete data.district;
-    delete data.ward;
-    delete data.home;
-    data.address = address;
-
-    console.log(data);
-    return null;
-    await customFetch.post("/user/update-user", data);
+    await customFetch.patch("/user/update-user", formData);
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+    store.dispatch(login({ user: user }));
     toast.success("Update successful");
-    return redirect("/profile");
+    return null;
   } catch (error) {
     return error;
   }
 };
 
-export const loader = async ({ params }) => {
+export const loader = async () => {
   try {
     return null;
   } catch (error) {
@@ -95,6 +100,8 @@ export const loader = async ({ params }) => {
 
 const Profile = () => {
   window.scrollTo(0, 0);
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
 
@@ -197,7 +204,9 @@ const Profile = () => {
       <h5>Thông tin khách hàng</h5>
       <Form method="post" className="form-info" encType="multipart/form-data">
         <div className="form-image">
-          <img src={selectedImage ? selectedImage : img} />
+          <div className="avatar">
+            <img src={selectedImage ? selectedImage : user?.avatar} />
+          </div>
           <input
             type="file"
             name="avatar"
@@ -315,8 +324,8 @@ const Profile = () => {
               sx={{ width: "300px" }}
             />
           </div>
-          <button className="btn" type="submit">
-            Cập nhật
+          <button className="btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
           </button>
         </div>
       </Form>

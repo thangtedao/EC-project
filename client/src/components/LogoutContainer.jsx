@@ -62,7 +62,7 @@ const Wrapper = styled.div`
 `;
 
 const LogoutContainer = () => {
-  const [showLogout, setShowLogout] = useState(false);
+  // const [showLogout, setShowLogout] = useState(false);
   const { user } = useMainLayoutContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -119,6 +119,7 @@ const LogoutContainer = () => {
             sx={{
               width: 31,
               height: 31,
+              backgroundColor: "white",
             }}
             src={user?.avatar && user.avatar}
           >
@@ -169,7 +170,7 @@ const LogoutContainer = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={() => navigate("/profile")}>
           <Avatar /> Profile
         </MenuItem>
         <MenuItem onClick={handleClose}>

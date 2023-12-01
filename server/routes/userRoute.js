@@ -22,6 +22,7 @@ import {
   authenticateUser,
   authorizePermissions,
 } from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/uploadImages.js";
 
 const router = Router();
 
@@ -38,7 +39,13 @@ router.post("/cart/cash-order", createOrder);
 router.get("/get-orders", getOrders);
 router.patch("/order/update-order/:id", updateOrderStatus);
 router.get("/admin/app-stats", authorizePermissions("admin"), blockUser);
-router.patch("/update-user", authenticateUser, validateUpdateInput, updateUser);
+router.patch(
+  "/update-user",
+  authenticateUser,
+  upload.single("avatar"),
+  validateUpdateInput,
+  updateUser
+);
 router.delete("/delete/:id", deleteUser);
 router.patch("/block-user", validateUpdateInput, blockUser);
 router.patch("/unblock-user", validateUpdateInput, unblockUser);

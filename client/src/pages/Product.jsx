@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
@@ -7,9 +7,9 @@ import {
   ProductSpecifications,
   SlideProduct,
 } from "../components";
-import SlideGallery from "../components/slider/SlideGallery";
+import SlideGallery from "../components/SlideGallery";
 import customFetch from "../utils/customFetch";
-import { useLoaderData, useNavigation } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../state/cartSlice";
 import { toast } from "react-toastify";

@@ -14,14 +14,6 @@ const multerStorage = multer.diskStorage({
   },
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-const parser = new DataParser();
-export const formatImage = (file) => {
-  const fileExtension = path.extname(file.originalname).toString();
-  return parser.format(fileExtension, file.buffer).content;
-};
-
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -65,3 +57,11 @@ export const uploadPhoto = multer({
   fileFilter: multerFilter,
   limits: { fieldSize: 2000000 },
 });
+
+const storage = multer.memoryStorage();
+export const upload = multer({ storage });
+const parser = new DataParser();
+export const formatImage = (file) => {
+  const fileExtension = path.extname(file.originalname).toString();
+  return parser.format(fileExtension, file.buffer).content;
+};

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ProductCard from "../ProductCard";
+import ProductCard from "./ProductCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Grid, Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";

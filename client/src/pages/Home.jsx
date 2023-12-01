@@ -5,7 +5,7 @@ import { NavLink, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { IoIosArrowForward } from "react-icons/io";
-import SlideGallery from "../components/slider/SlideGallery";
+import SlideGallery from "../components/SlideGallery";
 
 const Wrapper = styled.div`
   display: flex;
