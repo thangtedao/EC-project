@@ -4,10 +4,10 @@ import { useDashboardContext } from "../pages/DashboardLayout";
 
 const Wrapper = styled.nav`
   width: 100%;
-  height: var(--nav-height);
+  height: 60px;
   display: flex;
   background: gray;
-  padding: 1rem;
+  padding: 0 1rem;
   .nav-center {
     display: flex;
     align-items: center;

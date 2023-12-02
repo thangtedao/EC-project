@@ -10,6 +10,7 @@ import {
   useNavigation,
   useLoaderData,
 } from "react-router-dom";
+import { FaImage } from "react-icons/fa6";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -49,61 +50,76 @@ export const loader = async () => {
 
 const Wrapper = styled.div`
   width: 100%;
+  background-color: white;
 
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #00193b;
+    margin-bottom: 1rem;
+  }
   .form-add {
     height: 700px;
     width: 100%;
     display: flex;
     gap: 2rem;
-    background-color: lightblue;
-  }
-  .title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #00193b;
+    background-color: white;
+    box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
+    border-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 1rem;
   }
   .form-col-1 {
     width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
   .input-image {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    input[type="file"] {
-      position: absolute;
-      top: 0;
-      right: 0;
-      margin: 0;
-      padding: 0;
-      font-size: 20px;
+    height: 300px;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    .image {
       cursor: pointer;
-      opacity: 0;
-    }
-
-    .custom-input {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #3498db;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .image-preview {
-      margin-top: 10px;
-      max-width: 100%;
-      max-height: 300px;
+      background-color: #e2e1e1;
+      border-radius: 5px;
+      height: 300px;
+      width: 320px;
+      display: grid;
+      place-items: center;
       overflow: hidden;
+    }
+    img {
+      width: inherit;
+    }
+  }
+  .sub-image {
+    display: grid;
+    row-gap: 10px;
+    .image {
+      cursor: pointer;
+      background-color: #e2e1e1;
+      border-radius: 5px;
+      height: 145px;
+      width: 160px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    img {
+      width: inherit;
     }
   }
 
   .form-col-2 {
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
+    gap: 0.3rem;
     width: 40%;
   }
   .form-row {
-    height: 50px;
     .form-label {
       font-size: 12px;
       font-weight: bold;
@@ -121,6 +137,23 @@ const Wrapper = styled.div`
       padding: 0 20px;
       height: 44px;
     }
+    textarea {
+      resize: none;
+      width: 100%;
+      height: 120px;
+      overflow: auto;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 0.5px solid lightgray;
+    }
+  }
+  .btn {
+    height: 50px;
+    border-radius: 10px;
+    background-color: #035ecf;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bolder;
   }
 `;
 
@@ -131,24 +164,49 @@ const AddProduct = () => {
 
   const [categoryC, setCategoryC] = useState(categoryChild[0]);
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const [selectedImage1, setSelectedImage1] = useState(null);
+  const [selectedImage2, setSelectedImage2] = useState(null);
+  const [selectedImage3, setSelectedImage3] = useState(null);
+  const [selectedImage4, setSelectedImage4] = useState(null);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, key) => {
     const file = e.target.files[0];
+    switch (key) {
+      case 1:
+        setSelectedImage1(URL.createObjectURL(file));
+        break;
+      case 2:
+        setSelectedImage2(URL.createObjectURL(file));
+        break;
+      case 3:
+        setSelectedImage3(URL.createObjectURL(file));
+        break;
+      case 4:
+        setSelectedImage4(URL.createObjectURL(file));
+        break;
 
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-
-      reader.readAsDataURL(file);
+      default:
+        break;
     }
   };
 
-  const openFileInput = () => {
-    document.getElementById("fileInput").click();
+  const openFileInput = (key) => {
+    switch (key) {
+      case 1:
+        document.getElementById("fileInput1").click();
+        break;
+      case 2:
+        document.getElementById("fileInput2").click();
+        break;
+      case 3:
+        document.getElementById("fileInput3").click();
+        break;
+      case 4:
+        document.getElementById("fileInput4").click();
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -162,42 +220,93 @@ const AddProduct = () => {
         <div className="title">Add Product</div>
         <Form method="post" className="form-add">
           <div className="form-col-1">
-            <div>
-              <div className="input-image">
+            <div className="input-image">
+              <div className="image" onClick={() => openFileInput(1)}>
+                {selectedImage1 ? (
+                  <img src={selectedImage1} alt="Image" />
+                ) : (
+                  <div>
+                    <FaImage /> Browse Image
+                  </div>
+                )}
                 <input
                   accept="image/*"
                   type="file"
-                  id="fileInput"
+                  id="fileInput1"
                   style={{ display: "none" }}
-                  onChange={handleFileChange}
+                  onChange={(e) => handleFileChange(e, 1)}
                 />
-                <div className="custom-input" onClick={openFileInput}>
-                  Chọn ảnh
-                </div>
-                {imagePreview && (
-                  <div className="image-preview">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      style={{ maxWidth: "100%", maxHeight: "300px" }}
-                    />
+              </div>
+              <div className="image" onClick={() => openFileInput(2)}>
+                {selectedImage2 ? (
+                  <img src={selectedImage2} alt="Image" />
+                ) : (
+                  <div>
+                    <FaImage /> Browse Image
                   </div>
                 )}
+                <input
+                  accept="image/*"
+                  type="file"
+                  id="fileInput2"
+                  style={{ display: "none" }}
+                  onChange={(e) => handleFileChange(e, 2)}
+                />
+              </div>
+              <div className="sub-image">
+                <div className="image" onClick={() => openFileInput(3)}>
+                  {selectedImage3 ? (
+                    <img src={selectedImage3} alt="Image" />
+                  ) : (
+                    <div>
+                      <FaImage /> Browse Image
+                    </div>
+                  )}
+                  <input
+                    accept="image/*"
+                    type="file"
+                    id="fileInput3"
+                    style={{ display: "none" }}
+                    onChange={(e) => handleFileChange(e, 3)}
+                  />
+                </div>
+                <div className="image" onClick={() => openFileInput(4)}>
+                  {selectedImage4 ? (
+                    <img src={selectedImage4} alt="Image" />
+                  ) : (
+                    <div>
+                      <FaImage /> Browse Image
+                    </div>
+                  )}
+                  <input
+                    accept="image/*"
+                    type="file"
+                    id="fileInput4"
+                    style={{ display: "none" }}
+                    onChange={(e) => handleFileChange(e, 4)}
+                  />
+                </div>
               </div>
             </div>
-            <div>
-              <label htmlFor="images">image</label>
+
+            <div className="form-row">
+              <label htmlFor="images" className="form-label">
+                {"Image Link"}
+              </label>
               <textarea
-                type="text"
                 name="images"
                 defaultValue="https://media.very.co.uk/i/very/VPZ33_SQ1_0000000020_BLUE_SLf?$300x400_retinamobilex2$&$roundel_very$&p1_img=blank_apple"
               />
             </div>
-            <FormRow
-              type="text"
-              name="description"
-              defaultValue="chung ta khong thuoc ve nhau"
-            />
+            <div className="form-row">
+              <label htmlFor="description" className="form-label">
+                Description
+              </label>
+              <textarea
+                name="description"
+                defaultValue="chung ta khong thuoc ve nhau"
+              />
+            </div>
           </div>
           <div className="form-col-2">
             <FormRow
@@ -207,19 +316,19 @@ const AddProduct = () => {
               defaultValue="Iphone "
             />
             <FormRow
-              type="text"
+              type="number"
               name="price"
               lableText="Regular Price"
               defaultValue="100000"
             />
             <FormRow
-              type="text"
+              type="number"
               name="salePrice"
               lableText="Sale Price"
               defaultValue="50000"
             />
             <FormRow
-              type="text"
+              type="number"
               name="stockQuantity"
               lableText="Quantity in Stock"
               defaultValue="99"
@@ -237,7 +346,7 @@ const AddProduct = () => {
               list={categoryC || []}
               defaultValue={categoryC.length > 0 && categoryC[0].name}
             />
-            <button type="submit" className="btn-block" disabled={isSubmitting}>
+            <button type="submit" className="btn" disabled={isSubmitting}>
               {isSubmitting ? "Adding..." : "Add"}
             </button>
           </div>

@@ -13,7 +13,7 @@ const Wrapper = styled.section`
     grid-template-columns: auto 1fr;
   }
   .dashboard-page {
-    background-color: green;
+    background-color: var(--background-secondary-color);
     width: 100%;
     padding: 2rem;
   }

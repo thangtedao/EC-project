@@ -17,7 +17,7 @@ import { useState } from "react";
 
 const Wrapper = styled.aside`
   display: block;
-  box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
+  border: 1px solid black;
 
   .sidebar-container {
     background: var(--background-secondary-color);
