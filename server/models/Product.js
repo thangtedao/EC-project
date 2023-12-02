@@ -57,6 +57,10 @@ const productSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
+    publicIdImages: {
+      type: Array,
+      default: [],
+    },
     review: {
       type: Array,
       default: [],

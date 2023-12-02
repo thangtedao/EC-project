@@ -1,19 +1,45 @@
-import { NotFoundError } from "../errors/customErrors.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
+import fs from "fs";
+import slugify from "slugify";
+import { NotFoundError } from "../errors/customErrors.js";
+import { formatImage } from "../middleware/uploadImages.js";
 import {
   cloudinaryDeleteImage,
   cloudinaryUploadImage,
 } from "../utils/cloudinary.js";
-import fs from "fs";
-import slugify from "slugify";
 
 export const createProduct = async (req, res) => {
   try {
-    req.body.slug = slugify(req.body.name);
-    const newProduct = await Product.create(req.body);
+    const data = { ...req.body };
+    let images = [];
+    let publicIdImages = [];
+    if (data.images !== "") images = data.images.split(",");
+    if (req.files) {
+      const files = ["image1", "image2", "image3", "image4"];
+
+      await Promise.all(
+        files.map(async (fieldName) => {
+          if (req.files[fieldName]) {
+            const file = req.files[fieldName][0];
+
+            const fileFormat = formatImage(file);
+            const response = await cloudinaryUploadImage(fileFormat);
+
+            images.push(response.secure_url);
+            publicIdImages.push(response.public_id);
+          }
+        })
+      );
+    }
+    data.images = images;
+    data.publicIdImages = publicIdImages;
+
+    data.slug = slugify(data.name);
+    const newProduct = await Product.create(data);
     res.status(201).json(newProduct);
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };
@@ -201,14 +227,41 @@ export const getSingleProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
+    const data = { ...req.body };
+    let images = [];
+    let publicIdImages = [];
+    if (data.images !== "") images = data.images.split(",");
+    if (req.files) {
+      const files = ["image1", "image2", "image3", "image4"];
+
+      await Promise.all(
+        files.map(async (fieldName) => {
+          if (req.files[fieldName]) {
+            const file = req.files[fieldName][0];
+
+            const fileFormat = formatImage(file);
+            const response = await cloudinaryUploadImage(fileFormat);
+
+            images.push(response.secure_url);
+            publicIdImages.push(response.public_id);
+          }
+        })
+      );
+    }
+    data.images = images;
+    data.publicIdImages = publicIdImages;
+
     const { slug } = req.params;
-    const updatedProduct = await Product.findOneAndUpdate(
-      { slug: slug },
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const updatedProduct = await Product.findOneAndUpdate({ slug: slug }, data);
+
+    if (req.files && updatedProduct.publicIdImages.length > 0) {
+      await Promise.all(
+        updatedProduct.publicIdImages.map(async (id) => {
+          await cloudinaryDeleteImage(id);
+        })
+      );
+    }
+
     if (!updatedProduct) throw new NotFoundError(`no product ${slug}`);
     res.status(200).json({ updatedProduct });
   } catch (error) {

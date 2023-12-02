@@ -81,7 +81,7 @@ const SlideProduct = ({ products }) => {
             },
           }}
           autoplay={{
-            delay: 2500,
+            delay: 8000,
             disableOnInteraction: false,
           }}
           loop={true}

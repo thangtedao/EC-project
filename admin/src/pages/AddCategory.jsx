@@ -34,7 +34,65 @@ export const loader = async () => {
   }
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width: 100%;
+
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #f1f1f1;
+    margin-bottom: 1rem;
+  }
+  .form-add {
+    height: 600px;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: aqua;
+    box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
+    border-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .form-row {
+    .form-label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #8d8d99;
+    }
+    .form-input {
+      border: 1px solid #e2e1e1;
+      border-radius: 8px;
+      padding: 0 20px;
+      height: 44px;
+    }
+    .form-select {
+      border: 1px solid #e2e1e1;
+      border-radius: 8px;
+      padding: 0 20px;
+      height: 44px;
+    }
+    textarea {
+      resize: none;
+      width: 100%;
+      height: 120px;
+      overflow: auto;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 0.5px solid lightgray;
+    }
+  }
+  .btn {
+    height: 50px;
+    border-radius: 10px;
+    background-color: #035ecf;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bolder;
+  }
+`;
 
 const AddCategory = () => {
   const { categories } = useLoaderData();
@@ -49,16 +107,26 @@ const AddCategory = () => {
           <title>Add Category</title>
         </Helmet>
 
-        <Form method="post" className="form-login">
-          <h4>Add Category</h4>
+        <div className="title">Add Category</div>
+        <Form method="post" className="form-add">
           <FormRow type="text" name="name" defaultValue="Laptop" />
-          <FormRow
-            type="text"
-            name="description"
-            defaultValue="chung ta khong thuoc ve nhau"
+          <div className="form-row">
+            <label htmlFor="description" className="form-label">
+              Description
+            </label>
+            <textarea
+              name="description"
+              defaultValue="chung ta khong thuoc ve nhau"
+            />
+          </div>
+          <FormRowSelect
+            name="parent"
+            labelText="Parent Category"
+            list={categories || []}
+            id
+            optional
           />
-          <FormRowSelect name="parent" list={categories || []} id optional />
-          <button type="submit" className="btn-block" disabled={isSubmitting}>
+          <button type="submit" className="btn" disabled={isSubmitting}>
             {isSubmitting ? "Adding..." : "Add"}
           </button>
         </Form>

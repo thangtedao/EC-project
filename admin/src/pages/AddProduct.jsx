@@ -1,26 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { FormRow, FormRowSelect } from "../components";
-import {
-  Link,
-  Form,
-  redirect,
-  useNavigation,
-  useLoaderData,
-} from "react-router-dom";
+import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { FaImage } from "react-icons/fa6";
 
 export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  data.images = data.images.split(",");
-  data.category = [data.category1, data.category2];
-  delete data.category1;
-  delete data.category2;
+  // const data = Object.fromEntries(formData);
+  // data.images = data.images.split(",");
+  // data.category = [data.category1, data.category2];
+  // delete data.category1;
+  // delete data.category2;
   try {
-    await customFetch.post("/product", data);
+    const formData = await request.formData();
+    await customFetch.post("/product", formData);
     return redirect("/add-product");
   } catch (error) {
     return error;
@@ -50,7 +44,6 @@ export const loader = async () => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: white;
 
   .title {
     font-size: 2rem;
@@ -63,7 +56,7 @@ const Wrapper = styled.div`
     width: 100%;
     display: flex;
     gap: 2rem;
-    background-color: white;
+    background-color: #00193b;
     box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
     border-color: #f1f1f1;
     border-radius: 10px;
@@ -93,6 +86,7 @@ const Wrapper = styled.div`
     }
     img {
       width: inherit;
+      max-height: 300px;
     }
   }
   .sub-image {
@@ -110,6 +104,7 @@ const Wrapper = styled.div`
     }
     img {
       width: inherit;
+      max-height: 145px;
     }
   }
 
@@ -218,7 +213,7 @@ const AddProduct = () => {
         </Helmet>
 
         <div className="title">Add Product</div>
-        <Form method="post" className="form-add">
+        <Form method="post" className="form-add" encType="multipart/form-data">
           <div className="form-col-1">
             <div className="input-image">
               <div className="image" onClick={() => openFileInput(1)}>
@@ -233,6 +228,7 @@ const AddProduct = () => {
                   accept="image/*"
                   type="file"
                   id="fileInput1"
+                  name="image1"
                   style={{ display: "none" }}
                   onChange={(e) => handleFileChange(e, 1)}
                 />
@@ -249,6 +245,7 @@ const AddProduct = () => {
                   accept="image/*"
                   type="file"
                   id="fileInput2"
+                  name="image2"
                   style={{ display: "none" }}
                   onChange={(e) => handleFileChange(e, 2)}
                 />
@@ -266,6 +263,7 @@ const AddProduct = () => {
                     accept="image/*"
                     type="file"
                     id="fileInput3"
+                    name="image3"
                     style={{ display: "none" }}
                     onChange={(e) => handleFileChange(e, 3)}
                   />
@@ -282,6 +280,7 @@ const AddProduct = () => {
                     accept="image/*"
                     type="file"
                     id="fileInput4"
+                    name="image4"
                     style={{ display: "none" }}
                     onChange={(e) => handleFileChange(e, 4)}
                   />
