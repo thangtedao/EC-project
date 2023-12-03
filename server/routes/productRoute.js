@@ -1,17 +1,13 @@
 import {
   createProduct,
-  deleteImages,
   deleteProduct,
   getAllProduct,
   getProductByCategory,
-  getRelatedProduct,
   getSingleProduct,
   rating,
   updateProduct,
-  uploadImages,
 } from "../controller/productController.js";
 import { Router } from "express";
-import { productImgResize, uploadPhoto } from "../middleware/uploadImages.js";
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/uploadImages.js";
 
@@ -42,13 +38,5 @@ router.delete("/:id", deleteProduct);
 router.get("/category", getProductByCategory);
 router.get("/:slug", getSingleProduct);
 router.patch("/rating", authenticateUser, rating);
-
-router.delete("/delete-img/:id", deleteImages);
-router.patch(
-  "/upload/:id",
-  uploadPhoto.array("images", 10),
-  productImgResize,
-  uploadImages
-);
 
 export default router;

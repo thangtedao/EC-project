@@ -8,9 +8,12 @@ import { FaImage } from "react-icons/fa6";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { axisClasses } from "@mui/x-charts";
 
 const Wrapper = styled.div`
   width: 100%;
+  display: flex;
+  justify-content: center;
 
   .title {
     font-size: 2rem;
@@ -19,25 +22,36 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
   .dashboard-container {
-    width: 100%;
+    width: 80%;
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
   .card-statistic {
+    width: 100%;
     display: flex;
+    justify-content: space-between;
+    gap: 1rem;
   }
   .card-item {
-    width: 200px;
-    height: 180px;
-    border: 1px solid #00193b;
+    width: 30%;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: transparent;
+    border-radius: 5px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px #00000026;
+    background-color: white;
     .card-title {
-      font-weight: bolder;
+      font-size: 1.1rem;
       color: #8d8d99;
     }
     .card-content {
-      font-size: 1.2rem;
+      font-size: 1.8rem;
       font-weight: bold;
+      color: #00193b;
     }
   }
 
@@ -45,21 +59,40 @@ const Wrapper = styled.div`
     width: 100%;
     display: grid;
     place-items: center;
-    gap: 1rem;
+    gap: 2rem;
   }
 `;
 
 export const loader = async () => {
   try {
     const response = await customFetch.get("/order/stats");
-    return response.data.monthlyApplications;
+    return {
+      dataset: response.data.monthlyApplications,
+      totalRevenue: response.data.totalRevenue,
+      totalCount: response.data.totalCount,
+    };
   } catch (error) {
     return error;
   }
 };
 
 const Dashboard = () => {
-  const dataset = useLoaderData();
+  const { dataset, totalRevenue, totalCount } = useLoaderData();
+  console.log(dataset);
+
+  const chartSetting = {
+    yAxis: [
+      {
+        label: "vnđ",
+      },
+    ],
+    sx: {
+      [`.${axisClasses.left} .${axisClasses.label}`]: {
+        transform: "translate(-60px, 0)",
+        fontWeight: "bold",
+      },
+    },
+  };
 
   return (
     <HelmetProvider>
@@ -73,16 +106,16 @@ const Dashboard = () => {
           <div className="title">Dashboard</div>
           <div className="card-statistic">
             <div className="card-item">
-              <div className="card-title">Total sells</div>
-              <div className="card-content">9999đ</div>
+              <div className="card-title">Total Revenue</div>
+              <div className="card-content">{totalRevenue + "₫"}</div>
             </div>
             <div className="card-item">
               <div className="card-title">Average order value</div>
-              <div className="card-content">9999đ</div>
+              <div className="card-content">999</div>
             </div>
             <div className="card-item">
               <div className="card-title">Total orders</div>
-              <div className="card-content">9999</div>
+              <div className="card-content">{totalCount}</div>
             </div>
           </div>
 
@@ -91,21 +124,23 @@ const Dashboard = () => {
               dataset={dataset}
               xAxis={[{ scaleType: "band", dataKey: "date" }]}
               series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
-              width={600}
+              width={800}
               height={400}
               margin={{
                 left: 100,
               }}
+              {...chartSetting}
             />
             <LineChart
               dataset={dataset}
               xAxis={[{ scaleType: "band", dataKey: "date" }]}
               series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
-              width={600}
+              width={800}
               height={400}
               margin={{
                 left: 100,
               }}
+              {...chartSetting}
             />
             <PieChart
               series={[

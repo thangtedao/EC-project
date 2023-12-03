@@ -24,14 +24,9 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: null,
     },
-    quantity: {
-      type: Number,
-      default: 0,
-    },
     sku: {
       type: String,
-      //unique: true,
-      default: "",
+      unique: true,
     },
     category: [
       {

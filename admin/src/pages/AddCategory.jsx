@@ -36,11 +36,15 @@ export const loader = async () => {
 
 const Wrapper = styled.div`
   width: 100%;
+  height: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .title {
     font-size: 2rem;
     font-weight: bold;
-    color: #f1f1f1;
+    color: #00193b;
     margin-bottom: 1rem;
   }
   .form-add {

@@ -22,7 +22,69 @@ export const action = async ({ request }) => {
   }
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width: 100%;
+  height: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #00193b;
+    margin-bottom: 1rem;
+  }
+  .form-add {
+    height: 600px;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: aqua;
+    box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
+    border-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .form-row {
+    .form-label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #8d8d99;
+    }
+    .form-input {
+      border: 1px solid #e2e1e1;
+      border-radius: 8px;
+      padding: 0 20px;
+      height: 44px;
+    }
+    .form-select {
+      border: 1px solid #e2e1e1;
+      border-radius: 8px;
+      padding: 0 20px;
+      height: 44px;
+    }
+    textarea {
+      resize: none;
+      width: 100%;
+      height: 120px;
+      overflow: auto;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 0.5px solid lightgray;
+    }
+  }
+  .btn {
+    height: 50px;
+    border-radius: 10px;
+    background-color: #035ecf;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bolder;
+  }
+`;
 
 const AddCoupon = () => {
   const navigation = useNavigation();
@@ -35,9 +97,9 @@ const AddCoupon = () => {
           <meta charSet="utf-8" />
           <title>Add Coupon</title>
         </Helmet>
+        <div className="title">Add Coupon</div>
 
-        <Form method="post" className="form-login">
-          <h4>Add Coupon</h4>
+        <Form method="post" className="form-add">
           <FormRow type="text" name="name" defaultValue="SALE" />
           <FormRow type="text" name="description" defaultValue="giam gia 99%" />
           <FormRow
@@ -46,7 +108,7 @@ const AddCoupon = () => {
             defaultValue={new Date().toDateString()}
           />
           <FormRow type="number" name="discount" defaultValue={99} />
-          <button type="submit" className="btn-block" disabled={isSubmitting}>
+          <button type="submit" className="btn" disabled={isSubmitting}>
             {isSubmitting ? "Adding..." : "Add"}
           </button>
         </Form>

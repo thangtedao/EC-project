@@ -71,7 +71,8 @@ const StyledBadge = styled(Badge)(() => ({
 }));
 
 const Navbar = () => {
-  const { toggleSideBar, user } = useMainLayoutContext();
+  const { toggleSideBar } = useMainLayoutContext();
+  const user = useSelector((state) => state.user.user);
   const cart = useSelector((state) => state.cart.cart);
 
   return (

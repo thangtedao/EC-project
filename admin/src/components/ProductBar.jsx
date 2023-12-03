@@ -10,16 +10,18 @@ const Wrapper = styled.div`
   border-radius: 10px;
   padding: 1rem 0;
   .product-item {
-    height: 120px;
+    height: 50px;
     position: relative;
     display: flex;
     align-items: center;
   }
   .product-image {
-    margin-left: 10px;
-    width: 20%;
+    height: 50px;
+    display: grid;
+    place-items: center;
     img {
-      width: 150px;
+      border-radius: 10px;
+      height: inherit;
     }
   }
   .product-info {

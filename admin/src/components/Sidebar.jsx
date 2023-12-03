@@ -1,29 +1,35 @@
 import { useDashboardContext } from "../pages/DashboardLayout";
 import { NavLink } from "react-router-dom";
 
-import ListSubheader from "@mui/material/ListSubheader";
 import Collapse from "@mui/material/Collapse";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import StarBorder from "@mui/icons-material/StarBorder";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import ProductionQuantityLimitsOutlinedIcon from "@mui/icons-material/ProductionQuantityLimitsOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import DiscountOutlinedIcon from "@mui/icons-material/DiscountOutlined";
 
 import styled from "styled-components";
 import { useState } from "react";
 
 const Wrapper = styled.aside`
   display: block;
-  border: 1px solid black;
+  /* border: 1px solid black; */
+  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
 
   .sidebar-container {
-    background: var(--background-secondary-color);
+    /* background: var(--background-secondary-color); */
+    background-color: #3d464d;
     min-height: 100vh;
     height: 100%;
-    width: 300px;
+    width: 270px;
     margin-left: -410px;
     transition: margin-left 0.3s ease-in-out;
   }
@@ -60,16 +66,18 @@ const Wrapper = styled.aside`
     transition: var(--transition);
   }
   .icon {
-    font-size: 1.5rem;
-    margin-right: 1rem;
-    display: grid;
-    place-items: center;
+    color: white;
   }
   .active {
     color: var(--primary-500);
   }
   .pending {
     background: var(--background-color);
+  }
+
+  color: white;
+  a {
+    color: white;
   }
 `;
 
@@ -105,55 +113,30 @@ const Sidebar = () => {
           <header>Logo</header>
 
           <List sx={{ width: "100%", maxWidth: 360 }}>
-            <ListItemButton onClick={handleClickOpenDashboard}>
+            <ListItemButton>
               <ListItemIcon>
-                <InboxIcon />
+                <DashboardOutlinedIcon className="icon" />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" />
-              {openDashboard ? <ExpandLess /> : <ExpandMore />}
+              <NavLink to="dashboard" end>
+                Dashboard
+              </NavLink>
             </ListItemButton>
-            <Collapse in={openDashboard} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4, m: 1 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  <NavLink to="" end>
-                    Sales Analytics
-                  </NavLink>
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 4, m: 1 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  <NavLink to="" end>
-                    Revenue By Period
-                  </NavLink>
-                </ListItemButton>
-              </List>
-            </Collapse>
 
             <ListItemButton onClick={handleClickOpenProduct}>
               <ListItemIcon>
-                <InboxIcon />
+                <ProductionQuantityLimitsOutlinedIcon className="icon" />
               </ListItemIcon>
               <ListItemText primary="Product" />
               {openProduct ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openProduct} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4, m: 1 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
+                <ListItemButton sx={{ pl: 8, m: 1 }}>
                   <NavLink to="all-product" end>
                     All Product
                   </NavLink>
                 </ListItemButton>
-                <ListItemButton sx={{ pl: 4, m: 1 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
+                <ListItemButton sx={{ pl: 8, m: 1 }}>
                   <NavLink to="add-product" end>
                     Add Product
                   </NavLink>
@@ -163,25 +146,19 @@ const Sidebar = () => {
 
             <ListItemButton onClick={handleClickOpenCategory}>
               <ListItemIcon>
-                <InboxIcon />
+                <CategoryOutlinedIcon className="icon" />
               </ListItemIcon>
               <ListItemText primary="Category" />
               {openCategory ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openCategory} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
+                <ListItemButton sx={{ pl: 8, m: 1 }}>
                   <NavLink to="all-category" end>
                     All Category
                   </NavLink>
                 </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
+                <ListItemButton sx={{ pl: 8, m: 1 }}>
                   <NavLink to="add-category" end>
                     Add Category
                   </NavLink>
@@ -191,25 +168,19 @@ const Sidebar = () => {
 
             <ListItemButton onClick={handleClickOpenCoupon}>
               <ListItemIcon>
-                <InboxIcon />
+                <DiscountOutlinedIcon className="icon" />
               </ListItemIcon>
               <ListItemText primary="Coupon" />
               {openCoupon ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openCoupon} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
+                <ListItemButton sx={{ pl: 8, m: 1 }}>
                   <NavLink to="all-coupon" end>
                     All Coupon
                   </NavLink>
                 </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
+                <ListItemButton sx={{ pl: 8, m: 1 }}>
                   <NavLink to="add-coupon" end>
                     Add Coupon
                   </NavLink>
@@ -219,7 +190,7 @@ const Sidebar = () => {
 
             <ListItemButton>
               <ListItemIcon>
-                <StarBorder />
+                <CreditCardOutlinedIcon className="icon" />
               </ListItemIcon>
               <NavLink to="all-order" end>
                 Order
@@ -228,9 +199,9 @@ const Sidebar = () => {
 
             <ListItemButton>
               <ListItemIcon>
-                <StarBorder />
+                <PersonOutlineOutlinedIcon className="icon" />
               </ListItemIcon>
-              <NavLink to="add-user" end>
+              <NavLink to="" end>
                 Customer
               </NavLink>
             </ListItemButton>

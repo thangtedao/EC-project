@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
 import { logout } from "../state/userSlice";
@@ -63,7 +63,7 @@ const Wrapper = styled.div`
 
 const LogoutContainer = () => {
   // const [showLogout, setShowLogout] = useState(false);
-  const { user } = useMainLayoutContext();
+  const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

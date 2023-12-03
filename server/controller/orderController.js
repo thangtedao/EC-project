@@ -241,8 +241,21 @@ export const showStats = async (req, res) => {
     {
       $sort: { "_id.year": -1, "_id.month": -1 },
     },
-    { $limit: 6 },
+    { $limit: 12 },
   ]);
+
+  const result = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: "$totalPrice" },
+        totalCount: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const totalRevenue = result[0].totalRevenue;
+  const totalCount = result[0].totalCount;
 
   monthlyApplications = monthlyApplications
     .map((item) => {
@@ -252,10 +265,10 @@ export const showStats = async (req, res) => {
       } = item;
       const date = day()
         .month(month - 1)
-        .format("MMM");
+        .format("MMMM");
       return { date, totalRevenue };
     })
     .reverse();
 
-  res.json({ monthlyApplications });
+  res.json({ monthlyApplications, totalRevenue, totalCount });
 };

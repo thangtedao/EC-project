@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const Wrapper = styled.div`
   width: 650px;
   height: fit-content;
-  min-height: 800px;
+  min-height: 600px;
   display: flex;
   flex-direction: column;
   gap: 1rem;

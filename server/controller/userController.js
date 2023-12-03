@@ -28,7 +28,6 @@ export const getAllUsers = async (req, res) => {
 export const getSingleUser = async (req, res) => {
   try {
     const { id } = req.params;
-
     const user = await User.findById(id);
     res.status(StatusCodes.OK).json({ user });
   } catch (error) {
@@ -39,13 +38,14 @@ export const getSingleUser = async (req, res) => {
 export const getCurrentUser = async (req, res) => {
   try {
     if (req.user.userId) {
-      const user = await User.findOne({ _id: req.user.userId });
+      const user = await User.findById(req.user.userId);
       const userWithoutPassword = user.toJSON();
       res.status(StatusCodes.OK).json({ user: userWithoutPassword });
     } else {
       res.json({ user: null });
     }
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };
@@ -179,8 +179,8 @@ export const setUserCart = async (req, res) => {
 
 export const getUserCart = async (req, res) => {
   try {
-    const { _id } = req.user;
-    const cart = await Cart.findOne({ orderBy: _id }).populate(
+    const { userId } = req.user;
+    const cart = await Cart.findOne({ user: userId }).populate(
       "products.product"
     );
     res.status(StatusCodes.OK).json({ cart });
@@ -195,7 +195,7 @@ export const emptyCart = async (req, res) => {
     const cart = await Cart.findOneAndRemove({ user: userId });
     res.status(StatusCodes.OK).json({ cart });
   } catch (error) {
-    throw error;
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };
@@ -203,18 +203,19 @@ export const emptyCart = async (req, res) => {
 export const applyCoupon = async (req, res) => {
   try {
     const { coupon } = req.body;
-    const { _id } = req.user;
+    const { userId } = req.user;
     const validCoupon = await Coupon.findOne({ name: coupon });
+
     if (!validCoupon) throw new NotFoundError("Invalid Coupon");
     let { products, cartTotal } = await Cart.findOne({
-      orderBy: _id,
+      user: userId,
     }).populate("products.product");
     let totalAfterDiscount = (
       cartTotal -
       (cartTotal * validCoupon.discount) / 100
     ).toFixed(2);
     await Cart.findOneAndUpdate(
-      { orderBy: _id },
+      { user: userId },
       { totalAfterDiscount },
       { new: true }
     );
@@ -227,9 +228,9 @@ export const applyCoupon = async (req, res) => {
 export const createOrder = async (req, res) => {
   try {
     const { COD, couponApplied } = req.body;
-    const { _id } = req.user;
+    const { userId } = req.user;
     if (!COD) throw new NotFoundError("Invalid Coupon");
-    const userCart = await Cart.findOne({ orderBy: _id });
+    const userCart = await Cart.findOne({ user: userId });
     let finalAmount = 0;
     if (couponApplied && userCart.totalAfterDiscount) {
       finalAmount = userCart.totalAfterDiscount;
@@ -246,7 +247,7 @@ export const createOrder = async (req, res) => {
         created: Date.now(),
         currency: "vnđ",
       },
-      orderBy: _id,
+      user: userId,
       orderStatus: ORDER_STATUS.CASH_ON_DELIVERY,
     }).save();
 
@@ -268,8 +269,8 @@ export const createOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
   try {
-    const { _id } = req.user;
-    const userOrders = await Order.findOne({ orderBy: _id })
+    const { userId } = req.user;
+    const userOrders = await Order.findOne({ orderBy: userId })
       .populate("products.product")
       .exec();
 

@@ -1,6 +1,4 @@
 import Product from "../models/Product.js";
-import User from "../models/User.js";
-import fs from "fs";
 import slugify from "slugify";
 import { NotFoundError } from "../errors/customErrors.js";
 import { formatImage } from "../middleware/uploadImages.js";
@@ -40,44 +38,6 @@ export const createProduct = async (req, res) => {
     res.status(201).json(newProduct);
   } catch (error) {
     console.log(error);
-    res.status(409).json({ msg: error.message });
-  }
-};
-
-export const uploadImages = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const uploader = (path) => cloudinaryUploadImage(path, "images");
-    const urls = [];
-    const files = req.files;
-    for (const file of files) {
-      const { path } = file;
-      const newPath = await uploader(path);
-      urls.push(newPath);
-      fs.unlinkSync(path);
-    }
-    const images = urls.map((file) => {
-      return file;
-    });
-    const findProduct = await Product.findByIdAndUpdate(
-      id,
-      {
-        images: images,
-      },
-      { new: true }
-    );
-    res.status(201).json(images);
-  } catch (error) {
-    res.status(409).json({ msg: error.message });
-  }
-};
-
-export const deleteImages = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleted = cloudinaryDeleteImage(id, "images");
-    res.status(201).json({ msg: "Deleted" });
-  } catch (error) {
     res.status(409).json({ msg: error.message });
   }
 };
@@ -253,6 +213,7 @@ export const updateProduct = async (req, res) => {
 
     const { slug } = req.params;
     const updatedProduct = await Product.findOneAndUpdate({ slug: slug }, data);
+    if (!updatedProduct) throw new NotFoundError(`product does not exists`);
 
     if (req.files && updatedProduct.publicIdImages.length > 0) {
       await Promise.all(
@@ -262,9 +223,9 @@ export const updateProduct = async (req, res) => {
       );
     }
 
-    if (!updatedProduct) throw new NotFoundError(`no product ${slug}`);
-    res.status(200).json({ updatedProduct });
+    res.status(200).json({ msg: "updated" });
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };
@@ -273,21 +234,10 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const deletedProduct = await Product.findByIdAndDelete(id);
-    if (!deletedProduct) throw new NotFoundError(`no product with id ${id}`);
-    res.status(200).json({ deletedProduct });
+    if (!deletedProduct) throw new NotFoundError(`product does not exists`);
+    res.status(200).json({ msg: "deleted" });
   } catch (error) {
-    res.status(409).json({ msg: error.message });
-  }
-};
-
-export const getRelatedProduct = async (req, res) => {
-  try {
-    const products = await Product.find({
-      $all: { category: req.query.category },
-      limit: 10,
-    });
-    res.status(200).json({ products });
-  } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };

@@ -27,7 +27,6 @@ const UserSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      default: "",
     },
     birthday: {
       type: Date,
@@ -66,7 +65,3 @@ UserSchema.methods.toJSON = function () {
 
 const User = mongoose.model("User", UserSchema);
 export default User;
-
-//https://www.youtube.com/watch?v=S6Yd5cPtXr4&list=PL0g02APOH8okXhOQLOLcB_nifs1U41im5
-// node mailer 3h50
-// 4h17

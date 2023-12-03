@@ -10,9 +10,10 @@ const Wrapper = styled.div`
   width: 100%;
   position: relative;
   .main-layout {
-    min-height: 800px;
+    min-height: 700px;
     display: flex;
     justify-content: center;
+    padding-bottom: 2rem;
   }
 `;
 
@@ -48,14 +49,14 @@ const MainLayout = () => {
     setShowSideBar(!showSideBar);
   };
 
-  const user = useSelector((state) => state.user.user);
+  const user = 2;
 
   return (
     <MainLayoutContext.Provider
       value={{
+        user,
         categories,
         categoryChild,
-        user,
         showSideBar,
         toggleSideBar,
       }}
