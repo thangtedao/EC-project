@@ -12,6 +12,7 @@ import { action as editUserAction } from "./pages/EditUser";
 import { action as editOrderAction } from "./pages/EditOrder";
 
 /* LOADER */
+import { loader as dashboardLoader } from "./pages/Dashboard";
 import { loader as addProductLoader } from "./pages/AddProduct";
 import { loader as editProductLoader } from "./pages/EditProduct";
 import { loader as editCategoryLoader } from "./pages/EditCategory";
@@ -42,6 +43,7 @@ import EditOrder from "./pages/EditOrder";
 import Login from "./pages/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +51,11 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     errorElement: <Error />,
     children: [
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+        loader: dashboardLoader,
+      },
       {
         path: "all-product",
         element: <AllProduct />,

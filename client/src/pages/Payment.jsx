@@ -255,7 +255,8 @@ const Payment = () => {
         </div>
         <div className="flex-between">
           <p>Nhận hàng tại:</p>
-          {user?.address}
+          {user?.address &&
+            `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`}
         </div>
       </div>
 

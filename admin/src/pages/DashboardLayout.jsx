@@ -14,7 +14,7 @@ const Wrapper = styled.section`
   }
   .dashboard-page {
     /* background-color: var(--background-secondary-color); */
-    background-color: #00193b;
+    background-color: #fff;
     width: 100%;
     padding: 2rem;
   }
