@@ -2,6 +2,7 @@ import express from "express";
 import {
   getAllOrder,
   getSingleOrder,
+  showStats,
   stripePayment,
   stripeWebHook,
   updateOrder,
@@ -16,6 +17,7 @@ router.post(
   stripeWebHook
 );
 router.get("/", getAllOrder);
+router.get("/stats", showStats);
 router.get("/:id", getSingleOrder);
 router.patch("/update/:id", updateOrder);
 

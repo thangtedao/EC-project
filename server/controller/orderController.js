@@ -1,5 +1,6 @@
 import { Stripe } from "stripe";
 import Order from "../models/Order.js";
+import day from "dayjs";
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -227,4 +228,34 @@ export const updateOrder = async (req, res) => {
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }
+};
+
+export const showStats = async (req, res) => {
+  let monthlyApplications = await Order.aggregate([
+    {
+      $group: {
+        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
+        totalRevenue: { $sum: "$totalPrice" },
+      },
+    },
+    {
+      $sort: { "_id.year": -1, "_id.month": -1 },
+    },
+    { $limit: 6 },
+  ]);
+
+  monthlyApplications = monthlyApplications
+    .map((item) => {
+      const {
+        _id: { year, month },
+        totalRevenue,
+      } = item;
+      const date = day()
+        .month(month - 1)
+        .format("MMM");
+      return { date, totalRevenue };
+    })
+    .reverse();
+
+  res.json({ monthlyApplications });
 };
