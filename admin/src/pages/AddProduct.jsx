@@ -56,7 +56,7 @@ const Wrapper = styled.div`
     width: 100%;
     display: flex;
     gap: 2rem;
-    background-color: #00193b;
+    background-color: white;
     box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
     border-color: #f1f1f1;
     border-radius: 10px;
@@ -76,7 +76,7 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
     .image {
       cursor: pointer;
-      background-color: #e2e1e1;
+      background-color: #ededed;
       border-radius: 5px;
       height: 300px;
       width: 320px;
@@ -85,7 +85,7 @@ const Wrapper = styled.div`
       overflow: hidden;
     }
     img {
-      width: inherit;
+      max-width: 320px;
       max-height: 300px;
     }
   }
@@ -94,7 +94,7 @@ const Wrapper = styled.div`
     row-gap: 10px;
     .image {
       cursor: pointer;
-      background-color: #e2e1e1;
+      background-color: #ededed;
       border-radius: 5px;
       height: 145px;
       width: 160px;
@@ -118,7 +118,7 @@ const Wrapper = styled.div`
     .form-label {
       font-size: 12px;
       font-weight: bold;
-      color: #8d8d99;
+      color: #00193b;
     }
     .form-input {
       border: 1px solid #e2e1e1;

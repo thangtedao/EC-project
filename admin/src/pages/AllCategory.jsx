@@ -21,8 +21,8 @@ const Wrapper = styled.div`
 
   table {
     background-color: white;
-    width: 80%;
-    margin-top: 2rem;
+    width: 100%;
+    margin-top: 1rem;
     border-collapse: collapse;
   }
   th {
@@ -46,7 +46,7 @@ const Wrapper = styled.div`
   td:last-child,
   th:nth-last-child(2),
   td:nth-last-child(2) {
-    width: 80px;
+    width: 50px;
   }
 
   th:not(:last-child):not(:nth-last-child(2)),
@@ -85,17 +85,21 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const categories = await customFetch
-      .get(`/category`)
-      .then(({ data }) => data.categories);
-    return categories;
+    const response = await customFetch.get(`/category/?populate=parent`);
+
+    console.log(response.data);
+
+    return {
+      categories: response.data.categories,
+      count: response.data.itemsPerCate,
+    };
   } catch (error) {
     return error;
   }
 };
 
 const AllCategory = () => {
-  const categories = useLoaderData();
+  const { categories, count } = useLoaderData();
   const navigate = useNavigate();
 
   const deleteCategory = async (id) => {
@@ -131,7 +135,7 @@ const AllCategory = () => {
                   <td>{category.name}</td>
                   <td>{category.description}</td>
                   <td>{category.description}</td>
-                  <td>{category.parent}</td>
+                  <td>{category.parent?.name}</td>
                   <td>
                     <button
                       className="ed-btn"

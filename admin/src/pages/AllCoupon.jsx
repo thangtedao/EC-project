@@ -22,24 +22,24 @@ const Wrapper = styled.div`
   table {
     background-color: white;
     width: 80%;
-    margin-top: 2rem;
+    margin-top: 1rem;
     border-collapse: collapse;
   }
   th {
-    border: 1px solid lightgray;
+    /* border: 1px solid lightgray; */
     height: 20px;
   }
   tr {
     border: 1px solid lightgray;
   }
   td {
-    border: 1px solid lightgray;
+    /* border: 1px solid lightgray; */
     height: 30px;
   }
   th,
   td {
     text-align: left;
-    padding: 10px;
+    padding: 10px 20px;
   }
 
   th:last-child,
@@ -132,7 +132,7 @@ const AllCoupon = () => {
                   <td>{coupon.name}</td>
                   <td>{coupon.description}</td>
                   <td>{coupon.discount}</td>
-                  <td>{coupon.expiry}</td>
+                  <td>{coupon.expiry.split("T")[0]}</td>
                   <td>
                     <button
                       className="ed-btn"

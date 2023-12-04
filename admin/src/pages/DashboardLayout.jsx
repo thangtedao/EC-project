@@ -13,8 +13,9 @@ const Wrapper = styled.section`
     grid-template-columns: auto 1fr;
   }
   .dashboard-page {
-    background-color: #f5f7fa;
+    background-color: #e8e9ec;
     width: 100%;
+    height: calc(100% - 60px);
     padding: 2rem;
   }
 `;

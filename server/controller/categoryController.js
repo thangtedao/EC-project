@@ -1,4 +1,5 @@
 import Category from "../models/Category.js";
+import Product from "../models/Product.js";
 import slugify from "slugify";
 
 export const createCategory = async (req, res) => {
@@ -13,8 +14,41 @@ export const createCategory = async (req, res) => {
 
 export const getAllCategory = async (req, res) => {
   try {
-    const categories = await Category.find(req.query);
-    res.status(200).json({ categories });
+    const queryObj = { ...req.query };
+    const excludeFields = ["page", "sort", "limit", "fields", "populate"];
+    excludeFields.forEach((el) => delete queryObj[el]);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    let query = Category.find(JSON.parse(queryStr));
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    }
+
+    if (req.query.limit) {
+      query = query.limit(req.query.limit);
+    }
+
+    if (req.query.populate && req.query.populate === "parent") {
+      query = query.populate("parent");
+    }
+
+    const categories = await query;
+
+    let itemsPerCate = await Product.aggregate([
+      {
+        $unwind: "$category",
+      },
+      {
+        $group: {
+          _id: "$category",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json({ categories, itemsPerCate });
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }

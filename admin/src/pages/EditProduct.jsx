@@ -296,10 +296,7 @@ const EditProduct = () => {
               <label htmlFor="images" className="form-label">
                 {"Image Link"}
               </label>
-              <textarea
-                name="images"
-                defaultValue="https://media.very.co.uk/i/very/VPZ33_SQ1_0000000020_BLUE_SLf?$300x400_retinamobilex2$&$roundel_very$&p1_img=blank_apple"
-              />
+              <textarea name="images" defaultValue={product?.images || ""} />
             </div>
             <div className="form-row">
               <label htmlFor="description" className="form-label">
@@ -307,7 +304,7 @@ const EditProduct = () => {
               </label>
               <textarea
                 name="description"
-                defaultValue={product?.description}
+                defaultValue={product?.description || ""}
               />
             </div>
           </div>
@@ -316,25 +313,25 @@ const EditProduct = () => {
               type="text"
               name="name"
               lableText="Product Name"
-              defaultValue={product?.name}
+              defaultValue={product?.name || ""}
             />
             <FormRow
               type="number"
               name="price"
               lableText="Regular Price"
-              defaultValue={product?.price}
+              defaultValue={product?.price || 1000}
             />
             <FormRow
               type="number"
               name="salePrice"
               lableText="Sale Price"
-              defaultValue={product?.salePrice}
+              defaultValue={product?.salePrice || 1000}
             />
             <FormRow
               type="number"
               name="stockQuantity"
               lableText="Quantity in Stock"
-              defaultValue={product?.stockQuantity}
+              defaultValue={product?.stockQuantity || 0}
             />
             <FormRowSelect
               name="category1"

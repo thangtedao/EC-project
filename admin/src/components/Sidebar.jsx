@@ -21,17 +21,18 @@ import { useState } from "react";
 
 const Wrapper = styled.aside`
   display: block;
-  /* border: 1px solid black; */
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
 
   .sidebar-container {
-    /* background: var(--background-secondary-color); */
     background-color: #3d464d;
     min-height: 100vh;
     height: 100%;
-    width: 270px;
+    width: 250px;
     margin-left: -410px;
     transition: margin-left 0.3s ease-in-out;
+  }
+  .top-sidebar {
+    height: 60px;
   }
   .content {
     position: sticky;
@@ -110,9 +111,9 @@ const Sidebar = () => {
         }
       >
         <div className="content">
-          <header>Logo</header>
+          <header className="top-sidebar">Logo</header>
 
-          <List sx={{ width: "100%", maxWidth: 360 }}>
+          <List sx={{ width: "100%", maxWidth: 360, mt: 3 }}>
             <ListItemButton>
               <ListItemIcon>
                 <DashboardOutlinedIcon className="icon" />

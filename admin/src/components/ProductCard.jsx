@@ -47,6 +47,7 @@ const Wrapper = styled.div`
   }
   .btn-action {
     display: flex;
+    justify-content: center;
     gap: 0.5rem;
     button {
       min-width: 80px;

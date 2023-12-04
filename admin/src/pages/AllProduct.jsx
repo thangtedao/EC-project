@@ -12,24 +12,23 @@ import {
 
 const Wrapper = styled.div`
   width: 100%;
+
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 1rem;
   padding: 1rem;
+
   @media (max-width: 1550px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  }
-  @media (max-width: 1385px) {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
-  @media (max-width: 1200px) {
+  @media (max-width: 1385px) {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
   @media (max-width: 1200px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
   @media (max-width: 975px) {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   @media (max-width: 800px) {
     grid-template-columns: 1fr 1fr;

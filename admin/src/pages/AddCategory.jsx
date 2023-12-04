@@ -36,7 +36,7 @@ export const loader = async () => {
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 800px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,12 +48,12 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
   .form-add {
-    height: 600px;
+    height: fit-content;
     width: 600px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    background-color: aqua;
+    background-color: white;
     box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
     border-color: #f1f1f1;
     border-radius: 10px;
@@ -64,7 +64,7 @@ const Wrapper = styled.div`
     .form-label {
       font-size: 12px;
       font-weight: bold;
-      color: #8d8d99;
+      color: #00193b;
     }
     .form-input {
       border: 1px solid #e2e1e1;
@@ -89,7 +89,7 @@ const Wrapper = styled.div`
     }
   }
   .btn {
-    height: 50px;
+    height: 40px;
     border-radius: 10px;
     background-color: #035ecf;
     color: white;

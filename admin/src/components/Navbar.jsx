@@ -32,9 +32,9 @@ const Navbar = () => {
   return (
     <Wrapper>
       <div className="nav-center">
-        <button type="button" className="toggle-btn" onClick={toggleSidebar}>
+        {/* <button type="button" className="toggle-btn" onClick={toggleSidebar}>
           <FormatAlignLeftOutlinedIcon />
-        </button>
+        </button> */}
       </div>
     </Wrapper>
   );

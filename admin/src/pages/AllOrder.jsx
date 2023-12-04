@@ -22,7 +22,7 @@ const Wrapper = styled.div`
   table {
     background-color: white;
     width: 80%;
-    margin-top: 2rem;
+    margin-top: 1rem;
     border-collapse: collapse;
   }
   th {
