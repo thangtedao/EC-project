@@ -7,7 +7,6 @@ import customFetch from "../utils/customFetch.js";
 const Wrapper = styled.div`
   width: 650px;
   height: fit-content;
-  min-height: 800px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -99,6 +98,16 @@ const Wrapper = styled.div`
     font-weight: 500;
     color: #4d4b4b;
   }
+
+  .order-empty {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+  }
 `;
 
 export const loader = async () => {
@@ -125,11 +134,18 @@ const Order = () => {
   return (
     <Wrapper>
       <div className="title">Đơn hàng của bạn</div>
-      <div className="order-list">
-        {orders?.map((order) => {
-          return <OrderCard key={order._id} order={order} />;
-        })}
-      </div>
+      {orders && orders.length > 0 ? (
+        <div className="order-list">
+          {orders?.map((order) => {
+            return <OrderCard key={order._id} order={order} />;
+          })}
+        </div>
+      ) : (
+        <div className="order-empty">
+          <p>Bạn chưa có hóa đơn nào</p>
+          <p>Hãy chọn mua sản phẩm để có hóa đơn nhé</p>
+        </div>
+      )}
     </Wrapper>
   );
 };

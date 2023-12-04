@@ -1,12 +1,8 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import Checkbox from "@mui/material/Checkbox";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
-import { pink } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
@@ -155,7 +151,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export const loader = async ({ params }) => {
+export const loader = async () => {
   try {
     return null;
   } catch (error) {

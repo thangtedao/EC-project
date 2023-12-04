@@ -14,6 +14,13 @@ const Wrapper = styled.div`
   padding: 1rem;
   text-align: center;
 
+  .title {
+    width: 100%;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+  }
+
   table {
     width: 800px;
     font-size: 1.3rem;
@@ -75,8 +82,12 @@ const Wrapper = styled.div`
 
   .empty-wishlist {
     height: 600px;
-    display: grid;
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
   }
 
   @media (max-width: 838px) {
@@ -128,7 +139,7 @@ const Wishlist = () => {
   const wishlist = useLoaderData();
   return (
     <Wrapper>
-      <h2 className="title">Wishlist</h2>
+      <div className="title">Wishlist</div>
       {wishlist.length > 0 ? (
         <div>
           <table>
@@ -189,9 +200,7 @@ const Wishlist = () => {
           </table>
         </div>
       ) : (
-        <div className="empty-wishlist">
-          <h5>Chưa có sản phẩm yêu thích nào</h5>
-        </div>
+        <div className="empty-wishlist">Chưa có sản phẩm yêu thích nào</div>
       )}
     </Wrapper>
   );

@@ -347,6 +347,7 @@ export const getWishlist = async (req, res) => {
       select: [
         "name",
         "price",
+        "slug",
         "salePrice",
         "description",
         "category",

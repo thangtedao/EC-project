@@ -4,7 +4,7 @@ import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import SlideGallery from "../components/SlideGallery";
 import customFetch from "../utils/customFetch";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../state/cartSlice";
 import { toast } from "react-toastify";
@@ -236,6 +236,7 @@ export const loader = async ({ params }) => {
 
 const Product = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { product, relatedProducts } = useLoaderData();
   const user = useSelector((state) => state.user.user);
@@ -287,7 +288,15 @@ const Product = () => {
           </div>
 
           <div className="btn-buy">
-            <button className="btn-buynow">Mua ngay</button>
+            <button
+              className="btn-buynow"
+              onClick={() => [
+                debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                navigate("/cart"),
+              ]}
+            >
+              Mua ngay
+            </button>
             <button
               className="btn-addtocart"
               onClick={() => [

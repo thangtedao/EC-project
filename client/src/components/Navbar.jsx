@@ -22,21 +22,30 @@ const Wrapper = styled.div`
 
   .nav-center {
     display: flex;
-    width: 90%;
+    width: 1100px;
     align-items: center;
     justify-content: space-between;
   }
 
   .search-bar {
     background: white;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    column-gap: 0.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     border: 1px solid gray;
     border-radius: 10px;
-    padding: 0 0.5rem;
-    width: 20vw;
+    width: 30%;
+    height: 60%;
     min-width: 50px;
+    .search-input {
+      width: 80%;
+    }
+    .search-icon {
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
   }
 
   .nav-links {
