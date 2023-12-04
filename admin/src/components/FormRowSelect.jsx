@@ -19,7 +19,7 @@ const FormRowSelect = ({
         defaultValue={defaultValue}
         onChange={onChange}
       >
-        {optional && <option value="">Không chọn</option>}
+        {optional && <option value="">None</option>}
         {list.map((item) => {
           return (
             <option key={item._id} value={id ? item._id : item.slug}>

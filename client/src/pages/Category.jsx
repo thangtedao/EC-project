@@ -161,6 +161,10 @@ export const loader = async ({ params }) => {
 
     let endpoint = `/product/category?category=${slug1}&page=1&limit=10`;
 
+    if (slug2) {
+      endpoint = `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10`;
+    }
+
     const response = await customFetch.get(endpoint);
 
     const productsMostView = await customFetch
@@ -168,20 +172,26 @@ export const loader = async ({ params }) => {
       .then(({ data }) => data.products);
 
     window.scrollTo(0, 0);
-    return { response, slug1, productsMostView };
+    return { response, slug1, slug2, productsMostView };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { response, slug1, productsMostView } = useLoaderData();
+  const { response, slug1, slug2, productsMostView } = useLoaderData();
   const [products, setProducts] = useState(response.data.products);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
-  const [url, setUrl] = useState(
-    `/product/category?category=${slug1}&page=${page}&limit=10`
-  );
+
+  let firstUrl;
+  if (slug2) {
+    firstUrl = `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10`;
+  } else {
+    firstUrl = `/product/category?category=${slug1}&page=${page}&limit=10`;
+  }
+
+  const [url, setUrl] = useState(firstUrl);
   const [lth, setLth] = useState(false);
   const [htl, setHtl] = useState(false);
   const [mv, setMv] = useState(false);
@@ -197,6 +207,8 @@ const Category = () => {
       setIsLoading(false);
       setPage(page + 1);
     }
+    console.log(products);
+    console.log(url);
   }, 200);
 
   const filterLowToHigh = debounce(async () => {
@@ -206,10 +218,14 @@ const Category = () => {
       setMv(false);
       setHtl(false);
       setUrl(
-        `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
       );
 
-      let endpoint = `/product/category?category=${slug1}&page=1&limit=10&sort=salePrice`;
+      let endpoint = slug2
+        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&sort=salePrice`
+        : `/product/category?category=${slug1}&page=1&limit=10&sort=salePrice`;
       const response = await customFetch.get(endpoint);
       setProducts(response.data.products);
     } catch (error) {
@@ -227,10 +243,14 @@ const Category = () => {
       setMv(false);
       setHtl(true);
       setUrl(
-        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
       );
 
-      let endpoint = `/product/category?category=${slug1}&page=1&limit=10&sort=-salePrice`;
+      let endpoint = slug2
+        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&sort=-salePrice`
+        : `/product/category?category=${slug1}&page=1&limit=10&sort=-salePrice`;
       const response = await customFetch.get(endpoint);
       setProducts(response.data.products);
     } catch (error) {
@@ -248,10 +268,14 @@ const Category = () => {
       setMv(true);
       setHtl(false);
       setUrl(
-        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-viewed`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
       );
 
-      let endpoint = `/product/category?category=${slug1}&page=1&limit=10&sort=-viewed`;
+      let endpoint = slug2
+        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&sort=-viewed`
+        : `/product/category?category=${slug1}&page=1&limit=10&sort=-viewed`;
       const response = await customFetch.get(endpoint);
       setProducts(response.data.products);
     } catch (error) {
@@ -263,19 +287,31 @@ const Category = () => {
   }, 300);
 
   useEffect(() => {
-    if (htl)
+    if (htl) {
       setUrl(
-        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
       );
-    else if (lth)
+    } else if (lth) {
       setUrl(
-        `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
       );
-    else if (mv)
+    } else if (mv) {
       setUrl(
-        `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-viewed`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
       );
-    else setUrl(`/product/category?category=${slug1}&page=${page}&limit=10`);
+    } else {
+      setUrl(
+        slug2
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10`
+          : `/product/category?category=${slug1}&page=${page}&limit=10`
+      );
+    }
   }, [page]);
 
   return (
@@ -283,8 +319,8 @@ const Category = () => {
       <div className="block-top-filter-brands">
         {categoryData.map((item, index) => {
           return (
-            <div className="brands-list">
-              <NavLink key={index}>
+            <div key={index} className="brands-list">
+              <NavLink>
                 <img src={item.image} />
               </NavLink>
             </div>

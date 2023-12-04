@@ -118,46 +118,47 @@ const Dashboard = () => {
               <div className="card-content">{totalCount}</div>
             </div>
           </div>
-
-          <div className="charts-container">
-            <BarChart
-              dataset={dataset}
-              xAxis={[{ scaleType: "band", dataKey: "date" }]}
-              series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
-              width={800}
-              height={400}
-              margin={{
-                left: 100,
-              }}
-              {...chartSetting}
-            />
-            <LineChart
-              dataset={dataset}
-              xAxis={[{ scaleType: "band", dataKey: "date" }]}
-              series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
-              width={800}
-              height={400}
-              margin={{
-                left: 100,
-              }}
-              {...chartSetting}
-            />
-            <PieChart
-              series={[
-                {
-                  data: dataset.map((dataPoint, index) => {
-                    return {
-                      id: index,
-                      value: dataPoint.totalRevenue,
-                      label: dataPoint.date,
-                    };
-                  }),
-                },
-              ]}
-              width={600}
-              height={400}
-            />
-          </div>
+          {dataset.length > 0 && (
+            <div className="charts-container">
+              <BarChart
+                dataset={dataset}
+                xAxis={[{ scaleType: "band", dataKey: "date" }]}
+                series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
+                width={800}
+                height={400}
+                margin={{
+                  left: 100,
+                }}
+                {...chartSetting}
+              />
+              <LineChart
+                dataset={dataset}
+                xAxis={[{ scaleType: "band", dataKey: "date" }]}
+                series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
+                width={800}
+                height={400}
+                margin={{
+                  left: 100,
+                }}
+                {...chartSetting}
+              />
+              <PieChart
+                series={[
+                  {
+                    data: dataset.map((dataPoint, index) => {
+                      return {
+                        id: index,
+                        value: dataPoint.totalRevenue,
+                        label: dataPoint.date,
+                      };
+                    }),
+                  },
+                ]}
+                width={600}
+                height={400}
+              />
+            </div>
+          )}
         </div>
       </Wrapper>
     </HelmetProvider>

@@ -202,7 +202,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <PersonOutlineOutlinedIcon className="icon" />
               </ListItemIcon>
-              <NavLink to="" end>
+              <NavLink to="all-user" end>
                 Customer
               </NavLink>
             </ListItemButton>

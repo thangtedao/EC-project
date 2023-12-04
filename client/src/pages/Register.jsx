@@ -98,7 +98,7 @@ const Register = () => {
             defaultValue="xuan thang"
           />
           <FormRow
-            type="text"
+            type="number"
             name="phone"
             lableText="Số điện thoại"
             defaultValue="0123456789"

@@ -42,16 +42,9 @@ const Wrapper = styled.div`
     padding: 10px 20px;
   }
 
-  th:last-child,
-  td:last-child,
-  th:nth-last-child(2),
-  td:nth-last-child(2) {
-    width: 50px;
-  }
-
-  th:not(:last-child):not(:nth-last-child(2)),
-  td:not(:last-child):not(:nth-last-child(2)) {
-    width: 180px;
+  th:not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(4)),
+  td:not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(4)) {
+    width: 330px;
   }
 
   button {
@@ -86,8 +79,6 @@ const Wrapper = styled.div`
 export const loader = async () => {
   try {
     const response = await customFetch.get(`/category/?populate=parent`);
-
-    console.log(response.data);
 
     return {
       categories: response.data.categories,
@@ -134,7 +125,14 @@ const AllCategory = () => {
                 <tr key={category._id}>
                   <td>{category.name}</td>
                   <td>{category.description}</td>
-                  <td>{category.description}</td>
+                  <td>
+                    {count.map((item) => {
+                      return (
+                        category.slug.toString() === item._id.toString() &&
+                        item.count
+                      );
+                    })}
+                  </td>
                   <td>{category.parent?.name}</td>
                   <td>
                     <button

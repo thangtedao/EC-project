@@ -2,11 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import {
-  ProductReview,
-  ProductSpecifications,
-  SlideProduct,
-} from "../components";
 import SlideGallery from "../components/SlideGallery";
 import customFetch from "../utils/customFetch";
 import { useLoaderData } from "react-router-dom";
@@ -14,6 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../state/cartSlice";
 import { toast } from "react-toastify";
 import { debounce } from "lodash";
+import {
+  ProductReview,
+  ProductSpecifications,
+  SlideProduct,
+} from "../components";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -220,7 +220,7 @@ export const loader = async ({ params }) => {
     const { slug } = params;
     const product = await customFetch
       .get(
-        `/product/${slug}?fields=_id,name,price,salePrice,category,images,review,ratings,totalRating&populate=ratings.postedby`
+        `/product/${slug}?fields=_id,name,price,salePrice,slug,category,images,review,ratings,totalRating&populate=ratings.postedby`
       )
       .then(({ data }) => data.product);
 

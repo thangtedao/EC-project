@@ -54,6 +54,12 @@ const Wrapper = styled.div`
       width: 50%;
     }
   }
+
+  .address-title {
+    margin-top: 1.1rem;
+    text-align: left;
+  }
+
   .form-info-input {
     width: 65%;
     display: flex;
@@ -224,6 +230,7 @@ const Profile = () => {
           />
           <TextField
             name="phone"
+            type="number"
             label="Số điện thoại"
             defaultValue={user?.phone || ""}
             variant="standard"
@@ -231,13 +238,17 @@ const Profile = () => {
           />
           <TextField
             name="email"
+            type="email"
             label="Email"
             defaultValue={user?.email || ""}
             variant="standard"
-            sx={{ width: "100%" }}
+            sx={{ width: "75%" }}
+            InputProps={{
+              readOnly: true,
+            }}
           />
 
-          <p>Địa chỉ</p>
+          <div className="address-title">Địa chỉ</div>
           <div className="form-info-select">
             <FormControl variant="standard">
               <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>

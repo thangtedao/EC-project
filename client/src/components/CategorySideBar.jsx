@@ -51,7 +51,7 @@ const Wrapper = styled.div`
   }
   .menu-tree-child {
     width: calc(100% - 200px);
-    height: fit-content;
+    height: 600px;
     padding: 1rem;
     background: var(--background-secondary-color);
     border-radius: var(--border-radius);

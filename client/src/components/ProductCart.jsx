@@ -7,6 +7,7 @@ import {
   increaseCount,
   removeFromCart,
 } from "../state/cartSlice";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const ProductCart = ({ product, isPayment }) => {
   const user = useSelector((state) => state.user.user);
@@ -29,7 +30,7 @@ const ProductCart = ({ product, isPayment }) => {
 
         <div className="product-info">
           <div className="product-info-name">
-            {product?.name}
+            <NavLink to={`/product/${product?.slug}`}>{product?.name}</NavLink>
             {!isPayment && (
               <DeleteIcon
                 sx={{ cursor: "pointer" }}

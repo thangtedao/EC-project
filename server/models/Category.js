@@ -4,13 +4,12 @@ const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    //unique: true,
     index: true,
   },
   slug: {
     type: String,
+    unique: true,
     required: true,
-    //unique: true,
     lowercase: true,
   },
   image: {
@@ -22,13 +21,13 @@ const categorySchema = new mongoose.Schema({
   },
   child: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "Category",
       default: null,
     },
   ],
   parent: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.String,
     ref: "Category",
     default: null,
   },

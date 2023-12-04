@@ -2,7 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import {
+  redirect,
+  useLoaderData,
+  useNavigate,
+  NavLink,
+} from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Wrapper = styled.div`
@@ -147,7 +152,11 @@ const Wishlist = () => {
                         </div>
 
                         <div className="product-info">
-                          <span className="product-name">{item?.name}</span>
+                          <span className="product-name">
+                            <NavLink to={`/product/${item?.slug}`}>
+                              {item?.name}
+                            </NavLink>
+                          </span>
                           <span className="product-description">
                             {item?.description}
                           </span>

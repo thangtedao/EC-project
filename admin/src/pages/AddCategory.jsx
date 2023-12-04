@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import React from "react";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { FormRow, FormRowSelect } from "../components";
-import {
-  Link,
-  Form,
-  redirect,
-  useNavigation,
-  useLoaderData,
-} from "react-router-dom";
+import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -114,6 +108,7 @@ const AddCategory = () => {
         <div className="title">Add Category</div>
         <Form method="post" className="form-add">
           <FormRow type="text" name="name" defaultValue="Laptop" />
+          <FormRow type="text" name="slug" defaultValue="laptop" />
           <div className="form-row">
             <label htmlFor="description" className="form-label">
               Description

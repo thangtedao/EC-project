@@ -10,6 +10,11 @@ import {
 export const createProduct = async (req, res) => {
   try {
     const data = { ...req.body };
+
+    data.category = [data.category1, data.category2];
+    delete data.category1;
+    delete data.category2;
+
     let images = [];
     let publicIdImages = [];
     if (data.images !== "") images = data.images.split(",");
@@ -122,9 +127,13 @@ export const getAllProduct = async (req, res) => {
 export const getProductByCategory = async (req, res) => {
   try {
     if (req.query.category) {
-      const categories = req.query.category.split(",");
+      let query = Product.find({ category: { $all: req.query.category } });
 
-      let query = Product.find({ category: { $all: categories } });
+      if (req.query.parent) {
+        query = Product.find({
+          category: { $all: [req.query.category, req.query.parent] },
+        });
+      }
 
       if (req.query.sort) {
         const sortBy = req.query.sort.split(",").join(" ");

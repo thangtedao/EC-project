@@ -27,15 +27,18 @@ export const loader = async () => {
       .get("/category/get/parent")
       .then(({ data }) => data.categories);
 
-    const categoryChild = await Promise.all(
-      categories.map(async (category) => {
-        const children = await customFetch
-          .get(`/category/get/child/${category._id}`)
-          .then(({ data }) => data.categories);
+    let categoryChild = [];
+    if (categories.length > 0) {
+      categoryChild = await Promise.all(
+        categories.map(async (category) => {
+          const children = await customFetch
+            .get(`/category/get/child/${category._id}`)
+            .then(({ data }) => data.categories);
 
-        return children;
-      })
-    );
+          return children;
+        })
+      );
+    }
     return { categories, categoryChild };
   } catch (error) {
     return error;
@@ -294,7 +297,8 @@ const AddProduct = () => {
               </label>
               <textarea
                 name="images"
-                defaultValue="https://media.very.co.uk/i/very/VPZ33_SQ1_0000000020_BLUE_SLf?$300x400_retinamobilex2$&$roundel_very$&p1_img=blank_apple"
+                // defaultValue="https://vcdn-sohoa.vnecdn.net/2021/01/21/HP-Elite-Folio-Front-Left-Forw-6107-5267-1611217952.jpg"
+                defaultValue="https://cdn.tgdd.vn/Products/Images/42/22701/dien-thoai-di-dong-Nokia-1280-dienmay.com-l.jpg"
               />
             </div>
             <div className="form-row">
@@ -312,7 +316,7 @@ const AddProduct = () => {
               type="text"
               name="name"
               lableText="Product Name"
-              defaultValue="Iphone "
+              defaultValue="Nokia "
             />
             <FormRow
               type="number"
@@ -335,15 +339,27 @@ const AddProduct = () => {
             <FormRowSelect
               name="category1"
               list={categories || []}
-              defaultValue={categories[0].name || "Non"}
+              defaultValue={
+                categories.length > 0
+                  ? categories[0].name
+                  : "Chưa có category nào"
+              }
               onChange={(e) => {
-                setCategoryC(categoryChild[e.target.selectedIndex]);
+                setCategoryC(
+                  categoryChild.length > 0
+                    ? categoryChild[e.target.selectedIndex]
+                    : []
+                );
               }}
             />
             <FormRowSelect
               name="category2"
               list={categoryC || []}
-              defaultValue={categoryC.length > 0 && categoryC[0].name}
+              defaultValue={
+                categoryChild.length > 0 && categoryC.length > 0
+                  ? categoryC[0].name
+                  : ""
+              }
             />
             <button type="submit" className="btn" disabled={isSubmitting}>
               {isSubmitting ? "Adding..." : "Add"}

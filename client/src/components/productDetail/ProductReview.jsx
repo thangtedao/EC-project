@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
-import img from "../../assets/react.svg";
 import Rating from "@mui/material/Rating";
 import { FaStar } from "react-icons/fa";
 import { Form } from "react-router-dom";
@@ -269,7 +268,11 @@ const ProductReview = ({ product }) => {
                         item?.postedby.fullName.charAt(0).toUpperCase()}
                     </Avatar>
                     <p className="name">{item?.postedby.fullName}</p>
-                    <p>{item?.createdAt}</p>
+                    <p>
+                      {item?.createdAt.split("T")[0] +
+                        " " +
+                        item?.createdAt.split("T")[1].split(".")[0]}
+                    </p>
                   </div>
                   <div className="box-review-comment-item-content">
                     <Rating

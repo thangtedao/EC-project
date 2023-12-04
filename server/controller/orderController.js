@@ -254,8 +254,12 @@ export const showStats = async (req, res) => {
     },
   ]);
 
-  const totalRevenue = result[0].totalRevenue;
-  const totalCount = result[0].totalCount;
+  let totalCount = 0;
+  let totalRevenue = 0;
+  if (result.length > 0) {
+    totalRevenue = result[0].totalRevenue;
+    totalCount = result[0].totalCount;
+  }
 
   monthlyApplications = monthlyApplications
     .map((item) => {

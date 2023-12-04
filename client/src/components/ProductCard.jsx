@@ -25,8 +25,8 @@ const Wrapper = styled.div`
 
   .product-card-container {
     width: 100%;
-    height: fit-content;
-    max-height: 90%;
+    height: 90%;
+    background-color: var(--background-secondary-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -34,11 +34,11 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-card-image {
-    width: 100%;
-    text-align: center;
-    overflow: hidden;
-    height: 180px;
+    height: 120px;
+    display: grid;
+    place-items: center;
     img {
+      border-radius: 10px;
       height: inherit;
     }
   }

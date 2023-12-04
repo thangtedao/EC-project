@@ -1,10 +1,8 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
-import slugify from "slugify";
 
 export const createCategory = async (req, res) => {
   try {
-    req.body.slug = slugify(req.body.name);
     const newCategory = await Category.create(req.body);
     res.status(201).json(newCategory);
   } catch (error) {

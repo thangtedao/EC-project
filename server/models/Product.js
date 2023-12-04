@@ -8,8 +8,8 @@ const productSchema = mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
+      required: true,
       lowercase: true,
     },
     description: {
@@ -26,7 +26,6 @@ const productSchema = mongoose.Schema(
     },
     sku: {
       type: String,
-      unique: true,
     },
     category: [
       {
