@@ -109,6 +109,7 @@ const AllOrder = () => {
             <tr>
               <th>Customer</th>
               <th>Date</th>
+              <th>Time</th>
               <th>Items</th>
               <th>Status</th>
               <th></th>
@@ -119,7 +120,8 @@ const AllOrder = () => {
               return (
                 <tr key={order._id}>
                   <td>{order.orderBy.fullName}</td>
-                  <td>{order.createdAt}</td>
+                  <td>{order.createdAt.split("T")[0]}</td>
+                  <td>{order.createdAt.split("T")[1].split(".")[0]}</td>
                   <td>
                     {order.products.reduce((acc, item) => acc + item.count, 0)}
                   </td>

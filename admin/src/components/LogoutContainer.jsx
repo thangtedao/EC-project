@@ -2,7 +2,6 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
 import { logout } from "../state/userSlice";
 
@@ -17,7 +16,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { deleteCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   position: relative;
@@ -119,7 +117,6 @@ const LogoutContainer = () => {
               width: 31,
               height: 31,
               backgroundColor: "white",
-              color: "black",
             }}
             src={user?.avatar && user.avatar}
           >

@@ -15,6 +15,11 @@ export const action = async ({ request }) => {
     const user = await customFetch
       .get("/user/current-user")
       .then(({ data }) => data.user);
+
+    if (user.role !== "admin") {
+      return redirect("/login");
+    }
+
     store.dispatch(login({ user: user }));
     return redirect("/");
   } catch (error) {
@@ -23,9 +28,12 @@ export const action = async ({ request }) => {
 };
 
 const Wrapper = styled.div`
-  padding: 3rem;
-  margin-bottom: 5rem;
-  //height: 60vh;
+  width: 100%;
+  height: calc(100vh - 220px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   .form-login {
     width: 30vw;
     background-color: var(--background-color);

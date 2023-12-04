@@ -49,12 +49,9 @@ const MainLayout = () => {
     setShowSideBar(!showSideBar);
   };
 
-  const user = 2;
-
   return (
     <MainLayoutContext.Provider
       value={{
-        user,
         categories,
         categoryChild,
         showSideBar,
@@ -64,7 +61,7 @@ const MainLayout = () => {
       <Wrapper>
         <Header />
         <div className="main-layout">
-          <Outlet context={{ user }} />
+          <Outlet context={{}} />
         </div>
         <Footer />
       </Wrapper>

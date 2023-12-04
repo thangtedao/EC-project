@@ -5,6 +5,7 @@ import customFetch from "../utils/customFetch";
 import { useSelector } from "react-redux";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import { useEffect } from "react";
 
 const Wrapper = styled.section`
   width: 100%;
@@ -44,6 +45,12 @@ const DashboardLayout = () => {
     console.log("deleted");
     navigate("/all-product");
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <DashboardContext.Provider

@@ -161,7 +161,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export const loader = async ({ params }) => {
+export const loader = async () => {
   try {
     return null;
   } catch (error) {
@@ -172,7 +172,7 @@ export const loader = async ({ params }) => {
 const Payment = () => {
   window.scrollTo(0, 0);
   const navigate = useNavigate();
-  const { user } = useMainLayoutContext();
+  const user = useSelector((state) => state.user.user);
   const cart = useSelector((state) => state.cart.cart);
 
   const totalPrice =

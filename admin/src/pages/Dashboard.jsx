@@ -78,7 +78,6 @@ export const loader = async () => {
 
 const Dashboard = () => {
   const { dataset, totalRevenue, totalCount } = useLoaderData();
-  console.log(dataset);
 
   const chartSetting = {
     yAxis: [

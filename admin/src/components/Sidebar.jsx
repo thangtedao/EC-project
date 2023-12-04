@@ -118,7 +118,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <DashboardOutlinedIcon className="icon" />
               </ListItemIcon>
-              <NavLink to="dashboard" end>
+              <NavLink to="/" end>
                 Dashboard
               </NavLink>
             </ListItemButton>

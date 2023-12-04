@@ -12,7 +12,6 @@ export const stripePayment = async (req, res) => {
       salePrice: item.salePrice,
     };
   });
-
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.user._id,
@@ -79,8 +78,6 @@ export const stripeWebHook = async (req, response) => {
     stripe.customers
       .retrieve(data.customer)
       .then((customer) => {
-        console.log(customer);
-        console.log("data", data);
         createOrder(customer, data);
       })
       .catch((err) => console.log(err));

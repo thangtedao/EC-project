@@ -137,7 +137,7 @@ const AllUser = () => {
               <th>Phone</th>
               <th>Live in</th>
               <th>Role</th>
-              <th>Blocked</th>
+              {/* <th>Blocked</th> */}
               <th>Registered</th>
               <th></th>
               <th></th>
@@ -161,7 +161,7 @@ const AllUser = () => {
                   <td>{user.phone}</td>
                   <td>{user.address.city}</td>
                   <td>{user.role}</td>
-                  <td>{user.isBlocked.toString()}</td>
+                  {/* <td>{user.isBlocked.toString()}</td> */}
                   <td>{user.createdAt.split("T")[0]}</td>
                   <td>
                     <button
