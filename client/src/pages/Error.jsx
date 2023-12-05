@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Link, useRouteError } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.main`
   min-height: 100vh;
@@ -34,14 +35,21 @@ const Error = () => {
   const error = useRouteError();
   if (error.status === 404) {
     return (
-      <Wrapper>
-        <div>
-          <img src="#" alt="not found" />
-          <h3>Ohh! Page Not Found</h3>
-          <p>we cant seem to find the page you are looking for</p>
-          <Link to="/">back home</Link>
-        </div>
-      </Wrapper>
+      <HelmetProvider>
+        <Wrapper>
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Error</title>
+          </Helmet>
+
+          <div>
+            <img src="#" alt="not found" />
+            <h3>Ohh! Page Not Found</h3>
+            <p>we cant seem to find the page you are looking for</p>
+            <Link to="/">back home</Link>
+          </div>
+        </Wrapper>
+      </HelmetProvider>
     );
   }
 

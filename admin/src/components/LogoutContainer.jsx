@@ -117,6 +117,7 @@ const LogoutContainer = () => {
               width: 31,
               height: 31,
               backgroundColor: "white",
+              color: "black",
             }}
             src={user?.avatar && user.avatar}
           >

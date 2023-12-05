@@ -305,3 +305,21 @@ export const rating = async (req, res) => {
     res.status(409).json({ msg: error.message });
   }
 };
+
+export const searchProduct = async (req, res) => {
+  try {
+    if (req.query.name) {
+      let query = Product.find({
+        name: { $regex: req.query.name, $options: "i" },
+      });
+
+      query = query.sort("-createdAt");
+      query = query.limit(10);
+
+      const products = await query;
+      res.status(200).json({ products });
+    }
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};

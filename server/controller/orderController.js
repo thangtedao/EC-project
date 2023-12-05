@@ -1,5 +1,6 @@
 import { Stripe } from "stripe";
 import Order from "../models/Order.js";
+import Cart from "../models/Cart.js";
 import day from "dayjs";
 
 const stripe = Stripe(process.env.STRIPE_KEY);
@@ -122,6 +123,7 @@ const createOrder = async (customer, data) => {
     });
 
     const savedOrder = await newOrder.save();
+    await Cart.findOneAndRemove({ user: customer.metadata.userId });
     console.log(savedOrder);
   } catch (error) {
     console.log(error);

@@ -3,6 +3,9 @@ import styled from "styled-components";
 import { OrderCard } from "../components";
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { store } from "../state/store.js";
+import { setCart } from "../state/cartSlice.js";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -119,6 +122,12 @@ export const loader = async () => {
       const orders = await customFetch
         .get(`/order/?userId=${user._id}`)
         .then(({ data }) => data.orders);
+
+      const response = await customFetch.get("/user/cart");
+      if (!response.data.cart) {
+        store.dispatch(setCart([]));
+      }
+
       return orders;
     }
     return redirect("/login");
@@ -132,21 +141,28 @@ const Order = () => {
   const orders = useLoaderData();
 
   return (
-    <Wrapper>
-      <div className="title">Đơn hàng của bạn</div>
-      {orders && orders.length > 0 ? (
-        <div className="order-list">
-          {orders?.map((order) => {
-            return <OrderCard key={order._id} order={order} />;
-          })}
-        </div>
-      ) : (
-        <div className="order-empty">
-          <p>Bạn chưa có hóa đơn nào</p>
-          <p>Hãy chọn mua sản phẩm để có hóa đơn nhé</p>
-        </div>
-      )}
-    </Wrapper>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Order</title>
+        </Helmet>
+
+        <div className="title">Đơn hàng của bạn</div>
+        {orders && orders.length > 0 ? (
+          <div className="order-list">
+            {orders?.map((order) => {
+              return <OrderCard key={order._id} order={order} />;
+            })}
+          </div>
+        ) : (
+          <div className="order-empty">
+            <p>Bạn chưa có hóa đơn nào</p>
+            <p>Hãy chọn mua sản phẩm để có hóa đơn nhé</p>
+          </div>
+        )}
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

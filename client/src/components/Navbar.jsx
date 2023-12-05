@@ -27,27 +27,6 @@ const Wrapper = styled.div`
     justify-content: space-between;
   }
 
-  .search-bar {
-    background: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid gray;
-    border-radius: 10px;
-    width: 30%;
-    height: 60%;
-    min-width: 50px;
-    .search-input {
-      width: 80%;
-    }
-    .search-icon {
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-  }
-
   .nav-links {
     display: flex;
     gap: 1.2rem;

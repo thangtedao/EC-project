@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { ORDER_STATUS } from "../utils/constants.js";
-import moment from "moment-timezone";
+import { timeStamp } from "../utils/timezone.js";
 
 const orderSchema = mongoose.Schema({
   products: [
@@ -30,11 +30,11 @@ const orderSchema = mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: () => moment.tz("Asia/Ho_Chi_Minh").format(),
+    default: timeStamp,
   },
   updatedAt: {
     type: Date,
-    default: () => moment.tz("Asia/Ho_Chi_Minh").format(),
+    default: timeStamp,
   },
 });
 

@@ -5,6 +5,7 @@ import {
   getProductByCategory,
   getSingleProduct,
   rating,
+  searchProduct,
   updateProduct,
 } from "../controller/productController.js";
 import { Router } from "express";
@@ -34,6 +35,7 @@ router.patch(
   updateProduct
 );
 router.get("/", getAllProduct);
+router.get("/search", searchProduct);
 router.delete("/:id", deleteProduct);
 router.get("/category", getProductByCategory);
 router.get("/:slug", getSingleProduct);

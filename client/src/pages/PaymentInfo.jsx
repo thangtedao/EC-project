@@ -11,6 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -270,137 +271,144 @@ const PaymentInfo = () => {
   };
 
   return (
-    <Wrapper>
-      <div className="cart-header">
-        <a onClick={() => navigate("/cart")}>
-          <ArrowBackIcon />
-        </a>
-        Thông tin
-      </div>
-      <div className="cart-container">
-        {cart?.map((item, index) => {
-          return <ProductCart key={index} product={item} isPayment />;
-        })}
-      </div>
-      <div className="form-info">
-        <p>Thông tin khách hàng</p>
-        <div className="form-info-input">
-          <div className="is-flex">
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Payment Info</title>
+        </Helmet>
+
+        <div className="cart-header">
+          <a onClick={() => navigate("/cart")}>
+            <ArrowBackIcon />
+          </a>
+          Thông tin
+        </div>
+        <div className="cart-container">
+          {cart?.map((item, index) => {
+            return <ProductCart key={index} product={item} isPayment />;
+          })}
+        </div>
+        <div className="form-info">
+          <p>Thông tin khách hàng</p>
+          <div className="form-info-input">
+            <div className="is-flex">
+              <TextField
+                id=""
+                label="Họ và tên"
+                defaultValue={user?.fullName || ""}
+                variant="standard"
+                sx={{ width: "50%" }}
+              />
+              <TextField
+                id=""
+                label="Số điện thoại"
+                defaultValue={user?.phone || ""}
+                variant="standard"
+                sx={{ width: "50%" }}
+              />
+            </div>
             <TextField
               id=""
-              label="Họ và tên"
-              defaultValue={user?.fullName || ""}
+              label="Email"
+              defaultValue={user?.email || ""}
               variant="standard"
-              sx={{ width: "50%" }}
-            />
-            <TextField
-              id=""
-              label="Số điện thoại"
-              defaultValue={user?.phone || ""}
-              variant="standard"
-              sx={{ width: "50%" }}
             />
           </div>
-          <TextField
-            id=""
-            label="Email"
-            defaultValue={user?.email || ""}
-            variant="standard"
-          />
         </div>
-      </div>
 
-      <div className="form-info">
-        <p>Thông tin nhận hàng</p>
-        <div className="form-address">
-          <FormControl variant="standard">
-            <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-            <Select
-              labelId="city-select-label"
-              id="city-select"
-              value={city}
-              label="Tỉnh/Thành phố"
-              sx={{ width: "300px" }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: "200px",
+        <div className="form-info">
+          <p>Thông tin nhận hàng</p>
+          <div className="form-address">
+            <FormControl variant="standard">
+              <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
+              <Select
+                labelId="city-select-label"
+                id="city-select"
+                value={city}
+                label="Tỉnh/Thành phố"
+                sx={{ width: "300px" }}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: "200px",
+                    },
                   },
-                },
-              }}
-              onChange={handleChange}
-            >
-              {cities.map((city) => (
-                <MenuItem key={city.code} value={city.code}>
-                  {city.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                }}
+                onChange={handleChange}
+              >
+                {cities.map((city) => (
+                  <MenuItem key={city.code} value={city.code}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-          <FormControl variant="standard">
-            <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-            <Select
-              labelId="district-select-label"
-              id="district-select"
-              value={district}
-              label="Quận/Huyện"
-              sx={{ width: "300px" }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: "200px",
+            <FormControl variant="standard">
+              <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
+              <Select
+                labelId="district-select-label"
+                id="district-select"
+                value={district}
+                label="Quận/Huyện"
+                sx={{ width: "300px" }}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: "200px",
+                    },
                   },
-                },
-              }}
-              onChange={handleChange02}
-            >
-              {districts.map((district) => (
-                <MenuItem key={district.code} value={district.code}>
-                  {district.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                }}
+                onChange={handleChange02}
+              >
+                {districts.map((district) => (
+                  <MenuItem key={district.code} value={district.code}>
+                    {district.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-          <FormControl variant="standard">
-            <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-            <Select
-              labelId="ward-select-label"
-              id="ward-select"
-              value={ward}
-              label="Phường/Xã"
-              sx={{ width: "300px" }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: "200px",
+            <FormControl variant="standard">
+              <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
+              <Select
+                labelId="ward-select-label"
+                id="ward-select"
+                value={ward}
+                label="Phường/Xã"
+                sx={{ width: "300px" }}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: "200px",
+                    },
                   },
-                },
-              }}
-              onChange={handleChange03}
-            >
-              {wards.map((ward) => (
-                <MenuItem key={ward.code} value={ward.code}>
-                  {ward.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                }}
+                onChange={handleChange03}
+              >
+                {wards.map((ward) => (
+                  <MenuItem key={ward.code} value={ward.code}>
+                    {ward.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-          <TextField id="" label="Số nhà, tên đường" variant="standard" />
+            <TextField id="" label="Số nhà, tên đường" variant="standard" />
+          </div>
         </div>
-      </div>
-      <div className="bottom-bar">
-        <div className="price-temp">
-          <p>Tổng tiền tạm tính:</p>
-          {totalPrice}₫
+        <div className="bottom-bar">
+          <div className="price-temp">
+            <p>Tổng tiền tạm tính:</p>
+            {totalPrice}₫
+          </div>
+          <button className="btn" onClick={() => navigate("/cart/payment")}>
+            Tiếp tục
+          </button>
         </div>
-        <button className="btn" onClick={() => navigate("/cart/payment")}>
-          Tiếp tục
-        </button>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

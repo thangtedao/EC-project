@@ -9,6 +9,7 @@ import {
   NavLink,
 } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -138,71 +139,78 @@ const Wishlist = () => {
 
   const wishlist = useLoaderData();
   return (
-    <Wrapper>
-      <div className="title">Wishlist</div>
-      {wishlist.length > 0 ? (
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Sản phẩm</th>
-                <th>Giá</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Wishlist</title>
+        </Helmet>
 
-            <tbody>
-              {wishlist?.map((item) => {
-                return (
-                  <tr key={item._id}>
-                    <td>
-                      <div className="product-card">
-                        <div className="image">
-                          <img src={item?.images[0]} />
-                        </div>
+        <div className="title">Wishlist</div>
+        {wishlist.length > 0 ? (
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>Giá</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
 
-                        <div className="product-info">
-                          <span className="product-name">
-                            <NavLink to={`/product/${item?.slug}`}>
-                              {item?.name}
-                            </NavLink>
-                          </span>
-                          <span className="product-description">
-                            {item?.description}
-                          </span>
+              <tbody>
+                {wishlist?.map((item) => {
+                  return (
+                    <tr key={item._id}>
+                      <td>
+                        <div className="product-card">
+                          <div className="image">
+                            <img src={item?.images[0]} />
+                          </div>
+
+                          <div className="product-info">
+                            <span className="product-name">
+                              <NavLink to={`/product/${item?.slug}`}>
+                                {item?.name}
+                              </NavLink>
+                            </span>
+                            <span className="product-description">
+                              {item?.description}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="product-price">
-                        <p>
-                          {item?.salePrice
-                            ? item?.salePrice + "₫"
-                            : item?.price + "₫"}
-                        </p>
-                        <p className="strike">
-                          {item?.salePrice && item?.price + "₫"}
-                        </p>
-                      </div>
-                    </td>
-                    <td>Hết hàng</td>
-                    <td>
-                      <DeleteIcon
-                        sx={{ cursor: "pointer" }}
-                        onClick={() => removeFromWishlist(item._id)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="empty-wishlist">Chưa có sản phẩm yêu thích nào</div>
-      )}
-    </Wrapper>
+                      </td>
+                      <td>
+                        <div className="product-price">
+                          <p>
+                            {item?.salePrice
+                              ? item?.salePrice + "₫"
+                              : item?.price + "₫"}
+                          </p>
+                          <p className="strike">
+                            {item?.salePrice && item?.price + "₫"}
+                          </p>
+                        </div>
+                      </td>
+                      <td>Hết hàng</td>
+                      <td>
+                        <DeleteIcon
+                          sx={{ cursor: "pointer" }}
+                          onClick={() => removeFromWishlist(item._id)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="empty-wishlist">Chưa có sản phẩm yêu thích nào</div>
+        )}
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

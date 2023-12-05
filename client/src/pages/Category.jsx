@@ -8,6 +8,7 @@ import { debounce } from "lodash";
 import { FaEye } from "react-icons/fa";
 import { FaSortAmountDown } from "react-icons/fa";
 import { FaSortAmountUp } from "react-icons/fa";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
   display: flex;
@@ -315,74 +316,82 @@ const Category = () => {
   }, [page]);
 
   return (
-    <Wrapper>
-      <div className="block-top-filter-brands">
-        {categoryData.map((item, index) => {
-          return (
-            <div key={index} className="brands-list">
-              <NavLink>
-                <img src={item.image} />
-              </NavLink>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Category</title>
+        </Helmet>
+
+        <div className="block-top-filter-brands">
+          {categoryData.map((item, index) => {
+            return (
+              <div key={index} className="brands-list">
+                <NavLink>
+                  <img src={item.image} />
+                </NavLink>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* --------- HOT SALE -------- */}
+        <div className="block-hot-sale">
+          <div className="block-title">
+            <div className="sale-title">TOP 10 NỔI BẬT NHẤT</div>
+            {/* <div className="box-countdown">00:11:22:33</div> */}
+          </div>
+          {productsMostView?.length > 0 && (
+            <SlideProduct products={productsMostView} />
+          )}
+        </div>
+
+        {/* --------- ALL PRODUCTS -------- */}
+        <div className="block-filter-sort">
+          <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
+          <div className="filter-sort-list-filter">
+            <div className="btn-filter">Beta</div>
+          </div>
+          <div className="block-filter-sort-title">Sắp xếp theo</div>
+          <div className="filter-sort-list-filter">
+            <div className="btn-filter" onClick={() => filterHighToLow()}>
+              <FaSortAmountDown />
+              Giá Cao - Thấp
             </div>
-          );
-        })}
-      </div>
+            <div className="btn-filter" onClick={() => filterLowToHigh()}>
+              <FaSortAmountUp />
+              Giá Thấp - Cao
+            </div>
+            <div className="btn-filter" onClick={() => filterMostViewed()}>
+              <FaEye />
+              <span>Xem nhiều</span>
+            </div>
+          </div>
+          <ProductList products={products} />
+        </div>
+        <div className="btn-load" onClick={() => loadMore()}>
+          {isLoading ? "Loading" : "Xem thêm"}
+        </div>
 
-      {/* --------- HOT SALE -------- */}
-      <div className="block-hot-sale">
-        <div className="block-title">
-          <div className="sale-title">TOP 10 NỔI BẬT NHẤT</div>
-          {/* <div className="box-countdown">00:11:22:33</div> */}
-        </div>
-        {productsMostView?.length > 0 && (
-          <SlideProduct products={productsMostView} />
-        )}
-      </div>
-
-      {/* --------- ALL PRODUCTS -------- */}
-      <div className="block-filter-sort">
-        <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
-        <div className="filter-sort-list-filter">
-          <div className="btn-filter">Beta</div>
-        </div>
-        <div className="block-filter-sort-title">Sắp xếp theo</div>
-        <div className="filter-sort-list-filter">
-          <div className="btn-filter" onClick={() => filterHighToLow()}>
-            <FaSortAmountDown />
-            Giá Cao - Thấp
+        {/* BOT */}
+        <div className="bot-container">
+          <div className="bot-container-column-1">
+            <div className="product-description">
+              <p>
+                Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
+                xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản
+                phẩm tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những
+                gì để đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng
+                CellphoneS đánh giá kỹ hơn về mẫu điện thoại gaming này trong
+                bài viết đây.
+              </p>
+            </div>
+            <FAQ />
           </div>
-          <div className="btn-filter" onClick={() => filterLowToHigh()}>
-            <FaSortAmountUp />
-            Giá Thấp - Cao
-          </div>
-          <div className="btn-filter" onClick={() => filterMostViewed()}>
-            <FaEye />
-            <span>Xem nhiều</span>
-          </div>
+          <div className="bot-container-column-2"></div>
         </div>
-        <ProductList products={products} />
-      </div>
-      <div className="btn-load" onClick={() => loadMore()}>
-        {isLoading ? "Loading" : "Xem thêm"}
-      </div>
-
-      {/* BOT */}
-      <div className="bot-container">
-        <div className="bot-container-column-1">
-          <div className="product-description">
-            <p>
-              Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
-              xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản phẩm
-              tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những gì để
-              đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng CellphoneS
-              đánh giá kỹ hơn về mẫu điện thoại gaming này trong bài viết đây.
-            </p>
-          </div>
-          <FAQ />
-        </div>
-        <div className="bot-container-column-2"></div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

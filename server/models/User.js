@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import moment from "moment-timezone";
+import { timeStamp } from "../utils/timezone.js";
 
 const UserSchema = new mongoose.Schema({
   fullName: {
@@ -54,11 +54,11 @@ const UserSchema = new mongoose.Schema({
   ],
   createdAt: {
     type: Date,
-    default: () => moment.tz("Asia/Ho_Chi_Minh").format(),
+    default: timeStamp,
   },
   updatedAt: {
     type: Date,
-    default: () => moment.tz("Asia/Ho_Chi_Minh").format(),
+    default: timeStamp,
   },
 });
 

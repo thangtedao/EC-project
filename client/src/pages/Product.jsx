@@ -14,6 +14,7 @@ import {
   ProductSpecifications,
   SlideProduct,
 } from "../components";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -252,91 +253,99 @@ const Product = () => {
   }, 100);
 
   return (
-    <Wrapper>
-      {/* TOP */}
-      <div className="top-product-title">{product?.name}</div>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Product</title>
+        </Helmet>
 
-      <div className="top-container">
-        <div className="top-container-column-1">
-          <div className="sliding-product-image">
-            <SlideGallery image={product?.images} />
+        {/* TOP */}
+        <div className="top-product-title">{product?.name}</div>
+
+        <div className="top-container">
+          <div className="top-container-column-1">
+            <div className="sliding-product-image">
+              <SlideGallery image={product?.images} />
+            </div>
+            <div className="other-product-img">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
           </div>
-          <div className="other-product-img">
-            <div></div>
-            <div></div>
-            <div></div>
+
+          <div className="top-container-column-2">
+            <div className="box-product-variants">
+              {product?.types?.map((type) => {
+                return <ProductType text={type} />;
+              })}
+            </div>
+
+            <p>Chọn màu</p>
+            <div className="box-product-variants">
+              {product?.colors?.map((color) => {
+                return <ProductType text={color} />;
+              })}
+            </div>
+
+            <div className="box-product-price">
+              <p>{product?.salePrice + "₫"}</p>
+              <p className="strike">{product?.price + "₫"}</p>
+            </div>
+
+            <div className="btn-buy">
+              <button
+                className="btn-buynow"
+                onClick={() => [
+                  debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                  navigate("/cart"),
+                ]}
+              >
+                Mua ngay
+              </button>
+              <button
+                className="btn-addtocart"
+                onClick={() => [
+                  debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                ]}
+              >
+                <AddShoppingCartIcon />
+                <p>Thêm vào giỏ</p>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="top-container-column-2">
-          <div className="box-product-variants">
-            {product?.types?.map((type) => {
-              return <ProductType text={type} />;
-            })}
-          </div>
+        {/* MID */}
+        <div className="mid-container">
+          <span className="mid-title">SẢN PHẨM TƯƠNG TỰ</span>
+          {relatedProducts.length > 0 && (
+            <SlideProduct products={relatedProducts} />
+          )}
+        </div>
 
-          <p>Chọn màu</p>
-          <div className="box-product-variants">
-            {product?.colors?.map((color) => {
-              return <ProductType text={color} />;
-            })}
+        {/* BOT */}
+        <div className="bot-container">
+          <div className="bot-container-column-1">
+            <div className="product-description">
+              <p>
+                Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
+                xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản
+                phẩm tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những
+                gì để đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng
+                CellphoneS đánh giá kỹ hơn về mẫu điện thoại gaming này trong
+                bài viết đây.
+              </p>
+            </div>
+            <ProductReview product={product} />
           </div>
-
-          <div className="box-product-price">
-            <p>{product?.salePrice + "₫"}</p>
-            <p className="strike">{product?.price + "₫"}</p>
-          </div>
-
-          <div className="btn-buy">
-            <button
-              className="btn-buynow"
-              onClick={() => [
-                debouncedAddToCartBtn({ ...product, count: 1 }, user),
-                navigate("/cart"),
-              ]}
-            >
-              Mua ngay
-            </button>
-            <button
-              className="btn-addtocart"
-              onClick={() => [
-                debouncedAddToCartBtn({ ...product, count: 1 }, user),
-              ]}
-            >
-              <AddShoppingCartIcon />
-              <p>Thêm vào giỏ</p>
-            </button>
+          <div className="bot-container-column-2">
+            <ProductSpecifications />
           </div>
         </div>
-      </div>
-
-      {/* MID */}
-      <div className="mid-container">
-        <span className="mid-title">SẢN PHẨM TƯƠNG TỰ</span>
-        {relatedProducts.length > 0 && (
-          <SlideProduct products={relatedProducts} />
-        )}
-      </div>
-
-      {/* BOT */}
-      <div className="bot-container">
-        <div className="bot-container-column-1">
-          <div className="product-description">
-            <p>
-              Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
-              xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản phẩm
-              tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những gì để
-              đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng CellphoneS
-              đánh giá kỹ hơn về mẫu điện thoại gaming này trong bài viết đây.
-            </p>
-          </div>
-          <ProductReview product={product} />
-        </div>
-        <div className="bot-container-column-2">
-          <ProductSpecifications />
-        </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

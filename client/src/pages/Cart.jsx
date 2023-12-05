@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import { useNavigate } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -171,21 +172,27 @@ const Cart = () => {
     ) || 0;
 
   return (
-    <Wrapper>
-      <div className="cart-header">
-        <a onClick={() => navigate("/")}>
-          <ArrowBackIcon />
-        </a>
-        Giỏ hàng của bạn
-      </div>
-      {cart.length <= 0 ? (
-        <div className="cart-empty">
-          <p>Giỏ hàng của bạn đang trống.</p>
-          <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Cart</title>
+        </Helmet>
+
+        <div className="cart-header">
+          <a onClick={() => navigate("/")}>
+            <ArrowBackIcon />
+          </a>
+          Giỏ hàng của bạn
         </div>
-      ) : (
-        <div className="cart-container">
-          {/* <div className="header-action">
+        {cart.length <= 0 ? (
+          <div className="cart-empty">
+            <p>Giỏ hàng của bạn đang trống.</p>
+            <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
+          </div>
+        ) : (
+          <div className="cart-container">
+            {/* <div className="header-action">
             <Checkbox
               className="checkbox-btn"
               icon={<CircleOutlinedIcon />}
@@ -194,22 +201,23 @@ const Cart = () => {
             Chọn tất cả
           </div> */}
 
-          {cart?.map((item, index) => {
-            return <ProductCart key={index} product={item} />;
-          })}
+            {cart?.map((item, index) => {
+              return <ProductCart key={index} product={item} />;
+            })}
 
-          <div className="bottom-bar">
-            <div className="price-temp">
-              <p>Tạm tính</p>
-              {totalPrice}₫
+            <div className="bottom-bar">
+              <div className="price-temp">
+                <p>Tạm tính</p>
+                {totalPrice}₫
+              </div>
+              <button className="btn" onClick={() => navigate("payment-info")}>
+                Mua ngay {`(${cart.length})`}
+              </button>
             </div>
-            <button className="btn" onClick={() => navigate("payment-info")}>
-              Mua ngay {`(${cart.length})`}
-            </button>
           </div>
-        </div>
-      )}
-    </Wrapper>
+        )}
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

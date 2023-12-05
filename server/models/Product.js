@@ -1,5 +1,5 @@
-import moment from "moment-timezone";
 import mongoose from "mongoose";
+import { timeStamp } from "../utils/timezone.js";
 
 const productSchema = mongoose.Schema({
   name: {
@@ -66,7 +66,7 @@ const productSchema = mongoose.Schema({
       postedby: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       createdAt: {
         type: Date,
-        default: () => moment.tz("Asia/Ho_Chi_Minh").format(),
+        default: timeStamp,
       },
     },
   ],
@@ -90,9 +90,8 @@ const productSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-  timezone: { type: String, default: "Asia/Ho_Chi_Minh" },
+  createdAt: { type: Date, default: timeStamp },
+  updatedAt: { type: Date, default: timeStamp },
 });
 
 export default mongoose.model("Product", productSchema);

@@ -6,6 +6,7 @@ import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { IoIosArrowForward } from "react-icons/io";
 import SlideGallery from "../components/SlideGallery";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
   display: flex;
@@ -168,56 +169,65 @@ const Home = () => {
   ];
 
   return (
-    <HomeContext.Provider value={null}>
-      <Wrapper>
-        <div className="block-top-home">
-          {/* MENU TREE */}
-          <div className="menu-container">
-            {categories?.map((category, index) => {
-              return (
-                <NavLink
-                  className="nav-link"
-                  key={index}
-                  to={`/category/${category.slug}`}
-                >
-                  {category.name} <IoIosArrowForward />
-                </NavLink>
-              );
-            })}
-          </div>
+    <HelmetProvider>
+      <HomeContext.Provider value={null}>
+        <Wrapper>
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Home</title>
+          </Helmet>
 
-          {/* SLIDE */}
-          <div className="sliding-banner">
-            <SlideGallery image={img} />
-          </div>
-          <div className="right-banner"></div>
-        </div>
-
-        {/* FLASH SALE */}
-        <div className="block-hot-sale">
-          <div className="block-title">
-            <div className="sale-title">FLASH SALE</div>
-            <div className="box-countdown">00:11:22:33</div>
-          </div>
-          {saleProducts?.length > 0 && <SlideProduct products={saleProducts} />}
-        </div>
-
-        {/* PRODUCTS SALE */}
-        {categories.map((category, index) => {
-          return (
-            <div key={index} className="product-by-category">
-              <NavLink
-                to={`/category/${category.slug}`}
-                className="product-by-category-title"
-              >
-                {productsArray[index].length > 0 && category.name}
-              </NavLink>
-              <SlideProduct products={productsArray[index] || []} />
+          <div className="block-top-home">
+            {/* MENU TREE */}
+            <div className="menu-container">
+              {categories?.map((category, index) => {
+                return (
+                  <NavLink
+                    className="nav-link"
+                    key={index}
+                    to={`/category/${category.slug}`}
+                  >
+                    {category.name} <IoIosArrowForward />
+                  </NavLink>
+                );
+              })}
             </div>
-          );
-        })}
-      </Wrapper>
-    </HomeContext.Provider>
+
+            {/* SLIDE */}
+            <div className="sliding-banner">
+              <SlideGallery image={img} />
+            </div>
+            <div className="right-banner"></div>
+          </div>
+
+          {/* FLASH SALE */}
+          <div className="block-hot-sale">
+            <div className="block-title">
+              <div className="sale-title">FLASH SALE</div>
+              <div className="box-countdown">00:11:22:33</div>
+            </div>
+            {saleProducts?.length > 0 && (
+              <SlideProduct products={saleProducts} />
+            )}
+          </div>
+
+          {/* PRODUCTS SALE */}
+          {categories.map((category, index) => {
+            return (
+              <div key={index} className="product-by-category">
+                <NavLink
+                  to={`/category/${category.slug}`}
+                  className="product-by-category-title"
+                >
+                  {productsArray[index].length > 0 && category.name}
+                </NavLink>
+                <SlideProduct products={productsArray[index] || []} />
+              </div>
+            );
+          })}
+        </Wrapper>
+      </HomeContext.Provider>
+    </HelmetProvider>
   );
 };
 
