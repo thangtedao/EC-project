@@ -70,6 +70,7 @@ export const loader = async () => {
       dataset: response.data.monthlyApplications,
       totalRevenue: response.data.totalRevenue,
       totalCount: response.data.totalCount,
+      totalProduct: response.data.totalProduct,
     };
   } catch (error) {
     return error;
@@ -77,7 +78,7 @@ export const loader = async () => {
 };
 
 const Dashboard = () => {
-  const { dataset, totalRevenue, totalCount } = useLoaderData();
+  const { dataset, totalRevenue, totalCount, totalProduct } = useLoaderData();
 
   const chartSetting = {
     yAxis: [
@@ -109,11 +110,11 @@ const Dashboard = () => {
               <div className="card-content">{totalRevenue + "₫"}</div>
             </div>
             <div className="card-item">
-              <div className="card-title">Average order value</div>
-              <div className="card-content">999</div>
+              <div className="card-title">Total Products Sold</div>
+              <div className="card-content">{totalProduct}</div>
             </div>
             <div className="card-item">
-              <div className="card-title">Total orders</div>
+              <div className="card-title">Total Orders</div>
               <div className="card-content">{totalCount}</div>
             </div>
           </div>

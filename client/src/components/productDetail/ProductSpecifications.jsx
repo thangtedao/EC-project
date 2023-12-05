@@ -14,10 +14,10 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-specifications {
-    padding: 0.5rem;
     border-radius: 10px;
     border: 0.5px solid lightgrey;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
   }
   .technical-content {
     display: flex;
@@ -27,7 +27,10 @@ const Wrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 1rem;
-    padding: 0.5rem;
+    padding: 0.8rem 0.5rem;
+  }
+  .gray-background {
+    background-color: #f2f2f2;
   }
   .button-show-model-technical {
     border-radius: 10px;
@@ -46,45 +49,30 @@ const Wrapper = styled.div`
   }
 `;
 
-const ProductSpecifications = () => {
+const ProductSpecifications = ({ product }) => {
+  const productSpecifications = product?.specifications?.split("\r\n");
+
   return (
     <Wrapper>
       <div className="product-specifications-container">
         Thông số kỹ thuật
         <div className="product-specifications">
           <ul className="technical-content">
-            <li className="technical-content-item">
-              <p>Loại card đồ họa</p>
-              <p>8 nhân GPU, 16 nhân Neural Engine</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Dung lượng RAM</p>
-              <p>8GB</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Ổ cứng</p>
-              <p>256GB</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Kích thước màn hình</p>
-              <p>13.6 inches</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Công nghệ màn hình</p>
-              <p>Liquid Retina Display</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Pin</p>
-              <p>52,6 Wh</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Độ phân giải màn hình</p>
-              <p>2560 x 1664 pixels</p>
-            </li>
-            <li className="technical-content-item">
-              <p>Cổng giao tiếp</p>
-              <p>2 x Thunderbolt 3 Jack tai nghe 3.5 mm MagSafe 3</p>
-            </li>
+            {productSpecifications?.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  className={
+                    index % 2 !== 0
+                      ? "technical-content-item"
+                      : "technical-content-item gray-background"
+                  }
+                >
+                  <p>{item.split("=")[0]}</p>
+                  <p>{item.split("=")[1]}</p>
+                </li>
+              );
+            })}
           </ul>
         </div>
         <button className="button-show-model-technical">

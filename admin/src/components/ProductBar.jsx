@@ -16,6 +16,7 @@ const Wrapper = styled.div`
     align-items: center;
   }
   .product-image {
+    width: 80px;
     height: 50px;
     display: grid;
     place-items: center;
@@ -26,7 +27,6 @@ const Wrapper = styled.div`
   }
   .product-info {
     width: 80%;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -35,6 +35,9 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #444;
   }
   .product-info-price {
     display: flex;
@@ -46,7 +49,10 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1rem;
     .strike {
+      font-size: 0.9rem;
+      color: #707070;
       text-decoration: line-through;
+      text-decoration-thickness: 1px;
     }
   }
   .product-count {

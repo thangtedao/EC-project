@@ -74,6 +74,7 @@ const Wrapper = styled.div`
 
   /* ALL PRODUCT */
   .block-filter-sort {
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -338,7 +339,7 @@ const Category = () => {
         {/* --------- HOT SALE -------- */}
         <div className="block-hot-sale">
           <div className="block-title">
-            <div className="sale-title">TOP 10 NỔI BẬT NHẤT</div>
+            <div className="sale-title">SẢN PHẨM NỔI BẬT NHẤT</div>
             {/* <div className="box-countdown">00:11:22:33</div> */}
           </div>
           {productsMostView?.length > 0 && (
@@ -348,10 +349,10 @@ const Category = () => {
 
         {/* --------- ALL PRODUCTS -------- */}
         <div className="block-filter-sort">
-          <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
+          {/* <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
           <div className="filter-sort-list-filter">
             <div className="btn-filter">Beta</div>
-          </div>
+          </div> */}
           <div className="block-filter-sort-title">Sắp xếp theo</div>
           <div className="filter-sort-list-filter">
             <div className="btn-filter" onClick={() => filterHighToLow()}>

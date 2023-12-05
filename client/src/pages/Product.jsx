@@ -221,7 +221,7 @@ export const loader = async ({ params }) => {
     const { slug } = params;
     const product = await customFetch
       .get(
-        `/product/${slug}?fields=_id,name,price,salePrice,slug,category,images,review,ratings,totalRating&populate=ratings.postedby`
+        `/product/${slug}?fields=_id,name,price,salePrice,slug,category,images,specifications,review,ratings,totalRating&populate=ratings.postedby`
       )
       .then(({ data }) => data.product);
 
@@ -341,7 +341,7 @@ const Product = () => {
             <ProductReview product={product} />
           </div>
           <div className="bot-container-column-2">
-            <ProductSpecifications />
+            <ProductSpecifications product={product} />
           </div>
         </div>
       </Wrapper>

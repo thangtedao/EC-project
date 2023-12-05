@@ -56,7 +56,7 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
   .form-add {
-    height: 700px;
+    height: fit-content;
     width: 100%;
     display: flex;
     gap: 2rem;
@@ -305,6 +305,15 @@ const EditProduct = () => {
               <textarea
                 name="description"
                 defaultValue={product?.description || ""}
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="specifications" className="form-label">
+                Specifications
+              </label>
+              <textarea
+                name="specifications"
+                defaultValue={product?.specifications || ""}
               />
             </div>
           </div>

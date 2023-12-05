@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
-import { setCart } from "../state/cartSlice.js";
+import { setCart, setTotalPrice } from "../state/cartSlice.js";
 
 const Wrapper = styled.section`
   padding: 3rem;
@@ -90,6 +90,7 @@ export const action = async ({ request }) => {
           slug: item.product.slug,
         };
       });
+      store.dispatch(setTotalPrice(response.data.cart.cartTotal));
       store.dispatch(setCart(cart));
     } else {
       store.dispatch(setCart([]));

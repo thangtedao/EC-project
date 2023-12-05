@@ -2,6 +2,7 @@ import { Stripe } from "stripe";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import day from "dayjs";
+import { createPayPalOrder } from "../utils/paypal.js";
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -97,6 +98,29 @@ export const stripeWebHook = async (req, response) => {
   // }
 
   response.send().end();
+};
+
+export const paypalPayment = async (req, res) => {
+  try {
+    // use the cart information passed from the front-end to calculate the order amount detals
+    const { cart } = req.body;
+    const { jsonResponse, httpStatusCode } = await createPayPalOrder(cart);
+    res.status(httpStatusCode).json(jsonResponse);
+  } catch (error) {
+    console.error("Failed to create order:", error);
+    res.status(500).json({ error: "Failed to create order." });
+  }
+};
+
+export const paypalCaptureOrder = async (req, res) => {
+  try {
+    const { orderID } = req.params;
+    const { jsonResponse, httpStatusCode } = await createPayPalOrder(orderID);
+    res.status(httpStatusCode).json(jsonResponse);
+  } catch (error) {
+    console.error("Failed to create order:", error);
+    res.status(500).json({ error: "Failed to capture order." });
+  }
 };
 
 const createOrder = async (customer, data) => {
@@ -245,19 +269,25 @@ export const showStats = async (req, res) => {
 
   const result = await Order.aggregate([
     {
+      $unwind: "$products",
+    },
+    {
       $group: {
         _id: null,
         totalRevenue: { $sum: "$totalPrice" },
         totalCount: { $sum: 1 },
+        totalProduct: { $sum: "$products.count" },
       },
     },
   ]);
 
   let totalCount = 0;
   let totalRevenue = 0;
+  let totalProduct = 0;
   if (result.length > 0) {
     totalRevenue = result[0].totalRevenue;
     totalCount = result[0].totalCount;
+    totalProduct = result[0].totalProduct;
   }
 
   monthlyApplications = monthlyApplications
@@ -273,5 +303,5 @@ export const showStats = async (req, res) => {
     })
     .reverse();
 
-  res.json({ monthlyApplications, totalRevenue, totalCount });
+  res.json({ monthlyApplications, totalRevenue, totalCount, totalProduct });
 };

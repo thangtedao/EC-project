@@ -55,7 +55,7 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
   .form-add {
-    height: 700px;
+    height: fit-content;
     width: 100%;
     display: flex;
     gap: 2rem;
@@ -308,6 +308,24 @@ const AddProduct = () => {
               <textarea
                 name="description"
                 defaultValue="chung ta khong thuoc ve nhau"
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="specifications" className="form-label">
+                Specifications
+              </label>
+              <textarea
+                name="specifications"
+                defaultValue="Kích thước màn hình=6.67 inches
+Công nghệ màn hình=AMOLED
+Pin=5000mAh
+Chipset=Qualcomm Snapdragon 685
+Ram=8 GB
+Bộ nhớ trong=128 GB
+Độ phân giải màn hình=2560 x 1664 pixels
+Cổng giao tiếp=2 x Thunderbolt 3 Jack tai nghe 3.5 mm MagSafe 3
+Ổ cứng=256GB
+Loại card đồ họa=8 nhân GPU, 16 nhân Neural Engine"
               />
             </div>
           </div>

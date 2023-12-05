@@ -28,6 +28,7 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
+    text-align: left;
   }
   .form-image {
     display: grid;

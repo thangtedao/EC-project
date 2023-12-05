@@ -1,10 +1,11 @@
 import { InputBase } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import { Form, NavLink, useSubmit } from "react-router-dom";
+import { Form, NavLink } from "react-router-dom";
 import { useState } from "react";
 import customFetch from "../utils/customFetch";
 import { debounce } from "lodash";
 import styled from "styled-components";
+import img from "../assets/react.svg";
 
 const Wrapper = styled.div`
   position: relative;
@@ -20,7 +21,7 @@ const Wrapper = styled.div`
     border: 1px solid gray;
     border-radius: 10px;
     width: 100%;
-    height: 30px;
+    height: 35px;
     min-width: 50px;
     .search-input {
       width: 80%;
@@ -28,7 +29,6 @@ const Wrapper = styled.div`
     .search-icon {
       display: grid;
       place-items: center;
-      cursor: pointer;
     }
   }
   .search-result {
@@ -37,22 +37,37 @@ const Wrapper = styled.div`
     left: 0;
     width: 100%;
     height: fit-content;
-    max-height: 300px;
-    border: 1px solid black;
-    border-radius: 5px;
+    max-height: 500px;
+    border-radius: 8px;
     background-color: white;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
+      0 2px 6px 2px rgba(60, 64, 67, 0.15);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.8rem;
+    padding-top: 10px;
     overflow: auto;
   }
   .product-card {
     display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
     padding: 5px;
+  }
+  .product-card-image {
+    height: 45px;
+    display: grid;
+    place-items: center;
+    img {
+      border-radius: 10px;
+      height: inherit;
+    }
   }
   .product-card-info {
     display: flex;
     flex-direction: column;
+    gap: 5px;
     .name {
       font-size: 0.9rem;
       font-weight: bold;
@@ -60,14 +75,14 @@ const Wrapper = styled.div`
     }
   }
   .price {
-    font-size: 0.9rem;
     color: #d70018;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
     font-weight: bold;
     .strike {
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       color: #707070;
       text-decoration: line-through;
       text-decoration-thickness: 1px;
@@ -78,11 +93,16 @@ const Wrapper = styled.div`
 const SearchBar = () => {
   const [input, setInput] = useState("");
   const [products, setProducts] = useState([]);
+  const [isShow, setIsShow] = useState(false);
 
   const fetchData = debounce(async (name) => {
-    const response = await customFetch.get(`/product/search/?name=${name}`);
-    setProducts(response.data.products || []);
-  }, 1000);
+    if (name !== "") {
+      const response = await customFetch.get(`/product/search/?name=${name}`);
+      setProducts(response.data.products || []);
+    } else {
+      setProducts([]);
+    }
+  }, 300);
 
   const handleSearch = (e) => {
     setInput(e.target.value);
@@ -98,21 +118,37 @@ const SearchBar = () => {
           value={input}
           name="name"
           onChange={(e) => handleSearch(e)}
+          onFocus={() => setTimeout(() => setIsShow(true), 100)}
+          onBlur={() => setTimeout(() => setIsShow(false), 100)}
         />
         <div className="search-icon">
           <Search />
         </div>
       </Form>
-      <div className="search-result">
-        <NavLink className="product-card">
-          <div className="product-card-info">
-            <div className="name">Iphone</div>
-            <div className="price">
-              9999<div className="strike">9999</div>
-            </div>
-          </div>
-        </NavLink>
-      </div>
+      {products.length > 0 && isShow && (
+        <div className="search-result">
+          {products?.map((product) => {
+            return (
+              <NavLink
+                key={product._id}
+                to={`/product/${product.slug}`}
+                className="product-card"
+              >
+                <div className="product-card-image">
+                  <img src={product?.images[0] || img} />
+                </div>
+                <div className="product-card-info">
+                  <div className="name">{product?.name}</div>
+                  <div className="price">
+                    {product?.price + "₫"}
+                    <div className="strike">{product?.salePrice + "₫"}</div>
+                  </div>
+                </div>
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
     </Wrapper>
   );
 };

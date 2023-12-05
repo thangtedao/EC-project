@@ -43,6 +43,9 @@ const productSchema = mongoose.Schema({
     type: Array,
     default: [],
   },
+  specifications: {
+    type: String,
+  },
   stockQuantity: {
     type: Number,
     default: 0,
