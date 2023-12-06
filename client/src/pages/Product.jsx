@@ -85,7 +85,7 @@ const Wrapper = styled.div`
     align-items: center;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #fd2424;
+    color: #e04040;
     .strike {
       font-size: 1rem;
       color: #707070;
@@ -282,12 +282,12 @@ const Product = () => {
               })}
             </div>
 
-            <p>Chọn màu</p>
+            {/* <p>Chọn màu</p>
             <div className="box-product-variants">
               {product?.colors?.map((color) => {
                 return <ProductType text={color} />;
               })}
-            </div>
+            </div> */}
 
             <div className="box-product-price">
               <p>{product?.salePrice + "₫"}</p>

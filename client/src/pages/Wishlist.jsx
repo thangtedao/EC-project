@@ -9,7 +9,11 @@ import {
   NavLink,
 } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { addToCart } from "../state/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { debounce } from "lodash";
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -24,14 +28,14 @@ const Wrapper = styled.div`
 
   table {
     width: 800px;
-    font-size: 1.3rem;
+    font-size: 1rem;
     margin-top: 2rem;
   }
   th {
     height: 30px;
   }
   td {
-    height: 100px;
+    height: 80px;
     border-bottom: 1px solid lightgray;
   }
   th,
@@ -75,8 +79,9 @@ const Wrapper = styled.div`
   }
   .image {
     width: 120px;
-    height: inherit;
+    height: 100px;
     img {
+      max-width: 300px;
       height: inherit;
     }
   }
@@ -118,6 +123,19 @@ export const loader = async () => {
 const Wishlist = () => {
   window.scrollTo(0, 0);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user.user);
+
+  const addToCartBtn = debounce((product, user) => {
+    dispatch(addToCart({ product: { ...product, count: 1 }, user }));
+    toast.success("Thêm vào giỏ thành công", {
+      position: "top-center",
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  }, 100);
 
   const removeFromWishlist = async (id) => {
     try {
@@ -154,7 +172,7 @@ const Wishlist = () => {
                 <tr>
                   <th>Sản phẩm</th>
                   <th>Giá</th>
-                  <th>Status</th>
+                  <th></th>
                   <th></th>
                 </tr>
               </thead>
@@ -193,7 +211,14 @@ const Wishlist = () => {
                           </p>
                         </div>
                       </td>
-                      <td>Hết hàng</td>
+                      <td>
+                        <AddShoppingCartIcon
+                          sx={{ cursor: "pointer" }}
+                          onClick={() =>
+                            addToCartBtn({ ...item, count: 1 }, user)
+                          }
+                        />
+                      </td>
                       <td>
                         <DeleteIcon
                           sx={{ cursor: "pointer" }}

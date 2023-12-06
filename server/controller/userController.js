@@ -54,19 +54,20 @@ export const updateUser = async (req, res) => {
   try {
     const { userId } = req.user;
     const data = { ...req.body };
-
     delete data.password;
-    const address = {
-      city: data.city,
-      district: data.district,
-      ward: data.ward,
-      home: data.home,
-    };
-    delete data.city;
-    delete data.district;
-    delete data.ward;
-    delete data.home;
-    data.address = address;
+    if (data.city && data.district && data.ward && data.home) {
+      const address = {
+        city: data.city,
+        district: data.district,
+        ward: data.ward,
+        home: data.home,
+      };
+      delete data.city;
+      delete data.district;
+      delete data.ward;
+      delete data.home;
+      data.address = address;
+    }
 
     // if (req.file) {
     //   const response = await cloudinaryUploadImage(req.file.path);

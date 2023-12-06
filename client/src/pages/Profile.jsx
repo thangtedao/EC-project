@@ -13,6 +13,8 @@ import { Form, useNavigate, useNavigation } from "react-router-dom";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -118,6 +120,12 @@ const Profile = () => {
       navigate("/login");
     }
   }, []);
+
+  const [isCheck, setIsCheck] = useState(false);
+
+  const changeAddress = (event) => {
+    setIsCheck(event.target.checked);
+  };
 
   const [cities, setCities] = useState([]);
   const [city, setCity] = useState("");
@@ -257,92 +265,117 @@ const Profile = () => {
             />
 
             <div className="address-title">Địa chỉ</div>
-            <div className="form-info-select">
-              <FormControl variant="standard">
-                <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-                <Select
-                  labelId="city-select-label"
-                  name="city"
-                  value={city?.name || ""}
-                  // value={user?.address.city || ""}
-                  label="Tỉnh/Thành phố"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
+            <TextField
+              InputProps={{
+                readOnly: true,
+              }}
+              value={
+                user?.address &&
+                `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`
+              }
+              variant="standard"
+              sx={{ width: "90%" }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isCheck}
+                  onChange={changeAddress}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Thay đổi địa chỉ"
+            />
+            {isCheck && (
+              <div className="form-info-select">
+                <FormControl variant="standard">
+                  <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
+                  <Select
+                    labelId="city-select-label"
+                    name="city"
+                    value={city?.name || ""}
+                    // value={user?.address.city || ""}
+                    label="Tỉnh/Thành phố"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
                       },
-                    },
-                  }}
-                  onChange={handleChange}
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city.code} value={city.name}>
-                      {city.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    }}
+                    onChange={handleChange}
+                  >
+                    {cities.map((city) => (
+                      <MenuItem key={city.code} value={city.name}>
+                        {city.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              <FormControl variant="standard">
-                <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-                <Select
-                  labelId="district-select-label"
-                  name="district"
-                  value={district?.name || ""}
-                  // value={user?.address.district || ""}
-                  label="Quận/Huyện"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
+                <FormControl variant="standard">
+                  <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
+                  <Select
+                    labelId="district-select-label"
+                    name="district"
+                    value={district?.name || ""}
+                    // value={user?.address.district || ""}
+                    label="Quận/Huyện"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
                       },
-                    },
-                  }}
-                  onChange={handleChange02}
-                >
-                  {districts.map((district) => (
-                    <MenuItem key={district.code} value={district.name}>
-                      {district.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    }}
+                    onChange={handleChange02}
+                  >
+                    {districts.map((district) => (
+                      <MenuItem key={district.code} value={district.name}>
+                        {district.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              <FormControl variant="standard">
-                <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-                <Select
-                  labelId="ward-select-label"
-                  name="ward"
-                  value={ward?.name || ""}
-                  // defaultValue={user?.address.ward || ""}
-                  label="Phường/Xã"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
+                <FormControl variant="standard">
+                  <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
+                  <Select
+                    labelId="ward-select-label"
+                    name="ward"
+                    value={ward?.name || ""}
+                    // defaultValue={user?.address.ward || ""}
+                    label="Phường/Xã"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
                       },
-                    },
-                  }}
-                  onChange={handleChange03}
-                >
-                  {wards.map((ward) => (
-                    <MenuItem key={ward.code} value={ward.name}>
-                      {ward.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    }}
+                    onChange={handleChange03}
+                  >
+                    {wards.map((ward) => (
+                      <MenuItem key={ward.code} value={ward.name}>
+                        {ward.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              <TextField
-                name="home"
-                label="Số nhà, tên đường"
-                variant="standard"
-                sx={{ width: "300px" }}
-              />
-            </div>
+                <TextField
+                  required
+                  name="home"
+                  label="Số nhà, tên đường"
+                  variant="standard"
+                  sx={{ width: "300px" }}
+                />
+              </div>
+            )}
+
             <button className="btn" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
             </button>

@@ -102,7 +102,7 @@ const SearchBar = () => {
     } else {
       setProducts([]);
     }
-  }, 300);
+  }, 200);
 
   const handleSearch = (e) => {
     setInput(e.target.value);
