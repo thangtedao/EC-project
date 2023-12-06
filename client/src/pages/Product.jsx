@@ -221,7 +221,7 @@ export const loader = async ({ params }) => {
     const { slug } = params;
     const product = await customFetch
       .get(
-        `/product/${slug}?fields=_id,name,price,salePrice,slug,category,images,specifications,review,ratings,totalRating&populate=ratings.postedby`
+        `/product/${slug}?fields=_id,name,price,salePrice,description,slug,category,images,specifications,review,ratings,totalRating&populate=ratings.postedby`
       )
       .then(({ data }) => data.product);
 
@@ -268,11 +268,11 @@ const Product = () => {
             <div className="sliding-product-image">
               <SlideGallery image={product?.images} />
             </div>
-            <div className="other-product-img">
+            {/* <div className="other-product-img">
               <div></div>
               <div></div>
               <div></div>
-            </div>
+            </div> */}
           </div>
 
           <div className="top-container-column-2">
@@ -329,14 +329,7 @@ const Product = () => {
         <div className="bot-container">
           <div className="bot-container-column-1">
             <div className="product-description">
-              <p>
-                Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
-                xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản
-                phẩm tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những
-                gì để đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng
-                CellphoneS đánh giá kỹ hơn về mẫu điện thoại gaming này trong
-                bài viết đây.
-              </p>
+              <p>{product?.description}</p>
             </div>
             <ProductReview product={product} />
           </div>

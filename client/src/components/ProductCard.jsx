@@ -8,12 +8,14 @@ import { useMainLayoutContext } from "../pages/MainLayout";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const Wrapper = styled.div`
   width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   height: 380px;
   background-color: var(--background-secondary-color);
@@ -24,17 +26,17 @@ const Wrapper = styled.div`
   padding: 0.5rem;
 
   .product-card-container {
-    width: 100%;
+    width: 200px;
     height: 90%;
     background-color: var(--background-secondary-color);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    padding-top: 1.2rem;
     overflow: hidden;
     gap: 1rem;
   }
   .product-card-image {
-    height: 120px;
+    height: 135px;
     display: grid;
     place-items: center;
     img {
@@ -78,6 +80,7 @@ const Wrapper = styled.div`
     }
   }
   .product-card-description {
+    width: 100%;
     background: #f3f4f6;
     border: 1px solid #e5e7eb;
     padding: 5px;
@@ -85,6 +88,7 @@ const Wrapper = styled.div`
     border-radius: 3px;
     font-size: 12px;
     color: #444;
+    overflow-wrap: break-word;
   }
   .product-card-bottom {
     width: 100%;
@@ -110,7 +114,7 @@ const Wrapper = styled.div`
 `;
 
 const ProductCard = ({ product }) => {
-  const { user } = useMainLayoutContext();
+  const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
 
   const addToWishlist = async () => {
@@ -162,9 +166,11 @@ const ProductCard = ({ product }) => {
             </div>
           )}
         </div>
-        <div className="product-card-description">
-          <p>{product.description}</p>
-        </div>
+        {/* {product.description && (
+          <div className="product-card-description">
+            <p>{product.description}</p>
+          </div>
+        )} */}
       </NavLink>
 
       <div className="product-card-bottom">
