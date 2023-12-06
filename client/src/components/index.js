@@ -15,4 +15,4 @@ export { default as ProductCard } from "./ProductCard";
 export { default as ProductList } from "./ProductList";
 export { default as ProductCart } from "./ProductCart";
 export { default as OrderCard } from "./OrderCard";
-export { default as PayPalPayment } from "./PayPalPayment";
+export { default as PayPalButton } from "./PayPalButton";

@@ -80,7 +80,7 @@ export const stripeWebHook = async (req, response) => {
     stripe.customers
       .retrieve(data.customer)
       .then((customer) => {
-        createOrder(customer, data);
+        createOrderByStripe(customer, data);
       })
       .catch((err) => console.log(err));
   }
@@ -102,7 +102,6 @@ export const stripeWebHook = async (req, response) => {
 
 export const paypalPayment = async (req, res) => {
   try {
-    // use the cart information passed from the front-end to calculate the order amount detals
     const { cart } = req.body;
     const { jsonResponse, httpStatusCode } = await createPayPalOrder(cart);
     res.status(httpStatusCode).json(jsonResponse);
@@ -123,7 +122,7 @@ export const paypalCaptureOrder = async (req, res) => {
   }
 };
 
-const createOrder = async (customer, data) => {
+const createOrderByStripe = async (customer, data) => {
   try {
     const cart = JSON.parse(customer.metadata.cart);
     const products = cart.map((product) => {
@@ -149,6 +148,38 @@ const createOrder = async (customer, data) => {
     const savedOrder = await newOrder.save();
     await Cart.findOneAndRemove({ user: customer.metadata.userId });
     console.log(savedOrder);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createOrder = async (req, res) => {
+  try {
+    const { cart, user } = req.body;
+
+    const products = cart.map((product) => {
+      return {
+        product: product._id,
+        count: product.count,
+      };
+    });
+
+    const totalPrice =
+      cart?.reduce(
+        (accumulator, item) => accumulator + item.salePrice * item.count,
+        0
+      ) || 0;
+
+    const newOrder = new Order({
+      orderBy: user._id,
+      products: products,
+      totalPrice: totalPrice,
+    });
+
+    const savedOrder = await newOrder.save();
+    await Cart.findOneAndRemove({ user: user._id });
+    console.log(savedOrder);
+    res.status(200).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);
   }

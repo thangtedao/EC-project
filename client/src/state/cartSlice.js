@@ -3,7 +3,7 @@ import customFetch from "../utils/customFetch";
 
 const initialState = {
   cart: [],
-  totalPrice: 0,
+  cartTotal: 0,
 };
 
 export const cartSlice = createSlice({
@@ -74,8 +74,8 @@ export const cartSlice = createSlice({
         setCart();
       }
     },
-    setTotalPrice: (state, action) => {
-      state.totalPrice = action.payload;
+    setCartTotal: (state, action) => {
+      state.cartTotal = action.payload;
     },
   },
 });
@@ -87,6 +87,6 @@ export const {
   deleteCart,
   increaseCount,
   decreaseCount,
-  setTotalPrice,
+  setCartTotal,
 } = cartSlice.actions;
 export default cartSlice.reducer;

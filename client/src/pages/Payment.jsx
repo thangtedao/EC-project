@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 import Checkbox from "@mui/material/Checkbox";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -9,15 +14,16 @@ import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { PayPalPayment } from "../components";
+import { PayPalButton } from "../components";
 
 const Wrapper = styled.div`
   width: 650px;
-  height: 800px;
+  height: fit-content;
+  min-height: 800px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
   .cart-header {
     padding: 1rem;
     text-align: center;
@@ -129,12 +135,9 @@ const Wrapper = styled.div`
     cursor: pointer;
   }
   .payment-title {
-    margin-top: 1rem;
+    margin: 1rem 0 0.5rem 0;
   }
-  .payment-method {
-    display: flex;
-    align-items: center;
-  }
+
   .bottom-bar {
     width: 100%;
     align-self: flex-end;
@@ -165,6 +168,7 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
+    window.scrollTo(0, 0);
     return null;
   } catch (error) {
     return error;
@@ -172,10 +176,15 @@ export const loader = async () => {
 };
 
 const Payment = () => {
-  window.scrollTo(0, 0);
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const cart = useSelector((state) => state.cart.cart);
+
+  const [paymentMethod, setPaymentMethod] = useState("paypal");
+
+  const changePaymentMethod = (event) => {
+    setPaymentMethod(event.target.value);
+  };
 
   const totalPrice =
     cart?.reduce(
@@ -194,102 +203,105 @@ const Payment = () => {
       .catch((err) => console.log(err.message));
   };
 
-  const initialOptions = {
-    clientId:
-      "ATYjWM33ri0qOZCx71A9zu4qY0Erb9nGro7h-Gb89bSbeJS4asSc9sh7mT89YnHAKxmRpmLdpW0VNIU6",
-    currency: "USD",
-    intent: "capture",
-  };
-
   return (
-    <PayPalScriptProvider options={initialOptions}>
-      <HelmetProvider>
-        <Wrapper>
-          <Helmet>
-            <meta charSet="utf-8" />
-            <title>Payment</title>
-          </Helmet>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Payment</title>
+        </Helmet>
 
-          <div className="cart-header">
-            <a onClick={() => navigate("/cart/payment-info")}>
-              <ArrowBackIcon />
-            </a>
-            Thanh toán
-          </div>
-          <div className="info-payment">
-            <div className="flex-between">
-              <TextField
-                id=""
-                label="Mã giảm giá"
-                variant="standard"
-                placeholder="Nhập mã giảm giá (chỉ áp dụng 1 lần)"
-                sx={{ width: "85%" }}
-              />
-              <button className="btn-apply">Áp dụng</button>
-            </div>
-            <div className="flex-between">
-              <p>Số lượng sản phẩm</p>
-              {cart?.length}
-            </div>
-            <div className="flex-between">
-              <p>Tiền hàng (tạm tính)</p>
-              {totalPrice}₫
-            </div>
-            <div className="flex-between">
-              <p>Phí vận chuyển</p>
-              Miễn phí
-            </div>
-            <div className="flex-between">
-              <p>Tổng tiền (đã gồm VAT)</p>
-              {totalPrice}₫
-            </div>
-          </div>
-
-          <div className="payment-title">THÔNG TIN THANH TOÁN</div>
-          <div className="payment-method">
-            <Checkbox
-              className="checkbox-btn"
-              icon={<CircleOutlinedIcon />}
-              checkedIcon={<CheckCircleIcon />}
+        <div className="cart-header">
+          <a onClick={() => navigate("/cart/payment-info")}>
+            <ArrowBackIcon />
+          </a>
+          Thanh toán
+        </div>
+        <div className="info-payment">
+          <div className="flex-between">
+            <TextField
+              id=""
+              label="Mã giảm giá"
+              variant="standard"
+              placeholder="Nhập mã giảm giá (chỉ áp dụng 1 lần)"
+              sx={{ width: "85%" }}
             />
-            PayPal or Credit Card
+            <button className="btn-apply">Áp dụng</button>
           </div>
-
-          <div className="payment-title">THÔNG TIN NHẬN HÀNG</div>
-          <div className="info-payment">
-            <div className="flex-between">
-              <p>Khách hàng:</p>
-              {user?.fullName}
-            </div>
-            <div className="flex-between">
-              <p>Số điện thoại:</p>
-              {user?.phone}
-            </div>
-            <div className="flex-between">
-              <p>Email:</p>
-              {user?.email}
-            </div>
-            <div className="flex-between">
-              <p>Nhận hàng tại:</p>
-              {user?.address &&
-                `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`}
-            </div>
+          <div className="flex-between">
+            <p>Số lượng sản phẩm</p>
+            {cart?.length}
           </div>
+          <div className="flex-between">
+            <p>Tiền hàng (tạm tính)</p>
+            {totalPrice}₫
+          </div>
+          <div className="flex-between">
+            <p>Phí vận chuyển</p>
+            Miễn phí
+          </div>
+          <div className="flex-between">
+            <p>Tổng tiền (đã gồm VAT)</p>
+            {totalPrice}₫
+          </div>
+        </div>
 
-          <PayPalPayment />
+        <div>
+          <div className="payment-title">PHƯƠNG THỨC THANH TOÁN</div>
+          <RadioGroup
+            value={paymentMethod}
+            onChange={changePaymentMethod}
+            name="radio-buttons-group"
+          >
+            <FormControlLabel
+              value="paypal"
+              control={<Radio />}
+              label="PayPal or Credit Card"
+            />
+            <FormControlLabel
+              value="stripe"
+              control={<Radio />}
+              label="Stripe"
+            />
+          </RadioGroup>
+        </div>
 
-          <div className="bottom-bar">
-            <div className="price-temp">
-              <p>Tổng tiền tạm tính:</p>
-              {totalPrice}₫
-            </div>
+        <div className="payment-title">THÔNG TIN NHẬN HÀNG</div>
+        <div className="info-payment">
+          <div className="flex-between">
+            <p>Khách hàng:</p>
+            {user?.fullName}
+          </div>
+          <div className="flex-between">
+            <p>Số điện thoại:</p>
+            {user?.phone}
+          </div>
+          <div className="flex-between">
+            <p>Email:</p>
+            {user?.email}
+          </div>
+          <div className="flex-between">
+            <p>Nhận hàng tại:</p>
+            {user?.address &&
+              `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`}
+          </div>
+        </div>
+
+        <div className="bottom-bar">
+          <div className="price-temp">
+            <p>Tổng tiền tạm tính:</p>
+            {totalPrice}₫
+          </div>
+          {paymentMethod === "paypal" ? (
+            <PayPalButton cart={cart} user={user} />
+          ) : (
             <button className="btn" onClick={() => handleCheckout()}>
               Thanh toán
             </button>
-          </div>
-        </Wrapper>
-      </HelmetProvider>
-    </PayPalScriptProvider>
+          )}
+        </div>
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 

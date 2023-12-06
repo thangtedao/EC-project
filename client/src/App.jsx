@@ -30,6 +30,7 @@ import { loader as productLoader } from "./pages/Product";
 import { loader as categoryLoader } from "./pages/Category";
 import { loader as cartLoader } from "./pages/Cart";
 import { loader as paymentInfoLoader } from "./pages/PaymentInfo";
+import { loader as paymentLoader } from "./pages/Payment";
 import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as profileLoader } from "./pages/Profile";
@@ -78,6 +79,7 @@ const router = createBrowserRouter([
           {
             path: "payment",
             element: <Payment />,
+            loader: paymentLoader,
           },
         ],
       },
@@ -117,11 +119,18 @@ const router = createBrowserRouter([
   },
 ]);
 
+const initialOptions = {
+  clientId:
+    "ATYjWM33ri0qOZCx71A9zu4qY0Erb9nGro7h-Gb89bSbeJS4asSc9sh7mT89YnHAKxmRpmLdpW0VNIU6",
+  currency: "USD",
+  intent: "capture",
+};
+
 const App = () => {
   return (
-    <div>
+    <PayPalScriptProvider options={initialOptions}>
       <RouterProvider router={router} />
-    </div>
+    </PayPalScriptProvider>
   );
 };
 

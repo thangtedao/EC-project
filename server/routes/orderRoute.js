@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  createOrder,
   getAllOrder,
   getSingleOrder,
   showStats,
@@ -20,6 +21,7 @@ router.post(
   express.raw({ type: "application/json" }),
   stripeWebHook
 );
+router.post("/create-order", createOrder);
 router.get("/", getAllOrder);
 router.get("/stats", showStats);
 router.get("/:id", getSingleOrder);

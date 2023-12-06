@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import TextField from "@mui/material/TextField";
-import customFetch from "../utils/customFetch";
 import axios from "axios";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
@@ -47,7 +46,7 @@ const Wrapper = styled.div`
   .product-item {
     position: relative;
     display: flex;
-    height: 100px;
+    height: 80px;
   }
   .product-image {
     width: 20%;
