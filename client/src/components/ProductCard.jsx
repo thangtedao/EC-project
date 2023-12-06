@@ -4,7 +4,6 @@ import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
 import Rating from "@mui/material/Rating";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useMainLayoutContext } from "../pages/MainLayout";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
@@ -26,7 +25,7 @@ const Wrapper = styled.div`
   padding: 0.5rem;
 
   .product-card-container {
-    width: 200px;
+    width: 100%;
     height: 90%;
     background-color: var(--background-secondary-color);
     display: flex;

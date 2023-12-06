@@ -1,175 +1,81 @@
-const img =
-  "https://cdn2.cellphones.com.vn/insecure/rs:fill:0:50/q:30/plain/https://cellphones.com.vn/media/wysiwyg/Icon/brand_logo/Huawei.png";
+// const img =
+//   "https://cdn2.cellphones.com.vn/insecure/rs:fill:0:50/q:30/plain/https://cellphones.com.vn/media/wysiwyg/Icon/brand_logo/Huawei.png";
 
 export const categoryData = [
   {
-    name: "Điện thoại",
-    categoryProduct: [
-      {
-        brandName: "Apple",
-        color: "Red",
-      },
-      {
-        brandName: "Samsung",
-        color: "Red",
-      },
-      {
-        brandName: "Apple",
-        color: "Red",
-      },
-      {
-        brandName: "Samsung",
-        color: "Red",
-      },
-      {
-        brandName: "Apple",
-        color: "Red",
-      },
-      {
-        brandName: "Samsung",
-        color: "Red",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701874493/Logo-phone/vpf86qb9g6vznsnwrawe.svg",
   },
   {
-    name: "Máy tính",
-    categoryProduct: [
-      {
-        brandName: "Oppo",
-        color: "White",
-      },
-      {
-        brandName: "Huwaei",
-        color: "Black",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701874493/Logo-phone/ekds1nao5ly3cuds4t0z.svg",
   },
   {
-    name: "Laptop",
-    categoryProduct: [
-      {
-        brandName: "Pokemon",
-        color: "Blue",
-      },
-      {
-        brandName: "Dragon Ball",
-        color: "Green",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701874493/Logo-phone/lz2rnjy95qllhtagn3i7.svg",
   },
   {
-    name: "Máy tính",
-    categoryProduct: [
-      {
-        brandName: "Oppo",
-        color: "White",
-      },
-      {
-        brandName: "Huwaei",
-        color: "Black",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701874493/Logo-phone/pfpvnhxr2bfrnm5crucu.svg",
   },
   {
-    name: "Laptop",
-    categoryProduct: [
-      {
-        brandName: "Pokemon",
-        color: "Blue",
-      },
-      {
-        brandName: "Dragon Ball",
-        color: "Green",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701874493/Logo-phone/nfiwlz5bszjquhe1ue3c.svg",
   },
   {
-    name: "Máy tính",
-    categoryProduct: [
-      {
-        brandName: "Oppo",
-        color: "White",
-      },
-      {
-        brandName: "Huwaei",
-        color: "Black",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701875683/Logo-laptop/y3wasqqerh6wz5nlsiv6.svg",
   },
   {
-    name: "Laptop",
-    categoryProduct: [
-      {
-        brandName: "Pokemon",
-        color: "Blue",
-      },
-      {
-        brandName: "Dragon Ball",
-        color: "Green",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701875683/Logo-laptop/zkumkdtueelkncfiybsc.svg",
   },
   {
-    name: "Máy tính",
-    categoryProduct: [
-      {
-        brandName: "Oppo",
-        color: "White",
-      },
-      {
-        brandName: "Huwaei",
-        color: "Black",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701875683/Logo-laptop/zis960fm0p3cjvqvcoo8.svg",
   },
   {
-    name: "Laptop",
-    categoryProduct: [
-      {
-        brandName: "Pokemon",
-        color: "Blue",
-      },
-      {
-        brandName: "Dragon Ball",
-        color: "Green",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701875683/Logo-laptop/il3ppbt8cpbhkerhppjx.svg",
   },
   {
-    name: "Máy tính",
-    categoryProduct: [
-      {
-        brandName: "Oppo",
-        color: "White",
-      },
-      {
-        brandName: "Huwaei",
-        color: "Black",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701875683/Logo-laptop/tzvdchjnexwjmgvnbfz4.svg",
   },
   {
-    name: "Laptop",
-    categoryProduct: [
-      {
-        brandName: "Pokemon",
-        color: "Blue",
-      },
-      {
-        brandName: "Dragon Ball",
-        color: "Green",
-      },
-    ],
-    image: img,
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701879007/Logo-laptop/sbezbkjkomdr6jalpdzt.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701880242/Logo-phone/b9biwtaqd79ytzuoxpfc.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701879071/Logo-phone/jvqzdqljob0omnazsnbq.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701879264/Logo-phone/fcovaypkkayy6mlsgulb.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701879326/Logo-phone/dhe74nw2yfathh53kmig.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701880118/Logo-laptop/r0xyjnjmpoawhwsp085f.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701880038/Logo-tivi/xh6or6y4isrr685zu8yn.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701879929/Logo-phone/zwekqpjrp9a5hwbeaxem.svg",
+  },
+  {
+    image:
+      "https://res.cloudinary.com/dykffemq6/image/upload/v1701880332/Logo-tivi/kfo2aou9tjhiq36fx827.svg",
   },
 ];

@@ -210,10 +210,10 @@ const EditOrder = () => {
                     color: "black",
                     border: "1px solid black",
                   }}
-                  src={order?.orderBy?.avatar && order.orderBy.avatar}
+                  src={order?.orderBy.avatar && order.orderBy.avatar}
                 >
-                  {!order?.orderBy?.avatar &&
-                    order?.orderBy?.fullName.charAt(0).toUpperCase()}
+                  {!order?.orderBy.avatar &&
+                    order?.orderBy.fullName.charAt(0).toUpperCase()}
                 </Avatar>
                 <div>{order.orderBy.fullName}</div>
               </div>

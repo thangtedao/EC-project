@@ -31,7 +31,8 @@ const Wrapper = styled.div`
     border-radius: 5px;
     padding: 3px 0;
     img {
-      height: 25px;
+      width: 100px;
+      height: 40px;
     }
   }
   .nav-link {

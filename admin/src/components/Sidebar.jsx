@@ -15,7 +15,7 @@ import ProductionQuantityLimitsOutlinedIcon from "@mui/icons-material/Production
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import DiscountOutlinedIcon from "@mui/icons-material/DiscountOutlined";
-
+import Logo from "../assets/Nova.svg";
 import styled from "styled-components";
 import { useState } from "react";
 
@@ -111,7 +111,11 @@ const Sidebar = () => {
         }
       >
         <div className="content">
-          <header className="top-sidebar">Logo</header>
+          <header className="top-sidebar">
+            <NavLink to="/">
+              <img style={{ width: 140, height: 30 }} src={Logo} />
+            </NavLink>
+          </header>
 
           <List sx={{ width: "100%", maxWidth: 360, mt: 3 }}>
             <ListItemButton>

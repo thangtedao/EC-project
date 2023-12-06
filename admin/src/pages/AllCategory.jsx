@@ -128,7 +128,7 @@ const AllCategory = () => {
                   <td>
                     {count.map((item) => {
                       return (
-                        category.slug.toString() === item._id.toString() &&
+                        category?.slug?.toString() === item?._id?.toString() &&
                         item.count
                       );
                     })}

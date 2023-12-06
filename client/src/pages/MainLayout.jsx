@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
-import { Footer, Header } from "../components";
+import { Outlet, useLoaderData, useNavigation } from "react-router-dom";
+import { Footer, Header, Loading } from "../components";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -44,6 +43,9 @@ const MainLayoutContext = createContext();
 const MainLayout = () => {
   const { categories, categoryChild } = useLoaderData();
   const [showSideBar, setShowSideBar] = useState(false);
+  const navigation = useNavigation();
+
+  const isPageLoading = navigation.state === "loading";
 
   const toggleSideBar = () => {
     setShowSideBar(!showSideBar);
@@ -61,7 +63,7 @@ const MainLayout = () => {
       <Wrapper>
         <Header />
         <div className="main-layout">
-          <Outlet context={{}} />
+          {isPageLoading ? <Loading /> : <Outlet context={{}} />}
         </div>
         <Footer />
       </Wrapper>

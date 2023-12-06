@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useState } from "react";
-import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
 import { useSelector } from "react-redux";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { useEffect } from "react";
+import Loading from "../components/Loading";
 
 const Wrapper = styled.section`
   width: 100%;
@@ -34,6 +40,9 @@ const DashboardContext = createContext();
 const DashboardLayout = () => {
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
+  const navigation = useNavigation();
+
+  const isPageLoading = navigation.state === "loading";
 
   const [showSidebar, setShowSidebar] = useState(false);
   const toggleSidebar = () => {
@@ -67,7 +76,7 @@ const DashboardLayout = () => {
           <div>
             <Navbar />
             <div className="dashboard-page">
-              <Outlet context={{ user }} />
+              {isPageLoading ? <Loading /> : <Outlet context={{ user }} />}
             </div>
           </div>
         </main>

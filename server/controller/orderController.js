@@ -262,7 +262,7 @@ export const getSingleOrder = async (req, res) => {
       },
       {
         path: "orderBy",
-        select: ["fullName", "email", "phone", "address"],
+        select: ["fullName", "email", "phone", "avatar", "address"],
       },
     ]);
     res.status(200).json({ order });
