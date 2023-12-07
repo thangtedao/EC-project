@@ -147,7 +147,8 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1rem;
     border-top: 1px solid lightgray;
-    padding: 1rem 0;
+    padding-top: 2rem;
+    margin-top: 1rem;
   }
   .bot-container-column-1 {
     flex: 2;
@@ -163,6 +164,9 @@ const Wrapper = styled.div`
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   /* MEDIA QUERIES */
@@ -226,7 +230,7 @@ export const loader = async ({ params }) => {
       .then(({ data }) => data.product);
 
     const relatedProducts = await customFetch
-      .get(`/product/category/?category=${product.category}&limit=10`)
+      .get(`/product/category/?category=${product.category[1]}&limit=10`)
       .then(({ data }) => data.products);
     window.scrollTo(0, 0);
     return { product, relatedProducts };
@@ -329,6 +333,7 @@ const Product = () => {
         <div className="bot-container">
           <div className="bot-container-column-1">
             <div className="product-description">
+              <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
               <p>{product?.description}</p>
             </div>
             <ProductReview product={product} />

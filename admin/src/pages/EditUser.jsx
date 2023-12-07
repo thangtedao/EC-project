@@ -187,7 +187,7 @@ const EditUser = () => {
                           0
                         ) + " sp"}
                       </div>
-                      <div>{order.totalPrice + "₫"}</div>
+                      <div>{order.totalPrice.toFixed(0) + "₫"}</div>
                     </div>
                   );
                 })}

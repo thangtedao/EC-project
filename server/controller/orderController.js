@@ -3,50 +3,78 @@ import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import day from "dayjs";
 import { createPayPalOrder } from "../utils/paypal.js";
+import { sendMail } from "../utils/email.js";
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const stripePayment = async (req, res) => {
-  const cart = req.body.cart.map((item) => {
-    return {
-      id: item._id,
-      count: item.count,
-      salePrice: item.salePrice,
-    };
-  });
-  const customer = await stripe.customers.create({
-    metadata: {
-      userId: req.body.user._id,
-      cart: JSON.stringify(cart),
-    },
-  });
+  try {
+    const cart = req.body.cart.products.map((item) => {
+      return {
+        id: item.product._id,
+        count: item.count,
+        salePrice: item.product.salePrice,
+      };
+    });
 
-  const line_items = req.body.cart.map((item) => {
-    return {
-      price_data: {
-        currency: "vnd",
-        product_data: {
-          name: item.name,
-          images: [item.images[0]],
-          metadata: {
-            id: item._id,
-          },
+    let customer;
+    if (req.body.coupon) {
+      customer = await stripe.customers.create({
+        metadata: {
+          userId: req.body.user._id,
+          cart: JSON.stringify(cart),
+          coupon: JSON.stringify({
+            id: req.body.coupon,
+            discount: req.body.coupon.discount,
+          }),
         },
-        unit_amount: item.price,
-      },
-      quantity: item.count,
-    };
-  });
+      });
+    } else {
+      customer = await stripe.customers.create({
+        metadata: {
+          userId: req.body.user._id,
+          cart: JSON.stringify(cart),
+        },
+      });
+    }
 
-  const session = await stripe.checkout.sessions.create({
-    customer: customer.id,
-    line_items,
-    mode: "payment",
-    success_url: "http://localhost:5173/order",
-    cancel_url: "http://localhost:5173/cart",
-  });
+    const line_items = req.body.cart.products.map((item) => {
+      let productPrice = item.product.salePrice;
+      if (req.body.coupon) {
+        productPrice = (
+          productPrice -
+          (productPrice * req.body.coupon.discount) / 100
+        ).toFixed(0);
+      }
+      return {
+        price_data: {
+          currency: "vnd",
+          product_data: {
+            name: item.product.name,
+            images: [item.product.images[0]],
+            metadata: {
+              id: item.product._id,
+            },
+          },
+          unit_amount: productPrice,
+        },
+        quantity: item.count,
+      };
+    });
 
-  res.json({ url: session.url });
+    const session = await stripe.checkout.sessions.create({
+      customer: customer.id,
+      line_items,
+      mode: "payment",
+      success_url: "http://localhost:5173/order",
+      cancel_url: "http://localhost:5173/cart",
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    console.log(error);
+    res.status(409).json({ msg: error.message });
+  }
 };
 
 let endpointSecret;
@@ -132,21 +160,41 @@ const createOrderByStripe = async (customer, data) => {
       };
     });
 
-    const totalPrice =
+    console.log(cart);
+
+    let totalPrice =
       cart?.reduce(
         (accumulator, item) => accumulator + item.salePrice * item.count,
         0
       ) || 0;
 
-    const newOrder = new Order({
-      orderBy: customer.metadata.userId,
-      products: products,
-      totalPrice: totalPrice,
-      paymentIntent: data.payment_intent,
-    });
+    let newOrder;
+    if (customer.metadata.coupon) {
+      const coupon = JSON.parse(customer.metadata.coupon);
+      totalPrice = (totalPrice - (totalPrice * coupon.discount) / 100).toFixed(
+        0
+      );
+      newOrder = new Order({
+        orderBy: customer.metadata.userId,
+        products: products,
+        totalPrice: totalPrice,
+        coupon: coupon.id,
+        paymentIntent: data.payment_intent,
+      });
+    } else {
+      newOrder = new Order({
+        orderBy: customer.metadata.userId,
+        products: products,
+        totalPrice: totalPrice,
+        paymentIntent: data.payment_intent,
+      });
+    }
 
     const savedOrder = await newOrder.save();
-    await Cart.findOneAndRemove({ user: customer.metadata.userId });
+    await Cart.findOneAndUpdate(
+      { user: customer.metadata.userId },
+      { $set: { products: [] } }
+    );
     console.log(savedOrder);
   } catch (error) {
     console.log(error);
@@ -156,8 +204,6 @@ const createOrderByStripe = async (customer, data) => {
 export const createOrder = async (req, res) => {
   try {
     const { cart, user, coupon } = req.body;
-
-    console.log(cart);
 
     const products = cart.map((product) => {
       return {
@@ -175,7 +221,9 @@ export const createOrder = async (req, res) => {
 
     let newOrder;
     if (coupon) {
-      totalPrice = totalPrice - (totalPrice * coupon.discount) / 100;
+      totalPrice = (totalPrice - (totalPrice * coupon.discount) / 100).toFixed(
+        0
+      );
       newOrder = new Order({
         orderBy: user._id,
         products: products,
@@ -193,6 +241,12 @@ export const createOrder = async (req, res) => {
     const savedOrder = await newOrder.save();
     await Cart.findOneAndRemove({ user: user._id });
     console.log(savedOrder);
+
+    const order = await Order.findById(savedOrder._id).populate({
+      path: "products.product",
+      select: ["name", "salePrice"],
+    });
+    sendMail(user, order);
     res.status(200).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);

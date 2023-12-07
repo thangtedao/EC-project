@@ -189,7 +189,7 @@ const AllUser = () => {
                       className="ed-btn"
                       onClick={() => navigate(`/edit-user/${user._id}`)}
                     >
-                      Edit
+                      View
                     </button>
                   </td>
                   <td>

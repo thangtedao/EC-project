@@ -133,7 +133,7 @@ const Wrapper = styled.div`
     border-radius: 10px;
     background-color: white;
     .btn {
-      border-radius: 10px;
+      border-radius: 5px;
       border: none;
       background: #d70018;
       font-weight: bold;
@@ -164,6 +164,7 @@ const Cart = () => {
   window.scrollTo(0, 0);
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart.cart);
+  const user = useSelector((state) => state.user.user);
 
   const totalPrice =
     cart?.reduce(
@@ -210,8 +211,15 @@ const Cart = () => {
                 <p>Tạm tính</p>
                 {totalPrice}₫
               </div>
-              <button className="btn" onClick={() => navigate("payment-info")}>
-                Mua ngay {`(${cart.length})`}
+              <button
+                className="btn"
+                onClick={() => {
+                  if (!user) return navigate("/login");
+                  return navigate("payment-info");
+                }}
+              >
+                Mua ngay
+                {` (${cart.reduce((acc, item) => acc + item.count, 0)})`}
               </button>
             </div>
           </div>

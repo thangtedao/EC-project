@@ -9,7 +9,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useNavigate } from "react-router-dom";
+import { Form, redirect, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Wrapper = styled.div`
@@ -167,8 +167,12 @@ const Wrapper = styled.div`
   }
 `;
 
-export const loader = async ({ params }) => {
+export const loader = async () => {
   try {
+    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+    let { cart } = JSON.parse(localStorage.getItem("persist:cart"));
+    if (cart === "[]") return redirect("/cart");
+    if (user === "null") return redirect("/login");
     return null;
   } catch (error) {
     return error;
@@ -288,124 +292,134 @@ const PaymentInfo = () => {
             return <ProductCart key={index} product={item} isPayment />;
           })}
         </div>
-        <div className="form-info">
-          <p>Thông tin khách hàng</p>
-          <div className="form-info-input">
-            <div className="is-flex">
+
+        <Form style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div className="form-info">
+            <p>Thông tin khách hàng</p>
+            <div className="form-info-input">
+              <div className="is-flex">
+                <TextField
+                  required
+                  label="Họ và tên"
+                  defaultValue={user?.fullName || ""}
+                  variant="standard"
+                  sx={{ width: "50%" }}
+                />
+                <TextField
+                  required
+                  label="Số điện thoại"
+                  defaultValue={user?.phone || ""}
+                  variant="standard"
+                  sx={{ width: "50%" }}
+                />
+              </div>
               <TextField
-                id=""
-                label="Họ và tên"
-                defaultValue={user?.fullName || ""}
+                required
+                label="Email"
+                defaultValue={user?.email || ""}
                 variant="standard"
-                sx={{ width: "50%" }}
-              />
-              <TextField
-                id=""
-                label="Số điện thoại"
-                defaultValue={user?.phone || ""}
-                variant="standard"
-                sx={{ width: "50%" }}
               />
             </div>
-            <TextField
-              id=""
-              label="Email"
-              defaultValue={user?.email || ""}
-              variant="standard"
-            />
           </div>
-        </div>
 
-        <div className="form-info">
-          <p>Thông tin nhận hàng</p>
-          <div className="form-address">
-            <FormControl variant="standard">
-              <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-              <Select
-                labelId="city-select-label"
-                id="city-select"
-                value={city}
-                label="Tỉnh/Thành phố"
-                sx={{ width: "300px" }}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: "200px",
+          <div className="form-info">
+            <p>Thông tin nhận hàng</p>
+            <div className="form-address">
+              <FormControl variant="standard">
+                <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
+                <Select
+                  required
+                  labelId="city-select-label"
+                  id="city-select"
+                  value={city}
+                  label="Tỉnh/Thành phố"
+                  sx={{ width: "300px" }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: "200px",
+                      },
                     },
-                  },
-                }}
-                onChange={handleChange}
-              >
-                {cities.map((city) => (
-                  <MenuItem key={city.code} value={city.code}>
-                    {city.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  }}
+                  onChange={handleChange}
+                >
+                  {cities.map((city) => (
+                    <MenuItem key={city.code} value={city.code}>
+                      {city.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl variant="standard">
-              <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-              <Select
-                labelId="district-select-label"
-                id="district-select"
-                value={district}
-                label="Quận/Huyện"
-                sx={{ width: "300px" }}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: "200px",
+              <FormControl variant="standard">
+                <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
+                <Select
+                  required
+                  labelId="district-select-label"
+                  id="district-select"
+                  value={district}
+                  label="Quận/Huyện"
+                  sx={{ width: "300px" }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: "200px",
+                      },
                     },
-                  },
-                }}
-                onChange={handleChange02}
-              >
-                {districts.map((district) => (
-                  <MenuItem key={district.code} value={district.code}>
-                    {district.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  }}
+                  onChange={handleChange02}
+                >
+                  {districts.map((district) => (
+                    <MenuItem key={district.code} value={district.code}>
+                      {district.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl variant="standard">
-              <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-              <Select
-                labelId="ward-select-label"
-                id="ward-select"
-                value={ward}
-                label="Phường/Xã"
-                sx={{ width: "300px" }}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: "200px",
+              <FormControl variant="standard">
+                <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
+                <Select
+                  required
+                  labelId="ward-select-label"
+                  id="ward-select"
+                  value={ward}
+                  label="Phường/Xã"
+                  sx={{ width: "300px" }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: "200px",
+                      },
                     },
-                  },
-                }}
-                onChange={handleChange03}
-              >
-                {wards.map((ward) => (
-                  <MenuItem key={ward.code} value={ward.code}>
-                    {ward.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  }}
+                  onChange={handleChange03}
+                >
+                  {wards.map((ward) => (
+                    <MenuItem key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <TextField id="" label="Số nhà, tên đường" variant="standard" />
+              <TextField
+                required
+                label="Số nhà, tên đường"
+                variant="standard"
+              />
+            </div>
           </div>
-        </div>
-        <div className="bottom-bar">
-          <div className="price-temp">
-            <p>Tổng tiền tạm tính:</p>
-            {totalPrice}₫
+          <div className="bottom-bar">
+            <div className="price-temp">
+              <p>Tổng tiền tạm tính:</p>
+              {totalPrice}₫
+            </div>
+            <button className="btn" onClick={() => navigate("/cart/payment")}>
+              Tiếp tục
+            </button>
           </div>
-          <button className="btn" onClick={() => navigate("/cart/payment")}>
-            Tiếp tục
-          </button>
-        </div>
+        </Form>
       </Wrapper>
     </HelmetProvider>
   );

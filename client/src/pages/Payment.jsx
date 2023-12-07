@@ -11,7 +11,7 @@ import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TextField from "@mui/material/TextField";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { PayPalButton } from "../components";
@@ -169,6 +169,11 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
+    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+    let { cart } = JSON.parse(localStorage.getItem("persist:cart"));
+    if (cart === "[]") return redirect("/cart");
+    if (user === "null") return redirect("/login");
+
     window.scrollTo(0, 0);
     const response = await customFetch.get("/user/cart");
 
@@ -182,7 +187,6 @@ const Payment = () => {
   const navigate = useNavigate();
   const couponTextFieldRef = useRef();
   const user = useSelector((state) => state.user.user);
-  // const cart = useSelector((state) => state.cart.cart);
   const cart = useLoaderData();
 
   const [paymentMethod, setPaymentMethod] = useState("paypal");
@@ -202,14 +206,22 @@ const Payment = () => {
   //   ) || 0;
 
   const handleCheckout = async () => {
-    await customFetch
-      .post(`/order/create-checkout-session`, { cart, user })
-      .then((res) => {
-        if (res.data.url) {
-          window.location.href = res.data.url;
-        }
-      })
-      .catch((err) => console.log(err.message));
+    try {
+      await customFetch
+        .post(`/order/create-checkout-session`, { cart, user, coupon })
+        .then((res) => {
+          if (res.data.url) {
+            window.location.href = res.data.url;
+          }
+        });
+    } catch (error) {
+      toast.error(error?.response?.data?.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        pauseOnHover: false,
+        theme: "colored",
+      });
+    }
   };
 
   const applyCoupon = async () => {
@@ -235,8 +247,10 @@ const Payment = () => {
     } else {
       setCoupon(fetchCoupon);
       setPaypalButtonKey((prevKey) => prevKey + 1);
-      const totalAfterDiscount =
-        totalPrice - (totalPrice * fetchCoupon.discount) / 100;
+      const totalAfterDiscount = (
+        totalPrice -
+        (totalPrice * fetchCoupon.discount) / 100
+      ).toFixed(0);
       setTotalAfterDiscount(totalAfterDiscount);
       toast.success("Áp mã giảm giá thành công", {
         position: "top-center",
@@ -277,7 +291,7 @@ const Payment = () => {
           </div>
           <div className="flex-between">
             <p>Số lượng sản phẩm</p>
-            {cart?.products.length}
+            {cart?.products.reduce((acc, item) => acc + item.count, 0)}
           </div>
           <div className="flex-between">
             <p>Tiền hàng (tạm tính)</p>
