@@ -5,6 +5,14 @@ import styled from "styled-components";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import img from "../assets/react.svg";
 
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useState } from "react";
+
 const Wrapper = styled.div`
   width: 100%;
   padding: 1rem;
@@ -113,6 +121,19 @@ const AllUser = () => {
   const users = useLoaderData();
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const handleClickOpen = (user) => {
+    setOpen(true);
+    setUser(user);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setUser(null);
+  };
+
   const deleteUser = async (id) => {
     await customFetch.delete(`/user/delete/${id}`);
     console.log("deleted");
@@ -174,7 +195,7 @@ const AllUser = () => {
                   <td>
                     <button
                       className="dl-btn"
-                      onClick={() => deleteUser(user._id)}
+                      onClick={() => handleClickOpen(user)}
                     >
                       Delete
                     </button>
@@ -184,6 +205,28 @@ const AllUser = () => {
             })}
           </tbody>
         </table>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Chắc là xóa chưa?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Xóa là bay database
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Không xóa</Button>
+            <Button onClick={() => deleteUser(user._id)} autoFocus>
+              Ừ xóa
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Wrapper>
     </HelmetProvider>
   );

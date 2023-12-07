@@ -134,13 +134,16 @@ const EditUser = () => {
               <div className="flex-column">
                 <span style={{ fontWeight: "bold" }}>Last Order</span>
                 <span style={{ color: "#6c757d", fontSize: "0.9rem" }}>
-                  {"#" + orders[0]._id.slice(18)}
+                  {orders && orders.length && "#" + orders[0]._id.slice(18)}
                 </span>
               </div>
               <div className="flex-column">
                 <span style={{ fontWeight: "bold" }}>Total Spent</span>
                 <span style={{ color: "#6c757d", fontSize: "0.9rem" }}>
-                  {orders.reduce((acc, item) => acc + item.totalPrice, 0) + "₫"}
+                  {orders &&
+                    orders.length &&
+                    orders.reduce((acc, item) => acc + item.totalPrice, 0) +
+                      "₫"}
                 </span>
               </div>
               <div className="flex-column">
@@ -163,29 +166,31 @@ const EditUser = () => {
                 overflow: "auto",
               }}
             >
-              {orders.map((order) => {
-                return (
-                  <div
-                    key={order._id}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 2fr 2fr 1fr 1fr",
-                      gap: "1rem",
-                    }}
-                  >
-                    <div>{"#" + order._id.slice(18)}</div>
-                    <div>{order.createdAt.split("T")[0]}</div>
-                    <div>{order.orderStatus}</div>
-                    <div>
-                      {order.products.reduce(
-                        (acc, item) => acc + item.count,
-                        0
-                      ) + " sp"}
+              {orders &&
+                orders.length &&
+                orders.map((order) => {
+                  return (
+                    <div
+                      key={order._id}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 2fr 2fr 1fr 1fr",
+                        gap: "1rem",
+                      }}
+                    >
+                      <div>{"#" + order._id.slice(18)}</div>
+                      <div>{order.createdAt.split("T")[0]}</div>
+                      <div>{order.orderStatus}</div>
+                      <div>
+                        {order.products.reduce(
+                          (acc, item) => acc + item.count,
+                          0
+                        ) + " sp"}
+                      </div>
+                      <div>{order.totalPrice + "₫"}</div>
                     </div>
-                    <div>{order.totalPrice + "₫"}</div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>

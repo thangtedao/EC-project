@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect, ProductCard } from "../components";
-import {
-  Link,
-  Form,
-  redirect,
-  useNavigation,
-  useLoaderData,
-} from "react-router-dom";
+import { ProductCard } from "../components";
+import { createContext } from "react";
+import { useContext } from "react";
+import { useNavigate, useLoaderData } from "react-router-dom";
+
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -46,16 +49,63 @@ export const loader = async () => {
   }
 };
 
+const AllProductContext = createContext();
+
 const AllProduct = () => {
   const products = useLoaderData();
+  const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+  const [product, setproduct] = useState(null);
+
+  const handleClickOpen = (product) => {
+    setOpen(true);
+    setproduct(product);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setproduct(null);
+  };
+
+  const deleteProduct = async (id) => {
+    await customFetch.delete(`/product/${id}`);
+    console.log("deleted");
+    navigate("/all-product");
+  };
 
   return (
-    <Wrapper>
-      {products.map((product) => {
-        return <ProductCard key={product._id} product={product} />;
-      })}
-    </Wrapper>
+    <AllProductContext.Provider value={{ handleClickOpen }}>
+      <Wrapper>
+        {products.map((product) => {
+          return <ProductCard key={product._id} product={product} />;
+        })}
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Chắc là xóa chưa?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Xóa là bay database
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Không xóa</Button>
+            <Button onClick={() => deleteProduct(product._id)} autoFocus>
+              Ừ xóa
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Wrapper>
+    </AllProductContext.Provider>
   );
 };
 
+export const useAllProductContext = () => useContext(AllProductContext);
 export default AllProduct;

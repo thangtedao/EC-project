@@ -188,12 +188,12 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState("paypal");
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(cart.cartTotal);
   const [coupon, setCoupon] = useState(null);
+  const [paypalButtonKey, setPaypalButtonKey] = useState(0);
 
   const changePaymentMethod = (event) => {
     setPaymentMethod(event.target.value);
   };
 
-  console.log(cart);
   const totalPrice = cart.cartTotal;
   // const totalPrice =
   //   cart?.products.reduce(
@@ -213,12 +213,19 @@ const Payment = () => {
   };
 
   const applyCoupon = async () => {
-    console.log(couponTextFieldRef.current.value);
-    const coupon = await customFetch
+    if (coupon) {
+      toast.success("Đã áp mã giảm giá", {
+        position: "top-center",
+        autoClose: 1000,
+        pauseOnHover: false,
+        theme: "colored",
+      });
+      return;
+    }
+    const fetchCoupon = await customFetch
       .get(`coupon/${couponTextFieldRef.current.value}`)
       .then((response) => response.data.coupon);
-    console.log(coupon);
-    if (!coupon) {
+    if (!fetchCoupon) {
       toast.warning("Mã giảm giá không hợp lệ", {
         position: "top-center",
         autoClose: 1000,
@@ -226,10 +233,17 @@ const Payment = () => {
         theme: "colored",
       });
     } else {
-      setCoupon(coupon);
+      setCoupon(fetchCoupon);
+      setPaypalButtonKey((prevKey) => prevKey + 1);
       const totalAfterDiscount =
-        totalPrice - (totalPrice * coupon.discount) / 100;
+        totalPrice - (totalPrice * fetchCoupon.discount) / 100;
       setTotalAfterDiscount(totalAfterDiscount);
+      toast.success("Áp mã giảm giá thành công", {
+        position: "top-center",
+        autoClose: 1000,
+        pauseOnHover: false,
+        theme: "colored",
+      });
     }
   };
 
@@ -327,10 +341,10 @@ const Payment = () => {
           </div>
           {paymentMethod === "paypal" ? (
             <PayPalButton
+              key={paypalButtonKey}
               cart={cart}
               coupon={coupon}
               user={user}
-              totalAfterDiscount={totalAfterDiscount}
             />
           ) : (
             <button className="btn" onClick={() => handleCheckout()}>

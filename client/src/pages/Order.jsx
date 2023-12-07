@@ -45,9 +45,10 @@ const Wrapper = styled.div`
     background-color: white;
     border: 1px solid lightgray;
     border-radius: 5px;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0;
     height: 120px;
     display: flex;
+    gap: 1rem;
     align-items: center;
     overflow: hidden;
   }
@@ -60,14 +61,13 @@ const Wrapper = styled.div`
     }
   }
   .product-info {
-    width: 40%;
+    width: 50%;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
   .product-info-name {
-    font-size: 1.1rem;
     font-weight: bold;
     display: flex;
     justify-content: space-between;
@@ -92,10 +92,13 @@ const Wrapper = styled.div`
     }
   }
   .order-status {
-    border: 1px solid lightgray;
+    border-radius: 20px;
     background-color: #d1f5ea;
     padding: 0.5rem;
-    width: 40%;
+    width: 120px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.8rem;
   }
   .normal-text {
     font-weight: 500;

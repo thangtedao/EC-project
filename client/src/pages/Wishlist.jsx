@@ -33,6 +33,7 @@ const Wrapper = styled.div`
   }
   th {
     height: 30px;
+    border-bottom: 1px solid lightgray;
   }
   td {
     height: 80px;
@@ -164,7 +165,7 @@ const Wishlist = () => {
           <title>Wishlist</title>
         </Helmet>
 
-        <div className="title">Wishlist</div>
+        <div className="title">Danh sách yêu thích</div>
         {wishlist.length > 0 ? (
           <div>
             <table>

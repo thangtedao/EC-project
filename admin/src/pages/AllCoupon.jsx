@@ -4,6 +4,14 @@ import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { useNavigate, useLoaderData } from "react-router-dom";
 
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useState } from "react";
+
 const Wrapper = styled.div`
   width: 100%;
   padding: 1rem;
@@ -98,6 +106,19 @@ const AllCoupon = () => {
   const coupons = useLoaderData();
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const [coupon, setCoupon] = useState(null);
+
+  const handleClickOpen = (coupon) => {
+    setOpen(true);
+    setCoupon(coupon);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCoupon(null);
+  };
+
   const deleteCoupon = async (id) => {
     await customFetch.delete(`/coupon/delete/${id}`);
     console.log("deleted");
@@ -136,7 +157,7 @@ const AllCoupon = () => {
                   <td>
                     <button
                       className="ed-btn"
-                      onClick={() => navigate(`/edit-coupon/${coupon._id}`)}
+                      onClick={() => navigate(`/edit-coupon/${coupon.name}`)}
                     >
                       Edit
                     </button>
@@ -144,7 +165,7 @@ const AllCoupon = () => {
                   <td>
                     <button
                       className="dl-btn"
-                      onClick={() => deleteCoupon(coupon._id)}
+                      onClick={() => handleClickOpen(coupon)}
                     >
                       Delete
                     </button>
@@ -154,6 +175,28 @@ const AllCoupon = () => {
             })}
           </tbody>
         </table>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Chắc là xóa chưa?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Xóa là bay database
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Không xóa</Button>
+            <Button onClick={() => deleteCoupon(coupon._id)} autoFocus>
+              Ừ xóa
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Wrapper>
     </HelmetProvider>
   );

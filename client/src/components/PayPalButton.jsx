@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 
 const PayPalPayment = ({ cart, user, coupon }) => {
+  console.log(cart);
+  console.log(coupon);
   const navigate = useNavigate();
 
   const convertVNDToUSD = (vndAmount) => {
@@ -12,23 +14,20 @@ const PayPalPayment = ({ cart, user, coupon }) => {
     return usdAmount.toFixed(2);
   };
 
-  const calculateTotalPrice = () => {
-    let totalPrice =
-      cart?.products.reduce(
-        (accumulator, item) =>
-          accumulator + item.product.salePrice * item.count,
-        0
-      ) || 0;
+  let totalPrice =
+    cart?.products.reduce(
+      (accumulator, item) => accumulator + item.product.salePrice * item.count,
+      0
+    ) || 0;
 
-    console.log(coupon);
-    if (coupon) {
-      totalPrice -= (totalPrice * coupon.discount) / 100;
-    }
+  if (coupon) {
+    totalPrice -= (totalPrice * coupon.discount) / 100;
+  }
 
-    return convertVNDToUSD(totalPrice);
-  };
+  totalPrice = convertVNDToUSD(totalPrice);
 
   const createOrder = (data, actions) => {
+    console.log(totalPrice);
     return actions.order.create({
       purchase_units: [
         {
@@ -43,7 +42,11 @@ const PayPalPayment = ({ cart, user, coupon }) => {
 
   const onApprove = async (data, actions) => {
     const order = await actions.order.capture();
-    await customFetch.post("/order/create-order", { cart, user, coupon });
+    await customFetch.post("/order/create-order", {
+      cart: cart.products,
+      user,
+      coupon,
+    });
     navigate("/order");
   };
 

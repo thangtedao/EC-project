@@ -157,16 +157,19 @@ export const createOrder = async (req, res) => {
   try {
     const { cart, user, coupon } = req.body;
 
+    console.log(cart);
+
     const products = cart.map((product) => {
       return {
-        product: product._id,
+        product: product.product._id,
         count: product.count,
       };
     });
 
-    const totalPrice =
+    let totalPrice =
       cart?.reduce(
-        (accumulator, item) => accumulator + item.salePrice * item.count,
+        (accumulator, item) =>
+          accumulator + item.product.salePrice * item.count,
         0
       ) || 0;
 

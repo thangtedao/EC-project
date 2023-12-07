@@ -30,10 +30,7 @@ const OrderCard = ({ order }) => {
               <p>Số lượng: {item.count}</p>
             </div>
 
-            <div className="order-status">
-              Trạng thái:
-              {order.orderStatus}
-            </div>
+            <div className="order-status">{order.orderStatus}</div>
           </div>
         );
       })}

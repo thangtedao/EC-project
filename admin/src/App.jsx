@@ -101,7 +101,7 @@ const router = createBrowserRouter([
         loader: allCouponLoader,
       },
       {
-        path: "edit-coupon/:id",
+        path: "edit-coupon/:name",
         element: <EditCoupon />,
         action: editCouponAction,
         loader: editCouponLoader,

@@ -177,12 +177,39 @@ const EditOrder = () => {
             </div>
             <div className="flex">
               <div className="bold">Số lượng sản phẩm: </div>
-              {order.products.length}
+              {order.products.reduce(
+                (accumulator, item) => accumulator + item.count,
+                0
+              )}
             </div>
             <div className="flex">
               <div className="bold">Tổng tiền:</div>
               {order.totalPrice + "đ"}
             </div>
+            {order.coupon && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "1rem",
+                }}
+              >
+                <div className="flex">
+                  <div className="bold">Đã áp dụng mã:</div>
+                  {order.coupon.name}
+                </div>
+                <div className="flex">
+                  <div className="bold">Mã giảm:</div>
+                  {order.products.reduce(
+                    (accumulator, item) =>
+                      accumulator + item.product.salePrice * item.count,
+                    0
+                  ) -
+                    order.totalPrice +
+                    "đ"}
+                </div>
+              </div>
+            )}
 
             <div className="bold">Chi tiết sản phẩm:</div>
             <div className="product-list">

@@ -49,12 +49,6 @@ const DashboardLayout = () => {
     setShowSidebar(!showSidebar);
   };
 
-  const deleteProduct = async (id) => {
-    await customFetch.delete(`/product/${id}`);
-    console.log("deleted");
-    navigate("/all-product");
-  };
-
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -67,7 +61,6 @@ const DashboardLayout = () => {
         user,
         showSidebar,
         toggleSidebar,
-        deleteProduct,
       }}
     >
       <Wrapper>

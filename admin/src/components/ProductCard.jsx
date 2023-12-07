@@ -6,6 +6,7 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import { IconButton } from "@mui/material";
 import { useDashboardContext } from "../pages/DashboardLayout";
 import { MdModeEditOutline } from "react-icons/md";
+import { useAllProductContext } from "../pages/AllProduct";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -77,7 +78,7 @@ const Wrapper = styled.div`
 `;
 
 const ProductCard = ({ product }) => {
-  const { deleteProduct } = useDashboardContext();
+  const { handleClickOpen } = useAllProductContext();
   const navigate = useNavigate();
 
   return (
@@ -108,7 +109,7 @@ const ProductCard = ({ product }) => {
           >
             <MdModeEditOutline /> Edit
           </button>
-          <button className="dl-btn" onClick={() => deleteProduct(product._id)}>
+          <button className="dl-btn" onClick={() => handleClickOpen(product)}>
             Delete
           </button>
         </div>

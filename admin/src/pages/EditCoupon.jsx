@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components/index.js";
-import {
-  Link,
-  Form,
-  redirect,
-  useNavigation,
-  useLoaderData,
-} from "react-router-dom";
+import { FormRow } from "../components/index.js";
+import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -89,12 +82,12 @@ export const action = async ({ request, params }) => {
 
 export const loader = async ({ params }) => {
   try {
-    const { id } = params;
-    if (!id) {
+    const { name } = params;
+    if (!name) {
       return redirect("/all-coupon");
     }
     const coupon = await customFetch
-      .get(`/coupon/${id}`)
+      .get(`/coupon/${name}`)
       .then(({ data }) => data.coupon);
 
     return coupon;
