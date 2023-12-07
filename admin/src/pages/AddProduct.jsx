@@ -6,12 +6,35 @@ import { FormRow, FormRowSelect } from "../components";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { FaImage } from "react-icons/fa6";
 
+import { useTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const getStyles = (name, personName, theme) => {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+};
+
 export const action = async ({ request }) => {
-  // const data = Object.fromEntries(formData);
-  // data.images = data.images.split(",");
-  // data.category = [data.category1, data.category2];
-  // delete data.category1;
-  // delete data.category2;
   try {
     const formData = await request.formData();
     await customFetch.post("/product", formData);
@@ -119,7 +142,7 @@ const Wrapper = styled.div`
   }
   .form-row {
     .form-label {
-      font-size: 12px;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #00193b;
     }
@@ -159,8 +182,17 @@ const AddProduct = () => {
   const { categories, categoryChild } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const theme = useTheme();
 
-  const [categoryC, setCategoryC] = useState(categoryChild[0]);
+  const [categoryC, setCategoryC] = useState(categoryChild[0] || []);
+  const [categoriesC, setCategoriesC] = useState([]);
+
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setCategoriesC(typeof value === "string" ? value.split(",") : value);
+  };
 
   const [selectedImage1, setSelectedImage1] = useState(null);
   const [selectedImage2, setSelectedImage2] = useState(null);
@@ -363,14 +395,17 @@ Loại card đồ họa=8 nhân GPU, 16 nhân Neural Engine"
                   : "Chưa có category nào"
               }
               onChange={(e) => {
-                setCategoryC(
-                  categoryChild.length > 0
-                    ? categoryChild[e.target.selectedIndex]
-                    : []
-                );
+                [
+                  setCategoryC(
+                    categoryChild.length > 0
+                      ? categoryChild[e.target.selectedIndex]
+                      : []
+                  ),
+                  setCategoriesC([]),
+                ];
               }}
             />
-            <FormRowSelect
+            {/* <FormRowSelect
               name="category2"
               list={categoryC || []}
               defaultValue={
@@ -378,7 +413,40 @@ Loại card đồ họa=8 nhân GPU, 16 nhân Neural Engine"
                   ? categoryC[0].name
                   : ""
               }
-            />
+            /> */}
+
+            <FormControl sx={{ mb: 3 }} size="small">
+              <div className="form-label" style={{ fontWeight: "bold" }}>
+                Category Child
+              </div>
+              <Select
+                name="category2"
+                sx={{ minHeight: 44, p: 0 }}
+                multiple
+                value={categoriesC}
+                onChange={handleChange}
+                input={<OutlinedInput />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {categoryC.map((item) => (
+                  <MenuItem
+                    key={item._id}
+                    value={item.slug || ""}
+                    style={getStyles(item.name, categoriesC, theme)}
+                  >
+                    {item.name || ""}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <button type="submit" className="btn" disabled={isSubmitting}>
               {isSubmitting ? "Adding..." : "Add"}
             </button>

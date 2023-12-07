@@ -171,7 +171,6 @@ const EditUser = () => {
                       display: "grid",
                       gridTemplateColumns: "1fr 2fr 2fr 1fr 1fr",
                       gap: "1rem",
-                      overflow: "auto",
                     }}
                   >
                     <div>{"#" + order._id.slice(18)}</div>

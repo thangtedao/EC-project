@@ -56,7 +56,7 @@ const Wrapper = styled.div`
 
   .form-row {
     .form-label {
-      font-size: 12px;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #00193b;
     }

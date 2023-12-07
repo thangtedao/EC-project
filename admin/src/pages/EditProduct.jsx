@@ -6,6 +6,34 @@ import { FormRow, FormRowSelect } from "../components";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { FaImage } from "react-icons/fa6";
 
+import { useTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const getStyles = (name, personName, theme) => {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+};
+
 export const action = async ({ request, params }) => {
   const { slug } = params;
   try {
@@ -120,7 +148,7 @@ const Wrapper = styled.div`
   }
   .form-row {
     .form-label {
-      font-size: 12px;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #00193b;
     }
@@ -159,9 +187,18 @@ const Wrapper = styled.div`
 const EditProduct = () => {
   const { product, categories, categoryChild } = useLoaderData();
   const navigation = useNavigation();
+  const theme = useTheme();
   const isSubmitting = navigation.state === "submitting";
 
   const [categoryC, setCategoryC] = useState(categoryChild[0]);
+  const [categoriesC, setCategoriesC] = useState([]);
+
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setCategoriesC(typeof value === "string" ? value.split(",") : value);
+  };
 
   const [selectedImage1, setSelectedImage1] = useState(null);
   const [selectedImage2, setSelectedImage2] = useState(null);
@@ -350,11 +387,44 @@ const EditProduct = () => {
                 setCategoryC(categoryChild[e.target.selectedIndex]);
               }}
             />
-            <FormRowSelect
+            {/* <FormRowSelect
               name="category2"
               list={categoryC || []}
               defaultValue={categoryC.length > 0 && categoryC[0].name}
-            />
+            /> */}
+
+            <FormControl sx={{ mb: 3 }} size="small">
+              <div className="form-label" style={{ fontWeight: "bold" }}>
+                Category Child
+              </div>
+              <Select
+                sx={{ height: 44, p: 0 }}
+                className="form-select"
+                multiple
+                value={categoriesC}
+                onChange={handleChange}
+                input={<OutlinedInput />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {categoryC.map((item) => (
+                  <MenuItem
+                    key={item._id}
+                    value={item.name || ""}
+                    style={getStyles(item.name, categoriesC, theme)}
+                  >
+                    {item.name || ""}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <button type="submit" className="btn" disabled={isSubmitting}>
               {isSubmitting ? "Editing..." : "Edit"}
             </button>

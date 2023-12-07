@@ -44,7 +44,6 @@ const Wrapper = styled.div`
     }
   }
   .product-card-name {
-    font-size: 1.05rem;
     font-weight: bold;
     color: #444;
   }

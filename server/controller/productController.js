@@ -11,7 +11,8 @@ export const createProduct = async (req, res) => {
   try {
     const data = { ...req.body };
 
-    data.category = [data.category1, data.category2];
+    data.category2 = data.category2.split(",");
+    data.category = [data.category1, ...data.category2];
     delete data.category1;
     delete data.category2;
 
@@ -127,7 +128,7 @@ export const getAllProduct = async (req, res) => {
 export const getProductByCategory = async (req, res) => {
   try {
     if (req.query.category) {
-      let query = Product.find({ category: { $all: req.query.category } });
+      let query = Product.find({ category: { $in: req.query.category } });
 
       if (req.query.parent) {
         query = Product.find({
@@ -197,6 +198,12 @@ export const getSingleProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const data = { ...req.body };
+
+    data.category2 = data.category2.split(",");
+    data.category = [data.category1, ...data.category2];
+    delete data.category1;
+    delete data.category2;
+
     let images = [];
     let publicIdImages = [];
     if (data.images !== "") images = data.images.split(",");

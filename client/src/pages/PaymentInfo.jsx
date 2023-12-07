@@ -63,7 +63,7 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-info-name {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     font-weight: bold;
     display: flex;
     justify-content: space-between;

@@ -20,10 +20,12 @@ export const getAllCoupon = async (req, res) => {
 
 export const getSingleCoupon = async (req, res) => {
   try {
-    const { id } = req.params;
-    const coupon = await Coupon.findById(id);
+    let { name } = req.params;
+    name = name.toUpperCase();
+    const coupon = await Coupon.findOne({ name: name });
     res.status(200).json({ coupon });
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };

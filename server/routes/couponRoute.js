@@ -13,6 +13,6 @@ router.post("/", createCoupon);
 router.get("/", getAllCoupon);
 router.patch("/update/:id", updateCoupon);
 router.delete("/delete/:id", deleteCoupon);
-router.get("/:id", getSingleCoupon);
+router.get("/:name", getSingleCoupon);
 
 export default router;

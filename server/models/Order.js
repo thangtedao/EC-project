@@ -15,6 +15,10 @@ const orderSchema = mongoose.Schema({
   totalPrice: {
     type: Number,
   },
+  coupon: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon",
+  },
   paymentIntent: {
     type: String,
     default: "",

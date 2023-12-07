@@ -30,7 +30,9 @@ const ProductCart = ({ product, isPayment }) => {
 
         <div className="product-info">
           <div className="product-info-name">
-            <NavLink to={`/product/${product?.slug}`}>{product?.name}</NavLink>
+            <NavLink to={`/product/${product?.slug}`} style={{ width: "70%" }}>
+              {product?.name}
+            </NavLink>
             {!isPayment && (
               <DeleteIcon
                 sx={{ cursor: "pointer" }}

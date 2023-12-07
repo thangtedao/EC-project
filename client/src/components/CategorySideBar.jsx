@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 
 const Wrapper = styled.div`
@@ -161,14 +161,14 @@ const CategorySideBar = () => {
               {categoryChild &&
                 categoryChild[activeItem.index]?.map((item) => {
                   return (
-                    <NavLink
-                      to={`/category/${categories[activeItem.index].slug}/${
+                    <a
+                      href={`/category/${categories[activeItem.index].slug}/${
                         item.slug
                       }`}
                       key={item?._id}
                     >
                       {item?.name}
-                    </NavLink>
+                    </a>
                   );
                 })}
 

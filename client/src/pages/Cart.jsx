@@ -5,7 +5,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import { useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { setCartTotal } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -79,7 +78,7 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-info-name {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: bold;
     display: flex;
     justify-content: space-between;

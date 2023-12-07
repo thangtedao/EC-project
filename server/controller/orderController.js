@@ -155,7 +155,7 @@ const createOrderByStripe = async (customer, data) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { cart, user } = req.body;
+    const { cart, user, coupon } = req.body;
 
     const products = cart.map((product) => {
       return {
@@ -170,11 +170,22 @@ export const createOrder = async (req, res) => {
         0
       ) || 0;
 
-    const newOrder = new Order({
-      orderBy: user._id,
-      products: products,
-      totalPrice: totalPrice,
-    });
+    let newOrder;
+    if (coupon) {
+      totalPrice = totalPrice - (totalPrice * coupon.discount) / 100;
+      newOrder = new Order({
+        orderBy: user._id,
+        products: products,
+        totalPrice: totalPrice,
+        coupon: coupon._id,
+      });
+    } else {
+      newOrder = new Order({
+        orderBy: user._id,
+        products: products,
+        totalPrice: totalPrice,
+      });
+    }
 
     const savedOrder = await newOrder.save();
     await Cart.findOneAndRemove({ user: user._id });
@@ -263,6 +274,10 @@ export const getSingleOrder = async (req, res) => {
       {
         path: "orderBy",
         select: ["fullName", "email", "phone", "avatar", "address"],
+      },
+      {
+        path: "coupon",
+        select: ["name", "description", "expiry", "discount"],
       },
     ]);
     res.status(200).json({ order });

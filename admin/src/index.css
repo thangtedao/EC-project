@@ -289,7 +289,7 @@ button:disabled {
 
 .loading-container {
   width: 100%;
-  height: 800px;
+  height: 100%;
   display: grid;
   place-items: center;
 }

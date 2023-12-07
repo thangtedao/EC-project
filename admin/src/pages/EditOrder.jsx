@@ -54,8 +54,7 @@ const Wrapper = styled.div`
   .form-row {
     margin-top: 2rem;
     .form-label {
-      font-size: 12px;
-      font-weight: bold;
+      font-size: 0.9rem;
       color: #00193b;
     }
     .form-input {

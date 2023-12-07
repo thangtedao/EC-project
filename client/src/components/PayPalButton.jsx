@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 
-const PayPalPayment = ({ cart, user }) => {
+const PayPalPayment = ({ cart, user, coupon }) => {
   const navigate = useNavigate();
 
   const convertVNDToUSD = (vndAmount) => {
@@ -12,14 +12,21 @@ const PayPalPayment = ({ cart, user }) => {
     return usdAmount.toFixed(2);
   };
 
-  let totalPrice =
-    cart?.reduce(
-      (accumulator, item) => accumulator + item.salePrice * item.count,
-      0
-    ) || 0;
+  const calculateTotalPrice = () => {
+    let totalPrice =
+      cart?.products.reduce(
+        (accumulator, item) =>
+          accumulator + item.product.salePrice * item.count,
+        0
+      ) || 0;
 
-  totalPrice = convertVNDToUSD(totalPrice);
-  console.log(totalPrice);
+    console.log(coupon);
+    if (coupon) {
+      totalPrice -= (totalPrice * coupon.discount) / 100;
+    }
+
+    return convertVNDToUSD(totalPrice);
+  };
 
   const createOrder = (data, actions) => {
     return actions.order.create({
@@ -36,37 +43,9 @@ const PayPalPayment = ({ cart, user }) => {
 
   const onApprove = async (data, actions) => {
     const order = await actions.order.capture();
-    await customFetch.post("/order/create-order", { cart, user });
+    await customFetch.post("/order/create-order", { cart, user, coupon });
     navigate("/order");
   };
-
-  // const createOrder = async (cart) => {
-  //   try {
-  //     // Order is created on the server and the order id is returned
-  //     const response = await customFetch.post(
-  //       "/order/create-paypal-order",
-  //       cart
-  //     );
-  //     return response.data.id;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // };
-
-  // const onApprove = async (data) => {
-  //   try {
-  //     // Order is captured on the server and the response is returned to the browser
-  //     const response = await customFetch.post(
-  //       `/order/capture-paypal-order/${data.orderID}`
-  //     );
-
-  //     return response.data;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // };
 
   return (
     <PayPalButtons
@@ -82,3 +61,31 @@ const PayPalPayment = ({ cart, user }) => {
 };
 
 export default PayPalPayment;
+
+// const createOrder = async (cart) => {
+//   try {
+//     // Order is created on the server and the order id is returned
+//     const response = await customFetch.post(
+//       "/order/create-paypal-order",
+//       cart
+//     );
+//     return response.data.id;
+//   } catch (error) {
+//     console.log(error);
+//     return null;
+//   }
+// };
+
+// const onApprove = async (data) => {
+//   try {
+//     // Order is captured on the server and the response is returned to the browser
+//     const response = await customFetch.post(
+//       `/order/capture-paypal-order/${data.orderID}`
+//     );
+
+//     return response.data;
+//   } catch (error) {
+//     console.log(error);
+//     return null;
+//   }
+// };

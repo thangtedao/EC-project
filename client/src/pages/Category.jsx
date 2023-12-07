@@ -210,8 +210,6 @@ const Category = () => {
       setIsLoading(false);
       setPage(page + 1);
     }
-    console.log(products);
-    console.log(url);
   }, 200);
 
   const filterLowToHigh = debounce(async () => {

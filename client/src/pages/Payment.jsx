@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import Radio from "@mui/material/Radio";
@@ -11,10 +11,11 @@ import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TextField from "@mui/material/TextField";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { PayPalButton } from "../components";
+import { toast } from "react-toastify";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -169,7 +170,9 @@ const Wrapper = styled.div`
 export const loader = async () => {
   try {
     window.scrollTo(0, 0);
-    return null;
+    const response = await customFetch.get("/user/cart");
+
+    return response.data.cart;
   } catch (error) {
     return error;
   }
@@ -177,20 +180,26 @@ export const loader = async () => {
 
 const Payment = () => {
   const navigate = useNavigate();
+  const couponTextFieldRef = useRef();
   const user = useSelector((state) => state.user.user);
-  const cart = useSelector((state) => state.cart.cart);
+  // const cart = useSelector((state) => state.cart.cart);
+  const cart = useLoaderData();
 
   const [paymentMethod, setPaymentMethod] = useState("paypal");
+  const [totalAfterDiscount, setTotalAfterDiscount] = useState(cart.cartTotal);
+  const [coupon, setCoupon] = useState(null);
 
   const changePaymentMethod = (event) => {
     setPaymentMethod(event.target.value);
   };
 
-  const totalPrice =
-    cart?.reduce(
-      (accumulator, item) => accumulator + item.salePrice * item.count,
-      0
-    ) || 0;
+  console.log(cart);
+  const totalPrice = cart.cartTotal;
+  // const totalPrice =
+  //   cart?.products.reduce(
+  //     (accumulator, item) => accumulator + item.salePrice * item.count,
+  //     0
+  //   ) || 0;
 
   const handleCheckout = async () => {
     await customFetch
@@ -201,6 +210,27 @@ const Payment = () => {
         }
       })
       .catch((err) => console.log(err.message));
+  };
+
+  const applyCoupon = async () => {
+    console.log(couponTextFieldRef.current.value);
+    const coupon = await customFetch
+      .get(`coupon/${couponTextFieldRef.current.value}`)
+      .then((response) => response.data.coupon);
+    console.log(coupon);
+    if (!coupon) {
+      toast.warning("Mã giảm giá không hợp lệ", {
+        position: "top-center",
+        autoClose: 1000,
+        pauseOnHover: false,
+        theme: "colored",
+      });
+    } else {
+      setCoupon(coupon);
+      const totalAfterDiscount =
+        totalPrice - (totalPrice * coupon.discount) / 100;
+      setTotalAfterDiscount(totalAfterDiscount);
+    }
   };
 
   return (
@@ -220,17 +250,20 @@ const Payment = () => {
         <div className="info-payment">
           <div className="flex-between">
             <TextField
-              id=""
               label="Mã giảm giá"
               variant="standard"
               placeholder="Nhập mã giảm giá (chỉ áp dụng 1 lần)"
               sx={{ width: "85%" }}
+              inputRef={couponTextFieldRef}
+              defaultValue={"sale"}
             />
-            <button className="btn-apply">Áp dụng</button>
+            <button className="btn-apply" onClick={applyCoupon}>
+              Áp dụng
+            </button>
           </div>
           <div className="flex-between">
             <p>Số lượng sản phẩm</p>
-            {cart?.length}
+            {cart?.products.length}
           </div>
           <div className="flex-between">
             <p>Tiền hàng (tạm tính)</p>
@@ -242,7 +275,7 @@ const Payment = () => {
           </div>
           <div className="flex-between">
             <p>Tổng tiền (đã gồm VAT)</p>
-            {totalPrice}₫
+            {totalAfterDiscount}₫
           </div>
         </div>
 
@@ -290,10 +323,15 @@ const Payment = () => {
         <div className="bottom-bar">
           <div className="price-temp">
             <p>Tổng tiền tạm tính:</p>
-            {totalPrice}₫
+            {totalAfterDiscount}₫
           </div>
           {paymentMethod === "paypal" ? (
-            <PayPalButton cart={cart} user={user} />
+            <PayPalButton
+              cart={cart}
+              coupon={coupon}
+              user={user}
+              totalAfterDiscount={totalAfterDiscount}
+            />
           ) : (
             <button className="btn" onClick={() => handleCheckout()}>
               Thanh toán

@@ -33,7 +33,6 @@ const Wrapper = styled.div`
     }
   }
   .product-card-name {
-    font-size: 18px;
     font-weight: bold;
     color: #031123;
   }
