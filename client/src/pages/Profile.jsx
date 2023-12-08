@@ -15,6 +15,7 @@ import { login } from "../state/userSlice.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -221,6 +222,7 @@ const Profile = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Profile</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <h5>Thông tin khách hàng</h5>

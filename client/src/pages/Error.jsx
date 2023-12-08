@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link, useRouteError } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.main`
   min-height: 100vh;
@@ -40,6 +41,7 @@ const Error = () => {
           <Helmet>
             <meta charSet="utf-8" />
             <title>Error</title>
+            <link rel="icon" type="image/svg+xml" href={NovaIcon} />
           </Helmet>
 
           <div>

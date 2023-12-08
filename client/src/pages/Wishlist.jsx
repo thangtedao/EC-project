@@ -14,6 +14,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { addToCart } from "../state/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -163,6 +164,7 @@ const Wishlist = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Wishlist</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <div className="title">Danh sách yêu thích</div>

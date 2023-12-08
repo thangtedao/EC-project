@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -16,6 +17,7 @@ const Contact = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Contact</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <iframe

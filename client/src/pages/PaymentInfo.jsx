@@ -16,6 +16,7 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import customFetch from "../utils/customFetch";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -331,6 +332,7 @@ const PaymentInfo = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Payment Info</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <div className="cart-header">

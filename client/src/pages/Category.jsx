@@ -9,6 +9,7 @@ import { FaEye } from "react-icons/fa";
 import { FaSortAmountDown } from "react-icons/fa";
 import { FaSortAmountUp } from "react-icons/fa";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   display: flex;
@@ -331,6 +332,7 @@ const Category = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Category</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <div className="block-top-filter-brands">
@@ -388,7 +390,7 @@ const Category = () => {
           <div className="bot-container-column-1">
             <div className="product-description">
               <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
-              <p>{fetchCate.description}</p>
+              <p style={{ whiteSpace: "pre-line" }}>{fetchCate?.description}</p>
             </div>
             {/* <FAQ /> */}
           </div>

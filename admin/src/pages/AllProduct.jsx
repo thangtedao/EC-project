@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
 import { ProductCard } from "../components";
 import { createContext } from "react";
@@ -76,33 +77,37 @@ const AllProduct = () => {
 
   return (
     <AllProductContext.Provider value={{ handleClickOpen }}>
-      <Wrapper>
-        {products.map((product) => {
-          return <ProductCard key={product._id} product={product} />;
-        })}
+      <HelmetProvider>
+        <Wrapper>
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>All Product</title>
+          </Helmet>
+          {products.map((product) => {
+            return <ProductCard key={product._id} product={product} />;
+          })}
 
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Chắc là xóa chưa?"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Xóa là bay database
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Không xóa</Button>
-            <Button onClick={() => deleteProduct(product._id)} autoFocus>
-              Ừ xóa
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Wrapper>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Chắc là xóa chưa?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description"></DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Không xóa</Button>
+              <Button onClick={() => deleteProduct(product._id)} autoFocus>
+                Ừ xóa
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Wrapper>
+      </HelmetProvider>
     </AllProductContext.Provider>
   );
 };

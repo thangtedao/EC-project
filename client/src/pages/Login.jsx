@@ -8,6 +8,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
 import { setCart, setCartTotal } from "../state/cartSlice.js";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.section`
   padding: 3rem;
@@ -119,12 +120,13 @@ const Login = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Login</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <Form method="post" className="form-login">
           <h4>Đăng nhập</h4>
-          <FormRow type="text" name="email" defaultValue="thang@gmail.com" />
-          <FormRow type="password" name="password" defaultValue="thang123" />
+          <FormRow type="text" name="email" defaultValue="" />
+          <FormRow type="password" name="password" defaultValue="" />
           <button type="submit" className="btn-block" disabled={isSubmitting}>
             {isSubmitting ? "đang đăng nhập..." : "đăng nhập"}
           </button>

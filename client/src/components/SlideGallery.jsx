@@ -1,4 +1,3 @@
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -15,9 +14,9 @@ const Wrapper = styled.div`
   width: 100%;
 
   .swiper-slide {
-    text-align: center;
     background: #fff;
-    overflow: hidden;
+    display: grid;
+    place-items: center;
   }
   .swiper-slide img {
     max-height: 350px;
@@ -25,14 +24,6 @@ const Wrapper = styled.div`
 `;
 
 const SlideGallery = ({ image }) => {
-  // const settings = {
-  //   infinite: true,
-  //   speed: 1000,
-  //   slidesToShow: 1,
-  //   slidesToScroll: 1,
-  //   arrows: false,
-  // };
-
   return (
     <Wrapper>
       <Swiper
@@ -50,12 +41,6 @@ const SlideGallery = ({ image }) => {
         })}
       </Swiper>
     </Wrapper>
-
-    // <Slider {...settings}>
-    //   {image.map((img, index) => {
-    //     return <img key={index} className="product-img" src={img} />;
-    //   })}
-    // </Slider>
   );
 };
 

@@ -1,10 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink, useNavigate } from "react-router-dom";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import { IconButton } from "@mui/material";
-import { useDashboardContext } from "../pages/DashboardLayout";
+import { useNavigate } from "react-router-dom";
 import { MdModeEditOutline } from "react-icons/md";
 import { useAllProductContext } from "../pages/AllProduct";
 
@@ -84,22 +80,31 @@ const ProductCard = ({ product }) => {
   return (
     <Wrapper>
       <div className="product-card-container">
-        <div className="product-card-image">
-          <img src={product.images[0]} alt={product.name} />
-        </div>
-        <div className="product-card-name">
-          <p> {product.name}</p>
-        </div>
-        <div className="product-card-info">
-          <div className="item-info">
-            {"Available: " + product.stockQuantity}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            height: "85%",
+          }}
+        >
+          <div className="product-card-image">
+            <img src={product.images[0]} alt={product.name} />
           </div>
-          <div className="item-info">{"Sold: " + product.sold + "₫"}</div>
-          <div className="item-info">
-            {"Regular price: " + product.price + "₫"}
+          <div className="product-card-name">
+            <p> {product.name}</p>
           </div>
-          <div className="item-info">
-            {"Sale price: " + product.salePrice + "₫"}
+          <div className="product-card-info">
+            <div className="item-info">
+              {"Available: " + product.stockQuantity}
+            </div>
+            <div className="item-info">{"Sold: " + product.sold + "₫"}</div>
+            <div className="item-info">
+              {"Regular price: " + product.price + "₫"}
+            </div>
+            <div className="item-info">
+              {"Sale price: " + product.salePrice + "₫"}
+            </div>
           </div>
         </div>
         <div className="btn-action">

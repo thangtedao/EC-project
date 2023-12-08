@@ -6,6 +6,7 @@ import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { setCart } from "../state/cartSlice.js";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -149,6 +150,7 @@ const Order = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Order</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <div className="title">Đơn hàng của bạn</div>

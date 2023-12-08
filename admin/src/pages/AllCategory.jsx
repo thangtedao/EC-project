@@ -29,7 +29,7 @@ const Wrapper = styled.div`
 
   table {
     background-color: white;
-    width: 100%;
+    width: 90%;
     margin-top: 1rem;
     border-collapse: collapse;
   }
@@ -50,13 +50,12 @@ const Wrapper = styled.div`
     padding: 10px 20px;
   }
 
-  th:not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(4)),
-  td:not(:last-child):not(:nth-last-child(2)):not(:nth-last-child(4)) {
-    width: 330px;
+  td:nth-last-child(-n + 2) {
+    width: 55px;
   }
 
   button {
-    min-width: 80px;
+    width: 80px;
     font-weight: bolder;
     border-radius: 23px;
     background: white;
@@ -193,9 +192,7 @@ const AllCategory = () => {
             {"Chắc là xóa chưa?"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Xóa là bay database
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-description"></DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => handleClose}>Không xóa</Button>

@@ -94,8 +94,8 @@ const Login = () => {
 
         <Form method="post" className="form-login">
           <h4>Đăng nhập</h4>
-          <FormRow type="text" name="email" defaultValue="thang@gmail.com" />
-          <FormRow type="password" name="password" defaultValue="thang123" />
+          <FormRow type="text" name="email" defaultValue="" />
+          <FormRow type="password" name="password" defaultValue="" />
           <button type="submit" className="btn-block" disabled={isSubmitting}>
             {isSubmitting ? "đang đăng nhập..." : "đăng nhập"}
           </button>

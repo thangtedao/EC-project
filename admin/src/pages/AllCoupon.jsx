@@ -50,16 +50,8 @@ const Wrapper = styled.div`
     padding: 10px 20px;
   }
 
-  th:last-child,
-  td:last-child,
-  th:nth-last-child(2),
-  td:nth-last-child(2) {
-    width: 100px;
-  }
-
-  th:not(:last-child):not(:nth-last-child(2)),
-  td:not(:last-child):not(:nth-last-child(2)) {
-    width: 180px;
+  td:nth-last-child(-n + 2) {
+    width: 55px;
   }
 
   button {
@@ -186,9 +178,7 @@ const AllCoupon = () => {
             {"Chắc là xóa chưa?"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Xóa là bay database
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-description"></DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Không xóa</Button>

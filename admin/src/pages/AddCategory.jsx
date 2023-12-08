@@ -107,16 +107,13 @@ const AddCategory = () => {
 
         <div className="title">Add Category</div>
         <Form method="post" className="form-add">
-          <FormRow type="text" name="name" defaultValue="Laptop" />
-          <FormRow type="text" name="slug" defaultValue="laptop" />
+          <FormRow type="text" name="name" defaultValue="" />
+          <FormRow type="text" name="slug" defaultValue="" />
           <div className="form-row">
             <label htmlFor="description" className="form-label">
               Description
             </label>
-            <textarea
-              name="description"
-              defaultValue="chung ta khong thuoc ve nhau"
-            />
+            <textarea name="description" defaultValue="" />
           </div>
           <FormRowSelect
             name="parent"

@@ -6,6 +6,7 @@ import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import NovaIcon from "../assets/LogoNova.svg";
 
 /* ACTION */
 export const action = async ({ request }) => {
@@ -87,6 +88,7 @@ const Register = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Register</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <Form method="post" className="form-register">
@@ -95,16 +97,16 @@ const Register = () => {
             type="text"
             name="fullName"
             lableText="Họ và Tên"
-            defaultValue="xuan thang"
+            defaultValue=""
           />
           <FormRow
             type="number"
             name="phone"
             lableText="Số điện thoại"
-            defaultValue="0123456789"
+            defaultValue=""
           />
-          <FormRow type="email" name="email" defaultValue="thang@gmail.com" />
-          <FormRow type="password" name="password" defaultValue="thang123" />
+          <FormRow type="email" name="email" defaultValue="" />
+          <FormRow type="password" name="password" defaultValue="" />
           <button
             type="submit"
             className="btn btn-block"

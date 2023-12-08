@@ -15,6 +15,7 @@ import {
   SlideProduct,
 } from "../components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -262,6 +263,7 @@ const Product = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Product</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         {/* TOP */}
@@ -334,7 +336,7 @@ const Product = () => {
           <div className="bot-container-column-1">
             <div className="product-description">
               <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
-              <p>{product?.description}</p>
+              <p style={{ whiteSpace: "pre-line" }}>{product?.description}</p>
             </div>
             <ProductReview product={product} />
           </div>

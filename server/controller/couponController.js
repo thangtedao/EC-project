@@ -32,12 +32,17 @@ export const getSingleCoupon = async (req, res) => {
 
 export const updateCoupon = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedCoupon = await Coupon.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const { name } = req.params;
+    const updatedCoupon = await Coupon.findOneAndUpdate(
+      { name: name },
+      req.body,
+      {
+        new: true,
+      }
+    );
     res.status(200).json({ updatedCoupon });
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };

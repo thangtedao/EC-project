@@ -100,8 +100,8 @@ const AddCoupon = () => {
         <div className="title">Add Coupon</div>
 
         <Form method="post" className="form-add">
-          <FormRow type="text" name="name" defaultValue="SALE" />
-          <FormRow type="text" name="description" defaultValue="giam gia 99%" />
+          <FormRow type="text" name="name" defaultValue="" />
+          <FormRow type="text" name="description" defaultValue="" />
           <FormRow
             type="date"
             name="expiry"

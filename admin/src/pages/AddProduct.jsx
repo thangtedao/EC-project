@@ -330,35 +330,20 @@ const AddProduct = () => {
               <textarea
                 name="images"
                 // defaultValue="https://vcdn-sohoa.vnecdn.net/2021/01/21/HP-Elite-Folio-Front-Left-Forw-6107-5267-1611217952.jpg"
-                defaultValue="https://cdn.tgdd.vn/Products/Images/42/22701/dien-thoai-di-dong-Nokia-1280-dienmay.com-l.jpg"
+                defaultValue=""
               />
             </div>
             <div className="form-row">
               <label htmlFor="description" className="form-label">
                 Description
               </label>
-              <textarea
-                name="description"
-                defaultValue="chung ta khong thuoc ve nhau"
-              />
+              <textarea name="description" defaultValue="" />
             </div>
             <div className="form-row">
               <label htmlFor="specifications" className="form-label">
                 Specifications
               </label>
-              <textarea
-                name="specifications"
-                defaultValue="Kích thước màn hình=6.67 inches
-Công nghệ màn hình=AMOLED
-Pin=5000mAh
-Chipset=Qualcomm Snapdragon 685
-Ram=8 GB
-Bộ nhớ trong=128 GB
-Độ phân giải màn hình=2560 x 1664 pixels
-Cổng giao tiếp=2 x Thunderbolt 3 Jack tai nghe 3.5 mm MagSafe 3
-Ổ cứng=256GB
-Loại card đồ họa=8 nhân GPU, 16 nhân Neural Engine"
-              />
+              <textarea name="specifications" defaultValue="" />
             </div>
           </div>
           <div className="form-col-2">
@@ -366,28 +351,29 @@ Loại card đồ họa=8 nhân GPU, 16 nhân Neural Engine"
               type="text"
               name="name"
               lableText="Product Name"
-              defaultValue="Nokia "
+              defaultValue=""
             />
             <FormRow
               type="number"
               name="price"
               lableText="Regular Price"
-              defaultValue="100000"
+              defaultValue=""
             />
             <FormRow
               type="number"
               name="salePrice"
               lableText="Sale Price"
-              defaultValue="50000"
+              defaultValue=""
             />
             <FormRow
               type="number"
               name="stockQuantity"
               lableText="Quantity in Stock"
-              defaultValue="99"
+              defaultValue=""
             />
             <FormRowSelect
               name="category1"
+              labelText="Main Category"
               list={categories || []}
               defaultValue={
                 categories.length > 0

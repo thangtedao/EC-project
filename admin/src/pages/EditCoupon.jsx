@@ -69,11 +69,11 @@ const Wrapper = styled.div`
 `;
 
 export const action = async ({ request, params }) => {
-  const { id } = params;
+  const { name } = params;
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.patch(`/coupon/update/${id}`, data);
+    await customFetch.patch(`/coupon/update/${name}`, data);
     return redirect("/all-coupon");
   } catch (error) {
     return error;

@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import { IoIosArrowForward } from "react-icons/io";
 import SlideGallery from "../components/SlideGallery";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import NovaIcon from "../assets/LogoNova.svg";
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
-import img3 from "../assets/data/image/msi.png";
 import img4 from "../assets/data/image/1.png";
 import img5 from "../assets/data/image/2.png";
 import img6 from "../assets/data/image/3.png";
@@ -147,7 +147,7 @@ export const loader = async () => {
       .then(({ data }) => data.categories);
 
     const saleProducts = await customFetch
-      .get("/product/?category=mobile&limit=6")
+      .get("/product/?sort=createdAt&limit=6")
       .then(({ data }) => data.products);
 
     const productsArray = await Promise.all(
@@ -173,12 +173,7 @@ const Home = () => {
   window.scrollTo(0, 0);
   const { saleProducts, categories, productsArray } = useLoaderData();
 
-  // const img = [
-  //   "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
-  //   "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
-  //   "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
-  // ];
-  const img = [img1, img2, img3];
+  const img = [img1, img2];
 
   return (
     <HelmetProvider>
@@ -186,7 +181,8 @@ const Home = () => {
         <Wrapper>
           <Helmet>
             <meta charSet="utf-8" />
-            <title>Home</title>
+            <title>Nova</title>
+            <link rel="icon" type="image/svg+xml" href={NovaIcon} />
           </Helmet>
 
           <div className="block-top-home">

@@ -11,7 +11,7 @@ const router = Router();
 
 router.post("/", createCoupon);
 router.get("/", getAllCoupon);
-router.patch("/update/:id", updateCoupon);
+router.patch("/update/:name", updateCoupon);
 router.delete("/delete/:id", deleteCoupon);
 router.get("/:name", getSingleCoupon);
 

@@ -216,9 +216,7 @@ const AllUser = () => {
             {"Chắc là xóa chưa?"}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Xóa là bay database
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-description"></DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Không xóa</Button>

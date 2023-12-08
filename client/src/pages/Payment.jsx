@@ -11,6 +11,7 @@ import customFetch from "../utils/customFetch";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { PayPalButton } from "../components";
 import { toast } from "react-toastify";
+import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -242,6 +243,7 @@ const Payment = () => {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Payment</title>
+          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
         <div className="cart-header">
