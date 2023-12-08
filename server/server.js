@@ -12,7 +12,7 @@ import mongoose from "mongoose";
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware.js";
 import { authenticateUser } from "./middleware/authMiddleware.js";
 import cookieParser from "cookie-parser";
-//import cors from "cors";
+import cors from "cors";
 import helmet from "helmet";
 
 // public
@@ -28,9 +28,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-//app.use(cors());
+// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: {
+      "img-src": ["'self'", "https: data:"],
+    },
+  })
+);
+app.use(cors());
 
 app.use(express.static(path.resolve(__dirname, "../client/dist")));
 

@@ -2,14 +2,25 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3001/api",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+});
+
 // export default defineConfig({
 //   plugins: [react()],
 //   server: {
 //     proxy: {
 //       "/api": {
-//         target: "http://localhost:3001/admin/api",
-//         changeOrigin: true,
-//         rewrite: (path) => path.replace(/^\/api/, ""),
+//         target: "http://localhost:3001/api",
 //       },
 //     },
 //   },
@@ -18,18 +29,3 @@ import react from "@vitejs/plugin-react";
 //     assetsDir: "assets",
 //   },
 // });
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:3001/api",
-      },
-    },
-  },
-  base: "/admin/",
-  build: {
-    assetsDir: "assets",
-  },
-});
