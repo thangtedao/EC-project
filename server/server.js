@@ -15,9 +15,16 @@ import cookieParser from "cookie-parser";
 //import cors from "cors";
 import helmet from "helmet";
 
+// public
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
+
 dotenv.config();
 
 const app = express();
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(cookieParser());
 app.use(express.json());
@@ -25,15 +32,7 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 //app.use(cors());
 
-app.get("/api/test", (req, res) => {
-  res.json({ msg: "test route" });
-});
-
-/*
-    app.post('/test', validateTest, (req, res) => {
-        //sth
-    })
-*/
+app.use(express.static(path.resolve(__dirname, "../client/dist")));
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
@@ -43,6 +42,10 @@ app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/color", colorRouter);
 app.use("/api/order", orderRouter);
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+});
 
 // Not Found Middleware
 app.use("*", (req, res) => {
