@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 
 const PayPalPayment = ({ cart, user, coupon }) => {
-  console.log(cart);
-  console.log(coupon);
   const navigate = useNavigate();
 
   const convertVNDToUSD = (vndAmount) => {
@@ -27,7 +25,6 @@ const PayPalPayment = ({ cart, user, coupon }) => {
   totalPrice = convertVNDToUSD(totalPrice);
 
   const createOrder = (data, actions) => {
-    console.log(totalPrice);
     return actions.order.create({
       purchase_units: [
         {

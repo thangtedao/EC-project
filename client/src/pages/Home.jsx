@@ -8,6 +8,13 @@ import { IoIosArrowForward } from "react-icons/io";
 import SlideGallery from "../components/SlideGallery";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
+import img1 from "../assets/data/image/asus.png";
+import img2 from "../assets/data/image/asus1.png";
+import img3 from "../assets/data/image/msi.png";
+import img4 from "../assets/data/image/1.png";
+import img5 from "../assets/data/image/2.png";
+import img6 from "../assets/data/image/3.png";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -46,8 +53,15 @@ const Wrapper = styled.div`
     }
   }
   .right-banner {
-    border: 0.5px solid lightgrey;
-    width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 240px;
+    img {
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
+        0 2px 6px 2px rgba(60, 64, 67, 0.15);
+      border-radius: 5px;
+    }
   }
   .sliding-banner {
     width: calc(100% - 420px);
@@ -55,9 +69,6 @@ const Wrapper = styled.div`
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     margin: 0 0.75rem;
     overflow: hidden;
-  }
-  .product-img {
-    height: 350px;
   }
 
   /* FLASH SALE */
@@ -162,11 +173,12 @@ const Home = () => {
   window.scrollTo(0, 0);
   const { saleProducts, categories, productsArray } = useLoaderData();
 
-  const img = [
-    "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
-    "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
-    "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
-  ];
+  // const img = [
+  //   "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
+  //   "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
+  //   "https://cdn.viettelstore.vn/Images/Product/ProductImage/1349547788.jpeg",
+  // ];
+  const img = [img1, img2, img3];
 
   return (
     <HelmetProvider>
@@ -197,7 +209,11 @@ const Home = () => {
             <div className="sliding-banner">
               <SlideGallery image={img} />
             </div>
-            <div className="right-banner"></div>
+            <div className="right-banner">
+              <img src={img4} />
+              <img src={img5} />
+              <img src={img6} />
+            </div>
           </div>
 
           {/* FLASH SALE */}

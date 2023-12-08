@@ -8,9 +8,14 @@ import axios from "axios";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import { toast } from "react-toastify";
 import Select from "@mui/material/Select";
 import { Form, redirect, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import customFetch from "../utils/customFetch";
+import { store } from "../state/store.js";
+import { login } from "../state/userSlice.js";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -167,8 +172,43 @@ const Wrapper = styled.div`
   }
 `;
 
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    const isValidAddress = (field) => field && field.trim() !== "";
+
+    if (
+      isValidAddress(data.city) &&
+      isValidAddress(data.district) &&
+      isValidAddress(data.ward) &&
+      isValidAddress(data.home)
+    ) {
+      await customFetch.patch("/user/update-user", formData);
+      const user = (await customFetch.get("/user/current-user")).data.user;
+      store.dispatch(login({ user }));
+      return redirect("/cart/payment");
+    }
+
+    if (
+      !isValidAddress(data.cityC) ||
+      !isValidAddress(data.districtC) ||
+      !isValidAddress(data.wardC) ||
+      !isValidAddress(data.homeC)
+    ) {
+      return toast.warning("Thông tin không hợp lệ");
+    }
+
+    return redirect("/cart/payment");
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 export const loader = async () => {
   try {
+    window.scrollTo(0, 0);
     let { user } = JSON.parse(localStorage.getItem("persist:user"));
     let { cart } = JSON.parse(localStorage.getItem("persist:cart"));
     if (cart === "[]") return redirect("/cart");
@@ -180,7 +220,6 @@ export const loader = async () => {
 };
 
 const PaymentInfo = () => {
-  window.scrollTo(0, 0);
   const cart = useSelector((state) => state.cart.cart);
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
@@ -196,6 +235,12 @@ const PaymentInfo = () => {
       navigate("/cart");
     }
   }, []);
+
+  const [isCheck, setIsCheck] = useState(false);
+
+  const changeAddress = (event) => {
+    setIsCheck(event.target.checked);
+  };
 
   //const cities = useLoaderData();
 
@@ -213,7 +258,7 @@ const PaymentInfo = () => {
           "https://provinces.open-api.vn/api/?depth=1"
         );
         setCities(citiesResponse.data);
-        setCity(citiesResponse.data[0]?.code || "");
+        setCity(citiesResponse.data[0] || "");
       } catch (error) {
         console.error(error);
       }
@@ -226,13 +271,11 @@ const PaymentInfo = () => {
     const fetchDistricts = async () => {
       try {
         const districtsResponse = await axios.get(
-          `https://provinces.open-api.vn/api/p/${city}?depth=2`
+          `https://provinces.open-api.vn/api/p/${city && city?.code}?depth=2`
         );
         const fetchedDistricts = districtsResponse.data.districts || [];
         setDistricts(fetchedDistricts);
-        setDistrict(
-          fetchedDistricts.length > 0 ? fetchedDistricts[0]?.code : ""
-        );
+        setDistrict(fetchedDistricts.length > 0 ? fetchedDistricts[0] : "");
       } catch (error) {
         console.error(error);
       }
@@ -245,11 +288,13 @@ const PaymentInfo = () => {
     const fetchWards = async () => {
       try {
         const wardsResponse = await axios.get(
-          `https://provinces.open-api.vn/api/d/${district}?depth=2`
+          `https://provinces.open-api.vn/api/d/${
+            district && district?.code
+          }?depth=2`
         );
         const fetchedWards = wardsResponse.data.wards || [];
         setWards(fetchedWards);
-        setWard(fetchedWards.length > 0 ? fetchedWards[0]?.code : "");
+        setWard(fetchedWards.length > 0 ? fetchedWards[0] : "");
       } catch (error) {
         console.error(error);
       }
@@ -259,17 +304,24 @@ const PaymentInfo = () => {
   }, [district]);
 
   const handleChange = (event) => {
-    const selectedCity = event.target.value;
+    const selectedCityName = event.target.value;
+    const selectedCity =
+      cities.find((city) => city.name === selectedCityName) || {};
     setCity(selectedCity);
   };
 
   const handleChange02 = (event) => {
-    const selectedDistrict = event.target.value;
+    const selectedDistrictName = event.target.value;
+    const selectedDistrict =
+      districts.find((district) => district.name === selectedDistrictName) ||
+      {};
     setDistrict(selectedDistrict);
   };
 
   const handleChange03 = (event) => {
-    const selectedWard = event.target.value;
+    const selectedWardName = event.target.value;
+    const selectedWard =
+      wards.find((ward) => ward.name === selectedWardName) || {};
     setWard(selectedWard);
   };
 
@@ -293,13 +345,17 @@ const PaymentInfo = () => {
           })}
         </div>
 
-        <Form style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Form
+          method="post"
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
           <div className="form-info">
             <p>Thông tin khách hàng</p>
             <div className="form-info-input">
               <div className="is-flex">
                 <TextField
                   required
+                  name="fullName"
                   label="Họ và tên"
                   defaultValue={user?.fullName || ""}
                   variant="standard"
@@ -307,6 +363,7 @@ const PaymentInfo = () => {
                 />
                 <TextField
                   required
+                  name="phone"
                   label="Số điện thoại"
                   defaultValue={user?.phone || ""}
                   variant="standard"
@@ -315,6 +372,7 @@ const PaymentInfo = () => {
               </div>
               <TextField
                 required
+                name="email"
                 label="Email"
                 defaultValue={user?.email || ""}
                 variant="standard"
@@ -324,98 +382,132 @@ const PaymentInfo = () => {
 
           <div className="form-info">
             <p>Thông tin nhận hàng</p>
-            <div className="form-address">
-              <FormControl variant="standard">
-                <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-                <Select
-                  required
-                  labelId="city-select-label"
-                  id="city-select"
-                  value={city}
-                  label="Tỉnh/Thành phố"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
-                      },
-                    },
-                  }}
-                  onChange={handleChange}
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city.code} value={city.code}>
-                      {city.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <input name="cityC" defaultValue={user?.address.city} hidden />
+            <input
+              name="districtC"
+              defaultValue={user?.address.district}
+              hidden
+            />
+            <input name="wardC" defaultValue={user?.address.ward} hidden />
+            <input name="homeC" defaultValue={user?.address.home} hidden />
 
-              <FormControl variant="standard">
-                <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-                <Select
-                  required
-                  labelId="district-select-label"
-                  id="district-select"
-                  value={district}
-                  label="Quận/Huyện"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
-                      },
-                    },
-                  }}
-                  onChange={handleChange02}
-                >
-                  {districts.map((district) => (
-                    <MenuItem key={district.code} value={district.code}>
-                      {district.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <TextField
+              InputProps={{
+                readOnly: true,
+              }}
+              value={
+                user?.address &&
+                `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
+              }
+              variant="standard"
+              sx={{ width: "100%" }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isCheck}
+                  onChange={changeAddress}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Thay đổi địa chỉ"
+            />
 
-              <FormControl variant="standard">
-                <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-                <Select
-                  required
-                  labelId="ward-select-label"
-                  id="ward-select"
-                  value={ward}
-                  label="Phường/Xã"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
+            {isCheck && (
+              <div className="form-address">
+                <FormControl variant="standard">
+                  <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
+                  <Select
+                    required
+                    labelId="city-select-label"
+                    name="city"
+                    value={city?.name || ""}
+                    label="Tỉnh/Thành phố"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
                       },
-                    },
-                  }}
-                  onChange={handleChange03}
-                >
-                  {wards.map((ward) => (
-                    <MenuItem key={ward.code} value={ward.code}>
-                      {ward.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    }}
+                    onChange={handleChange}
+                  >
+                    {cities.map((city) => (
+                      <MenuItem key={city.code} value={city.name}>
+                        {city.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              <TextField
-                required
-                label="Số nhà, tên đường"
-                variant="standard"
-              />
-            </div>
+                <FormControl variant="standard">
+                  <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
+                  <Select
+                    required
+                    labelId="district-select-label"
+                    name="district"
+                    value={district?.name || ""}
+                    label="Quận/Huyện"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
+                      },
+                    }}
+                    onChange={handleChange02}
+                  >
+                    {districts.map((district) => (
+                      <MenuItem key={district.code} value={district.name}>
+                        {district.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl variant="standard">
+                  <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
+                  <Select
+                    required
+                    name="ward"
+                    labelId="ward-select-label"
+                    value={ward?.name || ""}
+                    label="Phường/Xã"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
+                      },
+                    }}
+                    onChange={handleChange03}
+                  >
+                    {wards.map((ward) => (
+                      <MenuItem key={ward.code} value={ward.name}>
+                        {ward.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  required
+                  name="home"
+                  label="Số nhà, tên đường"
+                  variant="standard"
+                />
+              </div>
+            )}
           </div>
           <div className="bottom-bar">
             <div className="price-temp">
               <p>Tổng tiền tạm tính:</p>
               {totalPrice}₫
             </div>
-            <button className="btn" onClick={() => navigate("/cart/payment")}>
+            <button type="submit" className="btn">
               Tiếp tục
             </button>
           </div>

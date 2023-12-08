@@ -22,6 +22,7 @@ import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
 import { action as productAction } from "./pages/Product";
 import { action as profileAction } from "./pages/Profile";
+import { action as paymentInfoAction } from "./pages/PaymentInfo";
 
 /* LOADER */
 import { loader as mainLayoutLoader } from "./pages/MainLayout";
@@ -74,6 +75,7 @@ const router = createBrowserRouter([
           {
             path: "payment-info",
             element: <PaymentInfo />,
+            action: paymentInfoAction,
             loader: paymentInfoLoader,
           },
           {

@@ -124,7 +124,8 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1rem;
     border-top: 1px solid lightgray;
-    padding: 1rem 0;
+    padding-top: 2rem;
+    margin-top: 1rem;
   }
   .bot-container-column-1 {
     flex: 2;
@@ -140,6 +141,9 @@ const Wrapper = styled.div`
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   /* MEDIA QUERIES */
@@ -163,11 +167,16 @@ export const loader = async ({ params }) => {
     const { slug1, slug2 } = params;
 
     let endpoint = `/product/category?category=${slug1}&page=1&limit=10`;
+    let endpointC = `/category/${slug1}`;
 
     if (slug2) {
       endpoint = `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10`;
+      endpointC = `/category/${slug2}`;
     }
 
+    const fetchCate = await customFetch
+      .get(endpointC)
+      .then((response) => response.data.category);
     const response = await customFetch.get(endpoint);
 
     const productsMostView = await customFetch
@@ -175,14 +184,15 @@ export const loader = async ({ params }) => {
       .then(({ data }) => data.products);
 
     window.scrollTo(0, 0);
-    return { response, slug1, slug2, productsMostView };
+    return { response, slug1, slug2, productsMostView, fetchCate };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { response, slug1, slug2, productsMostView } = useLoaderData();
+  const { response, slug1, slug2, productsMostView, fetchCate } =
+    useLoaderData();
   const [products, setProducts] = useState(response.data.products);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
@@ -377,16 +387,10 @@ const Category = () => {
         <div className="bot-container">
           <div className="bot-container-column-1">
             <div className="product-description">
-              <p>
-                Trong tháng 6 này, mẫu điện thoại gaming Nubia Neo đã chính thức
-                xuất hiện với giá bán cực tốt. Với mức giá chỉ ngang một sản
-                phẩm tầm trung giá rẻ, điện thoại Nubia Neo được trang bị những
-                gì để đáp ứng tốt nhất nhu cầu chơi game của người dùng? Cùng
-                CellphoneS đánh giá kỹ hơn về mẫu điện thoại gaming này trong
-                bài viết đây.
-              </p>
+              <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
+              <p>{fetchCate.description}</p>
             </div>
-            <FAQ />
+            {/* <FAQ /> */}
           </div>
           <div className="bot-container-column-2"></div>
         </div>

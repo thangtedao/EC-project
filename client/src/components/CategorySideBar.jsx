@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useMainLayoutContext } from "../pages/MainLayout";
-import { Link, NavLink, useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 
 const Wrapper = styled.div`
@@ -114,7 +113,6 @@ const CategorySideBar = () => {
   };
 
   const { categories, categoryChild } = useMainLayoutContext();
-  const navigate = useNavigate();
 
   return (
     <Wrapper>
@@ -156,7 +154,7 @@ const CategorySideBar = () => {
             onMouseLeave={() => setShowCategory(false)}
           >
             <div className="category-product">
-              <p>Thương hiệu</p>
+              {/* <p>Thương hiệu</p> */}
 
               {categoryChild &&
                 categoryChild[activeItem.index]?.map((item) => {
@@ -178,7 +176,7 @@ const CategorySideBar = () => {
             </div>
 
             <div className="category-product">
-              <p>Bla bla</p>
+              {/* <p>Bla bla</p> */}
               {/* {activeItem?.categoryProduct?.map((item) => {
                 return <h5>{item.color}</h5>;
               })} */}

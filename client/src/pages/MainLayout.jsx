@@ -4,6 +4,9 @@ import { Footer, Header, Loading } from "../components";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import { store } from "../state/store.js";
+import { login } from "../state/userSlice.js";
+import { setCart, setCartTotal } from "../state/cartSlice.js";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -18,6 +21,35 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
+    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+
+    if (user !== "null") {
+      const user = await customFetch
+        .get("/user/current-user")
+        .then(({ data }) => data.user);
+      store.dispatch(login({ user: user }));
+
+      const response = await customFetch.get("/user/cart");
+      if (response.data.cart) {
+        const cart = response.data.cart?.products?.map((item) => {
+          return {
+            _id: item.product._id,
+            name: item.product.name,
+            price: item.product.price,
+            salePrice: item.product.salePrice,
+            images: item.product.images,
+            count: item.count,
+            category: item.product.category,
+            slug: item.product.slug,
+          };
+        });
+        store.dispatch(setCartTotal(response.data.cart.cartTotal));
+        store.dispatch(setCart(cart));
+      } else {
+        store.dispatch(setCart([]));
+      }
+    }
+
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data.categories);
@@ -31,6 +63,7 @@ export const loader = async () => {
         return children;
       })
     );
+
     return { categories, categoryChild };
   } catch (error) {
     toast.error(error?.response?.data?.msg);

@@ -13,7 +13,7 @@ const router = Router();
 
 router.post("/", createCategory);
 router.get("/", getAllCategory);
-router.get("/:id", getSingleCategory);
+router.get("/:slug", getSingleCategory);
 router.patch("/update/:id", updateCategory);
 router.delete("/delete/:id", deleteCategory);
 router.get("/get/parent", getParentCategory);

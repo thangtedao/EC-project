@@ -4,6 +4,7 @@ import Cart from "../models/Cart.js";
 import day from "dayjs";
 import { createPayPalOrder } from "../utils/paypal.js";
 import { sendMail } from "../utils/email.js";
+import User from "../models/User.js";
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -160,8 +161,6 @@ const createOrderByStripe = async (customer, data) => {
       };
     });
 
-    console.log(cart);
-
     let totalPrice =
       cart?.reduce(
         (accumulator, item) => accumulator + item.salePrice * item.count,
@@ -196,6 +195,13 @@ const createOrderByStripe = async (customer, data) => {
       { $set: { products: [] } }
     );
     console.log(savedOrder);
+
+    const order = await Order.findById(savedOrder._id).populate({
+      path: "products.product",
+      select: ["name", "salePrice"],
+    });
+    const user = await User.findById(customer.metadata.userId);
+    sendMail(user, order);
   } catch (error) {
     console.log(error);
   }
@@ -240,7 +246,6 @@ export const createOrder = async (req, res) => {
 
     const savedOrder = await newOrder.save();
     await Cart.findOneAndRemove({ user: user._id });
-    console.log(savedOrder);
 
     const order = await Order.findById(savedOrder._id).populate({
       path: "products.product",

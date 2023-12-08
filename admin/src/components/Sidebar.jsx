@@ -72,9 +72,6 @@ const Wrapper = styled.aside`
   .active {
     color: var(--primary-500);
   }
-  .pending {
-    background: var(--background-color);
-  }
 
   color: white;
   a {
@@ -118,14 +115,14 @@ const Sidebar = () => {
           </header>
 
           <List sx={{ width: "100%", maxWidth: 360, mt: 3 }}>
-            <ListItemButton>
-              <ListItemIcon>
-                <DashboardOutlinedIcon className="icon" />
-              </ListItemIcon>
-              <NavLink to="/" end>
+            <NavLink to="/" end>
+              <ListItemButton>
+                <ListItemIcon>
+                  <DashboardOutlinedIcon className="icon" />
+                </ListItemIcon>
                 Dashboard
-              </NavLink>
-            </ListItemButton>
+              </ListItemButton>
+            </NavLink>
 
             <ListItemButton onClick={handleClickOpenProduct}>
               <ListItemIcon>
@@ -136,16 +133,16 @@ const Sidebar = () => {
             </ListItemButton>
             <Collapse in={openProduct} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 8, m: 1 }}>
-                  <NavLink to="all-product" end>
+                <NavLink to="all-product" end>
+                  <ListItemButton sx={{ pl: 8, m: 1 }}>
                     All Product
-                  </NavLink>
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 8, m: 1 }}>
-                  <NavLink to="add-product" end>
+                  </ListItemButton>
+                </NavLink>
+                <NavLink to="add-product" end>
+                  <ListItemButton sx={{ pl: 8, m: 1 }}>
                     Add Product
-                  </NavLink>
-                </ListItemButton>
+                  </ListItemButton>
+                </NavLink>
               </List>
             </Collapse>
 
@@ -158,16 +155,16 @@ const Sidebar = () => {
             </ListItemButton>
             <Collapse in={openCategory} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 8, m: 1 }}>
-                  <NavLink to="all-category" end>
+                <NavLink to="all-category" end>
+                  <ListItemButton sx={{ pl: 8, m: 1 }}>
                     All Category
-                  </NavLink>
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 8, m: 1 }}>
-                  <NavLink to="add-category" end>
+                  </ListItemButton>
+                </NavLink>
+                <NavLink to="add-category" end>
+                  <ListItemButton sx={{ pl: 8, m: 1 }}>
                     Add Category
-                  </NavLink>
-                </ListItemButton>
+                  </ListItemButton>
+                </NavLink>
               </List>
             </Collapse>
 
@@ -180,36 +177,36 @@ const Sidebar = () => {
             </ListItemButton>
             <Collapse in={openCoupon} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 8, m: 1 }}>
-                  <NavLink to="all-coupon" end>
+                <NavLink to="all-coupon" end>
+                  <ListItemButton sx={{ pl: 8, m: 1 }}>
                     All Coupon
-                  </NavLink>
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 8, m: 1 }}>
-                  <NavLink to="add-coupon" end>
+                  </ListItemButton>
+                </NavLink>
+                <NavLink to="add-coupon" end>
+                  <ListItemButton sx={{ pl: 8, m: 1 }}>
                     Add Coupon
-                  </NavLink>
-                </ListItemButton>
+                  </ListItemButton>
+                </NavLink>
               </List>
             </Collapse>
 
-            <ListItemButton>
-              <ListItemIcon>
-                <CreditCardOutlinedIcon className="icon" />
-              </ListItemIcon>
-              <NavLink to="all-order" end>
+            <NavLink to="all-order" end>
+              <ListItemButton>
+                <ListItemIcon>
+                  <CreditCardOutlinedIcon className="icon" />
+                </ListItemIcon>
                 Order
-              </NavLink>
-            </ListItemButton>
+              </ListItemButton>
+            </NavLink>
 
-            <ListItemButton>
-              <ListItemIcon>
-                <PersonOutlineOutlinedIcon className="icon" />
-              </ListItemIcon>
-              <NavLink to="all-user" end>
+            <NavLink to="all-user" end>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PersonOutlineOutlinedIcon className="icon" />
+                </ListItemIcon>
                 Customer
-              </NavLink>
-            </ListItemButton>
+              </ListItemButton>
+            </NavLink>
           </List>
         </div>
       </div>

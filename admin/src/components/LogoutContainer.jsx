@@ -161,7 +161,7 @@ const LogoutContainer = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={() => navigate("/profile")}>
+        {/* <MenuItem onClick={() => navigate("/profile")}>
           <Avatar /> Profile
         </MenuItem>
         <Divider />
@@ -176,7 +176,7 @@ const LogoutContainer = () => {
             <FavoriteIcon fontSize="small" />
           </ListItemIcon>
           Wishlist
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={logoutUser}>
           <ListItemIcon>
             <Logout fontSize="small" />

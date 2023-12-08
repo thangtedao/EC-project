@@ -85,7 +85,7 @@ const router = createBrowserRouter([
         loader: allCategoryLoader,
       },
       {
-        path: "edit-category/:id",
+        path: "edit-category/:slug",
         element: <EditCategory />,
         action: editCategoryAction,
         loader: editCategoryLoader,

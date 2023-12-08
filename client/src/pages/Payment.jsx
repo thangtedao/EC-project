@@ -1,14 +1,9 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import Checkbox from "@mui/material/Checkbox";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TextField from "@mui/material/TextField";
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
@@ -215,35 +210,20 @@ const Payment = () => {
           }
         });
     } catch (error) {
-      toast.error(error?.response?.data?.msg, {
-        position: "top-center",
-        autoClose: 5000,
-        pauseOnHover: false,
-        theme: "colored",
-      });
+      toast.error(error?.response?.data?.msg);
     }
   };
 
   const applyCoupon = async () => {
     if (coupon) {
-      toast.success("Đã áp mã giảm giá", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-        theme: "colored",
-      });
+      toast.success("Đã áp mã giảm giá");
       return;
     }
     const fetchCoupon = await customFetch
       .get(`coupon/${couponTextFieldRef.current.value}`)
       .then((response) => response.data.coupon);
     if (!fetchCoupon) {
-      toast.warning("Mã giảm giá không hợp lệ", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-        theme: "colored",
-      });
+      toast.warning("Mã giảm giá không hợp lệ");
     } else {
       setCoupon(fetchCoupon);
       setPaypalButtonKey((prevKey) => prevKey + 1);
@@ -252,12 +232,7 @@ const Payment = () => {
         (totalPrice * fetchCoupon.discount) / 100
       ).toFixed(0);
       setTotalAfterDiscount(totalAfterDiscount);
-      toast.success("Áp mã giảm giá thành công", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-        theme: "colored",
-      });
+      toast.success("Áp mã giảm giá thành công");
     }
   };
 
@@ -310,6 +285,7 @@ const Payment = () => {
         <div>
           <div className="payment-title">PHƯƠNG THỨC THANH TOÁN</div>
           <RadioGroup
+            sx={{ marginLeft: "1rem" }}
             value={paymentMethod}
             onChange={changePaymentMethod}
             name="radio-buttons-group"
@@ -343,8 +319,10 @@ const Payment = () => {
           </div>
           <div className="flex-between">
             <p>Nhận hàng tại:</p>
-            {user?.address &&
-              `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`}
+            <p style={{ width: "70%" }}>
+              {user?.address &&
+                `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`}
+            </p>
           </div>
         </div>
 

@@ -16,10 +16,11 @@ const Wrapper = styled.div`
 
   .swiper-slide {
     text-align: center;
-    font-size: 18px;
     background: #fff;
+    overflow: hidden;
   }
   .swiper-slide img {
+    max-height: 350px;
   }
 `;
 

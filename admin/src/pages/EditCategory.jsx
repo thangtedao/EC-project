@@ -69,13 +69,12 @@ const Wrapper = styled.div`
   }
 `;
 
-export const action = async ({ request, params }) => {
-  const { id } = params;
+export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   if (data.parent === "") delete data.parent;
   try {
-    await customFetch.patch(`/category/update/${id}`, data);
+    await customFetch.patch(`/category/update/${data.id}`, data);
     return redirect("/all-category");
   } catch (error) {
     return error;
@@ -84,12 +83,12 @@ export const action = async ({ request, params }) => {
 
 export const loader = async ({ params }) => {
   try {
-    const { id } = params;
-    if (!id) {
+    const { slug } = params;
+    if (!slug) {
       return redirect("/all-category");
     }
     const category = await customFetch
-      .get(`/category/${id}`)
+      .get(`/category/${slug}`)
       .then(({ data }) => data.category);
     const categories = await customFetch
       .get("/category/get/parent")
@@ -115,16 +114,18 @@ const EditCategory = () => {
 
         <div className="title">Edit Category</div>
         <Form method="post" className="form-add">
+          <input name="id" hidden defaultValue={category?._id} />
           <FormRow type="text" name="name" defaultValue={category?.name} />
           <FormRow type="text" name="slug" defaultValue={category?.slug} />
-          <FormRow
-            type="text"
-            name="description"
-            defaultValue={category?.description}
-          />
+          <div className="form-row">
+            <label htmlFor="description" className="form-label">
+              Description
+            </label>
+            <textarea name="description" defaultValue={category?.description} />
+          </div>
           <FormRowSelect name="parent" list={categories || []} id optional />
           <button type="submit" className="btn" disabled={isSubmitting}>
-            {isSubmitting ? "Adding..." : "Add"}
+            {isSubmitting ? "Editing..." : "Edit"}
           </button>
         </Form>
       </Wrapper>

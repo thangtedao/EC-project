@@ -183,32 +183,87 @@ const ProductReview = ({ product }) => {
             <div className="rating-level">
               <p>5</p>
               <FaStar className="gold" />
-              <progress max="10" value="5"></progress>
-              <span>10 đánh giá</span>
+              <progress
+                max={product.ratings?.length}
+                value={product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 5) return acc + 1;
+                  else return acc;
+                }, 0)}
+              ></progress>
+              <span>
+                {product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 5) return acc + 1;
+                  else return acc;
+                }, 0) + " đánh giá"}
+              </span>
             </div>
             <div className="rating-level">
               <p>4</p>
               <FaStar className="gold" />
-              <progress max="10" value="0"></progress>
-              <span>10 đánh giá</span>
+              <progress
+                max={product.ratings?.length}
+                value={product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 4) return acc + 1;
+                  else return acc;
+                }, 0)}
+              ></progress>
+              <span>
+                {product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 4) return acc + 1;
+                  else return acc;
+                }, 0) + " đánh giá"}
+              </span>
             </div>
             <div className="rating-level">
               <p>3</p>
               <FaStar className="gold" />
-              <progress max="10" value="0"></progress>
-              <span>10 đánh giá</span>
+              <progress
+                max={product.ratings?.length}
+                value={product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 3) return acc + 1;
+                  else return acc;
+                }, 0)}
+              ></progress>
+              <span>
+                {product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 3) return acc + 1;
+                  else return acc;
+                }, 0) + " đánh giá"}
+              </span>
             </div>
             <div className="rating-level">
               <p>2</p>
               <FaStar className="gold" />
-              <progress max="10" value="0"></progress>
-              <span>10 đánh giá</span>
+              <progress
+                max={product.ratings?.length}
+                value={product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 2) return acc + 1;
+                  else return acc;
+                }, 0)}
+              ></progress>
+              <span>
+                {product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 2) return acc + 1;
+                  else return acc;
+                }, 0) + " đánh giá"}
+              </span>
             </div>
             <div className="rating-level">
               <p>1</p>
               <FaStar className="gold" />
-              <progress max="10" value="0"></progress>
-              <span>10 đánh giá</span>
+              <progress
+                max={product.ratings?.length}
+                value={product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 1) return acc + 1;
+                  else return acc;
+                }, 0)}
+              ></progress>
+              <span>
+                {product.ratings?.reduce((acc, item) => {
+                  if (item?.star === 1) return acc + 1;
+                  else return acc;
+                }, 0) + " đánh giá"}
+              </span>
             </div>
           </div>
         </div>

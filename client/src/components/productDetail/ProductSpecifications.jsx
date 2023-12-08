@@ -75,10 +75,10 @@ const ProductSpecifications = ({ product }) => {
             })}
           </ul>
         </div>
-        <button className="button-show-model-technical">
+        {/* <button className="button-show-model-technical">
           Xem cấu hình chi tiết
           <KeyboardArrowDownIcon />
-        </button>
+        </button> */}
       </div>
     </Wrapper>
   );

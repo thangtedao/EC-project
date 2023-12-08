@@ -93,7 +93,7 @@ export const action = async ({ request }) => {
       .get("/user/current-user")
       .then(({ data }) => data.user);
     store.dispatch(login({ user: user }));
-    toast.success("Update successful");
+    toast.success("Cập nhật thành công");
     return null;
   } catch (error) {
     return error;

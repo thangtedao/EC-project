@@ -145,7 +145,11 @@ const AllCategory = () => {
               return (
                 <tr key={category._id}>
                   <td>{category.name}</td>
-                  <td>{category.description}</td>
+                  <td>
+                    {category.description.length > 50
+                      ? category.description.slice(0, 50) + "..."
+                      : category.description}
+                  </td>
                   <td>
                     {count.map((item) => {
                       return (
@@ -158,7 +162,9 @@ const AllCategory = () => {
                   <td>
                     <button
                       className="ed-btn"
-                      onClick={() => navigate(`/edit-category/${category._id}`)}
+                      onClick={() =>
+                        navigate(`/edit-category/${category.slug}`)
+                      }
                     >
                       Edit
                     </button>
