@@ -381,10 +381,22 @@ const EditProduct = () => {
             />
             <FormRowSelect
               name="category1"
+              labelText="Main Category"
               list={categories || []}
-              defaultValue={categories[0].name || "Non"}
+              defaultValue={
+                categories.length > 0
+                  ? categories[0].name
+                  : "Chưa có category nào"
+              }
               onChange={(e) => {
-                setCategoryC(categoryChild[e.target.selectedIndex]);
+                [
+                  setCategoryC(
+                    categoryChild.length > 0
+                      ? categoryChild[e.target.selectedIndex]
+                      : []
+                  ),
+                  setCategoriesC([]),
+                ];
               }}
             />
             {/* <FormRowSelect
@@ -398,14 +410,14 @@ const EditProduct = () => {
                 Category Child
               </div>
               <Select
-                sx={{ height: 44, p: 0 }}
-                className="form-select"
+                name="category2"
+                sx={{ minHeight: 44, p: 0 }}
                 multiple
                 value={categoriesC}
                 onChange={handleChange}
                 input={<OutlinedInput />}
                 renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
                       <Chip key={value} label={value} />
                     ))}
@@ -416,7 +428,7 @@ const EditProduct = () => {
                 {categoryC.map((item) => (
                   <MenuItem
                     key={item._id}
-                    value={item.name || ""}
+                    value={item.slug || ""}
                     style={getStyles(item.name, categoriesC, theme)}
                   >
                     {item.name || ""}

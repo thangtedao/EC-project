@@ -45,7 +45,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    padding-top: 10px;
+    padding: 10px 0;
     overflow: auto;
   }
   .product-card {

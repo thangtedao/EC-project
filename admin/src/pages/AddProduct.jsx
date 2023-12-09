@@ -327,49 +327,29 @@ const AddProduct = () => {
               <label htmlFor="images" className="form-label">
                 {"Image Link"}
               </label>
-              <textarea
-                name="images"
-                // defaultValue="https://vcdn-sohoa.vnecdn.net/2021/01/21/HP-Elite-Folio-Front-Left-Forw-6107-5267-1611217952.jpg"
-                defaultValue=""
-              />
+              <textarea name="images" />
             </div>
             <div className="form-row">
               <label htmlFor="description" className="form-label">
                 Description
               </label>
-              <textarea name="description" defaultValue="" />
+              <textarea name="description" />
             </div>
             <div className="form-row">
               <label htmlFor="specifications" className="form-label">
                 Specifications
               </label>
-              <textarea name="specifications" defaultValue="" />
+              <textarea name="specifications" />
             </div>
           </div>
           <div className="form-col-2">
-            <FormRow
-              type="text"
-              name="name"
-              lableText="Product Name"
-              defaultValue=""
-            />
-            <FormRow
-              type="number"
-              name="price"
-              lableText="Regular Price"
-              defaultValue=""
-            />
-            <FormRow
-              type="number"
-              name="salePrice"
-              lableText="Sale Price"
-              defaultValue=""
-            />
+            <FormRow type="text" name="name" lableText="Product Name" />
+            <FormRow type="number" name="price" lableText="Regular Price" />
+            <FormRow type="number" name="salePrice" lableText="Sale Price" />
             <FormRow
               type="number"
               name="stockQuantity"
               lableText="Quantity in Stock"
-              defaultValue=""
             />
             <FormRowSelect
               name="category1"

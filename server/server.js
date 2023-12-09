@@ -34,6 +34,14 @@ app.use(
     useDefaults: true,
     directives: {
       "img-src": ["'self'", "https: data:"],
+      "connect-src": [
+        "'self'",
+        "https://provinces.open-api.vn",
+        "https://www.paypal.com",
+        "https://www.sandbox.paypal.com",
+      ],
+      "script-src": ["'self'", "https://www.paypal.com"],
+      "frame-src": ["'self'", "https://www.sandbox.paypal.com"],
     },
   })
 );

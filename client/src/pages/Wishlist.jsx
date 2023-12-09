@@ -55,14 +55,14 @@ const Wrapper = styled.div`
     height: 100px;
   }
   .product-info {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     padding: 1rem 0;
+    margin-left: 0.5rem;
     .product-name {
       font-size: 1.1rem;
       font-weight: bold;
-    }
-    .product-description {
-      font-size: 1.05rem;
     }
   }
   .product-price {
@@ -196,8 +196,10 @@ const Wishlist = () => {
                                 {item?.name}
                               </NavLink>
                             </span>
-                            <span className="product-description">
-                              {item?.description}
+                            <span style={{ fontSize: "0.9rem" }}>
+                              {item.description.length > 50
+                                ? item.description.slice(0, 50) + "..."
+                                : item.description}
                             </span>
                           </div>
                         </div>
