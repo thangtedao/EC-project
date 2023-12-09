@@ -68,8 +68,8 @@ export const stripePayment = async (req, res) => {
       customer: customer.id,
       line_items,
       mode: "payment",
-      success_url: "http://localhost:5173/order",
-      cancel_url: "http://localhost:5173/cart",
+      success_url: "https://nova-store-uqza.onrender.com/order",
+      cancel_url: "https://nova-store-uqza.onrender.com/cart",
     });
 
     res.json({ url: session.url });
