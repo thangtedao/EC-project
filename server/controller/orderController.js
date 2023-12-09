@@ -79,9 +79,9 @@ export const stripePayment = async (req, res) => {
   }
 };
 
-let endpointSecret;
-// const endpointSecret =
-//   "whsec_99790e278153b08aeb4d7857f693cca685b854d4c733b686450fb260424bda90";
+// let endpointSecret;
+const endpointSecret =
+  "whsec_99790e278153b08aeb4d7857f693cca685b854d4c733b686450fb260424bda90";
 
 export const stripeWebHook = async (req, response) => {
   const sig = req.headers["stripe-signature"];
@@ -201,12 +201,11 @@ const createOrderByStripe = async (customer, data) => {
       path: "products.product",
       select: ["_id", "name", "salePrice"],
     });
-    order.products.map(async(item)=> {
-      await Product.findByIdAndUpdate(
-        item.product._id,
-        { $inc: { sold: 1, stockQuantity: -1 } },
-      );
-    })
+    order.products.map(async (item) => {
+      await Product.findByIdAndUpdate(item.product._id, {
+        $inc: { sold: 1, stockQuantity: -1 },
+      });
+    });
 
     const user = await User.findById(customer.metadata.userId);
     sendMail(user, order);
@@ -259,12 +258,11 @@ export const createOrder = async (req, res) => {
       path: "products.product",
       select: ["_id", "name", "salePrice"],
     });
-    order.products.map(async(item)=> {
-      await Product.findByIdAndUpdate(
-        item.product._id,
-        { $inc: { sold: 1, stockQuantity: -1 } },
-      );
-    })
+    order.products.map(async (item) => {
+      await Product.findByIdAndUpdate(item.product._id, {
+        $inc: { sold: 1, stockQuantity: -1 },
+      });
+    });
 
     sendMail(user, order);
     res.status(200).json({ msg: "Payment Successful" });
