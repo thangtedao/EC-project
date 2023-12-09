@@ -47,7 +47,7 @@ app.use(
 );
 app.use(cors());
 
-app.use(express.static(path.resolve(__dirname, "../admin/dist")));
+app.use(express.static(path.resolve(__dirname, "../client/dist")));
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
@@ -59,7 +59,7 @@ app.use("/api/color", colorRouter);
 app.use("/api/order", orderRouter);
 
 app.get("/*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../admin/dist", "index.html"));
+  res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
 });
 
 // Not Found Middleware
