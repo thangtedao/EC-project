@@ -66,7 +66,7 @@ export const loader = async () => {
 
     return { categories, categoryChild };
   } catch (error) {
-    toast.error(error?.response?.data?.msg);
+    console.log(error);
     return error;
   }
 };
