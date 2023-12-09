@@ -15,6 +15,10 @@ export default defineConfig({
   },
 });
 
+// export default {
+//   base: "/admin",
+// };
+
 // export default defineConfig({
 //   plugins: [react()],
 //   server: {
