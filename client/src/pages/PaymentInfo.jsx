@@ -507,7 +507,7 @@ const PaymentInfo = () => {
           <div className="bottom-bar">
             <div className="price-temp">
               <p>Tổng tiền tạm tính:</p>
-              {totalPrice}₫
+              {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
             </div>
             <button type="submit" className="btn">
               Tiếp tục

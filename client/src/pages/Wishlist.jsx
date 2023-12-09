@@ -208,11 +208,11 @@ const Wishlist = () => {
                         <div className="product-price">
                           <p>
                             {item?.salePrice
-                              ? item?.salePrice + "₫"
-                              : item?.price + "₫"}
+                              ? item?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"
+                              : item?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
                           </p>
                           <p className="strike">
-                            {item?.salePrice && item?.price + "₫"}
+                            {item?.salePrice && item?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
                           </p>
                         </div>
                       </td>

@@ -272,7 +272,7 @@ const Payment = () => {
           </div>
           <div className="flex-between">
             <p>Tiền hàng (tạm tính)</p>
-            {totalPrice}₫
+            {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
           </div>
           <div className="flex-between">
             <p>Phí vận chuyển</p>
@@ -280,7 +280,7 @@ const Payment = () => {
           </div>
           <div className="flex-between">
             <p>Tổng tiền (đã gồm VAT)</p>
-            {totalAfterDiscount}₫
+            {totalAfterDiscount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
           </div>
         </div>
 

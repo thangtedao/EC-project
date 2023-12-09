@@ -1,6 +1,7 @@
 import { Stripe } from "stripe";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
+import Product from "../models/Product.js";
 import day from "dayjs";
 import { createPayPalOrder } from "../utils/paypal.js";
 import { sendMail } from "../utils/email.js";
@@ -198,8 +199,15 @@ const createOrderByStripe = async (customer, data) => {
 
     const order = await Order.findById(savedOrder._id).populate({
       path: "products.product",
-      select: ["name", "salePrice"],
+      select: ["_id", "name", "salePrice"],
     });
+    order.products.map(async(item)=> {
+      await Product.findByIdAndUpdate(
+        item.product._id,
+        { $inc: { sold: 1, stockQuantity: -1 } },
+      );
+    })
+
     const user = await User.findById(customer.metadata.userId);
     sendMail(user, order);
   } catch (error) {
@@ -249,8 +257,15 @@ export const createOrder = async (req, res) => {
 
     const order = await Order.findById(savedOrder._id).populate({
       path: "products.product",
-      select: ["name", "salePrice"],
+      select: ["_id", "name", "salePrice"],
     });
+    order.products.map(async(item)=> {
+      await Product.findByIdAndUpdate(
+        item.product._id,
+        { $inc: { sold: 1, stockQuantity: -1 } },
+      );
+    })
+
     sendMail(user, order);
     res.status(200).json({ msg: "Payment Successful" });
   } catch (error) {

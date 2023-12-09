@@ -296,8 +296,8 @@ const Product = () => {
             </div> */}
 
             <div className="box-product-price">
-              <p>{product?.salePrice + "₫"}</p>
-              <p className="strike">{product?.price + "₫"}</p>
+              <p>{product?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}</p>
+              <p className="strike">{product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}</p>
             </div>
 
             <div className="btn-buy">

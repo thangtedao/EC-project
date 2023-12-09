@@ -149,9 +149,9 @@ const ProductCard = ({ product }) => {
         </div>
         <div className="product-card-price">
           <p>
-            {product.salePrice ? product.salePrice + "₫" : product.price + "₫"}
+            {product.salePrice ? product.salePrice?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫" : product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
           </p>
-          <p className="strike">{product.salePrice && product.price + "₫"}</p>
+          <p className="strike">{product.salePrice && product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}</p>
           {product.salePrice && (
             <div className="product-price-percent">
               <p>

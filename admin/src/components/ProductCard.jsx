@@ -98,7 +98,7 @@ const ProductCard = ({ product }) => {
             <div className="item-info">
               {"Available: " + product.stockQuantity}
             </div>
-            <div className="item-info">{"Sold: " + product.sold + "₫"}</div>
+            <div className="item-info">{"Sold: " + product.sold}</div>
             <div className="item-info">
               {"Regular price: " + product.price + "₫"}
             </div>
