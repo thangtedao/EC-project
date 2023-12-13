@@ -65,16 +65,17 @@ export const action = async ({ request }) => {
   const data = Object.fromEntries(formData);
   try {
     await customFetch.post("/auth/login", data);
-    toast.success("Login successful", {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
 
     const user = await customFetch
       .get("/user/current-user")
       .then(({ data }) => data.user);
+
+    if (user.isBlocked) {
+      toast.success("Bạn đã bị block");
+      await customFetch.get("/auth/logout");
+      dispatch(logout());
+      return redirect("/login");
+    }
     store.dispatch(login({ user: user }));
 
     const response = await customFetch.get("/user/cart");
@@ -97,6 +98,7 @@ export const action = async ({ request }) => {
       store.dispatch(setCart([]));
     }
 
+    toast.success("Login successful");
     return redirect("/");
   } catch (error) {
     toast.error(error?.response?.data?.msg, {
