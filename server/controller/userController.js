@@ -353,6 +353,7 @@ export const getWishlist = async (req, res) => {
         "description",
         "category",
         "images",
+        "status",
       ],
     });
     res.status(StatusCodes.OK).json({ wishlist });

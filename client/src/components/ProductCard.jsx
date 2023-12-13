@@ -52,7 +52,7 @@ const Wrapper = styled.div`
     color: #d70018;
     display: grid;
     grid-template-columns: auto 1fr;
-    column-gap: 1rem;
+    column-gap: 0.5rem;
     font-weight: bold;
   }
   .strike {
@@ -118,20 +118,16 @@ const ProductCard = ({ product }) => {
   const addToWishlist = async () => {
     if (!user) {
       navigate("/login");
-    }
-    try {
-      await customFetch.patch("/user/wishlist", {
-        productId: product._id,
-      });
-      toast.success("Đã thêm sản phẩm yêu thich", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-        theme: "colored",
-      });
-    } catch (error) {
-      console.log(error);
-      return error;
+    } else {
+      try {
+        await customFetch.patch("/user/wishlist", {
+          productId: product._id,
+        });
+        toast.success("Đã thêm sản phẩm yêu thich");
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
     }
   };
 
@@ -149,9 +145,18 @@ const ProductCard = ({ product }) => {
         </div>
         <div className="product-card-price">
           <p>
-            {product.salePrice ? product.salePrice?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫" : product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+            {product.salePrice
+              ? product.salePrice
+                  ?.toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"
+              : product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+                "₫"}
           </p>
-          <p className="strike">{product.salePrice && product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}</p>
+          <p className="strike">
+            {product.salePrice &&
+              product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+                "₫"}
+          </p>
           {product.salePrice && (
             <div className="product-price-percent">
               <p>

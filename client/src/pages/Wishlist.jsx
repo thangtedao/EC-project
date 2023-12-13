@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import {
   redirect,
   useLoaderData,
@@ -19,6 +20,7 @@ import NovaIcon from "../assets/LogoNova.svg";
 const Wrapper = styled.div`
   padding: 1rem;
   text-align: center;
+  height: fit-content;
 
   .title {
     width: 100%;
@@ -208,21 +210,36 @@ const Wishlist = () => {
                         <div className="product-price">
                           <p>
                             {item?.salePrice
-                              ? item?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"
-                              : item?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                              ? item?.salePrice
+                                  .toString()
+                                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"
+                              : item?.price
+                                  .toString()
+                                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
                           </p>
                           <p className="strike">
-                            {item?.salePrice && item?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                            {item?.salePrice &&
+                              item?.price
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
                           </p>
                         </div>
                       </td>
                       <td>
-                        <AddShoppingCartIcon
-                          sx={{ cursor: "pointer" }}
-                          onClick={() =>
-                            addToCartBtn({ ...item, count: 1 }, user)
-                          }
-                        />
+                        {item.status === PRODUCT_STATUS.AVAILABLE ? (
+                          <AddShoppingCartIcon
+                            sx={{ cursor: "pointer" }}
+                            onClick={() =>
+                              addToCartBtn({ ...item, count: 1 }, user)
+                            }
+                          />
+                        ) : (
+                          <div
+                            style={{ fontWeight: "bold", fontSize: "0.9rem" }}
+                          >
+                            {item.status}
+                          </div>
+                        )}
                       </td>
                       <td>
                         <DeleteIcon

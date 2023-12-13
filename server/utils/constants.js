@@ -13,3 +13,8 @@ export const ORDER_STATUS = {
   DELIVERED: "Đã Giao Hàng",
   CANCELLED: "Đã Hủy",
 };
+export const PRODUCT_STATUS = {
+  AVAILABLE: "Sẵn Hàng",
+  OUT_OF_STOCK: "Hết Hàng",
+  DISCONTINUED: "Ngưng Bán",
+};

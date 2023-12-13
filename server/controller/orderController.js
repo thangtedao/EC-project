@@ -1,4 +1,5 @@
 import { Stripe } from "stripe";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
@@ -201,10 +202,21 @@ const createOrderByStripe = async (customer, data) => {
       path: "products.product",
       select: ["_id", "name", "salePrice"],
     });
+
     order.products.map(async (item) => {
-      await Product.findByIdAndUpdate(item.product._id, {
-        $inc: { sold: 1, stockQuantity: -1 },
-      });
+      const product = await Product.findByIdAndUpdate(
+        item.product._id,
+        {
+          $inc: { sold: 1, stockQuantity: -1 },
+        },
+        { new: true }
+      );
+
+      if (product && product.stockQuantity <= 0) {
+        await Product.findByIdAndUpdate(product._id, {
+          $set: { status: PRODUCT_STATUS.OUT_OF_STOCK },
+        });
+      }
     });
 
     const user = await User.findById(customer.metadata.userId);
@@ -258,10 +270,21 @@ export const createOrder = async (req, res) => {
       path: "products.product",
       select: ["_id", "name", "salePrice"],
     });
+
     order.products.map(async (item) => {
-      await Product.findByIdAndUpdate(item.product._id, {
-        $inc: { sold: 1, stockQuantity: -1 },
-      });
+      const product = await Product.findByIdAndUpdate(
+        item.product._id,
+        {
+          $inc: { sold: 1, stockQuantity: -1 },
+        },
+        { new: true }
+      );
+
+      if (product && product.stockQuantity <= 0) {
+        await Product.findByIdAndUpdate(product._id, {
+          $set: { status: PRODUCT_STATUS.OUT_OF_STOCK },
+        });
+      }
     });
 
     sendMail(user, order);

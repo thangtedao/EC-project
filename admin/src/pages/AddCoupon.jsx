@@ -100,14 +100,14 @@ const AddCoupon = () => {
         <div className="title">Add Coupon</div>
 
         <Form method="post" className="form-add">
-          <FormRow type="text" name="name" defaultValue="" />
-          <FormRow type="text" name="description" defaultValue="" />
+          <FormRow type="text" name="name" />
+          <FormRow type="text" name="description" />
           <FormRow
             type="date"
             name="expiry"
             defaultValue={new Date().toISOString().split("T")[0]}
           />
-          <FormRow type="number" name="discount" defaultValue={99} />
+          <FormRow type="number" name="discount" />
           <button type="submit" className="btn" disabled={isSubmitting}>
             {isSubmitting ? "Adding..." : "Add"}
           </button>

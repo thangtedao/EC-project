@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -351,6 +352,22 @@ const AddProduct = () => {
               name="stockQuantity"
               lableText="Quantity in Stock"
             />
+            <div className="form-row">
+              <label htmlFor="status" className="form-label"></label>
+              <select
+                name="status"
+                className="form-select"
+                defaultValue={PRODUCT_STATUS.AVAILABLE}
+              >
+                {Object.values(PRODUCT_STATUS).map((item) => {
+                  return (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
             <FormRowSelect
               name="category1"
               labelText="Main Category"

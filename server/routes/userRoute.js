@@ -47,7 +47,7 @@ router.patch(
   updateUser
 );
 router.delete("/delete/:id", deleteUser);
-router.patch("/block-user", validateUpdateInput, blockUser);
-router.patch("/unblock-user", validateUpdateInput, unblockUser);
+router.patch("/block-user/:id", blockUser);
+router.patch("/unblock-user/:id", unblockUser);
 
 export default router;

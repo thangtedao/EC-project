@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -190,8 +191,15 @@ const EditProduct = () => {
   const theme = useTheme();
   const isSubmitting = navigation.state === "submitting";
 
-  const [categoryC, setCategoryC] = useState(categoryChild[0]);
-  const [categoriesC, setCategoriesC] = useState([]);
+  const [categoryP, setCategoryP] = useState(product.category[0]);
+  const [categoryC, setCategoryC] = useState(
+    categoryChild[
+      categories.findIndex((item) => item.slug === product.category[0])
+    ]
+  );
+  const [categoriesC, setCategoriesC] = useState(
+    product.category.slice(1) || []
+  );
 
   const handleChange = (event) => {
     const {
@@ -379,17 +387,30 @@ const EditProduct = () => {
               lableText="Quantity in Stock"
               defaultValue={product?.stockQuantity || 0}
             />
+            <div className="form-row">
+              <label htmlFor="status" className="form-label"></label>
+              <select
+                name="status"
+                className="form-select"
+                defaultValue={product?.status || ""}
+              >
+                {Object.values(PRODUCT_STATUS).map((item) => {
+                  return (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
             <FormRowSelect
               name="category1"
               labelText="Main Category"
               list={categories || []}
-              defaultValue={
-                categories.length > 0
-                  ? categories[0].name
-                  : "Chưa có category nào"
-              }
+              defaultValue={categoryP}
               onChange={(e) => {
                 [
+                  setCategoryP(e.target.value),
                   setCategoryC(
                     categoryChild.length > 0
                       ? categoryChild[e.target.selectedIndex]
