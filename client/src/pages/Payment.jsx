@@ -226,6 +226,13 @@ const Payment = () => {
     if (!fetchCoupon) {
       toast.warning("Mã giảm giá không hợp lệ");
     } else {
+      const currentDate = new Date();
+      const expiryDate = new Date(fetchCoupon.expiry);
+
+      if (currentDate > expiryDate) {
+        toast.warning("Mã giảm giá đã hết hạn sử dụng");
+        return;
+      }
       setCoupon(fetchCoupon);
       setPaypalButtonKey((prevKey) => prevKey + 1);
       const totalAfterDiscount = (
@@ -280,7 +287,10 @@ const Payment = () => {
           </div>
           <div className="flex-between">
             <p>Tổng tiền (đã gồm VAT)</p>
-            {totalAfterDiscount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+            {totalAfterDiscount
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+            ₫
           </div>
         </div>
 

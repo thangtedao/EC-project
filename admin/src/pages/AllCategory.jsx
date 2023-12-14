@@ -169,12 +169,12 @@ const AllCategory = () => {
                     </button>
                   </td>
                   <td>
-                    <button
+                    {/* <button
                       className="dl-btn"
                       onClick={() => handleClickOpen(category)}
                     >
                       Delete
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               );
