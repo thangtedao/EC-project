@@ -153,7 +153,7 @@ export const loader = async () => {
     const productsArray = await Promise.all(
       categories.map(async (category) => {
         const products = await customFetch
-          .get(`/product/?category=${category.slug}&limit=20`)
+          .get(`/product/?category=${category.slug}&limit=20&status=available`)
           .then(({ data }) => data.products);
 
         return products;
@@ -216,7 +216,7 @@ const Home = () => {
           <div className="block-hot-sale">
             <div className="block-title">
               <div className="sale-title">FLASH SALE</div>
-              <div className="box-countdown">00:11:22:33</div>
+              {/* <div className="box-countdown">00:11:22:33</div> */}
             </div>
             {saleProducts?.length > 0 && (
               <SlideProduct products={saleProducts} />
@@ -226,15 +226,17 @@ const Home = () => {
           {/* PRODUCTS SALE */}
           {categories.map((category, index) => {
             return (
-              <div key={index} className="product-by-category">
-                <NavLink
-                  to={`/category/${category.slug}`}
-                  className="product-by-category-title"
-                >
-                  {productsArray[index].length > 0 && category.name}
-                </NavLink>
-                <SlideProduct products={productsArray[index] || []} />
-              </div>
+              productsArray[index].length > 0 && (
+                <div key={index} className="product-by-category">
+                  <NavLink
+                    to={`/category/${category.slug}`}
+                    className="product-by-category-title"
+                  >
+                    {productsArray[index].length > 0 && category.name}
+                  </NavLink>
+                  <SlideProduct products={productsArray[index] || []} />
+                </div>
+              )
             );
           })}
         </Wrapper>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -88,7 +88,7 @@ export const loader = async ({ params }) => {
       return redirect("/all-category");
     }
     const category = await customFetch
-      .get(`/category/${slug}`)
+      .get(`/category/${slug}/?populate=parent`)
       .then(({ data }) => data.category);
     const categories = await customFetch
       .get("/category/get/parent")
@@ -103,6 +103,8 @@ const EditCategory = () => {
   const { category, categories } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+
+  const [categoryP, setCategoryP] = useState(category?.parent?._id || "");
 
   return (
     <HelmetProvider>
@@ -123,7 +125,14 @@ const EditCategory = () => {
             </label>
             <textarea name="description" defaultValue={category?.description} />
           </div>
-          <FormRowSelect name="parent" list={categories || []} id optional />
+          <FormRowSelect
+            name="parent"
+            defaultValue={categoryP}
+            onChange={(e) => setCategoryP[e.target.value]}
+            list={categories || []}
+            id
+            optional
+          />
           <button type="submit" className="btn" disabled={isSubmitting}>
             {isSubmitting ? "Editing..." : "Edit"}
           </button>

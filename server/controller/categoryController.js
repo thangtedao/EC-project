@@ -48,6 +48,7 @@ export const getAllCategory = async (req, res) => {
 
     res.status(200).json({ categories, itemsPerCate });
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };
@@ -55,7 +56,20 @@ export const getAllCategory = async (req, res) => {
 export const getSingleCategory = async (req, res) => {
   try {
     const { slug } = req.params;
-    const category = await Category.findOne({ slug: slug });
+    const queryObj = { ...req.query };
+
+    const excludeFields = ["page", "sort", "limit", "fields", "populate"];
+    excludeFields.forEach((el) => delete queryObj[el]);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    let query = Category.findOne({ slug: slug });
+
+    if (req.query.populate && req.query.populate === "parent") {
+      query = query.populate("parent");
+    }
+
+    const category = await query;
+
     res.status(200).json({ category });
   } catch (error) {
     res.status(409).json({ msg: error.message });
@@ -70,6 +84,7 @@ export const updateCategory = async (req, res) => {
     });
     res.status(200).json({ updatedCategory });
   } catch (error) {
+    console.log(error);
     res.status(409).json({ msg: error.message });
   }
 };

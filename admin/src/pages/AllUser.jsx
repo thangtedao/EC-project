@@ -134,9 +134,15 @@ const AllUser = () => {
     setUser(null);
   };
 
-  const deleteUser = async (id) => {
-    await customFetch.delete(`/user/delete/${id}`);
-    console.log("deleted");
+  const blockUser = async (id) => {
+    await customFetch.patch(`/user/block-user/${id}`);
+    console.log("blocked");
+    navigate("/all-user");
+  };
+
+  const unBlockUser = async (id) => {
+    await customFetch.patch(`/user/unblock-user/${id}`);
+    console.log("unblocked");
     navigate("/all-user");
   };
 
@@ -193,12 +199,21 @@ const AllUser = () => {
                     </button>
                   </td>
                   <td>
-                    <button
-                      className="dl-btn"
-                      onClick={() => handleClickOpen(user)}
-                    >
-                      Delete
-                    </button>
+                    {user.isBlocked ? (
+                      <button
+                        className="dl-btn"
+                        onClick={() => handleClickOpen(user)}
+                      >
+                        UnBlock
+                      </button>
+                    ) : (
+                      <button
+                        className="dl-btn"
+                        onClick={() => handleClickOpen(user)}
+                      >
+                        Block
+                      </button>
+                    )}
                   </td>
                 </tr>
               );
@@ -213,17 +228,26 @@ const AllUser = () => {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            {"Chắc là xóa chưa?"}
+            {user && user.isBlocked ? "Ublock User?" : "Block User?"}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description"></DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Không xóa</Button>
-            <Button onClick={() => deleteUser(user._id)} autoFocus>
-              Ừ xóa
-            </Button>
-          </DialogActions>
+          {user && user.isBlocked ? (
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={() => unBlockUser(user._id)} autoFocus>
+                UnBlock
+              </Button>
+            </DialogActions>
+          ) : (
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={() => blockUser(user._id)} autoFocus>
+                Block
+              </Button>
+            </DialogActions>
+          )}
         </Dialog>
       </Wrapper>
     </HelmetProvider>

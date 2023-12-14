@@ -101,11 +101,15 @@ export const createProduct = async (req, res) => {
 export const getAllProduct = async (req, res) => {
   try {
     const queryObj = { ...req.query };
-    const excludeFields = ["page", "sort", "limit", "fields"];
+    const excludeFields = ["page", "sort", "limit", "fields", "status"];
     excludeFields.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     let query = Product.find(JSON.parse(queryStr));
+
+    if (req.query.status === "available") {
+      query.where("status").equals("Sẵn Hàng");
+    }
 
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
@@ -134,6 +138,10 @@ export const getProductByCategory = async (req, res) => {
         query = Product.find({
           category: { $all: [req.query.category, req.query.parent] },
         });
+      }
+
+      if (req.query.status === "available") {
+        query.where("status").equals("Sẵn Hàng");
       }
 
       if (req.query.sort) {

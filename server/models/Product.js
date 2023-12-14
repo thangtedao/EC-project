@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { timeStamp } from "../utils/timezone.js";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 
 const productSchema = mongoose.Schema({
   name: {
@@ -42,6 +43,11 @@ const productSchema = mongoose.Schema({
   types: {
     type: Array,
     default: [],
+  },
+  status: {
+    type: String,
+    enum: Object.values(PRODUCT_STATUS),
+    default: PRODUCT_STATUS.AVAILABLE,
   },
   specifications: {
     type: String,

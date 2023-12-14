@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
-import { Outlet, useLoaderData, useNavigation } from "react-router-dom";
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useNavigation,
+} from "react-router-dom";
 import { Footer, Header, Loading } from "../components";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
@@ -27,6 +32,10 @@ export const loader = async () => {
       const user = await customFetch
         .get("/user/current-user")
         .then(({ data }) => data.user);
+      if (user.isBlocked) {
+        toast.success("Bạn đã bị block");
+        return redirect("/login");
+      }
       store.dispatch(login({ user: user }));
 
       const response = await customFetch.get("/user/cart");
@@ -66,7 +75,7 @@ export const loader = async () => {
 
     return { categories, categoryChild };
   } catch (error) {
-    toast.error(error?.response?.data?.msg);
+    console.log(error);
     return error;
   }
 };

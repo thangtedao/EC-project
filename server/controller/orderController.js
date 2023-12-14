@@ -1,6 +1,8 @@
 import { Stripe } from "stripe";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
+import Product from "../models/Product.js";
 import day from "dayjs";
 import { createPayPalOrder } from "../utils/paypal.js";
 import { sendMail } from "../utils/email.js";
@@ -67,8 +69,8 @@ export const stripePayment = async (req, res) => {
       customer: customer.id,
       line_items,
       mode: "payment",
-      success_url: "http://localhost:5173/order",
-      cancel_url: "http://localhost:5173/cart",
+      success_url: "https://nova-store-uqza.onrender.com/order",
+      cancel_url: "https://nova-store-uqza.onrender.com/cart",
     });
 
     res.json({ url: session.url });
@@ -78,9 +80,9 @@ export const stripePayment = async (req, res) => {
   }
 };
 
-let endpointSecret;
-// const endpointSecret =
-//   "whsec_99790e278153b08aeb4d7857f693cca685b854d4c733b686450fb260424bda90";
+// let endpointSecret;
+const endpointSecret =
+  "whsec_99790e278153b08aeb4d7857f693cca685b854d4c733b686450fb260424bda90";
 
 export const stripeWebHook = async (req, response) => {
   const sig = req.headers["stripe-signature"];
@@ -198,8 +200,25 @@ const createOrderByStripe = async (customer, data) => {
 
     const order = await Order.findById(savedOrder._id).populate({
       path: "products.product",
-      select: ["name", "salePrice"],
+      select: ["_id", "name", "salePrice"],
     });
+
+    order.products.map(async (item) => {
+      const product = await Product.findByIdAndUpdate(
+        item.product._id,
+        {
+          $inc: { sold: 1, stockQuantity: -1 },
+        },
+        { new: true }
+      );
+
+      if (product && product.stockQuantity <= 0) {
+        await Product.findByIdAndUpdate(product._id, {
+          $set: { status: PRODUCT_STATUS.OUT_OF_STOCK },
+        });
+      }
+    });
+
     const user = await User.findById(customer.metadata.userId);
     sendMail(user, order);
   } catch (error) {
@@ -249,8 +268,25 @@ export const createOrder = async (req, res) => {
 
     const order = await Order.findById(savedOrder._id).populate({
       path: "products.product",
-      select: ["name", "salePrice"],
+      select: ["_id", "name", "salePrice"],
     });
+
+    order.products.map(async (item) => {
+      const product = await Product.findByIdAndUpdate(
+        item.product._id,
+        {
+          $inc: { sold: 1, stockQuantity: -1 },
+        },
+        { new: true }
+      );
+
+      if (product && product.stockQuantity <= 0) {
+        await Product.findByIdAndUpdate(product._id, {
+          $set: { status: PRODUCT_STATUS.OUT_OF_STOCK },
+        });
+      }
+    });
+
     sendMail(user, order);
     res.status(200).json({ msg: "Payment Successful" });
   } catch (error) {

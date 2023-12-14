@@ -8,6 +8,7 @@ const Wrapper = styled.div`
   width: 100%;
 
   .product-card-container {
+    position: relative;
     width: 100%;
     height: 380px;
     background-color: var(--background-secondary-color);
@@ -20,6 +21,14 @@ const Wrapper = styled.div`
     padding: 1rem;
     gap: 1rem;
   }
+
+  .edit-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
+
   .product-card-image {
     height: 120px;
     display: grid;
@@ -88,6 +97,10 @@ const ProductCard = ({ product }) => {
             height: "85%",
           }}
         >
+          <MdModeEditOutline
+            className="edit-btn"
+            onClick={() => navigate(`/edit-product/${product.slug}`)}
+          />
           <div className="product-card-image">
             <img src={product.images[0]} alt={product.name} />
           </div>
@@ -95,10 +108,11 @@ const ProductCard = ({ product }) => {
             <p> {product.name}</p>
           </div>
           <div className="product-card-info">
+            <div className="item-info">{"Status: " + product.status}</div>
             <div className="item-info">
               {"Available: " + product.stockQuantity}
             </div>
-            <div className="item-info">{"Sold: " + product.sold + "₫"}</div>
+            <div className="item-info">{"Sold: " + product.sold}</div>
             <div className="item-info">
               {"Regular price: " + product.price + "₫"}
             </div>
@@ -108,15 +122,15 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
         <div className="btn-action">
-          <button
+          {/* <button
             className="ed-btn"
             onClick={() => navigate(`/edit-product/${product.slug}`)}
           >
             <MdModeEditOutline /> Edit
-          </button>
-          <button className="dl-btn" onClick={() => handleClickOpen(product)}>
+          </button> */}
+          {/* <button className="dl-btn" onClick={() => handleClickOpen(product)}>
             Delete
-          </button>
+          </button> */}
         </div>
       </div>
     </Wrapper>

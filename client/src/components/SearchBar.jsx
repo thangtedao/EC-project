@@ -45,7 +45,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    padding-top: 10px;
+    padding: 10px 0;
     overflow: auto;
   }
   .product-card {
@@ -140,8 +140,8 @@ const SearchBar = () => {
                 <div className="product-card-info">
                   <div className="name">{product?.name}</div>
                   <div className="price">
-                    {product?.price + "₫"}
-                    <div className="strike">{product?.salePrice + "₫"}</div>
+                    {product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                    <div className="strike">{product?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}</div>
                   </div>
                 </div>
               </NavLink>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -327,50 +328,46 @@ const AddProduct = () => {
               <label htmlFor="images" className="form-label">
                 {"Image Link"}
               </label>
-              <textarea
-                name="images"
-                // defaultValue="https://vcdn-sohoa.vnecdn.net/2021/01/21/HP-Elite-Folio-Front-Left-Forw-6107-5267-1611217952.jpg"
-                defaultValue=""
-              />
+              <textarea name="images" />
             </div>
             <div className="form-row">
               <label htmlFor="description" className="form-label">
                 Description
               </label>
-              <textarea name="description" defaultValue="" />
+              <textarea name="description" />
             </div>
             <div className="form-row">
               <label htmlFor="specifications" className="form-label">
                 Specifications
               </label>
-              <textarea name="specifications" defaultValue="" />
+              <textarea name="specifications" />
             </div>
           </div>
           <div className="form-col-2">
-            <FormRow
-              type="text"
-              name="name"
-              lableText="Product Name"
-              defaultValue=""
-            />
-            <FormRow
-              type="number"
-              name="price"
-              lableText="Regular Price"
-              defaultValue=""
-            />
-            <FormRow
-              type="number"
-              name="salePrice"
-              lableText="Sale Price"
-              defaultValue=""
-            />
+            <FormRow type="text" name="name" lableText="Product Name" />
+            <FormRow type="number" name="price" lableText="Regular Price" />
+            <FormRow type="number" name="salePrice" lableText="Sale Price" />
             <FormRow
               type="number"
               name="stockQuantity"
               lableText="Quantity in Stock"
-              defaultValue=""
             />
+            <div className="form-row">
+              <label htmlFor="status" className="form-label"></label>
+              <select
+                name="status"
+                className="form-select"
+                defaultValue={PRODUCT_STATUS.AVAILABLE}
+              >
+                {Object.values(PRODUCT_STATUS).map((item) => {
+                  return (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
             <FormRowSelect
               name="category1"
               labelText="Main Category"

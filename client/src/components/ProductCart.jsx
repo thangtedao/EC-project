@@ -44,8 +44,8 @@ const ProductCart = ({ product, isPayment }) => {
           </div>
           <div className="product-info-price">
             <div className="main-price">
-              <span>{product?.salePrice}₫</span>
-              <span className="strike">{product?.price}₫</span>
+              <span>{product?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫</span>
+              <span className="strike">{product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫</span>
             </div>
             {!isPayment ? (
               <div className="product-count">

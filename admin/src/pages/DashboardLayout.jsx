@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState } from "react";
 import {
   Outlet,
+  redirect,
   useLoaderData,
   useNavigate,
   useNavigation,
 } from "react-router-dom";
 import styled from "styled-components";
 import customFetch from "../utils/customFetch";
+import { store } from "../state/store.js";
 import { useSelector } from "react-redux";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -29,6 +31,19 @@ const Wrapper = styled.section`
 
 export const loader = async () => {
   try {
+    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+
+    if (user !== "null") {
+      const user = await customFetch
+        .get("/user/current-user")
+        .then(({ data }) => data.user);
+      if (user.role !== "admin") {
+        await customFetch.get("/auth/logout");
+        dispatch(logout());
+        return redirect("/login");
+      }
+    }
+
     return null;
   } catch (error) {
     return error;

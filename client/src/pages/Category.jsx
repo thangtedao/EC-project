@@ -167,11 +167,11 @@ export const loader = async ({ params }) => {
   try {
     const { slug1, slug2 } = params;
 
-    let endpoint = `/product/category?category=${slug1}&page=1&limit=10`;
+    let endpoint = `/product/category?category=${slug1}&page=1&limit=10&status=available`;
     let endpointC = `/category/${slug1}`;
 
     if (slug2) {
-      endpoint = `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10`;
+      endpoint = `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&status=available`;
       endpointC = `/category/${slug2}`;
     }
 
@@ -181,7 +181,9 @@ export const loader = async ({ params }) => {
     const response = await customFetch.get(endpoint);
 
     const productsMostView = await customFetch
-      .get(`/product/category?category=${slug1}&sort=-viewed&limit=10`)
+      .get(
+        `/product/category?category=${slug1}&sort=-viewed&limit=10&status=available`
+      )
       .then(({ data }) => data.products);
 
     window.scrollTo(0, 0);
@@ -200,9 +202,9 @@ const Category = () => {
 
   let firstUrl;
   if (slug2) {
-    firstUrl = `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10`;
+    firstUrl = `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available`;
   } else {
-    firstUrl = `/product/category?category=${slug1}&page=${page}&limit=10`;
+    firstUrl = `/product/category?category=${slug1}&page=${page}&limit=10&status=available`;
   }
 
   const [url, setUrl] = useState(firstUrl);
@@ -231,13 +233,13 @@ const Category = () => {
       setHtl(false);
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=salePrice`
-          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available&sort=salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available&sort=salePrice`
       );
 
       let endpoint = slug2
-        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&sort=salePrice`
-        : `/product/category?category=${slug1}&page=1&limit=10&sort=salePrice`;
+        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&status=available&sort=salePrice`
+        : `/product/category?category=${slug1}&page=1&limit=10&status=available&sort=salePrice`;
       const response = await customFetch.get(endpoint);
       setProducts(response.data.products);
     } catch (error) {
@@ -256,13 +258,13 @@ const Category = () => {
       setHtl(true);
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-salePrice`
-          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available&sort=-salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available&sort=-salePrice`
       );
 
       let endpoint = slug2
-        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&sort=-salePrice`
-        : `/product/category?category=${slug1}&page=1&limit=10&sort=-salePrice`;
+        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&status=available&sort=-salePrice`
+        : `/product/category?category=${slug1}&page=1&limit=10&status=available&sort=-salePrice`;
       const response = await customFetch.get(endpoint);
       setProducts(response.data.products);
     } catch (error) {
@@ -281,13 +283,13 @@ const Category = () => {
       setHtl(false);
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-viewed`
-          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available&sort=-viewed`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available&sort=-viewed`
       );
 
       let endpoint = slug2
-        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&sort=-viewed`
-        : `/product/category?category=${slug1}&page=1&limit=10&sort=-viewed`;
+        ? `/product/category?category=${slug2}&parent=${slug1}&page=1&limit=10&status=available&sort=-viewed`
+        : `/product/category?category=${slug1}&page=1&limit=10&status=available&sort=-viewed`;
       const response = await customFetch.get(endpoint);
       setProducts(response.data.products);
     } catch (error) {
@@ -302,26 +304,26 @@ const Category = () => {
     if (htl) {
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-salePrice`
-          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-salePrice`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available&sort=-salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available&sort=-salePrice`
       );
     } else if (lth) {
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-salePrice`
-          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=salePrice`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available&sort=-salePrice`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available&sort=salePrice`
       );
     } else if (mv) {
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&sort=-viewed`
-          : `/product/category?category=${slug1}&page=${page}&limit=10&sort=-viewed`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available&sort=-viewed`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available&sort=-viewed`
       );
     } else {
       setUrl(
         slug2
-          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10`
-          : `/product/category?category=${slug1}&page=${page}&limit=10`
+          ? `/product/category?category=${slug2}&parent=${slug1}&page=${page}&limit=10&status=available`
+          : `/product/category?category=${slug1}&page=${page}&limit=10&status=available`
       );
     }
   }, [page]);

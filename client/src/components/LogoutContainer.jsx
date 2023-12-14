@@ -68,12 +68,7 @@ const LogoutContainer = () => {
 
   const logoutUser = async () => {
     await customFetch.get("/auth/logout");
-    toast.success("Logged out", {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
+    toast.success("Logged out");
     dispatch(logout());
     dispatch(deleteCart());
     navigate("/");

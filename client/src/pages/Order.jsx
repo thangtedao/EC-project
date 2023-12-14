@@ -56,9 +56,8 @@ const Wrapper = styled.div`
   .product-image {
     text-align: center;
     width: 20%;
-    height: inherit;
     img {
-      height: inherit;
+      height: 110px;
     }
   }
   .product-info {

@@ -1,4 +1,5 @@
 import React from "react";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import styled from "styled-components";
 import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
@@ -226,7 +227,7 @@ export const loader = async ({ params }) => {
     const { slug } = params;
     const product = await customFetch
       .get(
-        `/product/${slug}?fields=_id,name,price,salePrice,description,slug,category,images,specifications,review,ratings,totalRating&populate=ratings.postedby`
+        `/product/${slug}?fields=_id,name,price,salePrice,status,description,slug,category,images,specifications,review,ratings,totalRating&populate=ratings.postedby`
       )
       .then(({ data }) => data.product);
 
@@ -281,46 +282,68 @@ const Product = () => {
             </div> */}
           </div>
 
-          <div className="top-container-column-2">
-            <div className="box-product-variants">
-              {product?.types?.map((type) => {
-                return <ProductType text={type} />;
-              })}
+          {product.status !== PRODUCT_STATUS.AVAILABLE ? (
+            <div className="top-container-column-2">
+              {product.status === PRODUCT_STATUS.OUT_OF_STOCK ? (
+                <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+                  SẢN PHẨM TẠM HẾT HÀNG
+                </div>
+              ) : (
+                <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+                  SẢN PHẨM NGỪNG KINH DOANH
+                </div>
+              )}
             </div>
+          ) : (
+            <div className="top-container-column-2">
+              <div className="box-product-variants">
+                {product?.types?.map((type) => {
+                  return <ProductType text={type} />;
+                })}
+              </div>
 
-            {/* <p>Chọn màu</p>
+              {/* <p>Chọn màu</p>
             <div className="box-product-variants">
               {product?.colors?.map((color) => {
                 return <ProductType text={color} />;
               })}
             </div> */}
 
-            <div className="box-product-price">
-              <p>{product?.salePrice + "₫"}</p>
-              <p className="strike">{product?.price + "₫"}</p>
-            </div>
+              <div className="box-product-price">
+                <p>
+                  {product?.salePrice
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                </p>
+                <p className="strike">
+                  {product?.price
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                </p>
+              </div>
 
-            <div className="btn-buy">
-              <button
-                className="btn-buynow"
-                onClick={() => [
-                  debouncedAddToCartBtn({ ...product, count: 1 }, user),
-                  navigate("/cart"),
-                ]}
-              >
-                Mua ngay
-              </button>
-              <button
-                className="btn-addtocart"
-                onClick={() => [
-                  debouncedAddToCartBtn({ ...product, count: 1 }, user),
-                ]}
-              >
-                <AddShoppingCartIcon />
-                <p>Thêm vào giỏ</p>
-              </button>
+              <div className="btn-buy">
+                <button
+                  className="btn-buynow"
+                  onClick={() => [
+                    debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                    navigate("/cart"),
+                  ]}
+                >
+                  Mua ngay
+                </button>
+                <button
+                  className="btn-addtocart"
+                  onClick={() => [
+                    debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                  ]}
+                >
+                  <AddShoppingCartIcon />
+                  <p>Thêm vào giỏ</p>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* MID */}
