@@ -110,6 +110,14 @@ export const getAllProduct = async (req, res) => {
 
     if (req.query.status === "available") {
       query.where("status").equals("Sẵn Hàng");
+    } else if (req.query.status === "outOfStock") {
+      query.where("status").equals("Hết Hàng");
+    } else if (req.query.status === "discontinued") {
+      query.where("status").equals("Ngưng Bán");
+    } else if (req.query.status === "most-buy") {
+      query = query.sort({ sold: -1 });
+    } else if (req.query.status === "less-buy") {
+      query = query.sort({ sold: 1 });
     }
 
     if (req.query.sort) {

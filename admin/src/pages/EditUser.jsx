@@ -142,8 +142,10 @@ const EditUser = () => {
                 <span style={{ color: "#6c757d", fontSize: "0.9rem" }}>
                   {orders &&
                     orders.length &&
-                    orders.reduce((acc, item) => acc + item.totalPrice, 0) +
-                      "₫"}
+                    orders
+                      .reduce((acc, item) => acc + item.totalPrice, 0)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
                 </span>
               </div>
               <div className="flex-column">
@@ -187,7 +189,12 @@ const EditUser = () => {
                           0
                         ) + " sp"}
                       </div>
-                      <div>{order.totalPrice.toFixed(0) + "₫"}</div>
+                      <div>
+                        {order.totalPrice
+                          .toFixed(0)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                      </div>
                     </div>
                   );
                 })}

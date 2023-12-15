@@ -5,7 +5,8 @@ import styled from "styled-components";
 import { ProductCard } from "../components";
 import { createContext } from "react";
 import { useContext } from "react";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate, useLoaderData, Form } from "react-router-dom";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -16,35 +17,92 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 const Wrapper = styled.div`
   width: 100%;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  padding: 1rem;
 
-  @media (max-width: 1550px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  .filter-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
   }
-  @media (max-width: 1385px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  .product-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+
+    @media (max-width: 1550px) {
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    }
+    @media (max-width: 1385px) {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    @media (max-width: 975px) {
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 800px) {
+      grid-template-columns: 1fr 1fr;
+    }
   }
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr 1fr 1fr;
+
+  .form-filter {
+    width: fit-content;
+    display: flex;
+    gap: 0.3rem;
+
+    .form-filter-label {
+      display: grid;
+      place-items: center;
+      height: 30px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #00193b;
+    }
+    .form-filter-select {
+      height: 30px;
+      border: 1px solid #e2e1e1;
+      border-radius: 8px;
+    }
   }
-  @media (max-width: 975px) {
-    grid-template-columns: 1fr 1fr;
-  }
-  @media (max-width: 800px) {
-    grid-template-columns: 1fr 1fr;
+
+  .btn {
+    width: 75px;
+    height: 28px;
+    border-radius: 10px;
+    background-color: #035ecf;
+    color: white;
+    font-weight: bolder;
   }
 `;
 
-export const loader = async () => {
+export const loader = async ({ request }) => {
   try {
+    console.log(request.url);
+    const params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
+    if (params && params.category === "all") {
+      delete params.category;
+    }
+    console.log(params);
+
     const products = await customFetch
-      .get(`/product`)
+      .get(`/product`, { params })
       .then(({ data }) => data.products);
-    return products;
+
+    const categories = await customFetch
+      .get("/category/get/parent")
+      .then(({ data }) => data.categories);
+
+    return { products, categories, searchParams: { ...params } };
   } catch (error) {
     return error;
   }
@@ -53,7 +111,8 @@ export const loader = async () => {
 const AllProductContext = createContext();
 
 const AllProduct = () => {
-  const products = useLoaderData();
+  const { products, categories, searchParams } = useLoaderData();
+  const { category, status } = searchParams;
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -83,9 +142,55 @@ const AllProduct = () => {
             <meta charSet="utf-8" />
             <title>All Product</title>
           </Helmet>
-          {products.map((product) => {
-            return <ProductCard key={product._id} product={product} />;
-          })}
+
+          <Form className="filter-bar">
+            <div className="form-filter">
+              <label htmlFor="category" className="form-filter-label">
+                Category
+              </label>
+              <select
+                name="category"
+                className="form-filter-select"
+                defaultValue={category || "all"}
+              >
+                <option value="all">All</option>
+                {categories.map((item) => {
+                  return (
+                    <option key={item._id} value={item.slug}>
+                      {item.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div className="form-filter">
+              <label htmlFor="status" className="form-filter-label">
+                Status
+              </label>
+              <select
+                name="status"
+                className="form-filter-select"
+                defaultValue={status || "all"}
+              >
+                <option value="all">All</option>
+                <option value="available">Sẵn Hàng</option>
+                <option value="outOfStock">Hết Hàng</option>
+                <option value="discontinued">Ngưng Bán</option>
+                <option value="most-buy">Mua Nhiều Nhất</option>
+                <option value="less-buy">Ế Nhất</option>
+              </select>
+            </div>
+            <button type="submit" className="btn">
+              Apply
+            </button>
+          </Form>
+
+          <div className="product-grid">
+            {products.map((product) => {
+              return <ProductCard key={product._id} product={product} />;
+            })}
+          </div>
 
           <Dialog
             open={open}

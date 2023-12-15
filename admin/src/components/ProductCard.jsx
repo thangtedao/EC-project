@@ -114,10 +114,16 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="item-info">{"Sold: " + product.sold}</div>
             <div className="item-info">
-              {"Regular price: " + product.price + "₫"}
+              {"Regular price: " +
+                product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+                "₫"}
             </div>
             <div className="item-info">
-              {"Sale price: " + product.salePrice + "₫"}
+              {"Sale price: " +
+                product.salePrice
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+                "₫"}
             </div>
           </div>
         </div>
