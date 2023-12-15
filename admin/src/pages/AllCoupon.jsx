@@ -155,12 +155,12 @@ const AllCoupon = () => {
                     </button>
                   </td>
                   <td>
-                    <button
+                    {/* <button
                       className="dl-btn"
                       onClick={() => handleClickOpen(coupon)}
                     >
                       Delete
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               );

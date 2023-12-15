@@ -147,7 +147,7 @@ export const loader = async () => {
       .then(({ data }) => data.categories);
 
     const saleProducts = await customFetch
-      .get("/product/?sort=createdAt&limit=6")
+      .get("/product/?sort=createdAt&limit=6&status=available")
       .then(({ data }) => data.products);
 
     const productsArray = await Promise.all(
