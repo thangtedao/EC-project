@@ -267,7 +267,6 @@ const Payment = () => {
               placeholder="Nhập mã giảm giá (chỉ áp dụng 1 lần)"
               sx={{ width: "85%" }}
               inputRef={couponTextFieldRef}
-              defaultValue={"sale"}
             />
             <button className="btn-apply" onClick={applyCoupon}>
               Áp dụng

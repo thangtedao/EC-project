@@ -159,6 +159,7 @@ const createOrderByStripe = async (customer, data) => {
     const products = cart.map((product) => {
       return {
         product: product.id,
+        price: product.salePrice,
         count: product.count,
       };
     });
@@ -179,7 +180,11 @@ const createOrderByStripe = async (customer, data) => {
         orderBy: customer.metadata.userId,
         products: products,
         totalPrice: totalPrice,
-        coupon: coupon.id,
+        coupon: {
+          couponId: coupon.id,
+          name: coupon.name,
+          discount: coupon.discount,
+        },
         paymentIntent: data.payment_intent,
       });
     } else {
@@ -233,6 +238,7 @@ export const createOrder = async (req, res) => {
     const products = cart.map((product) => {
       return {
         product: product.product._id,
+        price: product.product.salePrice,
         count: product.count,
       };
     });
@@ -253,7 +259,11 @@ export const createOrder = async (req, res) => {
         orderBy: user._id,
         products: products,
         totalPrice: totalPrice,
-        coupon: coupon._id,
+        coupon: {
+          couponId: coupon.id,
+          name: coupon.name,
+          discount: coupon.discount,
+        },
       });
     } else {
       newOrder = new Order({
@@ -337,11 +347,12 @@ export const getAllOrder = async (req, res) => {
       select: ["fullName"],
     });
 
-    const page = req.query.page;
-    const limit = req.query.limit;
-    const skip = (page - 1) * limit;
-    query = query.skip(skip).limit(limit);
     if (req.query.page) {
+      const page = req.query.page;
+      const limit = req.query.limit;
+      const skip = (page - 1) * limit;
+      query = query.skip(skip).limit(limit);
+
       const orderCount = await Order.countDocuments();
       if (skip >= orderCount)
         throw new NotFoundError(`This page does not exists`);
@@ -360,22 +371,11 @@ export const getSingleOrder = async (req, res) => {
     const order = await Order.findOne({ _id: orderId }).populate([
       {
         path: "products.product",
-        select: [
-          "name",
-          "price",
-          "salePrice",
-          "description",
-          "category",
-          "images",
-        ],
+        select: ["name", "images"],
       },
       {
         path: "orderBy",
         select: ["fullName", "email", "phone", "avatar", "address"],
-      },
-      {
-        path: "coupon",
-        select: ["name", "description", "expiry", "discount"],
       },
     ]);
     res.status(200).json({ order });

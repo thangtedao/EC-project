@@ -1,6 +1,7 @@
 import Product from "../models/Product.js";
 import slugify from "slugify";
 import { NotFoundError } from "../errors/customErrors.js";
+import { timeStamp } from "../utils/timezone.js";
 import { formatImage } from "../middleware/uploadImages.js";
 import {
   cloudinaryDeleteImage,
@@ -281,7 +282,11 @@ export const rating = async (req, res) => {
           ratings: { $elemMatch: alreadyRated },
         },
         {
-          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
+          $set: {
+            "ratings.$.star": star,
+            "ratings.$.comment": comment,
+            "ratings.$.createdAt": timeStamp(),
+          },
         },
         { new: true }
       );

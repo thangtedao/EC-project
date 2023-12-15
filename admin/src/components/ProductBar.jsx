@@ -89,8 +89,13 @@ const ProductBar = ({ product }) => {
           <div className="product-info-name">{product?.name}</div>
           <div className="product-info-price">
             <div className="main-price">
-              <span>{product?.salePrice}đ</span>
-              <span className="strike">{product?.price}đ</span>
+              <span>
+                {product?.price
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                đ
+              </span>
+              {/* <span className="strike">{product?.price}đ</span> */}
             </div>
             <p>Số lượng: {product?.count}</p>
           </div>

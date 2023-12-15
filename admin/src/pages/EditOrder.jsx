@@ -184,7 +184,9 @@ const EditOrder = () => {
             </div>
             <div className="flex">
               <div className="bold">Tổng tiền:</div>
-              {order.totalPrice + "đ"}
+              {order.totalPrice
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
             </div>
             {order.coupon && (
               <div
@@ -202,7 +204,7 @@ const EditOrder = () => {
                   <div className="bold">Mã giảm:</div>
                   {order.products.reduce(
                     (accumulator, item) =>
-                      accumulator + item.product.salePrice * item.count,
+                      accumulator + item.price * item.count,
                     0
                   ) -
                     order.totalPrice +
@@ -217,7 +219,11 @@ const EditOrder = () => {
                 return (
                   <ProductBar
                     key={item._id}
-                    product={{ ...item.product, count: item.count }}
+                    product={{
+                      ...item.product,
+                      count: item.count,
+                      price: item.price,
+                    }}
                   />
                 );
               })}

@@ -5,10 +5,16 @@ const OrderCard = ({ order }) => {
     <div className="order-container">
       <div className="order-title">
         <div>
-          Order <span className="normal-text">#{order._id.slice(18)}</span>
+          Đơn Hàng <span className="normal-text">#{order._id.slice(18)}</span>
         </div>
         <div>
-          Order Status: <span className="normal-text">{order.orderStatus}</span>
+          Tổng tiền{" "}
+          <span className="normal-text">
+            {order.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+          </span>
+        </div>
+        <div>
+          Trạng thái: <span className="normal-text">{order.orderStatus}</span>
         </div>
       </div>
 
@@ -23,8 +29,13 @@ const OrderCard = ({ order }) => {
               <div className="product-info-name">{item.product?.name}</div>
               <div className="product-info-price">
                 <div className="main-price">
-                  <span>{item.product?.salePrice}₫</span>
-                  <span className="strike">{item.product?.price}₫</span>
+                  <span>
+                    {item.price
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                    ₫
+                  </span>
+                  {/* <span className="strike">{item.product?.price}₫</span> */}
                 </div>
               </div>
               <p>Số lượng: {item.count}</p>

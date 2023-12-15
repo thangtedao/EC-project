@@ -9,6 +9,7 @@ const orderSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
       },
+      price: Number,
       count: Number,
     },
   ],
@@ -16,8 +17,9 @@ const orderSchema = mongoose.Schema({
     type: Number,
   },
   coupon: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Coupon",
+    couponId: { type: mongoose.Schema.Types.ObjectId, ref: "Coupon" },
+    name: String,
+    discount: Number,
   },
   paymentIntent: {
     type: String,
