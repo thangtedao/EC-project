@@ -398,7 +398,26 @@ export const updateOrder = async (req, res) => {
 };
 
 export const showStats = async (req, res) => {
+  // let startDate = new Date("2023-11-01");
+  // let endDate = new Date("2024-05-31");
+  let startDate = new Date(req.query.start);
+  let endDate = new Date(req.query.end);
+
+  if (!req.query.start && !req.query.end) {
+    endDate = new Date();
+    startDate = new Date(endDate);
+    startDate.setMonth(startDate.getMonth() - 10);
+  }
+
   let monthlyApplications = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+    },
     {
       $group: {
         _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
@@ -412,6 +431,14 @@ export const showStats = async (req, res) => {
   ]);
 
   const result = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+    },
     {
       $unwind: "$products",
     },

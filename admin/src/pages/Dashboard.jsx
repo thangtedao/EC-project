@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components";
+import { FormRow, FormRowSelect } from "../components/index.js";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { FaImage } from "react-icons/fa6";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -61,16 +61,29 @@ const Wrapper = styled.div`
     place-items: center;
     gap: 2rem;
   }
+
+  .btn {
+    width: 75px;
+    height: 28px;
+    border-radius: 10px;
+    background-color: #035ecf;
+    color: white;
+    font-weight: bolder;
+  }
 `;
 
-export const loader = async () => {
+export const loader = async ({ request }) => {
   try {
-    const response = await customFetch.get("/order/stats");
+    const params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
+    const response = await customFetch.get("/order/stats", { params });
     return {
       dataset: response.data.monthlyApplications,
       totalRevenue: response.data.totalRevenue,
       totalCount: response.data.totalCount,
       totalProduct: response.data.totalProduct,
+      params,
     };
   } catch (error) {
     return error;
@@ -78,7 +91,13 @@ export const loader = async () => {
 };
 
 const Dashboard = () => {
-  const { dataset, totalRevenue, totalCount, totalProduct } = useLoaderData();
+  const { dataset, totalRevenue, totalCount, totalProduct, params } =
+    useLoaderData();
+
+  const [startDate, setStartDate] = useState(params.start || null);
+  const [endDate, setEndDate] = useState(params.end || null);
+
+  console.log("cccccc", startDate);
 
   const chartSetting = {
     yAxis: [
@@ -104,10 +123,14 @@ const Dashboard = () => {
 
         <div className="dashboard-container">
           <div className="title">Dashboard</div>
+
           <div className="card-statistic">
             <div className="card-item">
               <div className="card-title">Total Revenue</div>
-              <div className="card-content">{totalRevenue + "₫"}</div>
+              <div className="card-content">
+                {totalRevenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+                  "₫"}
+              </div>
             </div>
             <div className="card-item">
               <div className="card-title">Total Products Sold</div>
@@ -118,6 +141,37 @@ const Dashboard = () => {
               <div className="card-content">{totalCount}</div>
             </div>
           </div>
+
+          <Form>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div>Select Date</div>
+              <div style={{ display: "flex", gap: "1rem" }}>
+                <input
+                  type="date"
+                  name="start"
+                  required
+                  // defaultValue={new Date().toISOString().split("T")[0]}
+                  value={startDate ? startDate?.split("T")[0] : ""}
+                  onChange={(event) => {
+                    setStartDate(event.target.value);
+                  }}
+                />
+                <input
+                  type="date"
+                  name="end"
+                  required
+                  // defaultValue={new Date().toISOString().split("T")[0]}
+                  value={endDate ? endDate?.split("T")[0] : ""}
+                  onChange={(event) => {
+                    setEndDate(event.target.value);
+                  }}
+                />
+              </div>
+              <button type="submit" className="btn">
+                Apply
+              </button>
+            </div>
+          </Form>
           {dataset.length > 0 && (
             <div className="charts-container">
               <BarChart
