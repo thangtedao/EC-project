@@ -311,18 +311,7 @@ export const getAllOrder = async (req, res) => {
     if (req.query.userId) {
       const id = req.query.userId;
       query = Order.find({ orderBy: id });
-    } else {
-      query = Order.find();
-    }
 
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort("-createdAt");
-    }
-
-    if (req.query.userId) {
       query.populate([
         {
           path: "orderBy",
@@ -340,6 +329,24 @@ export const getAllOrder = async (req, res) => {
           ],
         },
       ]);
+    } else {
+      const { status } = req.query;
+      if (!status || status === "all") {
+        query = Order.find();
+      } else {
+        query = Order.find({ orderStatus: status });
+      }
+    }
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      if (req.query.date && req.query.date === "old") {
+        query = query.sort("createdAt");
+      } else {
+        query = query.sort("-createdAt");
+      }
     }
 
     query.populate({

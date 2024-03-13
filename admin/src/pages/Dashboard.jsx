@@ -97,8 +97,6 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState(params.start || null);
   const [endDate, setEndDate] = useState(params.end || null);
 
-  console.log("cccccc", startDate);
-
   const chartSetting = {
     yAxis: [
       {
@@ -143,9 +141,16 @@ const Dashboard = () => {
           </div>
 
           <Form>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div>Select Date</div>
-              <div style={{ display: "flex", gap: "1rem" }}>
+            <div style={{ display: "flex", gap: "1rem", padding: "1rem 0" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "1rem",
+                  alignItems: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                <div style={{}}>From</div>
                 <input
                   type="date"
                   name="start"
@@ -156,6 +161,7 @@ const Dashboard = () => {
                     setStartDate(event.target.value);
                   }}
                 />
+                <div>To</div>
                 <input
                   type="date"
                   name="end"

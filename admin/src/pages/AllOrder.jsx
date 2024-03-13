@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate, useLoaderData, Form } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -76,23 +76,62 @@ const Wrapper = styled.div`
       color: #a80000;
     }
   }
+
+  .filter-bar {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+  }
+  .form-filter {
+    width: fit-content;
+    display: flex;
+    gap: 0.3rem;
+
+    .form-filter-label {
+      display: grid;
+      place-items: center;
+      height: 30px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #00193b;
+    }
+    .form-filter-select {
+      height: 30px;
+      border: 1px solid #e2e1e1;
+      border-radius: 8px;
+    }
+  }
+  .btn {
+    width: 75px;
+    height: 28px;
+    border-radius: 10px;
+    background-color: #035ecf;
+    color: white;
+    font-weight: bolder;
+  }
   @media (max-width: 1550px) {
   }
 `;
 
-export const loader = async () => {
+export const loader = async ({ request }) => {
   try {
+    const params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
     const orders = await customFetch
-      .get(`/order/`)
+      .get(`/order/`, { params })
       .then(({ data }) => data.orders);
-    return orders;
+
+    return { orders, params };
   } catch (error) {
     return error;
   }
 };
 
 const AllOrder = () => {
-  const orders = useLoaderData();
+  const { orders, params } = useLoaderData();
   const navigate = useNavigate();
 
   return (
@@ -104,6 +143,51 @@ const AllOrder = () => {
         </Helmet>
 
         <div className="title">Order</div>
+
+        <Form className="filter-bar">
+          <div className="form-filter">
+            <label htmlFor="category" className="form-filter-label">
+              Date
+            </label>
+            <select
+              name="date"
+              className="form-filter-select"
+              defaultValue={params.date || "new"}
+            >
+              <option value="new">Mới nhất</option>
+              <option value="old">Cũ nhất</option>
+              {/* {categories.map((item) => {
+                return (
+                  <option key={item._id} value={item.slug}>
+                    {item.name}
+                  </option>
+                );
+              })} */}
+            </select>
+          </div>
+
+          <div className="form-filter">
+            <label htmlFor="status" className="form-filter-label">
+              Status
+            </label>
+            <select
+              name="status"
+              className="form-filter-select"
+              defaultValue={params.status || "all"}
+            >
+              <option value="all">Tất cả</option>
+              <option value="Chờ Xác Nhận">Chờ Xác Nhận</option>
+              <option value="Đang Xử Lý">Đang Xử Lý</option>
+              <option value="Đang Giao Hàng">Đang Giao Hàng</option>
+              <option value="Đã Giao Hàng">Đã Giao Hàng</option>
+              <option value="Đã Hủy">Đã Hủy</option>
+            </select>
+          </div>
+          <button type="submit" className="btn">
+            Apply
+          </button>
+        </Form>
+
         <table>
           <thead>
             <tr>
@@ -116,7 +200,7 @@ const AllOrder = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => {
+            {orders?.map((order) => {
               return (
                 <tr key={order._id}>
                   <td>{order.orderBy.fullName}</td>
