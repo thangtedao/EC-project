@@ -77,6 +77,7 @@ export const action = async ({ request }) => {
       return redirect("/login");
     }
     store.dispatch(login({ user: user }));
+    console.log(user)
 
     const response = await customFetch.get("/user/cart");
     if (response.data.cart) {
