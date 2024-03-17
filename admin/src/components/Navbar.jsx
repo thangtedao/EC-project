@@ -1,7 +1,6 @@
 import LogoutContainer from "./LogoutContainer";
 import styled from "styled-components";
 import { useDashboardContext } from "../pages/DashboardLayout";
-import FormatAlignLeftOutlinedIcon from "@mui/icons-material/FormatAlignLeftOutlined";
 
 const Wrapper = styled.nav`
   width: 100%;
@@ -35,6 +34,7 @@ const Wrapper = styled.nav`
 
 const Navbar = () => {
   const { toggleSidebar } = useDashboardContext();
+
   return (
     <Wrapper>
       <div className="nav-center">

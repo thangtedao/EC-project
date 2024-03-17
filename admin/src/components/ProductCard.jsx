@@ -83,7 +83,7 @@ const Wrapper = styled.div`
 `;
 
 const ProductCard = ({ product }) => {
-  const { handleClickOpen } = useAllProductContext();
+  // const { handleClickOpen } = useAllProductContext();
   const navigate = useNavigate();
 
   return (
@@ -93,7 +93,7 @@ const ProductCard = ({ product }) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "1rem",
+            gap: "0.5rem",
             height: "85%",
           }}
         >
@@ -112,7 +112,14 @@ const ProductCard = ({ product }) => {
             <div className="item-info">
               {"Available: " + product.stockQuantity}
             </div>
-            <div className="item-info">{"Sold: " + product.sold}</div>
+            {product.totalQuantity ? (
+              <div className="item-info">
+                {"Sold in time: " + product.totalQuantity}
+              </div>
+            ) : (
+              <div className="item-info">{"Total Sold: " + product.sold}</div>
+            )}
+
             <div className="item-info">
               {"Regular price: " +
                 product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +

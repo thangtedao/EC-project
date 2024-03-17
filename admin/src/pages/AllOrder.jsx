@@ -26,14 +26,12 @@ const Wrapper = styled.div`
     border-collapse: collapse;
   }
   th {
-    /* border: 1px solid lightgray; */
     height: 20px;
   }
   tr {
     border: 1px solid lightgray;
   }
   td {
-    /* border: 1px solid lightgray; */
     height: 30px;
   }
   th,
@@ -70,7 +68,6 @@ const Wrapper = styled.div`
     transition: 0.3s ease-in-out;
   }
   .ed-btn {
-    border-bottom: 2px solid #035ecf;
     color: #035ecf;
     :hover {
       color: #a80000;
@@ -156,13 +153,6 @@ const AllOrder = () => {
             >
               <option value="new">Mới nhất</option>
               <option value="old">Cũ nhất</option>
-              {/* {categories.map((item) => {
-                return (
-                  <option key={item._id} value={item.slug}>
-                    {item.name}
-                  </option>
-                );
-              })} */}
             </select>
           </div>
 

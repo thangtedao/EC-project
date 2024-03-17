@@ -475,7 +475,7 @@ export const showStats = async (req, res) => {
       $sort: { totalQuantity: -1 },
     },
     {
-      $limit: 1,
+      $limit: 6,
     },
     {
       $lookup: {
@@ -492,11 +492,17 @@ export const showStats = async (req, res) => {
       $project: {
         _id: "$product._id",
         name: "$product.name",
+        slug: "$product.slug",
+        status: "$product.status",
+        sold: "$product.sold",
+        stockQuantity: "$product.stockQuantity",
+        price: "$product.price",
+        salePrice: "$product.salePrice",
+        images: "$product.images",
         totalQuantity: 1,
       },
     },
   ]);
-  console.log("------------", productMostSold);
 
   /* FORMAT DATA TO SHOW IN GRAPH */
   let monthlyApplications = await Order.aggregate([
@@ -513,7 +519,6 @@ export const showStats = async (req, res) => {
         _id: {
           year: { $year: "$createdAt" },
           month: { $month: "$createdAt" },
-          dayOfMonth: { $dayOfMonth: "$createdAt" },
         },
         totalRevenue: { $sum: "$totalPrice" },
       },
@@ -537,5 +542,11 @@ export const showStats = async (req, res) => {
     })
     .reverse();
 
-  res.json({ monthlyApplications, totalRevenue, totalCount, totalProduct });
+  res.json({
+    monthlyApplications,
+    totalRevenue,
+    totalCount,
+    totalProduct,
+    productMostSold,
+  });
 };

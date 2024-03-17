@@ -9,13 +9,10 @@ import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
-import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const Wrapper = styled.div`
   position: relative;
@@ -161,22 +158,6 @@ const LogoutContainer = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {/* <MenuItem onClick={() => navigate("/profile")}>
-          <Avatar /> Profile
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={() => navigate("/order")}>
-          <ListItemIcon>
-            <CreditCardOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          Order
-        </MenuItem>
-        <MenuItem onClick={() => navigate("/wishlist")}>
-          <ListItemIcon>
-            <FavoriteIcon fontSize="small" />
-          </ListItemIcon>
-          Wishlist
-        </MenuItem> */}
         <MenuItem onClick={logoutUser}>
           <ListItemIcon>
             <Logout fontSize="small" />

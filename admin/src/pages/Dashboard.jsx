@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components/index.js";
+import { FormRow, FormRowSelect, ProductCard } from "../components/index.js";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { FaImage } from "react-icons/fa6";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -83,6 +83,7 @@ export const loader = async ({ request }) => {
       totalRevenue: response.data.totalRevenue,
       totalCount: response.data.totalCount,
       totalProduct: response.data.totalProduct,
+      productMostSold: response.data.productMostSold,
       params,
     };
   } catch (error) {
@@ -91,11 +92,26 @@ export const loader = async ({ request }) => {
 };
 
 const Dashboard = () => {
-  const { dataset, totalRevenue, totalCount, totalProduct, params } =
-    useLoaderData();
+  const {
+    dataset,
+    totalRevenue,
+    totalCount,
+    totalProduct,
+    productMostSold,
+    params,
+  } = useLoaderData();
 
-  const [startDate, setStartDate] = useState(params.start || null);
-  const [endDate, setEndDate] = useState(params.end || null);
+  let start, end;
+  if (!params.start && !params.end) {
+    end = new Date();
+    start = new Date(end);
+    start.setMonth(start.getMonth() - 10);
+    end = end.toISOString().split("T")[0];
+    start = start.toISOString().split("T")[0];
+  }
+
+  const [startDate, setStartDate] = useState(params.start || start);
+  const [endDate, setEndDate] = useState(params.end || end);
 
   const chartSetting = {
     yAxis: [
@@ -178,6 +194,27 @@ const Dashboard = () => {
               </button>
             </div>
           </Form>
+
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              gap: "1rem",
+              flexDirection: "column",
+            }}
+          >
+            {startDate && endDate && productMostSold.length > 0 && (
+              <div>
+                Sản phẩm bán chạy từ {startDate} đến {endDate}
+              </div>
+            )}
+            <div style={{ width: "100%", display: "flex", gap: "1rem" }}>
+              {productMostSold?.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          </div>
+
           {dataset.length > 0 && (
             <div className="charts-container">
               <BarChart
