@@ -405,8 +405,7 @@ export const updateOrder = async (req, res) => {
 };
 
 export const showStats = async (req, res) => {
-  // let startDate = new Date("2023-11-01");
-  // let endDate = new Date("2024-05-31");
+  /* SHOW STATS BY DATE */
   let startDate = new Date(req.query.start);
   let endDate = new Date(req.query.end);
 
@@ -416,27 +415,7 @@ export const showStats = async (req, res) => {
     startDate.setMonth(startDate.getMonth() - 10);
   }
 
-  let monthlyApplications = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
-        totalRevenue: { $sum: "$totalPrice" },
-      },
-    },
-    {
-      $sort: { "_id.year": -1, "_id.month": -1 },
-    },
-    { $limit: 12 },
-  ]);
-
+  /* CALCULATE THE STATS */
   const result = await Order.aggregate([
     {
       $match: {
@@ -451,27 +430,104 @@ export const showStats = async (req, res) => {
     },
     {
       $group: {
-        _id: null,
-        totalRevenue: { $sum: "$totalPrice" },
-        totalCount: { $sum: 1 },
+        _id: {
+          orderId: "$_id",
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+          day: { $dayOfMonth: "$createdAt" },
+        },
+        totalRevenue: { $first: "$totalPrice" },
         totalProduct: { $sum: "$products.count" },
       },
     },
   ]);
 
-  let totalCount = 0;
+  let totalCount = result.length || 0;
   let totalRevenue = 0;
   let totalProduct = 0;
   if (result.length > 0) {
-    totalRevenue = result[0].totalRevenue;
-    totalCount = result[0].totalCount;
-    totalProduct = result[0].totalProduct;
+    result.map((item) => {
+      totalRevenue += item.totalRevenue;
+      totalProduct += item.totalProduct;
+    });
   }
+
+  /* PRODUCT MOST SOLD */
+  const productMostSold = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+    },
+    {
+      $unwind: "$products",
+    },
+    {
+      $group: {
+        _id: "$products.product",
+        totalQuantity: { $sum: "$products.count" },
+      },
+    },
+    {
+      $sort: { totalQuantity: -1 },
+    },
+    {
+      $limit: 1,
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "_id",
+        as: "product",
+      },
+    },
+    {
+      $unwind: "$product",
+    },
+    {
+      $project: {
+        _id: "$product._id",
+        name: "$product.name",
+        totalQuantity: 1,
+      },
+    },
+  ]);
+  console.log("------------", productMostSold);
+
+  /* FORMAT DATA TO SHOW IN GRAPH */
+  let monthlyApplications = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+          dayOfMonth: { $dayOfMonth: "$createdAt" },
+        },
+        totalRevenue: { $sum: "$totalPrice" },
+      },
+    },
+    {
+      $sort: { "_id.year": -1, "_id.month": -1 },
+    },
+    { $limit: 12 },
+  ]);
 
   monthlyApplications = monthlyApplications
     .map((item) => {
       const {
-        _id: { year, month },
+        _id: { month },
         totalRevenue,
       } = item;
       const date = day()
