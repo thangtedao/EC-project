@@ -64,7 +64,7 @@ const Wrapper = styled.div`
     transition: 0.3s ease-in-out;
   }
   .ed-btn {
-    border: 2px solid #035ecf;
+    border: transparent;
     color: #035ecf;
     :hover {
       background-color: #035ecf;
@@ -72,7 +72,7 @@ const Wrapper = styled.div`
     }
   }
   .dl-btn {
-    border: 2px solid #ff5470;
+    border: transparent;
     color: #ff5470;
     :hover {
       background-color: #ff5470;
@@ -128,6 +128,114 @@ const AllCategory = () => {
         </Helmet>
 
         <div className="title">All Category</div>
+
+        <div
+          style={{
+            width: "90%",
+            display: "flex",
+            padding: "2rem 1rem",
+            flexDirection: "column",
+            gap: "1rem",
+            backgroundColor: "white",
+          }}
+        >
+          {categories.map((parentCategory) => {
+            return (
+              !parentCategory.parent && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                    paddingBottom: "0.3rem",
+                    borderBottom: "1px solid lightgray",
+                  }}
+                  key={parentCategory._id}
+                >
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 3fr 1fr 1fr",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ fontWeight: "bold" }}>
+                      {"+ " + parentCategory.name}
+                    </div>
+                    <div style={{ marginLeft: "1.6rem" }}>
+                      {parentCategory.description.length > 50
+                        ? parentCategory.description.slice(0, 50) + "..."
+                        : parentCategory.description}
+                    </div>
+                    <div style={{ marginLeft: "0.65rem" }}>
+                      {count.map((item) => {
+                        return (
+                          parentCategory?.slug?.toString() ===
+                            item?._id?.toString() && item.count
+                        );
+                      })}
+                    </div>
+                    <div style={{ marginLeft: "0.4rem" }}>
+                      <button
+                        className="ed-btn"
+                        onClick={() =>
+                          navigate(`/edit-category/${parentCategory.slug}`)
+                        }
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                  {categories.map((childCategory) => {
+                    if (
+                      childCategory.parent &&
+                      childCategory.parent.slug === parentCategory.slug
+                    ) {
+                      return (
+                        <div
+                          style={{
+                            marginLeft: "2rem",
+                            display: "grid",
+                            gridTemplateColumns: "1fr 3fr 1fr 1fr",
+                            alignItems: "center",
+                          }}
+                          key={childCategory._id}
+                        >
+                          <div>{childCategory.name}</div>
+                          <div>
+                            {childCategory.description.length > 50
+                              ? childCategory.description.slice(0, 50) + "..."
+                              : childCategory.description}
+                          </div>
+                          <div>
+                            {count.map((item) => {
+                              return (
+                                childCategory?.slug?.toString() ===
+                                  item?._id?.toString() && item.count
+                              );
+                            })}
+                          </div>
+                          <div>
+                            <button
+                              className="ed-btn"
+                              onClick={() =>
+                                navigate(`/edit-category/${childCategory.slug}`)
+                              }
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              )
+            );
+          })}
+        </div>
+
         <table>
           <thead>
             <tr>
