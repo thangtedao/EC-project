@@ -208,7 +208,14 @@ const Dashboard = () => {
                 Sản phẩm bán chạy từ {startDate} đến {endDate}
               </div>
             )}
-            <div style={{ width: "100%", display: "flex", gap: "1rem" }}>
+            <div
+              style={{
+                width: "100%",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+                columnGap: "1rem",
+              }}
+            >
               {productMostSold?.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}

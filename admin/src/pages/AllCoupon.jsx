@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -10,7 +10,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useState } from "react";
+import { Space, Table } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -27,59 +27,18 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
 
-  table {
-    background-color: white;
-    width: 80%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-  }
-  th {
-    /* border: 1px solid lightgray; */
-    height: 20px;
-  }
-  tr {
-    border: 1px solid lightgray;
-  }
-  td {
-    /* border: 1px solid lightgray; */
-    height: 30px;
-  }
-  th,
-  td {
-    text-align: left;
-    padding: 10px 20px;
-  }
-
-  td:nth-last-child(-n + 2) {
-    width: 55px;
-  }
-
-  button {
-    min-width: 80px;
-    font-weight: bolder;
-    border-radius: 23px;
-    background: white;
-    height: 30px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
+  .grid-center {
+    display: grid;
+    place-items: center;
   }
   .ed-btn {
-    border: 2px solid #035ecf;
+    border: 1px solid #035ecf;
+    border-radius: 3px;
+    padding: 0 5px;
     color: #035ecf;
-    :hover {
-      background-color: #035ecf;
-      color: white;
-    }
   }
-  .dl-btn {
-    border: 2px solid #ff5470;
-    color: #ff5470;
-    :hover {
-      background-color: #ff5470;
-      color: white;
-    }
-  }
-  @media (max-width: 1550px) {
+  .md-font {
+    font-size: 0.95rem;
   }
 `;
 
@@ -117,6 +76,49 @@ const AllCoupon = () => {
     navigate("/all-coupon");
   };
 
+  const columns = [
+    {
+      title: "Code",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Expiry",
+      dataIndex: "expiry",
+      key: "expiry",
+      render: (_, { expiry }) => (
+        <span className="md-font">{expiry.split("T")[0]}</span>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a
+            className="ed-btn grid-center"
+            onClick={() => navigate(`/edit-coupon/${record.name}`)}
+          >
+            Edit
+          </a>
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -127,46 +129,9 @@ const AllCoupon = () => {
 
         <div className="title">All Coupon</div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Description</th>
-              <th>Discount</th>
-              <th>Expiry</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {coupons.map((coupon) => {
-              return (
-                <tr key={coupon._id}>
-                  <td>{coupon.name}</td>
-                  <td>{coupon.description}</td>
-                  <td>{coupon.discount}</td>
-                  <td>{coupon.expiry.split("T")[0]}</td>
-                  <td>
-                    <button
-                      className="ed-btn"
-                      onClick={() => navigate(`/edit-coupon/${coupon.name}`)}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                  <td>
-                    {/* <button
-                      className="dl-btn"
-                      onClick={() => handleClickOpen(coupon)}
-                    >
-                      Delete
-                    </button> */}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div style={{ width: "80%" }}>
+          <Table columns={columns} dataSource={coupons} size="middle" />
+        </div>
 
         <Dialog
           open={open}

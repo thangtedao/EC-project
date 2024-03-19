@@ -29,30 +29,21 @@ const Wrapper = styled.div`
     margin-bottom: 1.5rem;
   }
 
-  button {
-    width: 80px;
-    font-weight: bolder;
-    border-radius: 23px;
-    background: white;
-    height: 30px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
+  .grid-center {
+    display: grid;
+    place-items: center;
   }
   .ed-btn {
-    border: 2px solid #035ecf;
+    border: 1px solid #035ecf;
+    border-radius: 3px;
+    padding: 0 5px;
     color: #035ecf;
-    :hover {
-      background-color: #035ecf;
-      color: white;
-    }
   }
   .dl-btn {
-    border: 2px solid #ff5470;
+    border: 1px solid #ff5470;
+    border-radius: 3px;
+    padding: 0 5px;
     color: #ff5470;
-    :hover {
-      background-color: #ff5470;
-      color: white;
-    }
   }
   .md-font {
     font-size: 0.95rem;
@@ -160,11 +151,26 @@ const AllUser = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a>View</a>
+          <a
+            className="ed-btn grid-center"
+            onClick={() => navigate(`/edit-user/${record._id}`)}
+          >
+            View
+          </a>
           {record.isBlocked ? (
-            <a onClick={() => handleClickOpen(record)}>UnBlock</a>
+            <a
+              className="dl-btn grid-center"
+              onClick={() => handleClickOpen(record)}
+            >
+              UnBlock
+            </a>
           ) : (
-            <a onClick={() => handleClickOpen(record)}>Block</a>
+            <a
+              className="dl-btn grid-center"
+              onClick={() => handleClickOpen(record)}
+            >
+              Block
+            </a>
           )}
         </Space>
       ),
@@ -180,7 +186,7 @@ const AllUser = () => {
         </Helmet>
 
         <div className="title">User</div>
-        <div style={{ width: "90%" }}>
+        <div style={{ width: "80%" }}>
           <Table columns={columns} dataSource={users} size="middle" />
         </div>
 

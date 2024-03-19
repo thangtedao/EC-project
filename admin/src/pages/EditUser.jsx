@@ -1,9 +1,15 @@
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { redirect, useNavigation, useLoaderData } from "react-router-dom";
+import {
+  redirect,
+  useNavigation,
+  useLoaderData,
+  useNavigate,
+} from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
+import { Space, Table } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -42,24 +48,25 @@ const Wrapper = styled.div`
     border-radius: 10px;
     padding: 1.2rem 1rem;
   }
-  .user-orders {
-    width: 60%;
-    height: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    background-color: white;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
-      0 2px 6px 2px rgba(60, 64, 67, 0.15);
-    border-color: #f1f1f1;
-    border-radius: 10px;
-    padding: 1rem;
-  }
 
   .flex-column {
     display: flex;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .grid-center {
+    display: grid;
+    place-items: center;
+  }
+  .ed-btn {
+    border: 1px solid #035ecf;
+    border-radius: 3px;
+    padding: 0 5px;
+    color: #035ecf;
+  }
+  .md-font {
+    font-size: 0.95rem;
   }
 `;
 
@@ -97,7 +104,76 @@ export const loader = async ({ params }) => {
 const EditUser = () => {
   const { user, orders } = useLoaderData();
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
+
+  const columns = [
+    {
+      title: "Id",
+      dataIndex: "orderId",
+      key: "orderId",
+      render: (_, { _id }) => (
+        <span className="md-font">{"#" + _id.slice(18)}</span>
+      ),
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (_, { createdAt }) => (
+        <span className="md-font">{createdAt.split("T")[0]}</span>
+      ),
+    },
+    {
+      title: "Time",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (_, { createdAt }) => (
+        <span className="md-font">{createdAt.split("T")[1].split(".")[0]}</span>
+      ),
+    },
+    {
+      title: "Items",
+      dataIndex: "products",
+      key: "products",
+      render: (_, { products }) => (
+        <span className="md-font">{products.length}</span>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      render: (_, { totalPrice }) => (
+        <span className="md-font">
+          {totalPrice
+            .toFixed(0)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+        </span>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a
+            className="ed-btn grid-center"
+            onClick={() => navigate(`/edit-order/${record._id}`)}
+          >
+            View
+          </a>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <HelmetProvider>
@@ -109,6 +185,7 @@ const EditUser = () => {
 
         <div className="title">{user.fullName}</div>
         <div className="user-container">
+          {/* USER DETAILS */}
           <div className="user-details">
             <Avatar
               sx={{
@@ -157,48 +234,25 @@ const EditUser = () => {
             </div>
           </div>
 
-          <div className="user-orders">
-            <div style={{ fontWeight: "bold", fontSize: "1.2rem" }}>Orders</div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.8rem",
-                height: "90%",
-                overflow: "auto",
-              }}
-            >
-              {orders &&
-                orders.length &&
-                orders.map((order) => {
-                  return (
-                    <div
-                      key={order._id}
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 2fr 2fr 1fr 1fr",
-                        gap: "1rem",
-                      }}
-                    >
-                      <div>{"#" + order._id.slice(18)}</div>
-                      <div>{order.createdAt.split("T")[0]}</div>
-                      <div>{order.orderStatus}</div>
-                      <div>
-                        {order.products.reduce(
-                          (acc, item) => acc + item.count,
-                          0
-                        ) + " sp"}
-                      </div>
-                      <div>
-                        {order.totalPrice
-                          .toFixed(0)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
+          {/* LIST OF ORDERS */}
+          <div style={{ width: "100%" }}>
+            <Table
+              columns={columns}
+              dataSource={orders}
+              size="middle"
+              title={() => (
+                <div
+                  style={{
+                    fontSize: "1.2rem",
+                    fontWeight: "bold",
+                    marginTop: 6,
+                  }}
+                >
+                  Orders
+                </div>
+              )}
+              pagination={{ pageSize: 8 }}
+            />
           </div>
         </div>
 

@@ -20,54 +20,6 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
 
-  table {
-    background-color: white;
-    width: 80%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-  }
-  th {
-    height: 20px;
-  }
-  tr {
-    border: 1px solid lightgray;
-  }
-  td {
-    height: 30px;
-  }
-  th,
-  td {
-    text-align: left;
-    padding: 10px 20px;
-  }
-
-  th:last-child,
-  td:last-child {
-    width: 50px;
-  }
-
-  th:not(:last-child),
-  td:not(:last-child) {
-    width: 150px;
-  }
-
-  th:nth-last-child(3),
-  td:nth-last-child(3) {
-    width: 30px;
-  }
-
-  .status {
-  }
-
-  button {
-    min-width: 80px;
-    font-weight: bolder;
-    background: white;
-    border: none;
-    height: 30px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-  }
   .ed-btn {
     color: #035ecf;
     :hover {
@@ -109,8 +61,19 @@ const Wrapper = styled.div`
     color: white;
     font-weight: bolder;
   }
+
+  .grid-center {
+    display: grid;
+    place-items: center;
+  }
+  .ed-btn {
+    border: 1px solid #035ecf;
+    border-radius: 3px;
+    padding: 0 5px;
+    color: #035ecf;
+  }
   .md-font {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 `;
 
@@ -140,6 +103,7 @@ const AllOrder = () => {
       title: "Customer",
       dataIndex: "orderBy",
       key: "orderBy",
+      width: 250,
       render: (_, { orderBy }) => (
         <span className="md-font">{orderBy.fullName}</span>
       ),
@@ -179,7 +143,12 @@ const AllOrder = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a>View</a>
+          <a
+            className="ed-btn grid-center"
+            onClick={() => navigate(`/edit-order/${record._id}`)}
+          >
+            View
+          </a>
         </Space>
       ),
     },
@@ -232,47 +201,9 @@ const AllOrder = () => {
           </button>
         </Form>
 
-        <div style={{ width: "90%" }}>
+        <div style={{ width: "80%" }}>
           <Table columns={columns} dataSource={orders} size="middle" />
         </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Items</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders?.map((order) => {
-              return (
-                <tr key={order._id}>
-                  <td>{order.orderBy.fullName}</td>
-                  <td>{order.createdAt.split("T")[0]}</td>
-                  <td>{order.createdAt.split("T")[1].split(".")[0]}</td>
-                  <td>
-                    {order.products.reduce((acc, item) => acc + item.count, 0)}
-                  </td>
-                  <td>
-                    <div className="status">{order.orderStatus}</div>
-                  </td>
-                  <td>
-                    <button
-                      className="ed-btn"
-                      onClick={() => navigate(`/edit-order/${order._id}`)}
-                    >
-                      Xem chi tiết
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
       </Wrapper>
     </HelmetProvider>
   );

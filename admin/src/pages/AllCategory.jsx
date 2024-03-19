@@ -27,33 +27,6 @@ const Wrapper = styled.div`
     margin-bottom: 1rem;
   }
 
-  table {
-    background-color: white;
-    width: 90%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-  }
-  th {
-    /* border: 1px solid lightgray; */
-    height: 20px;
-  }
-  tr {
-    border: 1px solid lightgray;
-  }
-  td {
-    /* border: 1px solid lightgray; */
-    height: 30px;
-  }
-  th,
-  td {
-    text-align: left;
-    padding: 10px 20px;
-  }
-
-  td:nth-last-child(-n + 2) {
-    width: 55px;
-  }
-
   button {
     width: 80px;
     font-weight: bolder;
@@ -131,7 +104,7 @@ const AllCategory = () => {
 
         <div
           style={{
-            width: "90%",
+            width: "80%",
             display: "flex",
             padding: "2rem 1rem",
             flexDirection: "column",
@@ -238,60 +211,6 @@ const AllCategory = () => {
             );
           })}
         </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Items</th>
-              <th>Parent</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((category) => {
-              return (
-                <tr key={category._id}>
-                  <td>{category.name}</td>
-                  <td>
-                    {category.description.length > 50
-                      ? category.description.slice(0, 50) + "..."
-                      : category.description}
-                  </td>
-                  <td>
-                    {count.map((item) => {
-                      return (
-                        category?.slug?.toString() === item?._id?.toString() &&
-                        item.count
-                      );
-                    })}
-                  </td>
-                  <td>{category.parent?.name}</td>
-                  <td>
-                    <button
-                      className="ed-btn"
-                      onClick={() =>
-                        navigate(`/edit-category/${category.slug}`)
-                      }
-                    >
-                      Edit
-                    </button>
-                  </td>
-                  <td>
-                    {/* <button
-                      className="dl-btn"
-                      onClick={() => handleClickOpen(category)}
-                    >
-                      Delete
-                    </button> */}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
 
         <Dialog
           open={open}
