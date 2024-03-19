@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -11,7 +11,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useState } from "react";
+
+import { Space, Table, Image } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -22,59 +23,10 @@ const Wrapper = styled.div`
   align-items: center;
 
   .title {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: #00193b;
-    margin-bottom: 1rem;
-  }
-
-  table {
-    background-color: white;
-    width: 100%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-  }
-  th {
-    /* border: 1px solid lightgray; */
-    height: 40px;
-  }
-  tr {
-    border: 1px solid lightgray;
-  }
-  td {
-    /* border: 1px solid lightgray; */
-    height: 60px;
-  }
-  th,
-  td {
-    text-align: left;
-    padding: 5px 0;
-  }
-
-  td:nth-last-child(-n + 2) {
-    width: 85px;
-  }
-
-  th:first-child {
-    padding-left: 10px;
-  }
-  td:first-child {
-    display: grid;
-    place-items: center;
-    padding: 0;
-    width: 60px;
-  }
-  .avatar {
-    height: 50px;
-    width: 50px;
-    border-radius: 5px;
-    overflow: hidden;
-    display: grid;
-    place-items: center;
-    img {
-      max-width: 50px;
-      height: inherit;
-    }
+    margin-bottom: 1.5rem;
   }
 
   button {
@@ -102,7 +54,8 @@ const Wrapper = styled.div`
       color: white;
     }
   }
-  @media (max-width: 1550px) {
+  .md-font {
+    font-size: 0.95rem;
   }
 `;
 
@@ -146,6 +99,78 @@ const AllUser = () => {
     navigate("/all-user");
   };
 
+  const columns = [
+    {
+      title: "Image",
+      dataIndex: "avatar",
+      key: "avatar",
+      render: (_, { avatar }) => (
+        <>
+          {avatar ? (
+            <Image width={45} src={avatar} />
+          ) : (
+            <Image width={45} src={img} />
+          )}
+        </>
+      ),
+    },
+    {
+      title: "Name",
+      dataIndex: "fullName",
+      key: "fullName",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (_, { address }) => (
+        <span className="md-font">{address.city}</span>
+      ),
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Registered",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 100,
+      render: (_, { createdAt }) => (
+        <span className="md-font">{createdAt.split("T")[0]}</span>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a>View</a>
+          {record.isBlocked ? (
+            <a onClick={() => handleClickOpen(record)}>UnBlock</a>
+          ) : (
+            <a onClick={() => handleClickOpen(record)}>Block</a>
+          )}
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -155,71 +180,9 @@ const AllUser = () => {
         </Helmet>
 
         <div className="title">User</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Live in</th>
-              <th>Role</th>
-              {/* <th>Blocked</th> */}
-              <th>Registered</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {users?.map((user) => {
-              return (
-                <tr key={user._id}>
-                  <td>
-                    <div className="avatar">
-                      {user.avatar ? (
-                        <img src={user.avatar} alt="avatar" />
-                      ) : (
-                        <img src={img} alt="avatar" />
-                      )}
-                    </div>
-                  </td>
-                  <td>{user.fullName}</td>
-                  <td>{user.email}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.address.city}</td>
-                  <td>{user.role}</td>
-                  {/* <td>{user.isBlocked.toString()}</td> */}
-                  <td>{user.createdAt.split("T")[0]}</td>
-                  <td>
-                    <button
-                      className="ed-btn"
-                      onClick={() => navigate(`/edit-user/${user._id}`)}
-                    >
-                      View
-                    </button>
-                  </td>
-                  <td>
-                    {user.isBlocked ? (
-                      <button
-                        className="dl-btn"
-                        onClick={() => handleClickOpen(user)}
-                      >
-                        UnBlock
-                      </button>
-                    ) : (
-                      <button
-                        className="dl-btn"
-                        onClick={() => handleClickOpen(user)}
-                      >
-                        Block
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div style={{ width: "90%" }}>
+          <Table columns={columns} dataSource={users} size="middle" />
+        </div>
 
         <Dialog
           open={open}

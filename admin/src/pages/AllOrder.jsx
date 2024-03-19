@@ -3,6 +3,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { useNavigate, useLoaderData, Form } from "react-router-dom";
+import { Space, Table } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -108,7 +109,8 @@ const Wrapper = styled.div`
     color: white;
     font-weight: bolder;
   }
-  @media (max-width: 1550px) {
+  .md-font {
+    font-size: 0.9rem;
   }
 `;
 
@@ -130,6 +132,58 @@ export const loader = async ({ request }) => {
 const AllOrder = () => {
   const { orders, params } = useLoaderData();
   const navigate = useNavigate();
+
+  console.log(orders);
+
+  const columns = [
+    {
+      title: "Customer",
+      dataIndex: "orderBy",
+      key: "orderBy",
+      render: (_, { orderBy }) => (
+        <span className="md-font">{orderBy.fullName}</span>
+      ),
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (_, { createdAt }) => (
+        <span className="md-font">{createdAt.split("T")[0]}</span>
+      ),
+    },
+    {
+      title: "Time",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (_, { createdAt }) => (
+        <span className="md-font">{createdAt.split("T")[1].split(".")[0]}</span>
+      ),
+    },
+    {
+      title: "Items",
+      dataIndex: "products",
+      key: "products",
+      render: (_, { products }) => (
+        <span className="md-font">{products.length}</span>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (text) => <span className="md-font">{text}</span>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a>View</a>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <HelmetProvider>
@@ -177,6 +231,10 @@ const AllOrder = () => {
             Apply
           </button>
         </Form>
+
+        <div style={{ width: "90%" }}>
+          <Table columns={columns} dataSource={orders} size="middle" />
+        </div>
 
         <table>
           <thead>

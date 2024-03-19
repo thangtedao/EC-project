@@ -137,6 +137,7 @@ const AllCategory = () => {
             flexDirection: "column",
             gap: "1rem",
             backgroundColor: "white",
+            borderRadius: "10px",
           }}
         >
           {categories.map((parentCategory) => {
@@ -156,6 +157,7 @@ const AllCategory = () => {
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 3fr 1fr 1fr",
+                      columnGap: "1rem",
                       alignItems: "center",
                     }}
                   >
@@ -197,6 +199,7 @@ const AllCategory = () => {
                             marginLeft: "2rem",
                             display: "grid",
                             gridTemplateColumns: "1fr 3fr 1fr 1fr",
+                            columnGap: "1rem",
                             alignItems: "center",
                           }}
                           key={childCategory._id}
