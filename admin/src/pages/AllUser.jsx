@@ -33,6 +33,14 @@ const Wrapper = styled.div`
     display: grid;
     place-items: center;
   }
+  .btn {
+    width: 75px;
+    height: 28px;
+    border-radius: 5px;
+    background-color: #035ecf;
+    color: white;
+    font-weight: bolder;
+  }
   .ed-btn {
     border: 1px solid #035ecf;
     border-radius: 3px;

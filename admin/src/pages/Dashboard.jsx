@@ -4,7 +4,6 @@ import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { FormRow, FormRowSelect, ProductCard } from "../components/index.js";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
-import { FaImage } from "react-icons/fa6";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
@@ -65,10 +64,16 @@ const Wrapper = styled.div`
   .btn {
     width: 75px;
     height: 28px;
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: #035ecf;
     color: white;
     font-weight: bolder;
+  }
+  .dtp {
+    width: 150px;
+    height: 28px;
+    border-radius: 5px;
+    padding: 10px;
   }
 `;
 
@@ -166,12 +171,12 @@ const Dashboard = () => {
                   fontWeight: "bold",
                 }}
               >
-                <div style={{}}>From</div>
+                <div>From</div>
                 <input
+                  className="dtp"
                   type="date"
                   name="start"
                   required
-                  // defaultValue={new Date().toISOString().split("T")[0]}
                   value={startDate ? startDate?.split("T")[0] : ""}
                   onChange={(event) => {
                     setStartDate(event.target.value);
@@ -179,10 +184,10 @@ const Dashboard = () => {
                 />
                 <div>To</div>
                 <input
+                  className="dtp"
                   type="date"
                   name="end"
                   required
-                  // defaultValue={new Date().toISOString().split("T")[0]}
                   value={endDate ? endDate?.split("T")[0] : ""}
                   onChange={(event) => {
                     setEndDate(event.target.value);
@@ -204,15 +209,17 @@ const Dashboard = () => {
             }}
           >
             {startDate && endDate && productMostSold.length > 0 && (
-              <div>
-                Sản phẩm bán chạy từ {startDate} đến {endDate}
+              <div style={{ fontSize: "1.1rem" }}>
+                Top products from{" "}
+                <span style={{ fontWeight: "bold" }}>{startDate}</span> to{" "}
+                <span style={{ fontWeight: "bold" }}>{endDate}</span>
               </div>
             )}
             <div
               style={{
                 width: "100%",
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
                 columnGap: "1rem",
               }}
             >
@@ -222,6 +229,7 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* STATS GRAPH */}
           {dataset.length > 0 && (
             <div className="charts-container">
               <BarChart

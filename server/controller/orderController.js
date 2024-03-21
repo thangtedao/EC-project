@@ -475,7 +475,7 @@ export const showStats = async (req, res) => {
       $sort: { totalQuantity: -1 },
     },
     {
-      $limit: 6,
+      $limit: 5,
     },
     {
       $lookup: {
