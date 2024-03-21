@@ -15,6 +15,7 @@ import {
   Order,
   Wishlist,
   Profile,
+  Error
 } from "./pages";
 
 /* ACTION */
@@ -35,6 +36,7 @@ import { loader as paymentLoader } from "./pages/Payment";
 import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as profileLoader } from "./pages/Profile";
+import Chat from "./pages/chat/Chat";
 
 const router = createBrowserRouter([
   {
@@ -116,6 +118,10 @@ const router = createBrowserRouter([
         element: <Profile />,
         loader: profileLoader,
         action: profileAction,
+      },
+      {
+        path: "chat",
+        element: <Chat />
       },
     ],
   },

@@ -41,6 +41,7 @@ import EditUser from "./pages/EditUser";
 import AllOrder from "./pages/AllOrder";
 import EditOrder from "./pages/EditOrder";
 import Login from "./pages/Login";
+import Chat from "./pages/chat/Chat";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
@@ -127,6 +128,10 @@ const router = createBrowserRouter([
         element: <EditOrder />,
         action: editOrderAction,
         loader: editOrderLoader,
+      },
+      {
+        path: "chat",
+        element: <Chat />
       },
     ],
   },
