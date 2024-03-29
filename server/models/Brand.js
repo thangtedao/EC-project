@@ -7,6 +7,13 @@ const brandSchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
+  description: {
+    type: String,
+    default: "",
+  },
+  logo: {
+    type: String,
+  },
 });
 
 export default mongoose.model("Brand", brandSchema);

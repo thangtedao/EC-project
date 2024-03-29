@@ -47,32 +47,32 @@ const withValidationErrors = (validationValues) => {
 
 // Validate user input from body
 export const validateRegisterInput = withValidationErrors([
-  body("fullName").notEmpty().withMessage("FullName is required"),
+  body("fullName").notEmpty().withMessage("FullName is required!!!"),
   body("email")
     .notEmpty()
-    .withMessage("email is required")
+    .withMessage("Email is required!!!")
     .isEmail()
-    .withMessage("invalid email format")
+    .withMessage("Invalid email format!!!")
     .custom(async (email) => {
       const user = await User.findOne({ email });
       if (user) {
-        throw new BadRequestError("email already exists");
+        throw new BadRequestError("Email already exists!!!");
       }
     }),
   body("password")
     .notEmpty()
-    .withMessage("password is required")
+    .withMessage("Password is required!!!")
     .isLength({ min: 8 })
-    .withMessage("password must be at least 8 characters long"),
+    .withMessage("Password must be at least 8 characters long!!!"),
 ]);
 
 export const validateLoginInput = withValidationErrors([
   body("email")
     .notEmpty()
-    .withMessage("email is required")
+    .withMessage("Email is required!!!")
     .isEmail()
-    .withMessage("invalid email format"),
-  body("password").notEmpty().withMessage("password is required"),
+    .withMessage("Invalid email format!!!"),
+  body("password").notEmpty().withMessage("Password is required!!!"),
 ]);
 
 // Validate input from params
@@ -96,17 +96,17 @@ export const validateLoginInput = withValidationErrors([
 //   }),
 // ]);
 
-export const validateUpdateInput = withValidationErrors([
-  body("fullName").notEmpty().withMessage("FullName is required"),
-  body("email")
-    .notEmpty()
-    .withMessage("email is required")
-    .isEmail()
-    .withMessage("invalid email format")
-    .custom(async (email, { req }) => {
-      const user = await User.findOne({ email });
-      if (user && user._id.toString() !== req.user.userId) {
-        throw new BadRequestError("email already exists");
-      }
-    }),
-]);
+// export const validateUpdateInput = withValidationErrors([
+//   body("fullName").notEmpty().withMessage("FullName is required"),
+//   body("email")
+//     .notEmpty()
+//     .withMessage("Email is required")
+//     .isEmail()
+//     .withMessage("invalid email format")
+//     .custom(async (email, { req }) => {
+//       const user = await User.findOne({ email });
+//       if (user && user._id.toString() !== req.user.userId) {
+//         throw new BadRequestError("email already exists");
+//       }
+//     }),
+// ]);
