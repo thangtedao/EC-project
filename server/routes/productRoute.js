@@ -1,31 +1,30 @@
+import { Router } from "express";
+import { upload } from "../middleware/uploadImages.js";
 import {
   createProduct,
-  deleteProduct,
-  getAllProduct,
-  getProductByCategory,
-  getSingleProduct,
-  rating,
-  searchProduct,
   updateProduct,
+  deleteProduct,
+  getProducts,
+  getProduct,
+  searchProduct,
+  rating,
 } from "../controller/productController.js";
-import { Router } from "express";
-import { authenticateUser } from "../middleware/authMiddleware.js";
-import { upload } from "../middleware/uploadImages.js";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middleware/authMiddleware.js";
 
 const router = Router();
 
 router.post(
-  "/",
-  upload.fields([
-    { name: "image1", maxCount: 1 },
-    { name: "image2", maxCount: 1 },
-    { name: "image3", maxCount: 1 },
-    { name: "image4", maxCount: 1 },
-  ]),
+  "/create",
+  upload.fields([{ name: "images", maxCount: 5 }]),
   createProduct
 );
 router.patch(
-  "/update/:slug",
+  "/update/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
   upload.fields([
     { name: "image1", maxCount: 1 },
     { name: "image2", maxCount: 1 },
@@ -34,11 +33,16 @@ router.patch(
   ]),
   updateProduct
 );
-router.get("/", getAllProduct);
+router.delete(
+  "/delete/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  deleteProduct
+);
+
+router.get("/", getProducts);
 router.get("/search", searchProduct);
-router.delete("/:id", deleteProduct);
-router.get("/category", getProductByCategory);
-router.get("/:slug", getSingleProduct);
 router.patch("/rating", authenticateUser, rating);
+router.get("/:id", getProduct);
 
 export default router;

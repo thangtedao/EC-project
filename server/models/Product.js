@@ -9,13 +9,8 @@ const productSchema = mongoose.Schema({
   },
   slug: {
     type: String,
-    unique: true,
     required: true,
     lowercase: true,
-  },
-  description: {
-    type: String,
-    default: "",
   },
   price: {
     type: Number,
@@ -23,38 +18,11 @@ const productSchema = mongoose.Schema({
   },
   salePrice: {
     type: Number,
-    default: null,
+    required: true,
   },
-  sku: {
+  description: {
     type: String,
-  },
-  category: [
-    {
-      type: mongoose.Schema.Types.String,
-      ref: "Category",
-      default: [],
-    },
-  ],
-  brand: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-    default: null,
-  },
-  types: {
-    type: Array,
-    default: [],
-  },
-  status: {
-    type: String,
-    enum: Object.values(PRODUCT_STATUS),
-    default: PRODUCT_STATUS.AVAILABLE,
-  },
-  specifications: {
-    type: String,
-  },
-  stockQuantity: {
-    type: Number,
-    default: 0,
+    default: "",
   },
   images: {
     type: Array,
@@ -64,36 +32,23 @@ const productSchema = mongoose.Schema({
     type: Array,
     default: [],
   },
-  review: {
-    type: Array,
-    default: [],
-  },
-  ratings: [
+  category: [
     {
-      star: Number,
-      comment: String,
-      postedby: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      createdAt: {
-        type: Date,
-        default: timeStamp,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
     },
   ],
-  totalRating: {
-    type: Number,
-    default: 0,
+  brand: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Brand",
   },
-  sold: {
-    type: Number,
-    default: 0,
+  status: {
+    type: String,
+    enum: Object.values(PRODUCT_STATUS),
+    default: PRODUCT_STATUS.AVAILABLE,
   },
-  colors: {
-    type: Array,
-    default: [],
-  },
-  tags: {
-    type: Array,
-    default: [],
+  specifications: {
+    type: String,
   },
   viewed: {
     type: Number,

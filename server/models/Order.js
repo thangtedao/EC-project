@@ -3,36 +3,29 @@ import { ORDER_STATUS } from "../utils/constants.js";
 import { timeStamp } from "../utils/timezone.js";
 
 const orderSchema = mongoose.Schema({
-  products: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-      price: Number,
-      count: Number,
-    },
-  ],
-  totalPrice: {
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  CouponCode: {
+    type: String,
+  },
+  DiscountAmount: {
     type: Number,
   },
-  coupon: {
-    couponId: { type: mongoose.Schema.Types.ObjectId, ref: "Coupon" },
-    name: String,
-    discount: Number,
-  },
-  paymentIntent: {
+  ShippingAddress: {
     type: String,
-    default: "",
   },
-  orderStatus: {
+  PaymentMethod: {
+    type: String,
+  },
+  TotalAmount: {
+    type: Number,
+  },
+  status: {
     type: String,
     enum: Object.values(ORDER_STATUS),
     default: ORDER_STATUS.NOT_PROCESSED,
-  },
-  orderBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
   },
   createdAt: {
     type: Date,

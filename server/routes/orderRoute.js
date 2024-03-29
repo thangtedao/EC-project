@@ -1,8 +1,8 @@
 import express from "express";
 import {
   createOrder,
-  getAllOrder,
-  getSingleOrder,
+  getOrders,
+  getOrder,
   showStats,
   paypalPayment,
   stripePayment,
@@ -22,9 +22,9 @@ router.post(
   stripeWebHook
 );
 router.post("/create-order", createOrder);
-router.get("/", getAllOrder);
+router.get("/", getOrders);
 router.get("/stats", showStats);
-router.get("/:id", getSingleOrder);
+router.get("/:id", getOrder);
 router.patch("/update/:id", updateOrder);
 
 export default router;

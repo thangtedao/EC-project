@@ -12,20 +12,10 @@ const categorySchema = new mongoose.Schema({
     required: true,
     lowercase: true,
   },
-  image: {
-    type: String,
-  },
   description: {
     type: String,
-    default: null,
+    default: "",
   },
-  child: [
-    {
-      type: mongoose.Schema.Types.String,
-      ref: "Category",
-      default: null,
-    },
-  ],
   parent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",

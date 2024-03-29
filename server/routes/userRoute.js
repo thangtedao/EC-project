@@ -1,53 +1,69 @@
 import { Router } from "express";
+import { upload } from "../middleware/uploadImages.js";
 import {
-  applyCoupon,
-  blockUser,
-  createOrder,
-  deleteUser,
-  emptyCart,
-  getAllUsers,
+  getUsers,
+  getUser,
   getCurrentUser,
-  getOrders,
-  getSingleUser,
-  getUserCart,
-  getWishlist,
-  unblockUser,
-  updateOrderStatus,
+  deleteUser,
   updateUser,
-  setUserCart,
+  blockUser,
+  unblockUser,
+  getWishlist,
   addToWishlist,
 } from "../controller/userController.js";
-import { validateUpdateInput } from "../middleware/validationMiddleware.js";
 import {
   authenticateUser,
   authorizePermissions,
 } from "../middleware/authMiddleware.js";
-import { upload } from "../middleware/uploadImages.js";
 
 const router = Router();
 
+/* USER */
 router.get("/current-user", authenticateUser, getCurrentUser);
-router.get("/single-user/:id", getSingleUser);
-router.get("/all-users", getAllUsers);
-router.patch("/wishlist", authenticateUser, addToWishlist);
-router.get("/wishlist", authenticateUser, getWishlist);
-router.post("/cart", authenticateUser, setUserCart);
-router.get("/cart", authenticateUser, getUserCart);
-router.delete("/empty-cart", authenticateUser, emptyCart);
-router.post("/cart/apply-coupon", applyCoupon);
-router.post("/cart/cash-order", createOrder);
-router.get("/get-orders", getOrders);
-router.patch("/order/update-order/:id", updateOrderStatus);
-router.get("/admin/app-stats", authorizePermissions("admin"), blockUser);
 router.patch(
   "/update-user",
   authenticateUser,
   upload.single("avatar"),
-  validateUpdateInput,
   updateUser
 );
-router.delete("/delete/:id", deleteUser);
-router.patch("/block-user/:id", blockUser);
-router.patch("/unblock-user/:id", unblockUser);
+
+router.patch("/wishlist", authenticateUser, addToWishlist);
+router.get("/wishlist", authenticateUser, getWishlist);
+
+// router.post("/cart", authenticateUser, setUserCart);
+// router.get("/cart", authenticateUser, getUserCart);
+// router.delete("/empty-cart", authenticateUser, emptyCart);
+// router.post("/cart/apply-coupon", applyCoupon);
+
+/* ADMIN */
+router.get(
+  "/admin/all-users",
+  authenticateUser,
+  authorizePermissions("admin"),
+  getUsers
+);
+router.get(
+  "admin/user-profile/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  getUser
+);
+router.delete(
+  "/admin/delete/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  deleteUser
+);
+router.patch(
+  "/admin/block-user/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  blockUser
+);
+router.patch(
+  "/admin/unblock-user/:id",
+  authorizePermissions("admin"),
+  unblockUser
+);
 
 export default router;

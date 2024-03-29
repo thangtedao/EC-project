@@ -1,4 +1,5 @@
 import Coupon from "../models/Coupon.js";
+import Cart from "../models/Cart.js";
 
 export const createCoupon = async (req, res) => {
   try {
@@ -52,6 +53,31 @@ export const deleteCoupon = async (req, res) => {
     const { id } = req.params;
     const deletedCoupon = await Coupon.findByIdAndDelete(id);
     res.status(200).json({ deletedCoupon });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
+export const applyCoupon = async (req, res) => {
+  try {
+    const { coupon } = req.body;
+    const { userId } = req.user;
+    const validCoupon = await Coupon.findOne({ name: coupon });
+
+    if (!validCoupon) throw new NotFoundError("Invalid Coupon");
+    let { products, cartTotal } = await Cart.findOne({
+      user: userId,
+    }).populate("products.product");
+    let totalAfterDiscount = (
+      cartTotal -
+      (cartTotal * validCoupon.discount) / 100
+    ).toFixed(2);
+    await Cart.findOneAndUpdate(
+      { user: userId },
+      { totalAfterDiscount },
+      { new: true }
+    );
+    res.status(StatusCodes.OK).json({ totalAfterDiscount });
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }

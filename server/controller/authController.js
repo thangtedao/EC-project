@@ -1,6 +1,6 @@
+import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
 import { UnauthenticatedError } from "../errors/customErrors.js";
-import User from "../models/User.js";
 import { passwordHash, comparePassword } from "../utils/passwordHash.js";
 import { createJWT } from "../utils/token.js";
 
@@ -12,9 +12,9 @@ export const register = async (req, res) => {
     req.body.password = await passwordHash(req.body.password);
 
     await User.create(req.body);
-    res.status(201).json({ msg: "user created" });
+    res.status(StatusCodes.CREATED).json({ msg: "User Created" });
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
@@ -26,7 +26,7 @@ export const login = async (req, res) => {
     const isValidUser =
       user && (await comparePassword(password, user.password));
     if (!isValidUser)
-      throw new UnauthenticatedError("email or password is not correct");
+      throw new UnauthenticatedError("Email or Password is not correct");
 
     const token = createJWT({ userId: user.id, role: user.role });
 
@@ -38,16 +38,13 @@ export const login = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
     });
 
-    res.status(StatusCodes.OK).json({ msg: "user logged in", token: token });
+    res.status(StatusCodes.OK).json({ msg: "User logged in", token: token });
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
 export const logout = async (req, res) => {
-  res.cookie("token", "logout", {
-    httpOnly: true,
-    expires: new Date(Date.now()),
-  });
-  res.status(StatusCodes.OK).json({ msg: "user logged out" });
+  res.clearCookie("token");
+  res.status(StatusCodes.OK).json({ msg: "User logged out" });
 };
