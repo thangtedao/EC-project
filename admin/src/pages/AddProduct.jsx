@@ -17,7 +17,12 @@ import Chip from "@mui/material/Chip";
 {
   /* antd */
 }
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  UploadOutlined,
+  InfoCircleOutlined,
+  MinusCircleOutlined,
+} from "@ant-design/icons";
 import {
   Modal,
   Upload,
@@ -28,6 +33,10 @@ import {
   Input,
   Typography,
   InputNumber,
+  Tooltip,
+  Card,
+  Breadcrumb,
+  Space,
 } from "antd";
 
 const getBase64 = (file) =>
@@ -103,112 +112,12 @@ const Wrapper = styled.div`
   width: 100%;
 
   .title {
-    font-size: 2rem;
+    text-align: left;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #00193b;
     margin-bottom: 1rem;
   }
-  .form-add {
-    height: fit-content;
-    width: 100%;
-    display: flex;
-    gap: 2rem;
-    background-color: white;
-    box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
-    border-color: #f1f1f1;
-    border-radius: 10px;
-    padding: 1rem;
-  }
-  .form-col-1 {
-    width: 60%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-  .input-image {
-    height: 300px;
-    border: 1px solid black;
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    .image {
-      cursor: pointer;
-      background-color: #ededed;
-      border-radius: 5px;
-      height: 300px;
-      width: 320px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-    }
-    img {
-      max-width: 320px;
-      max-height: 300px;
-    }
-  }
-  .sub-image {
-    display: grid;
-    row-gap: 10px;
-    .image {
-      cursor: pointer;
-      background-color: #ededed;
-      border-radius: 5px;
-      height: 145px;
-      width: 160px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-    }
-    img {
-      width: inherit;
-      max-height: 145px;
-    }
-  }
-
-  .form-col-2 {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    width: 40%;
-  }
-  .form-row {
-    .form-label {
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #00193b;
-    }
-    .form-input {
-      border: 1px solid #e2e1e1;
-      border-radius: 8px;
-      padding: 0 20px;
-      height: 44px;
-    }
-    .form-select {
-      border: 1px solid #e2e1e1;
-      border-radius: 8px;
-      padding: 0 20px;
-      height: 44px;
-    }
-    textarea {
-      resize: none;
-      width: 100%;
-      height: 120px;
-      overflow: auto;
-      padding: 1rem;
-      border-radius: 10px;
-      border: 0.5px solid lightgray;
-    }
-  }
-  .btn {
-    height: 50px;
-    border-radius: 10px;
-    background-color: #035ecf;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bolder;
-  }
-
   .input-title {
     font-size: 0.95rem;
     font-weight: 400;
@@ -216,16 +125,32 @@ const Wrapper = styled.div`
   .col-1 {
     width: 60%;
     height: fit-content;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    padding: 1rem;
   }
   .col-2 {
     width: 40%;
     height: fit-content;
+  }
+  .col-2-item {
     border: 1px solid lightgray;
     border-radius: 10px;
-    padding: 1rem;
+  }
+  .col-1-item {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+  }
+  .btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background-color: #f3f3f3;
+    padding: 1 rem;
+    height: 60px;
+    width: 350px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 `;
 
@@ -241,7 +166,22 @@ const AddProduct = () => {
   const [previewTitle, setPreviewTitle] = useState("");
   const [fileList, setFileList] = useState([]);
 
-  const handleCancel = () => setPreviewOpen(false);
+  //Modal
+  const [open, setModalOpen] = useState(false);
+  //Mở Modal (Confirm box)
+  const showModal = () => {
+    setModalOpen(true);
+  };
+  //Đóng Modal sau khi xác nhận
+  const handleOk = () => {
+    setModalOpen(false);
+  };
+  //Đóng Modal sau khi xác nhận
+  //Đóng ReviewOpen sau khi xác nhận
+  const handleCancel = () => {
+    setPreviewOpen(false);
+    setModalOpen(false);
+  };
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -312,125 +252,23 @@ const AddProduct = () => {
   return (
     <HelmetProvider>
       <Wrapper>
+        <Breadcrumb
+          style={{ paddingBottom: "1rem" }}
+          items={[
+            {
+              title: <a href="">Product</a>,
+            },
+            {
+              title: "Add Product",
+            },
+          ]}
+        />
         <Helmet>
           <meta charSet="utf-8" />
           <title>Add Product</title>
         </Helmet>
 
         <div className="title">Add Product</div>
-        <div>
-          <div className="form-col-1">
-            <div className="form-row">
-              <label htmlFor="images" className="form-label">
-                {"Image Link"}
-              </label>
-              <textarea name="images" />
-            </div>
-            <div className="form-row">
-              <label htmlFor="description" className="form-label">
-                Description
-              </label>
-              <textarea name="description" />
-            </div>
-            <div className="form-row">
-              <label htmlFor="specifications" className="form-label">
-                Specifications
-              </label>
-              <textarea name="specifications" />
-            </div>
-          </div>
-          <div className="form-col-2">
-            <FormRow type="text" name="name" lableText="Product Name" />
-            <FormRow type="number" name="price" lableText="Regular Price" />
-            <FormRow type="number" name="salePrice" lableText="Sale Price" />
-            <FormRow
-              type="number"
-              name="stockQuantity"
-              lableText="Quantity in Stock"
-            />
-            <div className="form-row">
-              <label htmlFor="status" className="form-label"></label>
-              <select
-                name="status"
-                className="form-select"
-                defaultValue={PRODUCT_STATUS.AVAILABLE}
-              >
-                {Object.values(PRODUCT_STATUS).map((item) => {
-                  return (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <FormRowSelect
-              name="category1"
-              labelText="Main Category"
-              list={categories || []}
-              defaultValue={
-                categories.length > 0
-                  ? categories[0].name
-                  : "Chưa có category nào"
-              }
-              onChange={(e) => {
-                [
-                  setCategoryC(
-                    categoryChild.length > 0
-                      ? categoryChild[e.target.selectedIndex]
-                      : []
-                  ),
-                  setCategoriesC([]),
-                ];
-              }}
-            />
-            {/* <FormRowSelect
-              name="category2"
-              list={categoryC || []}
-              defaultValue={
-                categoryChild.length > 0 && categoryC.length > 0
-                  ? categoryC[0].name
-                  : ""
-              }
-            /> */}
-
-            {/* <FormControl sx={{ mb: 3 }} size="small">
-              <div className="form-label" style={{ fontWeight: "bold" }}>
-                Category Child
-              </div>
-              <Select
-                name="category2"
-                sx={{ minHeight: 44, p: 0 }}
-                multiple
-                value={categoriesC}
-                onChange={handleChangeC}
-                input={<OutlinedInput />}
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} />
-                    ))}
-                  </Box>
-                )}
-                MenuProps={MenuProps}
-              >
-                {categoryC.map((item) => (
-                  <MenuItem
-                    key={item._id}
-                    value={item.slug || ""}
-                    style={getStyles(item.name, categoriesC, theme)}
-                  >
-                    {item.name || ""}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl> */}
-
-            <button type="submit" className="btn" disabled={isSubmitting}>
-              {isSubmitting ? "Adding..." : "Add"}
-            </button>
-          </div>
-        </div>
 
         <Form
           name="basic"
@@ -445,87 +283,178 @@ const AddProduct = () => {
           autoComplete="off"
         >
           <div style={{ display: "flex", gap: "1.5rem" }}>
-            <div className="col-1">
-              {/* INFORMATION FIELDS */}
-              <div className="col-1-item">
-                <Typography.Title className="input-title">
-                  Name
-                </Typography.Title>
-                <Form.Item name="name">
-                  <Input size="large" placeholder="RTX 4090Ti" />
-                </Form.Item>
+            <div
+              className="col-1"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              {/* Product information */}
+              <Card
+                className="col-1-item"
+                size="large"
+                title={`Product information`}
+              >
+                <div>
+                  {/* INFORMATION FIELDS */}
 
-                <Typography.Title className="input-title">
-                  Description
-                </Typography.Title>
-                <Form.Item name="description">
-                  <Input.TextArea
-                    size="large"
-                    placeholder="Type your description..."
-                    autoSize={{
-                      minRows: 3,
-                      maxRows: 5,
-                    }}
-                  />
-                </Form.Item>
+                  <div>
+                    <Typography.Title className="input-title">
+                      Name
+                    </Typography.Title>
+                    <Form.Item name="name">
+                      <Input size="large" placeholder="RTX 4090Ti" />
+                    </Form.Item>
 
-                <Typography.Title className="input-title">
-                  Specifications
-                </Typography.Title>
-                <Form.Item name="specifications">
-                  <Input.TextArea
-                    size="large"
-                    placeholder="Type your specifications..."
-                    autoSize={{
-                      minRows: 3,
-                      maxRows: 5,
-                    }}
-                  />
-                </Form.Item>
-              </div>
+                    <Typography.Title className="input-title">
+                      Description
+                    </Typography.Title>
+                    <Form.Item name="description">
+                      <Input.TextArea
+                        size="large"
+                        placeholder="Type your description..."
+                        autoSize={{
+                          minRows: 3,
+                          maxRows: 5,
+                        }}
+                      />
+                    </Form.Item>
 
+                    <Typography.Title className="input-title">
+                      Specifications
+                    </Typography.Title>
+                    <Form.Item name="specifications">
+                      <Input.TextArea
+                        size="large"
+                        placeholder="Type your specifications..."
+                        autoSize={{
+                          minRows: 3,
+                          maxRows: 5,
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+              </Card>
               {/* MEDIA FIELDS */}
-              <div className="col-1-item">
-                <Form.Item name="images" label="Images">
-                  <Upload
-                    listType="picture-card"
-                    fileList={fileList}
-                    onPreview={handlePreview}
-                    onChange={handleChange}
-                    beforeUpload={() => false}
-                    maxCount={5}
-                    multiple
-                  >
-                    {fileList.length >= 5 ? null : uploadButton}
-                  </Upload>
-                </Form.Item>
+              <Card className="col-1-item" size="large" title={`Product Image`}>
+                <div>
+                  <Form.Item name="images" label="Images">
+                    <Upload
+                      listType="picture-card"
+                      fileList={fileList}
+                      onPreview={handlePreview}
+                      onChange={handleChange}
+                      beforeUpload={() => false}
+                      maxCount={5}
+                      multiple
+                    >
+                      {fileList.length >= 5 ? null : uploadButton}
+                    </Upload>
+                  </Form.Item>
 
-                <Form.Item>
-                  <Modal
-                    open={previewOpen}
-                    title={previewTitle}
-                    footer={null}
-                    onCancel={handleCancel}
-                  >
-                    <img
-                      alt="image"
-                      style={{
-                        width: "100%",
-                      }}
-                      src={previewImage}
-                    />
-                  </Modal>
-                </Form.Item>
-              </div>
+                  <Form.Item>
+                    <Modal
+                      open={previewOpen}
+                      title={previewTitle}
+                      footer={null}
+                      onCancel={handleCancel}
+                    >
+                      <img
+                        alt="image"
+                        style={{
+                          width: "100%",
+                        }}
+                        src={previewImage}
+                      />
+                    </Modal>
+                  </Form.Item>
+                </div>
+              </Card>
+              {/* Variants */}
+              <Card className="col-1-item" size="large" title={`Variants`}>
+                <Typography.Title className="input-title">
+                  Options
+                </Typography.Title>
+                <Form.List name="variations">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Space
+                          key={key}
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "2.5fr 7fr 0.5fr",
+                            width: "100%",
+                            marginBottom: 8,
+                          }}
+                          align="baseline"
+                        >
+                          <Form.Item
+                            style={{ width: "100%" }}
+                            {...restField}
+                            name={[name, "variationName"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing",
+                              },
+                            ]}
+                          >
+                            <Select
+                              size="large"
+                              placeholder="Select option"
+                              options={[
+                                {
+                                  value: "Color",
+                                  label: "Color",
+                                },
+                                {
+                                  value: "RAM-ROM",
+                                  label: "RAM-ROM",
+                                },
+                              ]}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "variationValue"]}
+                            {...restField}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing Value",
+                              },
+                            ]}
+                          >
+                            <Input size="large" placeholder="Enter Value" />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          Add another option
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Card>
             </div>
-
-            <div className="col-2">
-              <div className="col-2-item">
+            <div
+              className="col-2"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card className="col-2-item" size="large" title={`Price`}>
                 <Typography.Title className="input-title">
                   Price
                 </Typography.Title>
                 <Form.Item name="price">
                   <InputNumber
+                    suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
                     placeholder="99999999"
@@ -542,14 +471,15 @@ const AddProduct = () => {
                     placeholder="99999999"
                   />
                 </Form.Item>
-              </div>
+              </Card>
 
-              <div className="col-2-item">
+              <Card className="col-2-item" size="large" title={`Category`}>
                 <Typography.Title className="input-title">
                   Brand
                 </Typography.Title>
                 <Form.Item name="brand">
                   <Select
+                    size="large"
                     placeholder="Select Brand"
                     options={[
                       {
@@ -573,6 +503,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="category">
                   <Select
+                    size="large"
                     placeholder="Inserted are removed"
                     value={categoryP}
                     onChange={(value) => handleChangeC(value)}
@@ -589,6 +520,7 @@ const AddProduct = () => {
                 </Form.Item>
                 <Form.Item name="categoryC">
                   <Select
+                    size="large"
                     mode="multiple"
                     placeholder="Inserted are removed"
                     value={categoryC}
@@ -601,7 +533,7 @@ const AddProduct = () => {
                     }))}
                   />
                 </Form.Item>
-              </div>
+              </Card>
             </div>
           </div>
 
@@ -610,11 +542,47 @@ const AddProduct = () => {
               offset: 8,
               span: 16,
             }}
-          >
-            <Button type="primary" htmlType="submit">
+          ></Form.Item>
+          <div class="btn">
+            {/* Xóa data đã nhập (cụ thể: Load lại trang add sp) */}
+            <Button
+              danger
+              size="large"
+              onClick={() => {
+                Modal.confirm({
+                  title: "Confirm",
+                  content: "Do you want to cancel?",
+                  footer: (_, { OkBtn, CancelBtn }) => (
+                    <>
+                      <CancelBtn />
+                      <OkBtn />
+                    </>
+                  ),
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            {/* Submit data đã nhập vào dtb */}
+            <Button
+              size="large"
+              type="primary"
+              onClick={() => {
+                Modal.confirm({
+                  title: "Confirm",
+                  content: "Do you want submit?",
+                  footer: (_, { OkBtn, CancelBtn }) => (
+                    <>
+                      <CancelBtn />
+                      <OkBtn />
+                    </>
+                  ),
+                });
+              }}
+            >
               Submit
             </Button>
-          </Form.Item>
+          </div>
         </Form>
       </Wrapper>
     </HelmetProvider>

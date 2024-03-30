@@ -46,7 +46,11 @@ app.use(
 );
 app.use(cors());
 
+<<<<<<< HEAD
 // app.use(express.static(path.resolve(__dirname, "../admin/dist")));
+=======
+app.use(express.static(path.resolve(__dirname, "../admin/dist")));
+>>>>>>> edc52c8989589853a9c08753f007b99cf8dc3cbf
 // app.use(express.static(path.resolve(__dirname, "../client/dist")));
 
 app.use("/api/user", userRouter);
@@ -58,9 +62,15 @@ app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/order", orderRouter);
 
+<<<<<<< HEAD
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../admin/dist", "index.html"));
 // });
+=======
+app.get("/*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../admin/dist", "index.html"));
+});
+>>>>>>> edc52c8989589853a9c08753f007b99cf8dc3cbf
 
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));

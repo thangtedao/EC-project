@@ -22,7 +22,7 @@ const Wrapper = styled.section`
     grid-template-columns: auto 1fr;
   }
   .dashboard-page {
-    background-color: #e8e9ec;
+    background-color: #ffffff;
     width: 100%;
     height: calc(100% - 60px);
     padding: 2rem;
