@@ -1,16 +1,37 @@
+import { Router } from "express";
 import {
   createBrand,
   deleteBrand,
-  getAllBrand,
+  getBrands,
+  getBrand,
   updateBrand,
 } from "../controller/brandController.js";
-import { Router } from "express";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/", createBrand);
-router.get("/", getAllBrand);
-router.patch("/update/:id", updateBrand);
-router.delete("/delete/:id", deleteBrand);
+router.post(
+  "/create",
+  authenticateUser,
+  authorizePermissions("admin"),
+  createBrand
+);
+router.get("/all-brands", getBrands);
+router.get("/:id", getBrand);
+router.patch(
+  "/update/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  updateBrand
+);
+router.delete(
+  "/delete/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  deleteBrand
+);
 
 export default router;

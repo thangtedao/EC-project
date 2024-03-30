@@ -18,6 +18,8 @@ const router = Router();
 
 router.post(
   "/create",
+  authenticateUser,
+  authorizePermissions("admin"),
   upload.fields([{ name: "images", maxCount: 5 }]),
   createProduct
 );
