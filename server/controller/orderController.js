@@ -304,7 +304,7 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const getAllOrder = async (req, res) => {
+export const getOrders = async (req, res) => {
   try {
     let query;
 
@@ -372,7 +372,7 @@ export const getAllOrder = async (req, res) => {
   }
 };
 
-export const getSingleOrder = async (req, res) => {
+export const getOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
     const order = await Order.findOne({ _id: orderId }).populate([
@@ -549,4 +549,25 @@ export const showStats = async (req, res) => {
     totalProduct,
     productMostSold,
   });
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+    const findOrder = await Order.findByIdAndUpdate(
+      id,
+      {
+        orderStatus: status,
+        paymentIntent: {
+          status: status,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(StatusCodes.OK).json({ findOrder });
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
 };

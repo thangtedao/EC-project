@@ -64,7 +64,9 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.post("/auth/login", data);
+    const token = await customFetch
+      .post("/auth/login", data)
+      .then(({ data }) => data.token);
 
     const user = await customFetch
       .get("/user/current-user")
@@ -76,7 +78,9 @@ export const action = async ({ request }) => {
       dispatch(logout());
       return redirect("/login");
     }
-    store.dispatch(login({ user: user }));
+    if (token) {
+      store.dispatch(login({ user: user, token: token }));
+    }
 
     const response = await customFetch.get("/user/cart");
     if (response.data.cart) {

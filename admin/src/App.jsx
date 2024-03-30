@@ -53,8 +53,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />,
-        loader: dashboardLoader,
+        // element: <Dashboard />,
+        // loader: dashboardLoader,
+        element: <AddProduct />,
+        action: addProductAction,
+        loader: addProductLoader,
       },
       {
         path: "all-product",

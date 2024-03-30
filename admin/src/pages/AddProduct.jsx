@@ -3,8 +3,8 @@ import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components";
-import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { FormRow, FormRowSelect } from "../components/index.js";
+import { redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { FaImage } from "react-icons/fa6";
 
 import { useTheme } from "@mui/material/styles";
@@ -12,8 +12,34 @@ import Box from "@mui/material/Box";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
+
+{
+  /* antd */
+}
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  Modal,
+  Upload,
+  Button,
+  Checkbox,
+  Select,
+  Form,
+  Input,
+  Typography,
+  InputNumber,
+} from "antd";
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+{
+  /* antd */
+}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -49,20 +75,24 @@ export const loader = async () => {
   try {
     const categories = await customFetch
       .get("/category/get/parent")
-      .then(({ data }) => data.categories);
+      .then(({ data }) => data);
 
-    let categoryChild = [];
-    if (categories.length > 0) {
-      categoryChild = await Promise.all(
-        categories.map(async (category) => {
-          const children = await customFetch
-            .get(`/category/get/child/${category._id}`)
-            .then(({ data }) => data.categories);
+    const categoryChild = await customFetch
+      .get("/category/get/child")
+      .then(({ data }) => data);
 
-          return children;
-        })
-      );
-    }
+    // let categoryChild = [];
+    // if (categories.length > 0) {
+    //   categoryChild = await Promise.all(
+    //     categories.map(async (category) => {
+    //       const children = await customFetch
+    //         .get(`/category/get/child/${category._id}`)
+    //         .then(({ data }) => data.categories);
+
+    //       return children;
+    //     })
+    //   );
+    // }
     return { categories, categoryChild };
   } catch (error) {
     return error;
@@ -97,6 +127,7 @@ const Wrapper = styled.div`
   }
   .input-image {
     height: 300px;
+    border: 1px solid black;
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
@@ -177,6 +208,25 @@ const Wrapper = styled.div`
     font-size: 1.2rem;
     font-weight: bolder;
   }
+
+  .input-title {
+    font-size: 0.95rem;
+    font-weight: 400;
+  }
+  .col-1 {
+    width: 60%;
+    height: fit-content;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .col-2 {
+    width: 40%;
+    height: fit-content;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding: 1rem;
+  }
 `;
 
 const AddProduct = () => {
@@ -185,59 +235,78 @@ const AddProduct = () => {
   const isSubmitting = navigation.state === "submitting";
   const theme = useTheme();
 
-  const [categoryC, setCategoryC] = useState(categoryChild[0] || []);
-  const [categoriesC, setCategoriesC] = useState([]);
+  /* antd */
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
 
-  const handleChange = (event) => {
+  const handleCancel = () => setPreviewOpen(false);
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: "none",
+      }}
+      type="button"
+    >
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </button>
+  );
+  /* antd */
+  const onFinish = async (values) => {
+    console.log("Success:", values);
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append("images", file.originFileObj);
+    });
+    console.log("formData:", formData);
+    await customFetch.post("/product/create", formData);
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  // const [categoryC, setCategoryC] = useState(categoryChild[0] || []);
+  const [categoryP, setCategoryP] = useState();
+  const [categoryC, setCategoryC] = useState([]);
+  const [categoriesC, setCategoriesC] = useState([]);
+  const filteredOptions = categoriesC.filter((o) => !categoryC.includes(o));
+
+  const handleChangeC = (value) => {
+    let newCategoriesC = [];
+    categoryChild.map((item) => {
+      if (item.parent.toString() === value.toString()) {
+        newCategoriesC.push(item);
+      }
+    });
+    setCategoriesC(newCategoriesC);
+    setCategoryP(value);
+  };
+  const handleChangeC2 = (event) => {
     const {
       target: { value },
     } = event;
     setCategoriesC(typeof value === "string" ? value.split(",") : value);
-  };
-
-  const [selectedImage1, setSelectedImage1] = useState(null);
-  const [selectedImage2, setSelectedImage2] = useState(null);
-  const [selectedImage3, setSelectedImage3] = useState(null);
-  const [selectedImage4, setSelectedImage4] = useState(null);
-
-  const handleFileChange = (e, key) => {
-    const file = e.target.files[0];
-    switch (key) {
-      case 1:
-        setSelectedImage1(URL.createObjectURL(file));
-        break;
-      case 2:
-        setSelectedImage2(URL.createObjectURL(file));
-        break;
-      case 3:
-        setSelectedImage3(URL.createObjectURL(file));
-        break;
-      case 4:
-        setSelectedImage4(URL.createObjectURL(file));
-        break;
-
-      default:
-        break;
-    }
-  };
-
-  const openFileInput = (key) => {
-    switch (key) {
-      case 1:
-        document.getElementById("fileInput1").click();
-        break;
-      case 2:
-        document.getElementById("fileInput2").click();
-        break;
-      case 3:
-        document.getElementById("fileInput3").click();
-        break;
-      case 4:
-        document.getElementById("fileInput4").click();
-        break;
-      default:
-        break;
-    }
   };
 
   return (
@@ -249,81 +318,8 @@ const AddProduct = () => {
         </Helmet>
 
         <div className="title">Add Product</div>
-        <Form method="post" className="form-add" encType="multipart/form-data">
+        <div>
           <div className="form-col-1">
-            <div className="input-image">
-              <div className="image" onClick={() => openFileInput(1)}>
-                {selectedImage1 ? (
-                  <img src={selectedImage1} alt="Image" />
-                ) : (
-                  <div>
-                    <FaImage /> Browse Image
-                  </div>
-                )}
-                <input
-                  accept="image/*"
-                  type="file"
-                  id="fileInput1"
-                  name="image1"
-                  style={{ display: "none" }}
-                  onChange={(e) => handleFileChange(e, 1)}
-                />
-              </div>
-              <div className="image" onClick={() => openFileInput(2)}>
-                {selectedImage2 ? (
-                  <img src={selectedImage2} alt="Image" />
-                ) : (
-                  <div>
-                    <FaImage /> Browse Image
-                  </div>
-                )}
-                <input
-                  accept="image/*"
-                  type="file"
-                  id="fileInput2"
-                  name="image2"
-                  style={{ display: "none" }}
-                  onChange={(e) => handleFileChange(e, 2)}
-                />
-              </div>
-              <div className="sub-image">
-                <div className="image" onClick={() => openFileInput(3)}>
-                  {selectedImage3 ? (
-                    <img src={selectedImage3} alt="Image" />
-                  ) : (
-                    <div>
-                      <FaImage /> Browse Image
-                    </div>
-                  )}
-                  <input
-                    accept="image/*"
-                    type="file"
-                    id="fileInput3"
-                    name="image3"
-                    style={{ display: "none" }}
-                    onChange={(e) => handleFileChange(e, 3)}
-                  />
-                </div>
-                <div className="image" onClick={() => openFileInput(4)}>
-                  {selectedImage4 ? (
-                    <img src={selectedImage4} alt="Image" />
-                  ) : (
-                    <div>
-                      <FaImage /> Browse Image
-                    </div>
-                  )}
-                  <input
-                    accept="image/*"
-                    type="file"
-                    id="fileInput4"
-                    name="image4"
-                    style={{ display: "none" }}
-                    onChange={(e) => handleFileChange(e, 4)}
-                  />
-                </div>
-              </div>
-            </div>
-
             <div className="form-row">
               <label htmlFor="images" className="form-label">
                 {"Image Link"}
@@ -398,7 +394,7 @@ const AddProduct = () => {
               }
             /> */}
 
-            <FormControl sx={{ mb: 3 }} size="small">
+            {/* <FormControl sx={{ mb: 3 }} size="small">
               <div className="form-label" style={{ fontWeight: "bold" }}>
                 Category Child
               </div>
@@ -407,7 +403,7 @@ const AddProduct = () => {
                 sx={{ minHeight: 44, p: 0 }}
                 multiple
                 value={categoriesC}
-                onChange={handleChange}
+                onChange={handleChangeC}
                 input={<OutlinedInput />}
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -428,12 +424,197 @@ const AddProduct = () => {
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
+            </FormControl> */}
 
             <button type="submit" className="btn" disabled={isSubmitting}>
               {isSubmitting ? "Adding..." : "Add"}
             </button>
           </div>
+        </div>
+
+        <Form
+          name="basic"
+          style={{
+            width: "100%",
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <div style={{ display: "flex", gap: "1.5rem" }}>
+            <div className="col-1">
+              {/* INFORMATION FIELDS */}
+              <div className="col-1-item">
+                <Typography.Title className="input-title">
+                  Name
+                </Typography.Title>
+                <Form.Item name="name">
+                  <Input size="large" placeholder="RTX 4090Ti" />
+                </Form.Item>
+
+                <Typography.Title className="input-title">
+                  Description
+                </Typography.Title>
+                <Form.Item name="description">
+                  <Input.TextArea
+                    size="large"
+                    placeholder="Type your description..."
+                    autoSize={{
+                      minRows: 3,
+                      maxRows: 5,
+                    }}
+                  />
+                </Form.Item>
+
+                <Typography.Title className="input-title">
+                  Specifications
+                </Typography.Title>
+                <Form.Item name="specifications">
+                  <Input.TextArea
+                    size="large"
+                    placeholder="Type your specifications..."
+                    autoSize={{
+                      minRows: 3,
+                      maxRows: 5,
+                    }}
+                  />
+                </Form.Item>
+              </div>
+
+              {/* MEDIA FIELDS */}
+              <div className="col-1-item">
+                <Form.Item name="images" label="Images">
+                  <Upload
+                    listType="picture-card"
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    beforeUpload={() => false}
+                    maxCount={5}
+                    multiple
+                  >
+                    {fileList.length >= 5 ? null : uploadButton}
+                  </Upload>
+                </Form.Item>
+
+                <Form.Item>
+                  <Modal
+                    open={previewOpen}
+                    title={previewTitle}
+                    footer={null}
+                    onCancel={handleCancel}
+                  >
+                    <img
+                      alt="image"
+                      style={{
+                        width: "100%",
+                      }}
+                      src={previewImage}
+                    />
+                  </Modal>
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="col-2">
+              <div className="col-2-item">
+                <Typography.Title className="input-title">
+                  Price
+                </Typography.Title>
+                <Form.Item name="price">
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    size="large"
+                    placeholder="99999999"
+                  />
+                </Form.Item>
+
+                <Typography.Title className="input-title">
+                  Sale Price
+                </Typography.Title>
+                <Form.Item name="salePrice">
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    size="large"
+                    placeholder="99999999"
+                  />
+                </Form.Item>
+              </div>
+
+              <div className="col-2-item">
+                <Typography.Title className="input-title">
+                  Brand
+                </Typography.Title>
+                <Form.Item name="brand">
+                  <Select
+                    placeholder="Select Brand"
+                    options={[
+                      {
+                        value: "Samsung",
+                        label: "Samsung",
+                      },
+                      {
+                        value: "Oppo",
+                        label: "Oppo",
+                      },
+                      {
+                        value: "Nokia",
+                        label: "Nokia",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+
+                <Typography.Title className="input-title">
+                  Category
+                </Typography.Title>
+                <Form.Item name="category">
+                  <Select
+                    placeholder="Inserted are removed"
+                    value={categoryP}
+                    onChange={(value) => handleChangeC(value)}
+                    style={{
+                      width: "100%",
+                    }}
+                    options={categories.map((category) => {
+                      return {
+                        value: category._id,
+                        label: category.name,
+                      };
+                    })}
+                  />
+                </Form.Item>
+                <Form.Item name="categoryC">
+                  <Select
+                    mode="multiple"
+                    placeholder="Inserted are removed"
+                    value={categoryC}
+                    style={{
+                      width: "100%",
+                    }}
+                    options={filteredOptions.map((item) => ({
+                      value: item._id,
+                      label: item.name,
+                    }))}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+          </div>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
         </Form>
       </Wrapper>
     </HelmetProvider>

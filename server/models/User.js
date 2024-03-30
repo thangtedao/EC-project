@@ -25,13 +25,6 @@ const UserSchema = new mongoose.Schema({
     ward: { type: String, default: "" },
     home: { type: String, default: "" },
   },
-  gender: {
-    type: String,
-  },
-  birthday: {
-    type: Date,
-    default: new Date("1900-01-01"),
-  },
   role: {
     type: String,
     enum: ["user", "admin"],
@@ -69,5 +62,4 @@ UserSchema.methods.toJSON = function () {
   return obj;
 };
 
-const User = mongoose.model("User", UserSchema);
-export default User;
+export default mongoose.model("User", UserSchema);
