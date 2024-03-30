@@ -16,7 +16,9 @@ export const createProduct = async (req, res) => {
 
     let images = [];
     let publicIdImages = [];
-    if (data.images !== "") images = data.images.split(",");
+    if (data.images && data.images !== "undefined")
+      images = data.images?.split(",");
+    else delete data.images;
 
     req.file?.images?.map(async (image) => {
       const fileFormat = formatImage(image);
@@ -26,13 +28,24 @@ export const createProduct = async (req, res) => {
       publicIdImages.push(response.public_id);
     });
 
+    const variations = data.variations;
+    delete data.variations;
     data.images = images;
     data.publicIdImages = publicIdImages;
     data.slug = slugify(data.name);
     data.category = data.category.split(",");
 
-    return;
     const newProduct = await Product.create(data);
+
+    if (variations)
+      variations.map(async (item) => {
+        await ProductVariation.create({
+          productId: newProduct._id,
+          variationName: item.variationName,
+          variationValue: item.variationValue,
+          priceModifier: item.priceModifier,
+        });
+      });
 
     res.status(StatusCodes.CREATED).json(newProduct);
   } catch (error) {

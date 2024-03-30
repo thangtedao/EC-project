@@ -5,76 +5,25 @@ import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { FormRow, FormRowSelect } from "../components/index.js";
 import { redirect, useNavigation, useLoaderData } from "react-router-dom";
-import { FaImage } from "react-icons/fa6";
 
-import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Chip from "@mui/material/Chip";
-
-{
-  /* antd */
-}
-import {
-  PlusOutlined,
-  UploadOutlined,
-  InfoCircleOutlined,
-  MinusCircleOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
   Modal,
   Upload,
   Button,
-  Checkbox,
   Select,
   Form,
   Input,
   Typography,
   InputNumber,
-  Tooltip,
   Card,
   Breadcrumb,
   Space,
 } from "antd";
 
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-{
-  /* antd */
-}
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const getStyles = (name, personName, theme) => {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-};
-
-export const action = async ({ request }) => {
+export const action = async () => {
   try {
-    const formData = await request.formData();
-    await customFetch.post("/product", formData);
-    return redirect("/add-product");
+    return null;
   } catch (error) {
     return error;
   }
@@ -82,6 +31,10 @@ export const action = async ({ request }) => {
 
 export const loader = async () => {
   try {
+    const brands = await customFetch
+      .get("/brand/all-brands")
+      .then(({ data }) => data);
+
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
@@ -90,19 +43,7 @@ export const loader = async () => {
       .get("/category/get/child")
       .then(({ data }) => data);
 
-    // let categoryChild = [];
-    // if (categories.length > 0) {
-    //   categoryChild = await Promise.all(
-    //     categories.map(async (category) => {
-    //       const children = await customFetch
-    //         .get(`/category/get/child/${category._id}`)
-    //         .then(({ data }) => data.categories);
-
-    //       return children;
-    //     })
-    //   );
-    // }
-    return { categories, categoryChild };
+    return { brands, categories, categoryChild };
   } catch (error) {
     return error;
   }
@@ -155,16 +96,9 @@ const Wrapper = styled.div`
 `;
 
 const AddProduct = () => {
-  const { categories, categoryChild } = useLoaderData();
+  const { brands, categories, categoryChild } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const theme = useTheme();
-
-  /* antd */
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
-  const [fileList, setFileList] = useState([]);
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -182,6 +116,21 @@ const AddProduct = () => {
     setPreviewOpen(false);
     setModalOpen(false);
   };
+
+  /* Upload Image and Preview */
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
+
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -192,6 +141,7 @@ const AddProduct = () => {
       file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
     );
   };
+
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
   const uploadButton = (
@@ -212,21 +162,37 @@ const AddProduct = () => {
       </div>
     </button>
   );
-  /* antd */
+
+  {
+    /* SUBMIT FORM */
+  }
   const onFinish = async (values) => {
     console.log("Success:", values);
     const formData = new FormData();
+    if (values.categoryC) {
+      values.category = [values.category, ...values.categoryC];
+      delete values.categoryC;
+    }
+    if (values.variations && Array.isArray(values.variations)) {
+      values.variations.forEach((variation, index) => {
+        Object.entries(variation).forEach(([key, value]) => {
+          formData.append(`variations[${index}][${key}]`, value);
+        });
+      });
+      delete values.variations;
+    }
+    Object.entries(values).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
     fileList.forEach((file) => {
       formData.append("images", file.originFileObj);
     });
-    console.log("formData:", formData);
     await customFetch.post("/product/create", formData);
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
-  // const [categoryC, setCategoryC] = useState(categoryChild[0] || []);
   const [categoryP, setCategoryP] = useState();
   const [categoryC, setCategoryC] = useState([]);
   const [categoriesC, setCategoriesC] = useState([]);
@@ -241,12 +207,6 @@ const AddProduct = () => {
     });
     setCategoriesC(newCategoriesC);
     setCategoryP(value);
-  };
-  const handleChangeC2 = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setCategoriesC(typeof value === "string" ? value.split(",") : value);
   };
 
   return (
@@ -272,22 +232,16 @@ const AddProduct = () => {
 
         <Form
           name="basic"
-          style={{
-            width: "100%",
-          }}
-          initialValues={{
-            remember: true,
-          }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <div style={{ display: "flex", gap: "1.5rem" }}>
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {/* Product information */}
               <Card
                 className="col-1-item"
                 size="large"
@@ -295,7 +249,6 @@ const AddProduct = () => {
               >
                 <div>
                   {/* INFORMATION FIELDS */}
-
                   <div>
                     <Typography.Title className="input-title">
                       Name
@@ -334,6 +287,7 @@ const AddProduct = () => {
                   </div>
                 </div>
               </Card>
+
               {/* MEDIA FIELDS */}
               <Card className="col-1-item" size="large" title={`Product Image`}>
                 <div>
@@ -369,7 +323,8 @@ const AddProduct = () => {
                   </Form.Item>
                 </div>
               </Card>
-              {/* Variants */}
+
+              {/* VARIATIONS FIELDS*/}
               <Card className="col-1-item" size="large" title={`Variants`}>
                 <Typography.Title className="input-title">
                   Options
@@ -380,16 +335,14 @@ const AddProduct = () => {
                       {fields.map(({ key, name, ...restField }) => (
                         <Space
                           key={key}
+                          align="baseline"
                           style={{
                             display: "grid",
-                            gridTemplateColumns: "2.5fr 7fr 0.5fr",
-                            width: "100%",
+                            gridTemplateColumns: "2fr 5fr 3fr 0",
                             marginBottom: 8,
                           }}
-                          align="baseline"
                         >
                           <Form.Item
-                            style={{ width: "100%" }}
                             {...restField}
                             name={[name, "variationName"]}
                             rules={[
@@ -426,6 +379,22 @@ const AddProduct = () => {
                           >
                             <Input size="large" placeholder="Enter Value" />
                           </Form.Item>
+                          <Form.Item
+                            name={[name, "priceModifier"]}
+                            {...restField}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing Value",
+                              },
+                            ]}
+                          >
+                            <InputNumber
+                              style={{ width: "100%" }}
+                              size="large"
+                              placeholder="eg. 100000"
+                            />
+                          </Form.Item>
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>
                       ))}
@@ -444,6 +413,8 @@ const AddProduct = () => {
                 </Form.List>
               </Card>
             </div>
+
+            {/* PRICE FIELD */}
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -457,7 +428,7 @@ const AddProduct = () => {
                     suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
-                    placeholder="99999999"
+                    placeholder="eg. 100000"
                   />
                 </Form.Item>
 
@@ -468,11 +439,12 @@ const AddProduct = () => {
                   <InputNumber
                     style={{ width: "100%" }}
                     size="large"
-                    placeholder="99999999"
+                    placeholder="eg. 100000"
                   />
                 </Form.Item>
               </Card>
 
+              {/* ORGANIZATION FIELD */}
               <Card className="col-2-item" size="large" title={`Category`}>
                 <Typography.Title className="input-title">
                   Brand
@@ -481,20 +453,12 @@ const AddProduct = () => {
                   <Select
                     size="large"
                     placeholder="Select Brand"
-                    options={[
-                      {
-                        value: "Samsung",
-                        label: "Samsung",
-                      },
-                      {
-                        value: "Oppo",
-                        label: "Oppo",
-                      },
-                      {
-                        value: "Nokia",
-                        label: "Nokia",
-                      },
-                    ]}
+                    options={brands?.map((brand) => {
+                      return {
+                        value: brand._id,
+                        label: brand.name,
+                      };
+                    })}
                   />
                 </Form.Item>
 
@@ -504,7 +468,7 @@ const AddProduct = () => {
                 <Form.Item name="category">
                   <Select
                     size="large"
-                    placeholder="Inserted are removed"
+                    placeholder="Select category"
                     value={categoryP}
                     onChange={(value) => handleChangeC(value)}
                     style={{
@@ -522,7 +486,7 @@ const AddProduct = () => {
                   <Select
                     size="large"
                     mode="multiple"
-                    placeholder="Inserted are removed"
+                    placeholder="Select category"
                     value={categoryC}
                     style={{
                       width: "100%",
@@ -537,14 +501,8 @@ const AddProduct = () => {
             </div>
           </div>
 
-          <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-          ></Form.Item>
-          <div class="btn">
-            {/* Xóa data đã nhập (cụ thể: Load lại trang add sp) */}
+          {/* BUTTON SUBMIT */}
+          <div className="btn">
             <Button
               danger
               size="large"
@@ -563,10 +521,11 @@ const AddProduct = () => {
             >
               Cancel
             </Button>
-            {/* Submit data đã nhập vào dtb */}
+
             <Button
               size="large"
               type="primary"
+              htmlType="submit"
               onClick={() => {
                 Modal.confirm({
                   title: "Confirm",
