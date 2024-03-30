@@ -18,74 +18,12 @@ import DiscountOutlinedIcon from "@mui/icons-material/DiscountOutlined";
 import Logo from "../assets/Nova.svg";
 import styled from "styled-components";
 import { useState } from "react";
-import {
-  SettingOutlined,
-  LaptopOutlined,
-  ShopOutlined,
-  UserOutlined,
-  ShoppingCartOutlined,
-  ProfileOutlined,
-  DollarOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
-function getItem(label, key, icon, children, type) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  };
-}
-const items = [
-  getItem("Dashboard", "1", <ShopOutlined />),
-  getItem("Product", "sub1", <LaptopOutlined />, [
-    getItem("All Product", "2"),
-    getItem("Add Product", "3"),
-    getItem("Detail Product", "4"),
-  ]),
-  getItem("Category", "sub2", <ProfileOutlined />, [
-    getItem("All Category", "5"),
-    getItem("Add Category", "6"),
-    getItem("Detail Category ", "7"),
-  ]),
-  getItem("Coupon", "sub3", <DollarOutlined />, [
-    getItem("All Coupon", "8"),
-    getItem("Add Coupon", "9"),
-    getItem("Detail Coupon", "10"),
-  ]),
-  getItem("Order", "11", <ShoppingCartOutlined />),
-  getItem("Customer", "12", <UserOutlined />),
-  // getItem('Navigation Two', '2', <AppstoreOutlined />, [
-  //   getItem('Option 1', '21'),
-  //   getItem('Option 2', '22'),
-  //   getItem('Submenu', '23', null, [
-  //     getItem('Option 1', '231'),
-  //     getItem('Option 2', '232'),
-  //     getItem('Option 3', '233'),
-  //   ]),
-];
-const getLevelKeys = (items1) => {
-  const key = {};
-  const func = (items2, level = 1) => {
-    items2.forEach((item) => {
-      if (item.key) {
-        key[item.key] = level;
-      }
-      if (item.children) {
-        return func(item.children, level + 1);
-      }
-    });
-  };
-  func(items1);
-  return key;
-};
-const levelKeys = getLevelKeys(items);
+
 const Wrapper = styled.aside`
   width: 100%;
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
 
-  /* .sidebar-container {
+  .sidebar-container {
     background-color: #3d464d;
     min-height: 100vh;
     height: 100%;
@@ -138,54 +76,33 @@ const Wrapper = styled.aside`
   color: white;
   a {
     color: white;
-  } */
+  }
 `;
 
-const Sidebar = () => {
-  // const { showSidebar } = useDashboardContext();
+const Sidebar1 = () => {
+  const { showSidebar } = useDashboardContext();
 
-  // const [openDashboard, setOpenDashboard] = useState(false);
-  // const [openProduct, setOpenProduct] = useState(false);
-  // const [openCategory, setOpenCategory] = useState(false);
-  // const [openCoupon, setOpenCoupon] = useState(false);
+  const [openDashboard, setOpenDashboard] = useState(false);
+  const [openProduct, setOpenProduct] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openCoupon, setOpenCoupon] = useState(false);
 
-  // const handleClickOpenDashboard = () => {
-  //   setOpenDashboard(!openDashboard);
-  // };
-  // const handleClickOpenProduct = () => {
-  //   setOpenProduct(!openProduct);
-  // };
-  // const handleClickOpenCategory = () => {
-  //   setOpenCategory(!openCategory);
-  // };
-  // const handleClickOpenCoupon = () => {
-  //   setOpenCoupon(!openCoupon);
-  // };
-  const [stateOpenKeys, setStateOpenKeys] = useState(["2", "23"]);
-  const onOpenChange = (openKeys) => {
-    const currentOpenKey = openKeys.find(
-      (key) => stateOpenKeys.indexOf(key) === -1
-    );
-    // open
-    if (currentOpenKey !== undefined) {
-      const repeatIndex = openKeys
-        .filter((key) => key !== currentOpenKey)
-        .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
-      setStateOpenKeys(
-        openKeys
-          // remove repeat key
-          .filter((_, index) => index !== repeatIndex)
-          // remove current level all child
-          .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
-      );
-    } else {
-      // close
-      setStateOpenKeys(openKeys);
-    }
+  const handleClickOpenDashboard = () => {
+    setOpenDashboard(!openDashboard);
   };
+  const handleClickOpenProduct = () => {
+    setOpenProduct(!openProduct);
+  };
+  const handleClickOpenCategory = () => {
+    setOpenCategory(!openCategory);
+  };
+  const handleClickOpenCoupon = () => {
+    setOpenCoupon(!openCoupon);
+  };
+
   return (
     <Wrapper>
-      {/* <div
+      <div
         className={
           showSidebar ? "sidebar-container " : "sidebar-container show-sidebar"
         }
@@ -292,18 +209,8 @@ const Sidebar = () => {
             </NavLink>
           </List>
         </div>
-      </div> */}
-      <Menu
-        mode="inline"
-        defaultSelectedKeys={["231"]}
-        openKeys={stateOpenKeys}
-        onOpenChange={onOpenChange}
-        style={{
-          width: 256,
-        }}
-        items={items}
-      />
+      </div>
     </Wrapper>
   );
 };
-export default Sidebar;
+export default Sidebar1;
