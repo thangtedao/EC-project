@@ -216,7 +216,7 @@ const AddProduct = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="">Product</a>,
+              title: <a href="">Dashboard</a>,
             },
             {
               title: "Add Product",
@@ -254,7 +254,7 @@ const AddProduct = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="RTX 4090Ti" />
+                      <Input size="large" placeholder="Enter Product Name" />
                     </Form.Item>
 
                     <Typography.Title className="input-title">
@@ -291,6 +291,19 @@ const AddProduct = () => {
               {/* MEDIA FIELDS */}
               <Card className="col-1-item" size="large" title={`Product Image`}>
                 <div>
+                  <Typography.Title className="input-title">
+                    Image link
+                  </Typography.Title>
+                  <Form.Item name="merelink">
+                    <Input.TextArea
+                      size="large"
+                      placeholder="Enter link image"
+                      autoSize={{
+                        minRows: 3,
+                        maxRows: 5,
+                      }}
+                    />
+                  </Form.Item>
                   <Form.Item name="images" label="Images">
                     <Upload
                       listType="picture-card"
@@ -437,6 +450,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="salePrice">
                   <InputNumber
+                    suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
                     placeholder="eg. 100000"
@@ -495,6 +509,28 @@ const AddProduct = () => {
                       value: item._id,
                       label: item.name,
                     }))}
+                  />
+                </Form.Item>
+              </Card>
+              {/* Status */}
+              <Card
+                className="col-2-item"
+                size="large"
+                title={`Product Status`}
+              >
+                <Typography.Title className="input-title">
+                  Status
+                </Typography.Title>
+                <Form.Item name="status">
+                  <Select
+                    size="large"
+                    placeholder="Select Status"
+                    options={brands?.map((brand) => {
+                      return {
+                        value: brand._id,
+                        label: brand.name,
+                      };
+                    })}
                   />
                 </Form.Item>
               </Card>

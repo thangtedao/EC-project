@@ -15,7 +15,7 @@ import ProductionQuantityLimitsOutlinedIcon from "@mui/icons-material/Production
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import DiscountOutlinedIcon from "@mui/icons-material/DiscountOutlined";
-import Logo from "../assets/Nova.svg";
+import Logo from "../assets/LogoAdmin2.svg";
 import styled from "styled-components";
 import { useState } from "react";
 import {
@@ -85,8 +85,8 @@ const Wrapper = styled.aside`
   width: 100%;
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
 
-  /* .sidebar-container {
-    background-color: #3d464d;
+  .sidebar-container {
+    background-color: #ffffff;
     min-height: 100vh;
     height: 100%;
     width: 250px;
@@ -95,9 +95,13 @@ const Wrapper = styled.aside`
   }
   .top-sidebar {
     height: 60px;
+    border-bottom: 1px solid lightgray;
+    border-right: 1px solid lightgray;
   }
   .content {
     position: sticky;
+    background-color: #ffffff;
+
     top: 0;
   }
   .show-sidebar {
@@ -138,7 +142,7 @@ const Wrapper = styled.aside`
   color: white;
   a {
     color: white;
-  } */
+  }
 `;
 
 const Sidebar = () => {
@@ -186,18 +190,19 @@ const Sidebar = () => {
   return (
     <Wrapper>
       {/* <div
-        className={
-          showSidebar ? "sidebar-container " : "sidebar-container show-sidebar"
-        }
-      >
-        <div className="content">
-          <header className="top-sidebar">
-            <NavLink to="/">
-              <img style={{ width: 140, height: 30 }} src={Logo} />
-            </NavLink>
-          </header>
+      // className={
+      //   showSidebar ? "sidebar-container " : "sidebar-container show-sidebar"
+      // }
+      > */}
 
-          <List sx={{ width: "100%", maxWidth: 360, mt: 3 }}>
+      <div className="content">
+        <header className="top-sidebar">
+          <NavLink to="/">
+            <img style={{ width: 166, height: 50 }} src={Logo} />
+          </NavLink>
+        </header>
+
+        {/* <List sx={{ width: "100%", maxWidth: 360, mt: 3 }}>
             <NavLink to="/" end>
               <ListItemButton>
                 <ListItemIcon>
@@ -290,19 +295,18 @@ const Sidebar = () => {
                 Customer
               </ListItemButton>
             </NavLink>
-          </List>
-        </div>
-      </div> */}
-      <Menu
-        mode="inline"
-        defaultSelectedKeys={["231"]}
-        openKeys={stateOpenKeys}
-        onOpenChange={onOpenChange}
-        style={{
-          width: 256,
-        }}
-        items={items}
-      />
+          </List> */}
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={["231"]}
+          openKeys={stateOpenKeys}
+          onOpenChange={onOpenChange}
+          style={{
+            width: 256,
+          }}
+          items={items}
+        />
+      </div>
     </Wrapper>
   );
 };
