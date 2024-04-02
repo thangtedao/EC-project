@@ -7,7 +7,7 @@ const Wrapper = styled.nav`
   height: 60px;
   background: #212529;
   padding: 0 1rem;
-  color: #212529;
+  color: red;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid #ccc;
   display: flex;

@@ -216,7 +216,7 @@ const AddProduct = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="">Dashboard</a>,
+              title: <a href="/">Dashboard</a>,
             },
             {
               title: "Add Product",

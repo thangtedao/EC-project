@@ -28,43 +28,54 @@ import {
   DollarOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-function getItem(label, key, icon, children, type) {
+function getItem(label, key, icon, children, link) {
   return {
     key,
     icon,
     children,
     label,
-    type,
+    link,
   };
 }
 const items = [
-  getItem("Dashboard", "1", <ShopOutlined />),
-  getItem("Product", "sub1", <LaptopOutlined />, [
-    getItem("All Product", "2"),
-    getItem("Add Product", "3"),
-    getItem("Detail Product", "4"),
-  ]),
-  getItem("Category", "sub2", <ProfileOutlined />, [
-    getItem("All Category", "5"),
-    getItem("Add Category", "6"),
-    getItem("Detail Category ", "7"),
-  ]),
-  getItem("Coupon", "sub3", <DollarOutlined />, [
-    getItem("All Coupon", "8"),
-    getItem("Add Coupon", "9"),
-    getItem("Detail Coupon", "10"),
-  ]),
-  getItem("Order", "11", <ShoppingCartOutlined />),
-  getItem("Customer", "12", <UserOutlined />),
-  // getItem('Navigation Two', '2', <AppstoreOutlined />, [
-  //   getItem('Option 1', '21'),
-  //   getItem('Option 2', '22'),
-  //   getItem('Submenu', '23', null, [
-  //     getItem('Option 1', '231'),
-  //     getItem('Option 2', '232'),
-  //     getItem('Option 3', '233'),
-  //   ]),
+  getItem("Dashboard", "1", <ShopOutlined />, null, "/add-product"),
+  getItem(
+    "Product",
+    "sub1",
+    <LaptopOutlined />,
+    [
+      getItem("All Product", "2", null, null, "/add-product"),
+      getItem("Add Product", "3", null, null, "/add-product"),
+      getItem("Detail Product", "4", null, null, "/add-product"),
+    ],
+    null
+  ),
+  getItem(
+    "Category",
+    "sub2",
+    <ProfileOutlined />,
+    [
+      getItem("All Category", "5", null, null, "/add-category"),
+      getItem("Add Category", "6", null, null, "/add-category"),
+      getItem("Detail Category ", "7", null, null, "/add-category"),
+    ],
+    null
+  ),
+  getItem(
+    "Coupon",
+    "sub3",
+    <DollarOutlined />,
+    [
+      getItem("All Coupon", "8", null, null, "/add-coupon"),
+      getItem("Add Coupon", "9", null, null, "/add-coupon"),
+      getItem("Detail Coupon", "10", null, null, "/add-coupon"),
+    ],
+    null
+  ),
+  getItem("Order", "11", <ShoppingCartOutlined />, null, "/add-product"),
+  getItem("Customer", "12", <UserOutlined />, null, "/add-product"),
 ];
+
 const getLevelKeys = (items1) => {
   const key = {};
   const func = (items2, level = 1) => {
@@ -84,9 +95,10 @@ const levelKeys = getLevelKeys(items);
 const Wrapper = styled.aside`
   width: 100%;
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
+  background-color: white;
 
   .sidebar-container {
-    background-color: #ffffff;
+    background-color: green;
     min-height: 100vh;
     height: 100%;
     width: 250px;
@@ -100,7 +112,7 @@ const Wrapper = styled.aside`
   }
   .content {
     position: sticky;
-    background-color: #ffffff;
+    background-color: white;
 
     top: 0;
   }
@@ -303,9 +315,26 @@ const Sidebar = () => {
           onOpenChange={onOpenChange}
           style={{
             width: 256,
+            backgroundColor: "white",
           }}
-          items={items}
-        />
+          // items={items}
+        >
+          {items.map((item) =>
+            item.children ? (
+              <Menu.SubMenu key={item.key} icon={item.icon} title={item.label}>
+                {item.children.map((subItem) => (
+                  <Menu.Item key={subItem.key}>
+                    <NavLink to={subItem.link}>{subItem.label}</NavLink>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+            ) : (
+              <Menu.Item key={item.key} icon={item.icon}>
+                <NavLink to={item.link}>{item.label}</NavLink>
+              </Menu.Item>
+            )
+          )}
+        </Menu>
       </div>
     </Wrapper>
   );
