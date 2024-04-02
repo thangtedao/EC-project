@@ -13,6 +13,7 @@ import {
   Card,
   Breadcrumb,
   DatePicker,
+  InputNumber,
   Space,
 } from "antd";
 export const action = async ({ request }) => {
@@ -68,6 +69,19 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .discount {
+    display: flex;
+  }
+  .discount-item-1 {
+    flex-grow: 7;
+    box-sizing: border-box;
+    padding-right: 10px;
+  }
+  .discount-item-2 {
+    flex-grow: 3;
+    box-sizing: border-box;
+    padding-left: 10px;
   }
 `;
 
@@ -139,18 +153,29 @@ const AddCoupon = () => {
                       <Input size="large" placeholder="Enter Coupon Name" />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
-                      Code
-                    </Typography.Title>
-                    <Form.Item name="code">
-                      <Input size="large" placeholder="Enter Coupon Code" />
-                    </Form.Item>
-                    <Typography.Title className="input-title">
-                      Sua lai
-                    </Typography.Title>
-                    <Form.Item name="code">
-                      <Input size="large" placeholder="Enter Coupon Code" />
-                    </Form.Item>
+                    <div className="discount">
+                      <div className="discount-item-1">
+                        <Typography.Title className="input-title">
+                          Code
+                        </Typography.Title>
+                        <Form.Item name="code">
+                          <Input size="large" placeholder="Enter Coupon Code" />
+                        </Form.Item>
+                      </div>
+                      <div className="discount-item-2">
+                        <Typography.Title className="input-title">
+                          Discount
+                        </Typography.Title>
+                        <Form.Item name="discount">
+                          <InputNumber
+                            suffix="%"
+                            style={{ width: "100%" }}
+                            size="large"
+                            placeholder="eg. 10"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
                     <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
@@ -172,13 +197,17 @@ const AddCoupon = () => {
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {/* Parent */}
               <Card className="col-2-item" size="large" title={`Day`}>
                 <Typography.Title className="input-title">
-                  Category parent
+                  Day End
                 </Typography.Title>
-                <Form.Item name="day">
-                  <DatePicker onChange={onChange} needConfirm />
+                <Form.Item name="dayEnd">
+                  <DatePicker
+                    size="large"
+                    style={{ width: "100%" }}
+                    onChange={onChange}
+                    needConfirm
+                  />
                 </Form.Item>
               </Card>
             </div>

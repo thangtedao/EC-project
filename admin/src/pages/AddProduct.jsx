@@ -438,7 +438,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="price">
                   <InputNumber
-                    suffix="VND"
+                    suffix="%"
                     style={{ width: "100%" }}
                     size="large"
                     placeholder="eg. 100000"
