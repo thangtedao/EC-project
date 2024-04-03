@@ -44,7 +44,7 @@ const items = [
     "sub1",
     <LaptopOutlined />,
     [
-      getItem("All Product", "2", null, null, "/add-product"),
+      getItem("All Product", "2", null, null, "/all-product"),
       getItem("Add Product", "3", null, null, "/add-product"),
       getItem("Detail Product", "4", null, null, "/add-product"),
     ],
@@ -96,7 +96,7 @@ const Wrapper = styled.aside`
   width: 100%;
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
   background-color: white;
-
+  border: 1px solid lightgray;
   .sidebar-container {
     background-color: green;
     min-height: 100vh;

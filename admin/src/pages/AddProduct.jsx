@@ -351,7 +351,7 @@ const AddProduct = () => {
                           align="baseline"
                           style={{
                             display: "grid",
-                            gridTemplateColumns: "2fr 5fr 3fr 0",
+                            // gridTemplateColumns: "2fr 5fr 3fr 0",
                             marginBottom: 8,
                           }}
                         >

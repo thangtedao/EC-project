@@ -2,84 +2,38 @@ import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
-import { ProductCard } from "../components";
+import { ProductCard } from "../components/index.js";
 import { createContext } from "react";
 import { useContext } from "react";
 import { useNavigate, useLoaderData, Form } from "react-router-dom";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 
-import Button from "@mui/material/Button";
+// import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { EditOutlined, AudioOutlined, PlusOutlined } from "@ant-design/icons";
+import { Breadcrumb, Table, Image, Button, Input, Space } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 
-  .filter-bar {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 1rem;
+  .title {
+    text-align: left;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00193b;
+    margin-bottom: 1rem;
   }
 
-  .product-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 1rem;
-    padding: 1rem;
-
-    @media (max-width: 1550px) {
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    }
-    @media (max-width: 1385px) {
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-    }
-    @media (max-width: 1200px) {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-    @media (max-width: 975px) {
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 800px) {
-      grid-template-columns: 1fr 1fr;
-    }
+  .table {
+    width: 1200px;
   }
-
-  .form-filter {
-    width: fit-content;
-    display: flex;
-    gap: 0.3rem;
-
-    .form-filter-label {
-      display: grid;
-      place-items: center;
-      height: 30px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #00193b;
-    }
-    .form-filter-select {
-      height: 30px;
-      border: 1px solid #e2e1e1;
-      border-radius: 8px;
-    }
-  }
-
-  .btn {
-    width: 75px;
-    height: 28px;
-    border-radius: 10px;
-    background-color: #035ecf;
-    color: white;
-    font-weight: bolder;
+  .ant-table {
+    border: 1px solid lightgray;
+    border-radius: 2px;
   }
 `;
 
@@ -133,6 +87,146 @@ const AllProduct = () => {
     console.log("deleted");
     navigate("/all-product");
   };
+  const { Search } = Input;
+  //Search Product
+  const suffix = (
+    <AudioOutlined
+      style={{
+        fontSize: 16,
+        color: "#1677ff",
+      }}
+    />
+  );
+  //Danh sách các cột
+  const columns = [
+    {
+      title: "Image",
+      width: 150,
+      dataIndex: "image",
+      key: "image",
+      fixed: "left",
+      render: (image) => <Image width={100} height={100} src={image} />,
+    },
+    {
+      title: "Name",
+      width: 300,
+      dataIndex: "name",
+      key: "name",
+      fixed: "left",
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      filters: [
+        {
+          text: "Laptop",
+          value: "Laptop",
+        },
+        {
+          text: "Phone",
+          value: "Phone",
+        },
+      ],
+      onFilter: (value, record) => record.category.indexOf(value) === 0,
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Sale Price",
+      dataIndex: "saleprice",
+      key: "saleprice",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      filters: [
+        {
+          text: "Available",
+          value: "Available",
+        },
+        {
+          text: "Out of stock",
+          value: "Out of stock",
+        },
+      ],
+      onFilter: (value, record) => record.status.indexOf(value) === 0,
+    },
+    {
+      title: "Sold",
+      dataIndex: "sold",
+      key: "sold",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.sold - b.sold,
+    },
+    // {
+    //   title: "Action",
+    //   key: "operation",
+    //   fixed: "right",
+    //   width: 100,
+    //   render: () => <a>Edit</a>,
+    // },
+    {
+      title: "Action",
+      key: "operation",
+      fixed: "right",
+      width: 100,
+      render: () => <Button icon={<EditOutlined />}>Edit</Button>,
+    },
+  ];
+  // onChange của sorter và filter data cột
+  const onChange = (pagination, filters, sorter, extra) => {
+    console.log("params", pagination, filters, sorter, extra);
+  };
+  //Data table
+  const data = [
+    {
+      image:
+        "https://cdn2.cellphones.com.vn/x/media/catalog/product/x/i/xiaomi-14-pre-trang.png",
+      name: "Xiaomi 14 12GB 256GB",
+      category: "Phone",
+      price: "16.000.000",
+      saleprice: "15.000.000",
+      status: "Available",
+      sold: "5",
+    },
+    {
+      image:
+        "https://cdn2.cellphones.com.vn/x/media/catalog/product/t/e/text_ng_n_15__7_14.png",
+      name: "Xiaomi 14 12GB 256GB",
+      category: "Laptop",
+      price: "16.000.000",
+      saleprice: "15.000.000",
+      status: "Out of stock",
+      sold: "4",
+    },
+    {
+      image:
+        "https://cdn2.cellphones.com.vn/x/media/catalog/product/t/e/text_ng_n_15__7_14.png",
+      name: "Xiaomi 14 12GB 256GB",
+      category: "Phone",
+      price: "16.000.000",
+      saleprice: "15.000.000",
+      status: "Out of stock",
+      sold: "6",
+    },
+    {
+      image:
+        "https://cdn2.cellphones.com.vn/x/media/catalog/product/x/i/xiaomi-14-pre-trang.png",
+      name: "Xiaomi 14 12GB 256GB",
+      category: "Phone",
+      price: "16.000.000",
+      saleprice: "15.000.000",
+      status: "Available",
+      sold: "2",
+    },
+  ];
+  //Search
+  const onSearch = (value, _e, info) => console.log(info?.source, value);
 
   return (
     <AllProductContext.Provider value={{ handleClickOpen }}>
@@ -142,8 +236,70 @@ const AllProduct = () => {
             <meta charSet="utf-8" />
             <title>All Product</title>
           </Helmet>
-
-          <Form className="filter-bar">
+          <Breadcrumb
+            style={{ paddingBottom: "1rem" }}
+            items={[
+              {
+                title: <a href="/">Dashboard</a>,
+              },
+              {
+                title: "Product",
+              },
+            ]}
+          />
+          <div className="title">Product</div>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <Search
+              size="large"
+              placeholder="Enter search name"
+              allowClear
+              onSearch={onSearch}
+              style={{
+                width: "30%",
+              }}
+            />
+            <div style={{ flex: "0 0 auto" }}>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="large"
+                style={{ width: "100%" }}
+              >
+                Add Product
+              </Button>
+            </div>
+          </div>
+          <Button size="large" style={{ marginBottom: 20 }}>
+            Reload
+          </Button>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              gap: "1.5rem",
+              marginBottom: "4rem",
+            }}
+          >
+            <Table
+              className="table"
+              columns={columns}
+              dataSource={data}
+              onChange={onChange}
+              showSorterTooltip={{
+                target: "sorter-icon",
+              }}
+            />
+          </div>
+          {/* <Form className="filter-bar">
             <div className="form-filter">
               <label htmlFor="category" className="form-filter-label">
                 Category
@@ -184,14 +340,14 @@ const AllProduct = () => {
             <button type="submit" className="btn">
               Apply
             </button>
-          </Form>
+          </Form> */}
 
-          <div className="product-grid">
+          {/* <div className="product-grid">
             {products.map((product) => {
               return <ProductCard key={product._id} product={product} />;
             })}
-          </div>
-
+          </div> */}
+          {/* 
           <Dialog
             open={open}
             onClose={handleClose}
@@ -210,7 +366,7 @@ const AllProduct = () => {
                 Ừ xóa
               </Button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
         </Wrapper>
       </HelmetProvider>
     </AllProductContext.Provider>
