@@ -351,7 +351,7 @@ const AddProduct = () => {
                           align="baseline"
                           style={{
                             display: "grid",
-                            // gridTemplateColumns: "2fr 5fr 3fr 0",
+                            gridTemplateColumns: "2fr 5fr 3fr 0",
                             marginBottom: 8,
                           }}
                         >
@@ -438,7 +438,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="price">
                   <InputNumber
-                    suffix="%"
+                    suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
                     placeholder="eg. 100000"
