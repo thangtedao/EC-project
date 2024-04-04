@@ -8,19 +8,21 @@ import { useContext } from "react";
 import { useNavigate, useLoaderData, Form } from "react-router-dom";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 
-// import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { EditOutlined, AudioOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  AudioOutlined,
+  PlusOutlined,
+  BlockOutlined,
+} from "@ant-design/icons";
 import { Breadcrumb, Table, Image, Button, Input, Space } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
 
   .title {
+    width: 100%;
     text-align: left;
     font-size: 1.5rem;
     font-weight: bold;
@@ -29,7 +31,7 @@ const Wrapper = styled.div`
   }
 
   .table {
-    width: 1200px;
+    width: 100%;
   }
   .ant-table {
     border: 1px solid lightgray;
@@ -39,24 +41,26 @@ const Wrapper = styled.div`
 
 export const loader = async ({ request }) => {
   try {
-    console.log(request.url);
     const params = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
     ]);
     if (params && params.category === "all") {
       delete params.category;
     }
-    console.log(params);
 
     const products = await customFetch
-      .get(`/product`, { params })
-      .then(({ data }) => data.products);
+      .get(`/product/?populate=category,brand`)
+      .then(({ data }) => data);
 
     const categories = await customFetch
-      .get("/category/get/parent")
-      .then(({ data }) => data.categories);
+      .get("/category/all-categories")
+      .then(({ data }) => data);
 
-    return { products, categories, searchParams: { ...params } };
+    const brands = await customFetch
+      .get("/brand/all-brands")
+      .then(({ data }) => data);
+
+    return { products, categories, brands, searchParams: { ...params } };
   } catch (error) {
     return error;
   }
@@ -65,29 +69,12 @@ export const loader = async ({ request }) => {
 const AllProductContext = createContext();
 
 const AllProduct = () => {
-  const { products, categories, searchParams } = useLoaderData();
+  const { products, categories, brands, searchParams } = useLoaderData();
   const { category, status } = searchParams;
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const [product, setproduct] = useState(null);
-
-  const handleClickOpen = (product) => {
-    setOpen(true);
-    setproduct(product);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setproduct(null);
-  };
-
-  const deleteProduct = async (id) => {
-    await customFetch.delete(`/product/${id}`);
-    console.log("deleted");
-    navigate("/all-product");
-  };
   const { Search } = Input;
+
   //Search Product
   const suffix = (
     <AudioOutlined
@@ -101,15 +88,15 @@ const AllProduct = () => {
   const columns = [
     {
       title: "Image",
-      width: 150,
-      dataIndex: "image",
-      key: "image",
+      width: 100,
+      dataIndex: "images",
+      key: "images",
       fixed: "left",
-      render: (image) => <Image width={100} height={100} src={image} />,
+      render: (images) => <Image width={100} height={100} src={images[0]} />,
     },
     {
       title: "Name",
-      width: 300,
+      width: 200,
       dataIndex: "name",
       key: "name",
       fixed: "left",
@@ -118,57 +105,65 @@ const AllProduct = () => {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      filters: [
-        {
-          text: "Laptop",
-          value: "Laptop",
-        },
-        {
-          text: "Phone",
-          value: "Phone",
-        },
-      ],
-      onFilter: (value, record) => record.category.indexOf(value) === 0,
+      width: 150,
+      render: (category) => {
+        return category?.map((item) => <div key={item._id}>{item?.name}</div>);
+      },
+      filters: categories?.map((category) => {
+        return {
+          text: category?.name,
+          value: category?._id,
+        };
+      }),
+      onFilter: (value, record) =>
+        record?.category?.some((cat) => cat?._id === value),
+    },
+    {
+      title: "Brand",
+      dataIndex: "brand",
+      key: "brand",
+      width: 150,
+      render: (brand) => brand?.name,
+      filters: brands?.map((brand) => {
+        return {
+          text: brand?.name,
+          value: brand?._id,
+        };
+      }),
+      onFilter: (value, record) => record?.brand?._id === value,
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      width: 150,
     },
     {
       title: "Sale Price",
-      dataIndex: "saleprice",
-      key: "saleprice",
+      dataIndex: "salePrice",
+      key: "salePrice",
+      width: 150,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      filters: [
-        {
-          text: "Available",
-          value: "Available",
-        },
-        {
-          text: "Out of stock",
-          value: "Out of stock",
-        },
-      ],
-      onFilter: (value, record) => record.status.indexOf(value) === 0,
-    },
-    {
-      title: "Sold",
-      dataIndex: "sold",
-      key: "sold",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.sold - b.sold,
+      width: 200,
+      filters: Object.keys(PRODUCT_STATUS).map((key) => {
+        return {
+          text: PRODUCT_STATUS[key],
+          value: PRODUCT_STATUS[key],
+        };
+      }),
+      onFilter: (value, record) => record?.status === value,
     },
     // {
-    //   title: "Action",
-    //   key: "operation",
-    //   fixed: "right",
+    //   title: "Sold",
+    //   dataIndex: "sold",
+    //   key: "sold",
     //   width: 100,
-    //   render: () => <a>Edit</a>,
+    //   defaultSortOrder: "descend",
+    //   sorter: (a, b) => a.sold - b.sold,
     // },
     {
       title: "Action",
@@ -182,49 +177,7 @@ const AllProduct = () => {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
-  //Data table
-  const data = [
-    {
-      image:
-        "https://cdn2.cellphones.com.vn/x/media/catalog/product/x/i/xiaomi-14-pre-trang.png",
-      name: "Xiaomi 14 12GB 256GB",
-      category: "Phone",
-      price: "16.000.000",
-      saleprice: "15.000.000",
-      status: "Available",
-      sold: "5",
-    },
-    {
-      image:
-        "https://cdn2.cellphones.com.vn/x/media/catalog/product/t/e/text_ng_n_15__7_14.png",
-      name: "Xiaomi 14 12GB 256GB",
-      category: "Laptop",
-      price: "16.000.000",
-      saleprice: "15.000.000",
-      status: "Out of stock",
-      sold: "4",
-    },
-    {
-      image:
-        "https://cdn2.cellphones.com.vn/x/media/catalog/product/t/e/text_ng_n_15__7_14.png",
-      name: "Xiaomi 14 12GB 256GB",
-      category: "Phone",
-      price: "16.000.000",
-      saleprice: "15.000.000",
-      status: "Out of stock",
-      sold: "6",
-    },
-    {
-      image:
-        "https://cdn2.cellphones.com.vn/x/media/catalog/product/x/i/xiaomi-14-pre-trang.png",
-      name: "Xiaomi 14 12GB 256GB",
-      category: "Phone",
-      price: "16.000.000",
-      saleprice: "15.000.000",
-      status: "Available",
-      sold: "2",
-    },
-  ];
+
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
 
@@ -248,11 +201,11 @@ const AllProduct = () => {
             ]}
           />
           <div className="title">Product</div>
+
           <div
             style={{
               width: "100%",
               display: "flex",
-              flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
               marginBottom: 20,
@@ -265,40 +218,34 @@ const AllProduct = () => {
               onSearch={onSearch}
               style={{
                 width: "30%",
+                minWidth: 300,
               }}
             />
-            <div style={{ flex: "0 0 auto" }}>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                size="large"
-                style={{ width: "100%" }}
-              >
-                Add Product
-              </Button>
-            </div>
+
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="large"
+              style={{ width: 150 }}
+            >
+              Add Product
+            </Button>
           </div>
-          <Button size="large" style={{ marginBottom: 20 }}>
+
+          <Button size="large" style={{ marginBottom: 20, width: 100 }}>
             Reload
           </Button>
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              gap: "1.5rem",
-              marginBottom: "4rem",
+
+          <Table
+            className="table"
+            columns={columns}
+            dataSource={products}
+            onChange={onChange}
+            scroll={{ x: 1200 }}
+            showSorterTooltip={{
+              target: "sorter-icon",
             }}
-          >
-            <Table
-              className="table"
-              columns={columns}
-              dataSource={data}
-              onChange={onChange}
-              showSorterTooltip={{
-                target: "sorter-icon",
-              }}
-            />
-          </div>
+          />
           {/* <Form className="filter-bar">
             <div className="form-filter">
               <label htmlFor="category" className="form-filter-label">
@@ -341,32 +288,6 @@ const AllProduct = () => {
               Apply
             </button>
           </Form> */}
-
-          {/* <div className="product-grid">
-            {products.map((product) => {
-              return <ProductCard key={product._id} product={product} />;
-            })}
-          </div> */}
-          {/* 
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Chắc là xóa chưa?"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description"></DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Không xóa</Button>
-              <Button onClick={() => deleteProduct(product._id)} autoFocus>
-                Ừ xóa
-              </Button>
-            </DialogActions>
-          </Dialog> */}
         </Wrapper>
       </HelmetProvider>
     </AllProductContext.Provider>

@@ -64,7 +64,6 @@ export const getProducts = async (req, res) => {
       /\b(gte|gt|lte|lt|eq|ne)\b/g,
       (match) => `$${match}`
     );
-    console.log(JSON.parse(queryStr));
     let query = Product.find(JSON.parse(queryStr));
 
     if (req.query.sort) {
@@ -84,7 +83,8 @@ export const getProducts = async (req, res) => {
     }
 
     if (req.query.populate) {
-      query = query.populate(req.query.populate);
+      const item = req.query.populate.split(",").join(" ");
+      query = query.populate(item);
     }
 
     const products = await query;

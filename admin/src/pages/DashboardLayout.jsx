@@ -17,9 +17,12 @@ import Loading from "../components/Loading";
 
 const Wrapper = styled.section`
   width: 100%;
+  height: 100%;
+  display: flex;
   .dashboard {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    width: calc(100% - 256px);
+    display: flex;
+    flex-direction: column;
   }
   .dashboard-page {
     background-color: #ffffff;
@@ -79,15 +82,13 @@ const DashboardLayout = () => {
       }}
     >
       <Wrapper>
-        <main className="dashboard">
-          <Sidebar />
-          <div>
-            <Navbar />
-            <div className="dashboard-page">
-              {isPageLoading ? <Loading /> : <Outlet context={{ user }} />}
-            </div>
+        <Sidebar />
+        <div className="dashboard">
+          <Navbar />
+          <div className="dashboard-page">
+            {isPageLoading ? <Loading /> : <Outlet context={{ user }} />}
           </div>
-        </main>
+        </div>
       </Wrapper>
     </DashboardContext.Provider>
   );

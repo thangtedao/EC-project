@@ -14,7 +14,7 @@ export const ORDER_STATUS_2 = [
   "Delivered",
 ];
 export const PRODUCT_STATUS = {
-  AVAILABLE: "Sẵn Hàng",
-  OUT_OF_STOCK: "Hết Hàng",
-  DISCONTINUED: "Ngưng Bán",
+  AVAILABLE: "Hàng Có Sẵn",
+  OUT_OF_STOCK: "Tạm Hết Hàng",
+  DISCONTINUED: "Ngưng Kinh Doanh",
 };

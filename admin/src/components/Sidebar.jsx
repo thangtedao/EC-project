@@ -93,7 +93,7 @@ const getLevelKeys = (items1) => {
 };
 const levelKeys = getLevelKeys(items);
 const Wrapper = styled.aside`
-  width: 100%;
+  width: 256px;
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
   background-color: white;
   border: 1px solid lightgray;
@@ -106,6 +106,7 @@ const Wrapper = styled.aside`
     transition: margin-left 0.3s ease-in-out;
   }
   .top-sidebar {
+    max-width: 256px;
     height: 60px;
     border-bottom: 1px solid lightgray;
     border-right: 1px solid lightgray;
