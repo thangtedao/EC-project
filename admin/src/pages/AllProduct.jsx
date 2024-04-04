@@ -35,7 +35,22 @@ const Wrapper = styled.div`
     border-radius: 2px;
   }
 `;
-
+//Select row
+// rowSelection object indicates the need for row selection
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(
+      `selectedRowKeys: ${selectedRowKeys}`,
+      "selectedRows: ",
+      selectedRows
+    );
+  },
+  // Column configuration not to be checked
+  getCheckboxProps: (record) => ({
+    disabled: record.status === "Hàng Có Sẵn",
+    status: record.status,
+  }),
+};
 export const loader = async ({ request }) => {
   try {
     const params = Object.fromEntries([
@@ -83,7 +98,7 @@ const AllProduct = () => {
   const columns = [
     {
       title: "Image",
-      width: 100,
+      width: 120,
       dataIndex: "images",
       key: "images",
       fixed: "left",
@@ -91,10 +106,11 @@ const AllProduct = () => {
     },
     {
       title: "Name",
-      width: 200,
+      width: 250,
       dataIndex: "name",
       key: "name",
       fixed: "left",
+      render: (text) => <a>{text}</a>,
     },
     {
       title: "Category",
@@ -164,7 +180,7 @@ const AllProduct = () => {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 100,
+      width: 120,
       render: () => <Button icon={<EditOutlined />}>Edit</Button>,
     },
   ];
@@ -173,9 +189,14 @@ const AllProduct = () => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
+  // Số lượng sản phẩm trên mỗi trang
+  const paginationConfig = {
+    pageSize: 5,
+  };
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
-
+  //CheckBox
+  const [selectionType] = useState("checkbox");
   return (
     <HelmetProvider>
       <Wrapper>
@@ -232,8 +253,15 @@ const AllProduct = () => {
 
         <Table
           className="table"
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
           columns={columns}
-          dataSource={products}
+          dataSource={products.map((product) => ({
+            ...product,
+            key: product._id,
+          }))}
           onChange={onChange}
           scroll={{ x: 1200 }}
           showSorterTooltip={{

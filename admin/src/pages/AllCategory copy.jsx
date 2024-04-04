@@ -11,20 +11,22 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Breadcrumb } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   .title {
-    text-align: left;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #00193b;
     margin-bottom: 1rem;
   }
 
-  /* 
   button {
     width: 80px;
     font-weight: bolder;
@@ -51,22 +53,23 @@ const Wrapper = styled.div`
     }
   }
   @media (max-width: 1550px) {
-  } */
+  }
 `;
 
 export const loader = async () => {
   try {
-    // const response = await customFetch.get(`/category/?populate=parent`);
+    const response = await customFetch.get(`/category/?populate=parent`);
+
     return {
-      // categories: response.data.categories,
-      // count: response.data.itemsPerCate,
+      categories: response.data.categories,
+      count: response.data.itemsPerCate,
     };
   } catch (error) {
     return error;
   }
 };
 
-const AllCategory = () => {
+const AllCategory1 = () => {
   const { categories, count } = useLoaderData();
   const navigate = useNavigate();
 
@@ -96,20 +99,10 @@ const AllCategory = () => {
           <meta charSet="utf-8" />
           <title>All Category</title>
         </Helmet>
-        <Breadcrumb
-          style={{ paddingBottom: "1rem" }}
-          items={[
-            {
-              title: <a href="/">Dashboard</a>,
-            },
-            {
-              title: "Category",
-            },
-          ]}
-        />
-        <div className="title">Category</div>
 
-        {/* <div
+        <div className="title">All Category</div>
+
+        <div
           style={{
             width: "80%",
             display: "flex",
@@ -119,8 +112,8 @@ const AllCategory = () => {
             backgroundColor: "white",
             borderRadius: "10px",
           }}
-        > */}
-        {/* {categories.map((parentCategory) => {
+        >
+          {categories.map((parentCategory) => {
             return (
               !parentCategory.parent && (
                 <div
@@ -237,10 +230,10 @@ const AllCategory = () => {
               Ừ xóa
             </Button>
           </DialogActions>
-        </Dialog> */}
+        </Dialog>
       </Wrapper>
     </HelmetProvider>
   );
 };
 
-export default AllCategory;
+export default AllCategory1;
