@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { MdModeEditOutline } from "react-icons/md";
-import { useAllProductContext } from "../pages/AllProduct";
 
 const Wrapper = styled.div`
   width: 100%;

@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
-import { ProductCard } from "../components/index.js";
-import { createContext } from "react";
-import { useContext } from "react";
 import { useNavigate, useLoaderData, Form } from "react-router-dom";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 
@@ -65,8 +62,6 @@ export const loader = async ({ request }) => {
     return error;
   }
 };
-
-const AllProductContext = createContext();
 
 const AllProduct = () => {
   const { products, categories, brands, searchParams } = useLoaderData();
@@ -182,71 +177,70 @@ const AllProduct = () => {
   const onSearch = (value, _e, info) => console.log(info?.source, value);
 
   return (
-    <AllProductContext.Provider value={{ handleClickOpen }}>
-      <HelmetProvider>
-        <Wrapper>
-          <Helmet>
-            <meta charSet="utf-8" />
-            <title>All Product</title>
-          </Helmet>
-          <Breadcrumb
-            style={{ paddingBottom: "1rem" }}
-            items={[
-              {
-                title: <a href="/">Dashboard</a>,
-              },
-              {
-                title: "Product",
-              },
-            ]}
-          />
-          <div className="title">Product</div>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>All Product</title>
+        </Helmet>
+        <Breadcrumb
+          style={{ paddingBottom: "1rem" }}
+          items={[
+            {
+              title: <a href="/">Dashboard</a>,
+            },
+            {
+              title: "Product",
+            },
+          ]}
+        />
+        <div className="title">Product</div>
 
-          <div
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+        >
+          <Search
+            size="large"
+            placeholder="Enter search name"
+            allowClear
+            onSearch={onSearch}
             style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            <Search
-              size="large"
-              placeholder="Enter search name"
-              allowClear
-              onSearch={onSearch}
-              style={{
-                width: "30%",
-                minWidth: 300,
-              }}
-            />
-
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              size="large"
-              style={{ width: 150 }}
-            >
-              Add Product
-            </Button>
-          </div>
-
-          <Button size="large" style={{ marginBottom: 20, width: 100 }}>
-            Reload
-          </Button>
-
-          <Table
-            className="table"
-            columns={columns}
-            dataSource={products}
-            onChange={onChange}
-            scroll={{ x: 1200 }}
-            showSorterTooltip={{
-              target: "sorter-icon",
+              width: "30%",
+              minWidth: 300,
             }}
           />
-          {/* <Form className="filter-bar">
+
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="large"
+            style={{ width: 150 }}
+          >
+            Add Product
+          </Button>
+        </div>
+
+        <Button size="large" style={{ marginBottom: 20, width: 100 }}>
+          Reload
+        </Button>
+
+        <Table
+          className="table"
+          columns={columns}
+          dataSource={products}
+          onChange={onChange}
+          scroll={{ x: 1200 }}
+          showSorterTooltip={{
+            target: "sorter-icon",
+          }}
+        />
+        {/* <Form className="filter-bar">
             <div className="form-filter">
               <label htmlFor="category" className="form-filter-label">
                 Category
@@ -288,11 +282,9 @@ const AllProduct = () => {
               Apply
             </button>
           </Form> */}
-        </Wrapper>
-      </HelmetProvider>
-    </AllProductContext.Provider>
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 
-export const useAllProductContext = () => useContext(AllProductContext);
 export default AllProduct;
