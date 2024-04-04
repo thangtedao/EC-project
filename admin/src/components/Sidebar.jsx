@@ -55,7 +55,7 @@ const items = [
     "sub2",
     <ProfileOutlined />,
     [
-      getItem("All Category", "5", null, null, "/add-category"),
+      getItem("All Category", "5", null, null, "/all-category"),
       getItem("Add Category", "6", null, null, "/add-category"),
       getItem("Detail Category ", "7", null, null, "/add-category"),
     ],
@@ -66,7 +66,7 @@ const items = [
     "sub3",
     <DollarOutlined />,
     [
-      getItem("All Coupon", "8", null, null, "/add-coupon"),
+      getItem("All Coupon", "8", null, null, "/all-coupon"),
       getItem("Add Coupon", "9", null, null, "/add-coupon"),
       getItem("Detail Coupon", "10", null, null, "/add-coupon"),
     ],
