@@ -11,7 +11,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Table } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -23,35 +23,6 @@ const Wrapper = styled.div`
     color: #00193b;
     margin-bottom: 1rem;
   }
-
-  /* 
-  button {
-    width: 80px;
-    font-weight: bolder;
-    border-radius: 23px;
-    background: white;
-    height: 30px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-  }
-  .ed-btn {
-    border: transparent;
-    color: #035ecf;
-    :hover {
-      background-color: #035ecf;
-      color: white;
-    }
-  }
-  .dl-btn {
-    border: transparent;
-    color: #ff5470;
-    :hover {
-      background-color: #ff5470;
-      color: white;
-    }
-  }
-  @media (max-width: 1550px) {
-  } */
 `;
 
 export const loader = async () => {
@@ -88,7 +59,99 @@ const AllCategory = () => {
     console.log("deleted");
     navigate("/all-category");
   };
-
+  //Danh sách các cột
+  const columns = [
+    // {
+    //   title: "Image",
+    //   width: 120,
+    //   dataIndex: "images",
+    //   key: "images",
+    //   fixed: "left",
+    //   render: (images) => <Image width={100} height={100} src={images[0]} />,
+    // },
+    {
+      title: "Name",
+      width: 200,
+      dataIndex: "name",
+      key: "name",
+      fixed: "left",
+    },
+    {
+      title: "SubCategory",
+      dataIndex: "category",
+      key: "category",
+      width: 150,
+      //   render: (category) => {
+      //     return category?.map((item) => <div key={item._id}>{item?.name}</div>);
+      //   },
+      //   filters: categories?.map((category) => {
+      //     return {
+      //       text: category?.name,
+      //       value: category?._id,
+      //     };
+      //   }),
+      //   onFilter: (value, record) =>
+      //     record?.category?.some((cat) => cat?._id === value),
+    },
+    // {
+    //   title: "Brand",
+    //   dataIndex: "brand",
+    //   key: "brand",
+    //   width: 150,
+    //   render: (brand) => brand?.name,
+    //   filters: brands?.map((brand) => {
+    //     return {
+    //       text: brand?.name,
+    //       value: brand?._id,
+    //     };
+    //   }),
+    //   onFilter: (value, record) => record?.brand?._id === value,
+    // },
+    {
+      title: "Item",
+      dataIndex: "Item",
+      key: "Item",
+      width: 150,
+    },
+    // {
+    //   title: "Sale Price",
+    //   dataIndex: "salePrice",
+    //   key: "salePrice",
+    //   width: 150,
+    // },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 200,
+      //   filters: Object.keys(PRODUCT_STATUS).map((key) => {
+      //     return {
+      //       text: PRODUCT_STATUS[key],
+      //       value: PRODUCT_STATUS[key],
+      //     };
+      //   }),
+      //   onFilter: (value, record) => record?.status === value,
+    },
+    // {
+    //   title: "Sold",
+    //   dataIndex: "sold",
+    //   key: "sold",
+    //   width: 100,
+    //   defaultSortOrder: "descend",
+    //   sorter: (a, b) => a.sold - b.sold,
+    // },
+    {
+      title: "Action",
+      key: "operation",
+      fixed: "right",
+      width: 120,
+      render: () => <Button icon={<EditOutlined />}>Edit</Button>,
+    },
+  ];
+  // onChange của sorter và filter data cột
+  const onChange = (pagination, filters, sorter, extra) => {
+    console.log("params", pagination, filters, sorter, extra);
+  };
   return (
     <HelmetProvider>
       <Wrapper>
@@ -108,8 +171,33 @@ const AllCategory = () => {
           ]}
         />
         <div className="title">Category</div>
-
-        {/* <div
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+        >
+          <Table
+            className="table"
+            // rowSelection={{
+            //   type: selectionType,
+            //   ...rowSelection,
+            // }}
+            columns={columns}
+            // dataSource={products.map((product) => ({
+            //   ...product,
+            //   key: product._id,
+            // }))}
+            onChange={onChange}
+            scroll={{ x: 1200 }}
+            showSorterTooltip={{
+              target: "sorter-icon",
+            }}
+          />
+          {/* <div
           style={{
             width: "80%",
             display: "flex",
@@ -120,7 +208,7 @@ const AllCategory = () => {
             borderRadius: "10px",
           }}
         > */}
-        {/* {categories.map((parentCategory) => {
+          {/* {categories.map((parentCategory) => {
             return (
               !parentCategory.parent && (
                 <div
@@ -238,6 +326,7 @@ const AllCategory = () => {
             </Button>
           </DialogActions>
         </Dialog> */}
+        </div>
       </Wrapper>
     </HelmetProvider>
   );

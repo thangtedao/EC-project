@@ -257,6 +257,7 @@ const AllProduct = () => {
             type: selectionType,
             ...rowSelection,
           }}
+          pagination={paginationConfig}
           columns={columns}
           dataSource={products.map((product) => ({
             ...product,
