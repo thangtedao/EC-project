@@ -73,6 +73,10 @@ const AllCategory = () => {
   const handleAddCategoryClick = () => {
     navigate("/add-category");
   };
+  const handleEditCategory = () => {
+    navigate("  edit-category/:slug");
+  };
+
   const deleteCategory = async (id) => {
     await customFetch.delete(`/category/delete/${id}`);
     console.log("deleted");
@@ -182,6 +186,7 @@ const AllCategory = () => {
       width: 120,
       render: () => (
         <Dropdown.Button
+          onClick={handleEditCategory}
           menu={{
             items,
           }}
