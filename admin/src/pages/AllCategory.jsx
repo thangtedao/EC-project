@@ -5,23 +5,40 @@ import styled from "styled-components";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 
-import Button from "@mui/material/Button";
+// import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Breadcrumb, Table } from "antd";
+import {
+  EditOutlined,
+  AudioOutlined,
+  PlusOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
+import { Breadcrumb, Table, Button, Input, Tag, Dropdown } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
 
   .title {
+    width: 100%;
     text-align: left;
     font-size: 1.5rem;
     font-weight: bold;
     color: #00193b;
     margin-bottom: 1rem;
+  }
+
+  .table {
+    width: 100%;
+  }
+  .ant-table {
+    border: 1px solid lightgray;
+    border-radius: 2px;
   }
 `;
 
@@ -53,12 +70,37 @@ const AllCategory = () => {
     setOpen(false);
     setCategory(null);
   };
-
+  const handleAddCategoryClick = () => {
+    navigate("/add-category");
+  };
   const deleteCategory = async (id) => {
     await customFetch.delete(`/category/delete/${id}`);
     console.log("deleted");
     navigate("/all-category");
   };
+  //Search Product
+  const { Search } = Input;
+  const suffix = (
+    <AudioOutlined
+      style={{
+        fontSize: 16,
+        color: "#1677ff",
+      }}
+    />
+  );
+
+  //Dropdown
+  const items = [
+    {
+      label: "View",
+      key: "1",
+      icon: <FormOutlined />,
+    },
+  ];
+
+  // Color Tag
+  const fixedColor = "geekblue";
+
   //Danh sách các cột
   const columns = [
     // {
@@ -77,10 +119,21 @@ const AllCategory = () => {
       fixed: "left",
     },
     {
-      title: "SubCategory",
+      title: "Sub Category",
       dataIndex: "category",
       key: "category",
-      width: 150,
+      width: 200,
+      render: (_, { category }) => (
+        <>
+          {category.map((category) => {
+            return (
+              <Tag color={fixedColor} key={category}>
+                {category.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
       //   render: (category) => {
       //     return category?.map((item) => <div key={item._id}>{item?.name}</div>);
       //   },
@@ -93,32 +146,21 @@ const AllCategory = () => {
       //   onFilter: (value, record) =>
       //     record?.category?.some((cat) => cat?._id === value),
     },
-    // {
-    //   title: "Brand",
-    //   dataIndex: "brand",
-    //   key: "brand",
-    //   width: 150,
-    //   render: (brand) => brand?.name,
-    //   filters: brands?.map((brand) => {
-    //     return {
-    //       text: brand?.name,
-    //       value: brand?._id,
-    //     };
-    //   }),
-    //   onFilter: (value, record) => record?.brand?._id === value,
-    // },
+
     {
       title: "Item",
       dataIndex: "Item",
       key: "Item",
       width: 150,
     },
-    // {
-    //   title: "Sale Price",
-    //   dataIndex: "salePrice",
-    //   key: "salePrice",
-    //   width: 150,
-    // },
+    {
+      title: "Total Sold",
+      dataIndex: "sold",
+      key: "sold",
+      width: 100,
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.sold - b.sold,
+    },
     {
       title: "Status",
       dataIndex: "status",
@@ -132,22 +174,28 @@ const AllCategory = () => {
       //   }),
       //   onFilter: (value, record) => record?.status === value,
     },
-    // {
-    //   title: "Sold",
-    //   dataIndex: "sold",
-    //   key: "sold",
-    //   width: 100,
-    //   defaultSortOrder: "descend",
-    //   sorter: (a, b) => a.sold - b.sold,
-    // },
+
     {
       title: "Action",
       key: "operation",
       fixed: "right",
       width: 120,
-      render: () => <Button icon={<EditOutlined />}>Edit</Button>,
+      render: () => (
+        <Dropdown.Button
+          menu={{
+            items,
+          }}
+        >
+          <EditOutlined />
+          Edit
+        </Dropdown.Button>
+      ),
     },
   ];
+
+  //Search
+  const onSearch = (value, _e, info) => console.log(info?.source, value);
+
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -180,24 +228,46 @@ const AllCategory = () => {
             marginBottom: 20,
           }}
         >
-          <Table
-            className="table"
-            // rowSelection={{
-            //   type: selectionType,
-            //   ...rowSelection,
-            // }}
-            columns={columns}
-            // dataSource={products.map((product) => ({
-            //   ...product,
-            //   key: product._id,
-            // }))}
-            onChange={onChange}
-            scroll={{ x: 1200 }}
-            showSorterTooltip={{
-              target: "sorter-icon",
+          <Search
+            size="large"
+            placeholder="Enter search name"
+            allowClear
+            onSearch={onSearch}
+            style={{
+              width: "30%",
+              minWidth: 300,
             }}
           />
-          {/* <div
+
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="large"
+            style={{ width: 150 }}
+            onClick={handleAddCategoryClick}
+          >
+            Add Category
+          </Button>
+        </div>
+        <Table
+          className="table"
+          // rowSelection={{
+          //   type: selectionType,
+          //   ...rowSelection,
+          // }}
+          columns={columns}
+          // dataSource={products.map((product) => ({
+          //   ...product,
+          //   key: product._id,
+          // }))}
+          onChange={onChange}
+          scroll={{ x: 1200 }}
+          showSorterTooltip={{
+            target: "sorter-icon",
+          }}
+        />
+
+        {/* <div
           style={{
             width: "80%",
             display: "flex",
@@ -208,7 +278,7 @@ const AllCategory = () => {
             borderRadius: "10px",
           }}
         > */}
-          {/* {categories.map((parentCategory) => {
+        {/* {categories.map((parentCategory) => {
             return (
               !parentCategory.parent && (
                 <div
@@ -326,7 +396,6 @@ const AllCategory = () => {
             </Button>
           </DialogActions>
         </Dialog> */}
-        </div>
       </Wrapper>
     </HelmetProvider>
   );

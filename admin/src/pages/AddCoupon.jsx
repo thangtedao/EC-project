@@ -116,6 +116,9 @@ const AddCoupon = () => {
               title: <a href="/">Dashboard</a>,
             },
             {
+              title: <a href="/all-coupon">Coupon</a>,
+            },
+            {
               title: "Add Coupon",
             },
           ]}
@@ -198,6 +201,17 @@ const AddCoupon = () => {
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
               <Card className="col-2-item" size="large" title={`Day`}>
+                <Typography.Title className="input-title">
+                  Day Start
+                </Typography.Title>
+                <Form.Item name="dayStart">
+                  <DatePicker
+                    size="large"
+                    style={{ width: "100%" }}
+                    onChange={onChange}
+                    needConfirm
+                  />
+                </Form.Item>
                 <Typography.Title className="input-title">
                   Day End
                 </Typography.Title>

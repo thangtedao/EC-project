@@ -44,6 +44,7 @@ import Login from "./pages/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
+// import DetailCoupon from "./pages/DetailCoupon";
 
 const router = createBrowserRouter([
   {

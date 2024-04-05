@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { Helmet, HelmetProvider } from "react-helmet-async";
-import { FormRow, FormRowSelect } from "../components";
-// import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { FormRow, FormRowSelect } from "../components/index.js";
 import {
   Modal,
   Button,
@@ -13,25 +12,16 @@ import {
   Typography,
   Card,
   Breadcrumb,
+  DatePicker,
+  InputNumber,
+  Space,
 } from "antd";
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  if (data.parent === "") delete data.parent;
   try {
-    await customFetch.post("/category", data);
-    return redirect("/add-category");
-  } catch (error) {
-    return error;
-  }
-};
-
-export const loader = async () => {
-  try {
-    const categories = await customFetch
-      .get("/category/get/parent")
-      .then(({ data }) => data.categories);
-    return { categories };
+    await customFetch.post("/coupon", data);
+    return redirect("/all-coupon");
   } catch (error) {
     return error;
   }
@@ -66,27 +56,25 @@ const Wrapper = styled.div`
     border: 1px solid lightgray;
     border-radius: 10px;
   }
-  .btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-    background-color: #f3f3f3;
-    padding: 1 rem;
-    height: 60px;
-    width: 350px;
+
+  .discount {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+  }
+  .discount-item-1 {
+    flex-grow: 7;
+    box-sizing: border-box;
+    padding-right: 10px;
+  }
+  .discount-item-2 {
+    flex-grow: 3;
+    box-sizing: border-box;
+    padding-left: 10px;
   }
 `;
 
-const AddCategory = () => {
-  // const { categories } = useLoaderData();
+const AddCoupon = () => {
   // const navigation = useNavigation();
-  // const isSubmitting = navigation.state === "submitting";
-
+  const isSubmitting = navigation.state === "submitting";
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -102,7 +90,9 @@ const AddCategory = () => {
   const handleCancel = () => {
     setModalOpen(false);
   };
-
+  const onChange = (date, dateString) => {
+    console.log(date, dateString);
+  };
   return (
     <HelmetProvider>
       <Wrapper>
@@ -113,19 +103,16 @@ const AddCategory = () => {
               title: <a href="/">Dashboard</a>,
             },
             {
-              title: <a href="/all-category">Category</a>,
-            },
-            {
-              title: "Add Category",
+              title: "Add Coupon",
             },
           ]}
         />
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Add Category</title>
+          <title>Add Coupon</title>
         </Helmet>
+        <div className="title">Add Coupon</div>
 
-        <div className="title">Add Category</div>
         <Form
           name="basic"
           // initialValues={{ remember: true }}
@@ -141,7 +128,7 @@ const AddCategory = () => {
               <Card
                 className="col-1-item"
                 size="large"
-                title={`Category information`}
+                title={`Coupon information`}
               >
                 <div>
                   {/* INFORMATION FIELDS */}
@@ -150,16 +137,32 @@ const AddCategory = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="Enter Category Name" />
+                      <Input size="large" placeholder="Enter Coupon Name" />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
-                      Category Slug
-                    </Typography.Title>
-                    <Form.Item name="slug">
-                      <Input size="large" placeholder="Enter Category Slug" />
-                    </Form.Item>
-
+                    <div className="discount">
+                      <div className="discount-item-1">
+                        <Typography.Title className="input-title">
+                          Code
+                        </Typography.Title>
+                        <Form.Item name="code">
+                          <Input size="large" placeholder="Enter Coupon Code" />
+                        </Form.Item>
+                      </div>
+                      <div className="discount-item-2">
+                        <Typography.Title className="input-title">
+                          Discount
+                        </Typography.Title>
+                        <Form.Item name="discount">
+                          <InputNumber
+                            suffix="%"
+                            style={{ width: "100%" }}
+                            size="large"
+                            placeholder="eg. 10"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
                     <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
@@ -181,66 +184,39 @@ const AddCategory = () => {
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {/* Parent */}
-              <Card className="col-2-item" size="large" title={`Parent`}>
+              <Card className="col-2-item" size="large" title={`Day`}>
                 <Typography.Title className="input-title">
-                  Category parent
+                  Day Start
                 </Typography.Title>
-                <Form.Item name="parent">
-                  <Select
+                <Form.Item name="dayStart">
+                  <DatePicker
                     size="large"
-                    placeholder="Select Parent"
-                    // options={?.map(() => {
-                    //   return {
-                    //     value:,
-                    //     label:,
-                    //   };
-                    // })}
+                    style={{ width: "100%" }}
+                    onChange={onChange}
+                    needConfirm
+                  />
+                </Form.Item>
+                <Typography.Title className="input-title">
+                  Day End
+                </Typography.Title>
+                <Form.Item name="dayEnd">
+                  <DatePicker
+                    size="large"
+                    style={{ width: "100%" }}
+                    onChange={onChange}
+                    needConfirm
                   />
                 </Form.Item>
               </Card>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="large"
+                style={{ width: 150 }}
+              >
+                Add Category
+              </Button>
             </div>
-          </div>
-          {/* BUTTON SUBMIT */}
-          <div className="btn">
-            <Button
-              danger
-              size="large"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want to cancel?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
-              Submit
-            </Button>
           </div>
         </Form>
       </Wrapper>
@@ -248,4 +224,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default AddCoupon;

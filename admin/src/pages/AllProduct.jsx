@@ -9,9 +9,9 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  BlockOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Button, Input, Space } from "antd";
+import { Breadcrumb, Table, Image, Button, Input, Dropdown } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -47,7 +47,7 @@ const rowSelection = {
   },
   // Column configuration not to be checked
   getCheckboxProps: (record) => ({
-    disabled: record.status === "Hàng Có Sẵn",
+    disabled: record.status === "Out of stock",
     status: record.status,
   }),
 };
@@ -82,10 +82,14 @@ const AllProduct = () => {
   const { products, categories, brands, searchParams } = useLoaderData();
   const { category, status } = searchParams;
   const navigate = useNavigate();
-
-  const { Search } = Input;
-
+  const handleAddProductClick = () => {
+    navigate("/add-product");
+  };
+  const handleReloadClick = () => {
+    navigate("/all-product");
+  };
   //Search Product
+  const { Search } = Input;
   const suffix = (
     <AudioOutlined
       style={{
@@ -94,6 +98,17 @@ const AllProduct = () => {
       }}
     />
   );
+
+  //Dropdown
+  const items = [
+    {
+      label: "View",
+      key: "1",
+      icon: <FormOutlined />,
+      onClick: () => handleAddProductClick(),
+    },
+  ];
+
   //Danh sách các cột
   const columns = [
     {
@@ -180,8 +195,18 @@ const AllProduct = () => {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 120,
-      render: () => <Button icon={<EditOutlined />}>Edit</Button>,
+      width: 150,
+      render: () => (
+        <Dropdown.Button
+          onClick={handleAddProductClick}
+          menu={{
+            items,
+          }}
+        >
+          <EditOutlined />
+          Edit
+        </Dropdown.Button>
+      ),
     },
   ];
   // onChange của sorter và filter data cột
@@ -197,6 +222,7 @@ const AllProduct = () => {
   const onSearch = (value, _e, info) => console.log(info?.source, value);
   //CheckBox
   const [selectionType] = useState("checkbox");
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -242,12 +268,17 @@ const AllProduct = () => {
             icon={<PlusOutlined />}
             size="large"
             style={{ width: 150 }}
+            onClick={handleAddProductClick}
           >
             Add Product
           </Button>
         </div>
 
-        <Button size="large" style={{ marginBottom: 20, width: 100 }}>
+        <Button
+          size="large"
+          style={{ marginBottom: 20, width: 100 }}
+          onClick={handleReloadClick}
+        >
           Reload
         </Button>
 

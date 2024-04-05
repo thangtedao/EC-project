@@ -219,6 +219,9 @@ const AddProduct = () => {
               title: <a href="/">Dashboard</a>,
             },
             {
+              title: <a href="/all-product">Product</a>,
+            },
+            {
               title: "Add Product",
             },
           ]}

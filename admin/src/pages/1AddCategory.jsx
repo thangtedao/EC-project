@@ -92,7 +92,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const AddCategory1 = () => {
+const AddCategory = () => {
   const { categories } = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -131,4 +131,4 @@ const AddCategory1 = () => {
   );
 };
 
-export default AddCategory1;
+export default AddCategory;
