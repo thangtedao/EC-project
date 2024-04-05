@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { FormRow, FormRowSelect } from "../components";
-// import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
+import {
+  redirect,
+  useNavigation,
+  useLoaderData,
+  useNavigate,
+} from "react-router-dom";
 import {
   Modal,
   Button,
@@ -14,13 +18,13 @@ import {
   Card,
   Breadcrumb,
 } from "antd";
+
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  if (data.parent === "") delete data.parent;
+  console.log("cccccccccccccccccc", data);
   try {
-    await customFetch.post("/category", data);
-    return redirect("/add-category");
+    return null;
   } catch (error) {
     return error;
   }
@@ -30,7 +34,7 @@ export const loader = async () => {
   try {
     const categories = await customFetch
       .get("/category/get/parent")
-      .then(({ data }) => data.categories);
+      .then(({ data }) => data);
     return { categories };
   } catch (error) {
     return error;
@@ -83,9 +87,10 @@ const Wrapper = styled.div`
 `;
 
 const AddCategory = () => {
-  // const { categories } = useLoaderData();
-  // const navigation = useNavigation();
-  // const isSubmitting = navigation.state === "submitting";
+  const { categories } = useLoaderData();
+  const navigation = useNavigation();
+  const navigate = useNavigate();
+  const isSubmitting = navigation.state === "submitting";
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -101,6 +106,16 @@ const AddCategory = () => {
   //Đóng ReviewOpen sau khi xác nhận
   const handleCancel = () => {
     setModalOpen(false);
+  };
+
+  const onFinish = async (values) => {
+    console.log("Success:", values);
+    if (values.parent === null) delete values.parent;
+    await customFetch.post("/category/create", values);
+    navigate("/all-category");
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
   };
 
   return (
@@ -129,8 +144,8 @@ const AddCategory = () => {
         <Form
           name="basic"
           // initialValues={{ remember: true }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
@@ -190,12 +205,15 @@ const AddCategory = () => {
                   <Select
                     size="large"
                     placeholder="Select Parent"
-                    // options={?.map(() => {
-                    //   return {
-                    //     value:,
-                    //     label:,
-                    //   };
-                    // })}
+                    options={[
+                      { value: null, label: "None" },
+                      ...categories?.map((item) => {
+                        return {
+                          value: item._id,
+                          label: item.name,
+                        };
+                      }),
+                    ]}
                   />
                 </Form.Item>
               </Card>
@@ -222,23 +240,7 @@ const AddCategory = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>

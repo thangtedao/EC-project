@@ -203,13 +203,7 @@ const Payment = () => {
 
   const handleCheckout = async () => {
     try {
-      await customFetch
-        .post(`/order/create-checkout-session`, { cart, user, coupon })
-        .then((res) => {
-          if (res.data.url) {
-            window.location.href = res.data.url;
-          }
-        });
+      return;
     } catch (error) {
       toast.error(error?.response?.data?.msg);
     }
