@@ -3,7 +3,6 @@ import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components/index.js";
 import { redirect, useNavigation, useLoaderData } from "react-router-dom";
 
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
@@ -196,7 +195,6 @@ const AddProduct = () => {
   const [categoryP, setCategoryP] = useState();
   const [categoryC, setCategoryC] = useState([]);
   const [categoriesC, setCategoriesC] = useState([]);
-  const filteredOptions = categoriesC.filter((o) => !categoryC.includes(o));
 
   const handleChangeC = (value) => {
     let newCategoriesC = [];
@@ -206,7 +204,6 @@ const AddProduct = () => {
       }
     });
     setCategoriesC(newCategoriesC);
-    setCategoryP(value);
   };
 
   return (
@@ -233,13 +230,7 @@ const AddProduct = () => {
 
         <div className="title">Add Product</div>
 
-        <Form
-          name="basic"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
+        <Form name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
@@ -430,11 +421,11 @@ const AddProduct = () => {
               </Card>
             </div>
 
-            {/* PRICE FIELD */}
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
+              {/* PRICE FIELD */}
               <Card className="col-2-item" size="large" title={`Price`}>
                 <Typography.Title className="input-title">
                   Price
@@ -486,17 +477,14 @@ const AddProduct = () => {
                   <Select
                     size="large"
                     placeholder="Select category"
-                    value={categoryP}
-                    onChange={(value) => handleChangeC(value)}
+                    onChange={handleChangeC}
                     style={{
                       width: "100%",
                     }}
-                    options={categories.map((category) => {
-                      return {
-                        value: category._id,
-                        label: category.name,
-                      };
-                    })}
+                    options={categories.map((category) => ({
+                      value: category._id,
+                      label: category.name,
+                    }))}
                   />
                 </Form.Item>
                 <Form.Item name="categoryC">
@@ -504,11 +492,10 @@ const AddProduct = () => {
                     size="large"
                     mode="multiple"
                     placeholder="Select category"
-                    value={categoryC}
                     style={{
                       width: "100%",
                     }}
-                    options={filteredOptions.map((item) => ({
+                    options={categoriesC.map((item) => ({
                       value: item._id,
                       label: item.name,
                     }))}
@@ -528,12 +515,10 @@ const AddProduct = () => {
                   <Select
                     size="large"
                     placeholder="Select Status"
-                    options={brands?.map((brand) => {
-                      return {
-                        value: brand._id,
-                        label: brand.name,
-                      };
-                    })}
+                    options={Object.keys(PRODUCT_STATUS).map((key) => ({
+                      value: PRODUCT_STATUS[key],
+                      label: PRODUCT_STATUS[key],
+                    }))}
                   />
                 </Form.Item>
               </Card>

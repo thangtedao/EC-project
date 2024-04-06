@@ -5,8 +5,14 @@ export const ORDER_STATUS = {
   DELIVERED: "Đã Giao Hàng",
   CANCELLED: "Đã Hủy Đơn",
 };
+
 export const PRODUCT_STATUS = {
-  AVAILABLE: "Hàng Có Sẵn",
-  OUT_OF_STOCK: "Tạm Hết Hàng",
-  DISCONTINUED: "Ngưng Kinh Doanh",
+  AVAILABLE: "Available",
+  OUT_OF_STOCK: "Out of stock",
+  DISCONTINUED: "Discontinued",
 };
+// export const PRODUCT_STATUS = {
+//   AVAILABLE: "Hàng Có Sẵn",
+//   OUT_OF_STOCK: "Tạm Hết Hàng",
+//   DISCONTINUED: "Ngưng Kinh Doanh",
+// };

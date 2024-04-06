@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components";
-// import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { redirect, useNavigation, useLoaderData } from "react-router-dom";
 import {
   Modal,
   Button,
@@ -15,69 +14,6 @@ import {
   Breadcrumb,
 } from "antd";
 
-// const Wrapper = styled.div`
-//   width: 100%;
-//   height: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-
-//   .title {
-//     font-size: 2rem;
-//     font-weight: bold;
-//     color: #00193b;
-//     margin-bottom: 1rem;
-//   }
-//   .form-add {
-//     height: fit-content;
-//     width: 600px;
-//     display: flex;
-//     flex-direction: column;
-//     gap: 1rem;
-//     background-color: white;
-//     box-shadow: 0px 3px 14px rgba(226, 225, 225, 0.75);
-//     border-color: #f1f1f1;
-//     border-radius: 10px;
-//     padding: 1rem;
-//   }
-
-//   .form-row {
-//     .form-label {
-//       font-size: 0.9rem;
-//       font-weight: bold;
-//       color: #00193b;
-//     }
-//     .form-input {
-//       border: 1px solid #e2e1e1;
-//       border-radius: 8px;
-//       padding: 0 20px;
-//       height: 44px;
-//     }
-//     .form-select {
-//       border: 1px solid #e2e1e1;
-//       border-radius: 8px;
-//       padding: 0 20px;
-//       height: 44px;
-//     }
-//     textarea {
-//       resize: none;
-//       width: 100%;
-//       height: 120px;
-//       overflow: auto;
-//       padding: 1rem;
-//       border-radius: 10px;
-//       border: 0.5px solid lightgray;
-//     }
-//   }
-//   .btn {
-//     height: 40px;
-//     border-radius: 10px;
-//     background-color: #035ecf;
-//     color: white;
-//     font-size: 1.2rem;
-//     font-weight: bolder;
-//   }
-// `;
 const Wrapper = styled.div`
   width: 100%;
   .title {
@@ -123,30 +59,18 @@ const Wrapper = styled.div`
   }
 `;
 
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  if (data.parent === "") delete data.parent;
-  try {
-    await customFetch.patch(`/category/update/${data.id}`, data);
-    return redirect("/all-category");
-  } catch (error) {
-    return error;
-  }
-};
-
 export const loader = async ({ params }) => {
   try {
-    const { slug } = params;
-    if (!slug) {
+    const { id } = params;
+    if (!id) {
       return redirect("/all-category");
     }
     const category = await customFetch
-      .get(`/category/${slug}/?populate=parent`)
-      .then(({ data }) => data.category);
+      .get(`/category/${id}`)
+      .then(({ data }) => data);
     const categories = await customFetch
       .get("/category/get/parent")
-      .then(({ data }) => data.categories);
+      .then(({ data }) => data);
     return { category, categories };
   } catch (error) {
     return error;
@@ -154,14 +78,9 @@ export const loader = async ({ params }) => {
 };
 
 const EditCategory = () => {
-  // const { category, categories } = useLoaderData();
-  // const navigation = useNavigation();
-  // const isSubmitting = navigation.state === "submitting";
-
-  // const [categoryP, setCategoryP] = useState(category?.parent?._id || "");
-
-  //NEW
-  //NEW
+  const { category, categories } = useLoaderData();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -178,7 +97,17 @@ const EditCategory = () => {
   const handleCancel = () => {
     setModalOpen(false);
   };
-  //NEW
+
+  const onFinish = async (values) => {
+    console.log("Success:", values);
+    if (values.parent) delete values.parent;
+    // await customFetch.post("/category/create", values);
+    navigate("/all-category");
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -205,7 +134,12 @@ const EditCategory = () => {
 
         <Form
           name="basic"
-          // initialValues={{ remember: true }}
+          initialValues={{
+            name: category?.name,
+            slug: category?.slug,
+            description: category?.description,
+            parent: category?.parent,
+          }}
           // onFinish={onFinish}
           // onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -267,12 +201,12 @@ const EditCategory = () => {
                   <Select
                     size="large"
                     placeholder="Select Parent"
-                    // options={?.map(() => {
-                    //   return {
-                    //     value:,
-                    //     label:,
-                    //   };
-                    // })}
+                    options={categories?.map((item) => {
+                      return {
+                        value: item._id,
+                        label: item.name,
+                      };
+                    })}
                   />
                 </Form.Item>
               </Card>

@@ -16,9 +16,10 @@ export const createProduct = async (req, res) => {
 
     let images = [];
     let publicIdImages = [];
-    if (data.images && data.images !== "undefined")
-      images = data.images?.split(",");
-    else delete data.images;
+    if (data.merelink) {
+      images = data.merelink?.split(",");
+      delete data.merelink;
+    } else delete data.merelink;
 
     req.file?.images?.map(async (image) => {
       const fileFormat = formatImage(image);

@@ -17,17 +17,20 @@ import Loading from "../components/Loading";
 
 const Wrapper = styled.section`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
+  position: relative;
+
   .dashboard {
-    width: calc(100% - 256px);
+    position: absolute;
+    left: 255px;
+    width: calc(100% - 255px);
     display: flex;
     flex-direction: column;
   }
   .dashboard-page {
     background-color: #ffffff;
     width: 100%;
-    height: calc(100% - 60px);
     padding: 2rem;
   }
 `;
@@ -36,16 +39,16 @@ export const loader = async () => {
   try {
     let { user } = JSON.parse(localStorage.getItem("persist:user"));
 
-    if (user !== "null") {
-      const user = await customFetch
-        .get("/user/current-user")
-        .then(({ data }) => data.user);
-      if (user.role !== "admin") {
-        await customFetch.get("/auth/logout");
-        dispatch(logout());
-        return redirect("/login");
-      }
-    }
+    // if (user !== "null") {
+    //   const user = await customFetch
+    //     .get("/user/current-user")
+    //     .then(({ data }) => data.user);
+    //   if (user.role !== "admin") {
+    //     await customFetch.get("/auth/logout");
+    //     dispatch(logout());
+    //     return redirect("/login");
+    //   }
+    // }
 
     return null;
   } catch (error) {
@@ -69,7 +72,7 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      // navigate("/login");
     }
   }, []);
 

@@ -82,11 +82,12 @@ const AllProduct = () => {
   const { products, categories, brands, searchParams } = useLoaderData();
   const { category, status } = searchParams;
   const navigate = useNavigate();
+
   const handleAddProductClick = () => {
     navigate("/add-product");
   };
-  const handleEditProduct = () => {
-    navigate("/edit-product/:slug");
+  const handleEditProduct = (id) => {
+    navigate(`/edit-product/${id}`);
   };
   const handleReloadClick = () => {
     navigate("/all-product");
@@ -166,12 +167,16 @@ const AllProduct = () => {
       dataIndex: "price",
       key: "price",
       width: 150,
+      render: (value) =>
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
     },
     {
       title: "Sale Price",
       dataIndex: "salePrice",
       key: "salePrice",
       width: 150,
+      render: (value) =>
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
     },
     {
       title: "Status",
@@ -199,9 +204,9 @@ const AllProduct = () => {
       key: "operation",
       fixed: "right",
       width: 150,
-      render: () => (
+      render: ({ _id }) => (
         <Dropdown.Button
-          onClick={handleEditProduct}
+          onClick={() => handleEditProduct(_id)}
           menu={{
             items,
           }}

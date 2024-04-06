@@ -7,7 +7,6 @@ import { action as editProductAction } from "./pages/EditProduct";
 import { action as editCouponAction } from "./pages/EditCoupon";
 import { action as addCategoryAction } from "./pages/AddCategory";
 import { action as addCouponAction } from "./pages/AddCoupon";
-import { action as editCategoryAction } from "./pages/EditCategory";
 import { action as editUserAction } from "./pages/EditUser";
 import { action as editOrderAction } from "./pages/EditOrder";
 
@@ -72,7 +71,7 @@ const router = createBrowserRouter([
         loader: addProductLoader,
       },
       {
-        path: "edit-product/:slug",
+        path: "edit-product/:id",
         element: <EditProduct />,
         action: editProductAction,
         loader: editProductLoader,
@@ -89,9 +88,8 @@ const router = createBrowserRouter([
         loader: allCategoryLoader,
       },
       {
-        path: "edit-category/:slug",
+        path: "edit-category/:id",
         element: <EditCategory />,
-        action: editCategoryAction,
         loader: editCategoryLoader,
       },
       {

@@ -8,6 +8,7 @@ import {
   getParentCategory,
   getCategory,
   updateCategory,
+  getItemCountPerCategory,
 } from "../controller/categoryController.js";
 import {
   authenticateUser,
@@ -39,5 +40,6 @@ router.delete(
 router.get("/get/parent", getParentCategory);
 router.get("/get/child", getchildCategory);
 router.get("/get/child/:parentId", getChildCategoryByParentId);
+router.get("/get/item-amount", getItemCountPerCategory);
 
 export default router;

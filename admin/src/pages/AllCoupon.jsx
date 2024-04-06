@@ -4,12 +4,6 @@ import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { useNavigate, useLoaderData } from "react-router-dom";
 
-// import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import {
   EditOutlined,
   AudioOutlined,
@@ -35,30 +29,6 @@ const Wrapper = styled.div`
   .table {
     width: 100%;
   }
-  .ant-table {
-    border: 1px solid lightgray;
-    border-radius: 2px;
-  }
-  /* .title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-
-  .grid-center {
-    display: grid;
-    place-items: center;
-  }
-  .ed-btn {
-    border: 1px solid #035ecf;
-    border-radius: 3px;
-    padding: 0 5px;
-    color: #035ecf;
-  }
-  .md-font {
-    font-size: 0.95rem;
-  } */
 `;
 
 export const loader = async () => {
@@ -209,6 +179,7 @@ const AllCoupon = () => {
           <meta charSet="utf-8" />
           <title>All Coupon</title>
         </Helmet>
+
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
           items={[
@@ -253,10 +224,6 @@ const AllCoupon = () => {
         </div>
         <Table
           className="table"
-          // rowSelection={{
-          //   type: selectionType,
-          //   ...rowSelection,
-          // }}
           columns={columns}
           // dataSource={products.map((product) => ({
           //   ...product,
