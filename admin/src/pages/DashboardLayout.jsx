@@ -72,7 +72,7 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      // navigate("/login");
     }
   }, []);
 

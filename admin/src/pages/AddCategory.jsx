@@ -110,7 +110,7 @@ const AddCategory = () => {
 
   const onFinish = async (values) => {
     console.log("Success:", values);
-    if (values.parent === null) delete values.parent;
+    if (values.parent) delete values.parent;
     await customFetch.post("/category/create", values);
     navigate("/all-category");
   };
@@ -204,16 +204,14 @@ const AddCategory = () => {
                 <Form.Item name="parent">
                   <Select
                     size="large"
+                    allowClear
                     placeholder="Select Parent"
-                    options={[
-                      { value: null, label: "None" },
-                      ...categories?.map((item) => {
-                        return {
-                          value: item._id,
-                          label: item.name,
-                        };
-                      }),
-                    ]}
+                    options={categories?.map((item) => {
+                      return {
+                        value: item._id,
+                        label: item.name,
+                      };
+                    })}
                   />
                 </Form.Item>
               </Card>

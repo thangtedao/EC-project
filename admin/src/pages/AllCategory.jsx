@@ -3,7 +3,6 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { useState } from "react";
 
 import {
   EditOutlined,
@@ -79,15 +78,10 @@ const AllCategory = () => {
   const handleAddCategoryClick = () => {
     navigate("/add-category");
   };
-  const handleEditCategory = () => {
-    navigate("/edit-category/:slug");
+  const handleEditCategory = (id) => {
+    navigate(`/edit-category/${id}`);
   };
 
-  const deleteCategory = async (id) => {
-    await customFetch.delete(`/category/delete/${id}`);
-    console.log("deleted");
-    navigate("/all-category");
-  };
   //Search Product
   const { Search } = Input;
   const suffix = (
@@ -157,9 +151,9 @@ const AllCategory = () => {
       key: "operation",
       fixed: "right",
       width: 120,
-      render: () => (
+      render: ({ _id }) => (
         <Dropdown.Button
-          onClick={handleEditCategory}
+          onClick={() => handleEditCategory(_id)}
           menu={{
             items,
           }}
@@ -229,10 +223,6 @@ const AllCategory = () => {
         </div>
         <Table
           className="table"
-          // rowSelection={{
-          //   type: selectionType,
-          //   ...rowSelection,
-          // }}
           columns={columns}
           dataSource={categories.map((category) => ({
             ...category,

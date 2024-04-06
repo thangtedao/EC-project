@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
@@ -106,7 +106,6 @@ const Wrapper = styled.div`
 `;
 const EditProduct = () => {
   const { product, brands, categories, categoryChild } = useLoaderData();
-  console.log("aaaaaaaaaaaa", product);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -131,6 +130,7 @@ const EditProduct = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [fileList, setFileList] = useState([]);
+
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -198,8 +198,11 @@ const EditProduct = () => {
 
   const [categoryP, setCategoryP] = useState(product?.category[0]?._id);
   const [categoryC, setCategoryC] = useState([]);
-  const [categoriesC, setCategoriesC] = useState([]);
-  const filteredOptions = categoriesC.filter((o) => !categoryC.includes(o));
+  const [categoriesC, setCategoriesC] = useState(
+    categoryChild.map((item) => {
+      if (item.parent === product?.category[0]) return item;
+    })
+  );
 
   const handleChangeC = (value) => {
     let newCategoriesC = [];
@@ -209,7 +212,6 @@ const EditProduct = () => {
       }
     });
     setCategoriesC(newCategoriesC);
-    setCategoryP(value);
   };
 
   return (
@@ -242,6 +244,7 @@ const EditProduct = () => {
             name: product?.name,
             description: product?.description,
             category: product?.category[0],
+            categoryC: product?.category?.slice(1),
             merelink: product?.images,
             specifications: product?.specifications,
             price: product?.price,
@@ -499,7 +502,6 @@ const EditProduct = () => {
                   <Select
                     size="large"
                     placeholder="Select category"
-                    value={categoryP}
                     onChange={(value) => handleChangeC(value)}
                     style={{
                       width: "100%",
@@ -519,13 +521,12 @@ const EditProduct = () => {
                     size="large"
                     mode="multiple"
                     placeholder="Select category"
-                    value={categoryC}
                     style={{
                       width: "100%",
                     }}
-                    options={filteredOptions?.map((item) => ({
-                      value: item._id,
-                      label: item.name,
+                    options={categoriesC?.map((item) => ({
+                      value: item?._id,
+                      label: item?.name,
                     }))}
                   />
                 </Form.Item>
