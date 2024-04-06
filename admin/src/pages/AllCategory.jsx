@@ -80,7 +80,7 @@ const AllCategory = () => {
     navigate("/add-category");
   };
   const handleEditCategory = () => {
-    navigate("  edit-category/:slug");
+    navigate("/edit-category/:slug");
   };
 
   const deleteCategory = async (id) => {

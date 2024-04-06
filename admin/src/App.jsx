@@ -72,7 +72,7 @@ const router = createBrowserRouter([
         loader: addProductLoader,
       },
       {
-        path: "edit-product/:slug",
+        path: "edit-product/:id",
         element: <EditProduct />,
         action: editProductAction,
         loader: editProductLoader,
