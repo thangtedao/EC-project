@@ -31,7 +31,7 @@ const items = [
     [
       getItem("All Product", "2", null, null, "/all-product"),
       getItem("Add Product", "3", null, null, "/add-product"),
-      getItem("Detail Product", "4", null, null, "/add-product"),
+      getItem("Detail Product", "4", null, null, "add-product"),
     ],
     null
   ),
@@ -42,7 +42,9 @@ const items = [
     [
       getItem("All Category", "5", null, null, "/all-category"),
       getItem("Add Category", "6", null, null, "/add-category"),
-      getItem("Detail Category ", "7", null, null, "/add-category"),
+      //Nháp
+      getItem("Nháp", "7", null, null, "edit-category/:slug"),
+      getItem("Detail Category ", "7", null, null, "/edit-category/:slug"),
     ],
     null
   ),
@@ -53,6 +55,7 @@ const items = [
     [
       getItem("All Coupon", "8", null, null, "/all-coupon"),
       getItem("Add Coupon", "9", null, null, "/add-coupon"),
+      getItem("Nháp Coupon", "9", null, null, "/edit-coupon/:name"),
       getItem("Detail Coupon", "10", null, null, "/add-coupon"),
     ],
     null

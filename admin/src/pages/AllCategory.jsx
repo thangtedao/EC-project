@@ -79,7 +79,15 @@ const AllCategory = () => {
   const handleAddCategoryClick = () => {
     navigate("/add-category");
   };
+  const handleEditCategory = () => {
+    navigate("  edit-category/:slug");
+  };
 
+  const deleteCategory = async (id) => {
+    await customFetch.delete(`/category/delete/${id}`);
+    console.log("deleted");
+    navigate("/all-category");
+  };
   //Search Product
   const { Search } = Input;
   const suffix = (
@@ -151,6 +159,7 @@ const AllCategory = () => {
       width: 120,
       render: () => (
         <Dropdown.Button
+          onClick={handleEditCategory}
           menu={{
             items,
           }}

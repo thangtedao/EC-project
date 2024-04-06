@@ -85,6 +85,9 @@ const AllProduct = () => {
   const handleAddProductClick = () => {
     navigate("/add-product");
   };
+  const handleEditProduct = () => {
+    navigate("/edit-product/:slug");
+  };
   const handleReloadClick = () => {
     navigate("/all-product");
   };
@@ -202,7 +205,7 @@ const AllProduct = () => {
       width: 150,
       render: () => (
         <Dropdown.Button
-          onClick={handleAddProductClick}
+          onClick={handleEditProduct}
           menu={{
             items,
           }}
