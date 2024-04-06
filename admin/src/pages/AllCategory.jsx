@@ -38,26 +38,29 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const categoriesP = await customFetch
-      .get(`/category/get/parent`)
+    const categories = await customFetch
+      .get(`/category/all-categories`)
       .then(({ data }) => data);
     const categoriesC = await customFetch
       .get(`/category/get/child`)
       .then(({ data }) => data);
-    return { categoriesP, categoriesC };
+    const itemPerCate = await customFetch
+      .get(`/category/get/item-amount`)
+      .then(({ data }) => data);
+    return { categories, categoriesC, itemPerCate };
   } catch (error) {
     return error;
   }
 };
 
 const AllCategory = () => {
-  const { categoriesP, categoriesC } = useLoaderData();
+  let { categories, categoriesC, itemPerCate } = useLoaderData();
   const navigate = useNavigate();
 
-  let categories;
-  categories = categoriesP?.map((category) => {
+  categories = categories?.map((category) => {
     const newCategory = { ...category };
     newCategory.subCate = [];
+    newCategory.itemPerCate = 0;
     delete newCategory.parent;
     return newCategory;
   });
@@ -66,6 +69,11 @@ const AllCategory = () => {
     item.subCate = categoriesC
       ?.filter((itemC) => itemC.parent === item._id)
       .map(({ _id, name }) => ({ _id, name }));
+    itemPerCate
+      ?.filter((i) => item._id === i._id)
+      .map(({ count }) => {
+        item.itemPerCate = count;
+      });
   });
 
   const handleAddCategoryClick = () => {
@@ -124,8 +132,8 @@ const AllCategory = () => {
 
     {
       title: "Item",
-      dataIndex: "item",
-      key: "item",
+      dataIndex: "itemPerCate",
+      key: "itemPerCate",
       width: 150,
     },
     {

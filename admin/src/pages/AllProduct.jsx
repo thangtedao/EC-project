@@ -163,12 +163,16 @@ const AllProduct = () => {
       dataIndex: "price",
       key: "price",
       width: 150,
+      render: (value) =>
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
     },
     {
       title: "Sale Price",
       dataIndex: "salePrice",
       key: "salePrice",
       width: 150,
+      render: (value) =>
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
     },
     {
       title: "Status",

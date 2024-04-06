@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect, ProductCard } from "../components/index.js";
+import { FormRow, FormRowSelect } from "../components/index.js";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
@@ -223,9 +223,9 @@ const Dashboard = () => {
                 columnGap: "1rem",
               }}
             >
-              {productMostSold?.map((product) => (
+              {/* {productMostSold?.map((product) => (
                 <ProductCard key={product._id} product={product} />
-              ))}
+              ))} */}
             </div>
           </div>
 

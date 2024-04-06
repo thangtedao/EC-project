@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { FormRow } from "../components";
 import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -94,8 +93,8 @@ const Login = () => {
 
         <Form method="post" className="form-login">
           <h4>Đăng nhập</h4>
-          <FormRow type="text" name="email" defaultValue="" />
-          <FormRow type="password" name="password" defaultValue="" />
+          {/* <FormRow type="text" name="email" defaultValue="" />
+          <FormRow type="password" name="password" defaultValue="" /> */}
           <button type="submit" className="btn-block" disabled={isSubmitting}>
             {isSubmitting ? "đang đăng nhập..." : "đăng nhập"}
           </button>

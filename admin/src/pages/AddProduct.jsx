@@ -3,7 +3,6 @@ import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components/index.js";
 import { redirect, useNavigation, useLoaderData } from "react-router-dom";
 
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
@@ -528,12 +527,10 @@ const AddProduct = () => {
                   <Select
                     size="large"
                     placeholder="Select Status"
-                    options={brands?.map((brand) => {
-                      return {
-                        value: brand._id,
-                        label: brand.name,
-                      };
-                    })}
+                    options={Object.keys(PRODUCT_STATUS).map((key) => ({
+                      value: PRODUCT_STATUS[key],
+                      label: PRODUCT_STATUS[key],
+                    }))}
                   />
                 </Form.Item>
               </Card>
