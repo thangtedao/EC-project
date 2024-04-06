@@ -129,10 +129,10 @@ const AllCategory = () => {
       width: 200,
       render: (_, { category }) => (
         <>
-          {category.map((category) => {
+          {category.map((tag) => {
             return (
-              <Tag color={fixedColor} key={category}>
-                {category.toUpperCase()}
+              <Tag color={fixedColor} key={tag}>
+                {tag.toUpperCase()}
               </Tag>
             );
           })}
@@ -197,7 +197,13 @@ const AllCategory = () => {
       ),
     },
   ];
-
+  const data = [
+    {
+      key: "1",
+      name: "John Brown",
+      category: ["developer"],
+    },
+  ];
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
 
@@ -261,6 +267,7 @@ const AllCategory = () => {
           //   ...rowSelection,
           // }}
           columns={columns}
+          dataSource={data}
           // dataSource={products.map((product) => ({
           //   ...product,
           //   key: product._id,
