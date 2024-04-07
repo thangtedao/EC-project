@@ -39,18 +39,19 @@ export const loader = async () => {
   try {
     let { user } = JSON.parse(localStorage.getItem("persist:user"));
 
-    // if (user !== "null") {
-    //   const user = await customFetch
-    //     .get("/user/current-user")
-    //     .then(({ data }) => data.user);
-    //   if (user.role !== "admin") {
-    //     await customFetch.get("/auth/logout");
-    //     dispatch(logout());
-    //     return redirect("/login");
-    //   }
-    // }
-
-    return null;
+    if (user === "null") {
+      return redirect("/login");
+    } else {
+      const user = await customFetch
+        .get("/user/current-user")
+        .then(({ data }) => data.user);
+      if (user.role !== "admin") {
+        await customFetch.get("/auth/logout");
+        dispatch(logout());
+        return redirect("/login");
+      }
+      return null;
+    }
   } catch (error) {
     return error;
   }
@@ -70,11 +71,11 @@ const DashboardLayout = () => {
     setShowSidebar(!showSidebar);
   };
 
-  useEffect(() => {
-    if (!user) {
-      // navigate("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   return (
     <DashboardContext.Provider

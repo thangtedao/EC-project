@@ -1,30 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Link, redirect, useNavigation } from "react-router-dom";
+import { useNavigate, useNavigation } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { store } from "../state/store.js";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../state/userSlice.js";
 import { Button, Checkbox, Form, Input } from "antd";
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  try {
-    await customFetch.post("/auth/login", data);
-    const user = await customFetch
-      .get("/user/current-user")
-      .then(({ data }) => data.user);
-
-    if (user.role !== "admin") {
-      return redirect("/login");
-    }
-
-    store.dispatch(login({ user: user }));
-    return redirect("/");
-  } catch (error) {
-    return error;
-  }
-};
 
 const Wrapper = styled.div`
   width: 100%;
@@ -80,14 +61,27 @@ const Wrapper = styled.div`
 `;
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const onFinish = (values) => {
-    console.log("Success:", values);
+
+  const onFinish = async (values) => {
+    await customFetch.post("/auth/login", values);
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+    if (user) {
+      dispatch(login({ user: { fullName: user.fullName, role: user.role } }));
+      navigate("/");
+    } else {
+      console.log("Login Fail");
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -115,12 +109,12 @@ const Login = () => {
           autoComplete="off"
         >
           <Form.Item
-            label="Username"
-            name="username"
+            label="Email"
+            name="email"
             rules={[
               {
                 required: true,
-                message: "Please input your username!",
+                message: "Please input your email!",
               },
             ]}
           >
@@ -141,7 +135,7 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item
-            name="remember"
+            // name="remember"
             valuePropName="checked"
             wrapperCol={{
               offset: 8,

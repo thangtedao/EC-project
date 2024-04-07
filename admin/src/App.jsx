@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 /* ACTION */
-import { action as loginAction } from "./pages/Login";
 import { action as addProductAction } from "./pages/AddProduct";
 import { action as editProductAction } from "./pages/EditProduct";
 import { action as editCouponAction } from "./pages/EditCoupon";
@@ -12,6 +11,7 @@ import { action as editOrderAction } from "./pages/EditOrder";
 
 /* LOADER */
 import { loader as dashboardLoader } from "./pages/Dashboard";
+import { loader as dashboardLayoutLoader } from "./pages/DashboardLayout";
 import { loader as addProductLoader } from "./pages/AddProduct";
 import { loader as editProductLoader } from "./pages/EditProduct";
 import { loader as editCategoryLoader } from "./pages/EditCategory";
@@ -49,6 +49,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <DashboardLayout />,
+    loader: dashboardLayoutLoader,
     errorElement: <Error />,
     children: [
       {
@@ -135,7 +136,6 @@ const router = createBrowserRouter([
   {
     path: "login",
     element: <Login />,
-    action: loginAction,
   },
 ]);
 
