@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../state/userSlice.js";
 import { Button, Checkbox, Form, Input } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 const Wrapper = styled.div`
   .login-page {
@@ -105,21 +104,16 @@ const Wrapper = styled.div`
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
 
   const onFinish = async (values) => {
-    await customFetch.post("/auth/login", values);
+    await customFetch
+      .post("/auth/login", values)
+      .catch(() => console.log("Login Failed"));
     const user = await customFetch
       .get("/user/current-user")
-      .then(({ data }) => data.user);
-    if (user) {
-      dispatch(login({ user: { fullName: user.fullName, role: user.role } }));
-      navigate("/");
-    } else {
-      console.log("Login Fail");
-    }
+      .then(({ data }) => data.user)
+      .catch(() => console.log("Login Failed"));
+    if (user) navigate("/");
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -148,6 +142,7 @@ const Login = () => {
                 remember: true,
               }}
               onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
             >
               <p className="form-title">Welcome back</p>
               <p>Login to the Dashboard</p>
@@ -161,6 +156,7 @@ const Login = () => {
                 ]}
               >
                 <Input
+                  type="email"
                   prefix={<UserOutlined className="site-form-item-icon" />}
                   placeholder="Email"
                 />
@@ -183,10 +179,6 @@ const Login = () => {
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
-
-                <a className="login-form-forgot" href="">
-                  Forgot password
-                </a>
               </Form.Item>
 
               <Form.Item>
@@ -195,9 +187,8 @@ const Login = () => {
                   htmlType="submit"
                   className="login-form-button"
                 >
-                  Log in
+                  Login
                 </Button>
-                Or <a href="">register now!</a>
               </Form.Item>
             </Form>
           </div>

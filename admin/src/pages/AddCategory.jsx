@@ -2,12 +2,7 @@ import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import {
-  redirect,
-  useNavigation,
-  useLoaderData,
-  useNavigate,
-} from "react-router-dom";
+import { useNavigation, useLoaderData, useNavigate } from "react-router-dom";
 import {
   Modal,
   Button,
@@ -18,17 +13,6 @@ import {
   Card,
   Breadcrumb,
 } from "antd";
-
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  console.log("cccccccccccccccccc", data);
-  try {
-    return null;
-  } catch (error) {
-    return error;
-  }
-};
 
 export const loader = async () => {
   try {
@@ -88,9 +72,7 @@ const Wrapper = styled.div`
 
 const AddCategory = () => {
   const { categories } = useLoaderData();
-  const navigation = useNavigation();
   const navigate = useNavigate();
-  const isSubmitting = navigation.state === "submitting";
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -109,8 +91,7 @@ const AddCategory = () => {
   };
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
-    if (values.parent) delete values.parent;
+    if (!values.parent) delete values.parent;
     await customFetch.post("/category/create", values);
     navigate("/all-category");
   };

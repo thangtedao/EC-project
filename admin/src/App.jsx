@@ -1,10 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 /* ACTION */
-import { action as addProductAction } from "./pages/AddProduct";
-import { action as editProductAction } from "./pages/EditProduct";
 import { action as editCouponAction } from "./pages/EditCoupon";
-import { action as addCategoryAction } from "./pages/AddCategory";
 import { action as addCouponAction } from "./pages/AddCoupon";
 import { action as editUserAction } from "./pages/EditUser";
 import { action as editOrderAction } from "./pages/EditOrder";
@@ -43,7 +40,6 @@ import Login from "./pages/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
-// import DetailCoupon from "./pages/DetailCoupon";
 
 const router = createBrowserRouter([
   {
@@ -57,7 +53,6 @@ const router = createBrowserRouter([
         // element: <Dashboard />,
         // loader: dashboardLoader,
         element: <AddProduct />,
-        action: addProductAction,
         loader: addProductLoader,
       },
       {
@@ -68,19 +63,16 @@ const router = createBrowserRouter([
       {
         path: "add-product",
         element: <AddProduct />,
-        action: addProductAction,
         loader: addProductLoader,
       },
       {
         path: "edit-product/:id",
         element: <EditProduct />,
-        action: editProductAction,
         loader: editProductLoader,
       },
       {
         path: "add-category",
         element: <AddCategory />,
-        action: addCategoryAction,
         loader: addCategoryLoader,
       },
       {

@@ -1,19 +1,15 @@
 import React, { createContext, useContext, useState } from "react";
+import styled from "styled-components";
+import customFetch from "../utils/customFetch";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+import Loading from "../components/Loading";
 import {
   Outlet,
   redirect,
   useLoaderData,
-  useNavigate,
   useNavigation,
 } from "react-router-dom";
-import styled from "styled-components";
-import customFetch from "../utils/customFetch";
-import { store } from "../state/store.js";
-import { useSelector } from "react-redux";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import { useEffect } from "react";
-import Loading from "../components/Loading";
 
 const Wrapper = styled.section`
   width: 100%;
@@ -36,32 +32,18 @@ const Wrapper = styled.section`
 `;
 
 export const loader = async () => {
-  try {
-    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+  const user = await customFetch
+    .get("/user/current-user")
+    .then(({ data }) => data.user)
+    .catch(() => redirect("/login"));
 
-    if (user === "null") {
-      return redirect("/login");
-    } else {
-      const user = await customFetch
-        .get("/user/current-user")
-        .then(({ data }) => data.user);
-      if (user.role !== "admin") {
-        await customFetch.get("/auth/logout");
-        dispatch(logout());
-        return redirect("/login");
-      }
-      return null;
-    }
-  } catch (error) {
-    return error;
-  }
+  return user;
 };
 
 const DashboardContext = createContext();
 
 const DashboardLayout = () => {
-  const user = useSelector((state) => state.user.user);
-  const navigate = useNavigate();
+  const user = useLoaderData();
   const navigation = useNavigation();
 
   const isPageLoading = navigation.state === "loading";
@@ -70,12 +52,6 @@ const DashboardLayout = () => {
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
-
-  // useEffect(() => {
-  //   if (!user) {
-  //     navigate("/login");
-  //   }
-  // }, []);
 
   return (
     <DashboardContext.Provider

@@ -3,7 +3,7 @@ import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { useNavigation, useLoaderData } from "react-router-dom";
 
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
@@ -19,14 +19,6 @@ import {
   Breadcrumb,
   Space,
 } from "antd";
-
-export const action = async () => {
-  try {
-    return null;
-  } catch (error) {
-    return error;
-  }
-};
 
 export const loader = async () => {
   try {
@@ -96,8 +88,6 @@ const Wrapper = styled.div`
 
 const AddProduct = () => {
   const { brands, categories, categoryChild } = useLoaderData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -162,9 +152,6 @@ const AddProduct = () => {
     </button>
   );
 
-  {
-    /* SUBMIT FORM */
-  }
   const onFinish = async (values) => {
     console.log("Success:", values);
     const formData = new FormData();
@@ -192,8 +179,6 @@ const AddProduct = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const [categoryP, setCategoryP] = useState();
-  const [categoryC, setCategoryC] = useState([]);
   const [categoriesC, setCategoriesC] = useState([]);
 
   const handleChangeC = (value) => {
@@ -546,23 +531,7 @@ const AddProduct = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>
