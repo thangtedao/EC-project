@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Link, Form, redirect, useNavigation } from "react-router-dom";
+import { Link, redirect, useNavigation } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
-
+import { Button, Checkbox, Form, Input } from "antd";
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -82,7 +82,12 @@ const Wrapper = styled.div`
 const Login = () => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
   return (
     <HelmetProvider>
       <Wrapper>
@@ -91,13 +96,71 @@ const Login = () => {
           <title>Login</title>
         </Helmet>
 
-        <Form method="post" className="form-login">
-          <h4>Đăng nhập</h4>
-          {/* <FormRow type="text" name="email" defaultValue="" />
-          <FormRow type="password" name="password" defaultValue="" /> */}
-          <button type="submit" className="btn-block" disabled={isSubmitting}>
-            {isSubmitting ? "đang đăng nhập..." : "đăng nhập"}
-          </button>
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          style={{
+            maxWidth: 600,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: "Please input your username!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your password!",
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="remember"
+            valuePropName="checked"
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
         </Form>
       </Wrapper>
     </HelmetProvider>
