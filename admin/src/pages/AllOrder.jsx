@@ -202,7 +202,9 @@ const AllOrder = () => {
   //     ),
   //   },
   // ];
-
+  const handleEditOrder = () => {
+    navigate("/edit-order/:id");
+  };
   //Danh sách các cột
   const columns = [
     {
@@ -298,7 +300,7 @@ const AllOrder = () => {
       width: 150,
       render: () => (
         <Dropdown.Button
-          // onClick={handleEditProduct}
+          onClick={handleEditOrder}
           menu={{
             items,
           }}

@@ -259,7 +259,10 @@ const EditOrder = () => {
                 className="col-1-item"
                 size="large"
                 title={`Ở đây là ID Order`}
+                extra={`Ngay2 tạo order ở đây`}
               >
+                {/* PRODUCT 1 */}
+
                 <div
                   className="product"
                   style={{
@@ -321,6 +324,7 @@ const EditOrder = () => {
                   </div>
                 </div>
                 <Divider />
+                {/* PRODUCT 2 */}
                 <div
                   className="product"
                   style={{
@@ -382,8 +386,59 @@ const EditOrder = () => {
                   </div>
                 </div>
                 <Divider />
+
+                {/* TOTAL PRICE 1 */}
+
+                <div
+                  style={{ width: "40%", marginLeft: "auto", display: "flex" }}
+                >
+                  <div style={{ width: "40%" }}>
+                    <Typography.Text size="large" strong>
+                      Total:{" "}
+                    </Typography.Text>
+                  </div>
+                  <div style={{ marginLeft: "auto" }}>
+                    <Typography.Text size="large">
+                      {"đ"} 123456789000
+                    </Typography.Text>
+                  </div>
+                </div>
+                {/* TOTAL PRICE 2 */}
+                <div
+                  style={{ width: "40%", marginLeft: "auto", display: "flex" }}
+                >
+                  <div style={{ width: "40%" }}>
+                    <Typography.Text size="large" strong>
+                      Coupon:{" "}
+                    </Typography.Text>
+                  </div>
+                  <div style={{ marginLeft: "auto" }}>
+                    <Typography.Text size="large">
+                      -{"đ"}12222222
+                    </Typography.Text>
+                  </div>
+                </div>
+
+                {/* TOTAL PRICE 3 */}
+                <div
+                  style={{ width: "40%", marginLeft: "auto", display: "flex" }}
+                >
+                  <div style={{ width: "40%" }}>
+                    <Typography.Text size="large" strong>
+                      Amount paid::{" "}
+                    </Typography.Text>
+                  </div>
+                  <div style={{ marginLeft: "auto" }}>
+                    <Typography.Text size="large">
+                      {"đ"}122222220000000000
+                    </Typography.Text>
+                  </div>
+                </div>
               </Card>
             </div>
+
+            {/* CUSTOMER */}
+
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -397,7 +452,7 @@ const EditOrder = () => {
                 <Divider />
                 <Space wrap size={16}>
                   <Typography.Text strong>ID:</Typography.Text>
-                  <Typography.Text size="large">123</Typography.Text>
+                  <Typography.Text size="large">125445824</Typography.Text>
                 </Space>
 
                 <Divider />
@@ -442,136 +497,51 @@ const EditOrder = () => {
                   </Tag>
                 </Space>
               </Card>
-            </div>
-          </div>
-          <div className="order-container">
-            <div className="order-details">
-              <div className="flex">
-                <div className="bold">Ngày đặt hàng: </div>
-                {/* {order.createdAt.split("T")[0] +
-                "  " +
-                order.createdAt.split("T")[1].split(".")[0]} */}
-              </div>
-              <div className="flex">
-                <div className="bold">Số lượng sản phẩm: </div>
-                {/* {order.products.reduce(
-                (accumulator, item) => accumulator + item.count,
-                0
-              )} */}
-              </div>
-              <div className="flex">
-                <div className="bold">Tổng tiền:</div>
-                {/* {order.totalPrice
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"} */}
-              </div>
-              {/* {order.coupon && (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-              >
-                <div className="flex">
-                  <div className="bold">Đã áp dụng mã:</div>
-                  {order.coupon.name}
-                </div>
-                <div className="flex">
-                  <div className="bold">Mã giảm:</div>
-                  {order.products.reduce(
-                    (accumulator, item) =>
-                      accumulator + item.price * item.count,
-                    0
-                  ) -
-                    order.totalPrice +
-                    "đ"}
-                </div>
-              </div>
-            )} */}
-
-              <div className="bold">Chi tiết sản phẩm:</div>
-              <div className="product-list">
-                {/* {order.products.map((item) => {
-                return (
-                  <ProductBar
-                  key={item._id}
-                  product={{
-                    ...item.product,
-                    count: item.count,
-                    price: item.price,
-                  }}
+              <Card className="col-2-item" size="large" title={`Change Status`}>
+                <Typography.Title className="input-title">
+                  Change Status
+                </Typography.Title>
+                <Form.Item name="parent">
+                  <Select
+                    size="large"
+                    allowClear
+                    placeholder="Select Status"
+                    options={[
+                      {
+                        value: "OK",
+                        label: "OK",
+                      },
+                    ]}
                   />
-                );
-              })} */}
-              </div>
+                </Form.Item>
+              </Card>
             </div>
+          </div>{" "}
+          {/* BUTTON SUBMIT */}
+          <div className="btn">
+            <Button danger size="large">
+              Cancel
+            </Button>
 
-            <div className="user-info-container">
-              <div className="user-info">
-                <div className="bold">Khách hàng</div>
-                <div className="flex">
-                  <Avatar
-                    sx={{
-                      width: 37,
-                      height: 37,
-                      backgroundColor: "white",
-                      color: "black",
-                      border: "1px solid black",
-                    }}
-                    // src={order?.orderBy.avatar && order.orderBy.avatar}
-                  >
-                    {/* {!order?.orderBy.avatar &&
-                    order?.orderBy.fullName.charAt(0).toUpperCase()} */}
-                  </Avatar>
-                  {/* <div>{order.orderBy.fullName}</div> */}
-                </div>
-              </div>
-              <div className="user-info">
-                <div className="bold">Thông tin liên hệ</div>
-                <div className="flex-column">
-                  {/* <div>{order.orderBy.fullName}</div>
-                <div>{order.orderBy.email}</div>
-                <div>{order.orderBy.phone}</div> */}
-                </div>
-              </div>
-              <div className="user-info">
-                <div className="bold">Địa chỉ giao hàng</div>
-                <div className="flex-column">
-                  {/* <div>{order.orderBy.address.city}</div>
-                <div>{order.orderBy.address.district}</div>
-                <div>{order.orderBy.address.ward}</div>
-                <div>{order.orderBy.address.home}</div> */}
-                </div>
-              </div>
-
-              <div className="user-info">
-                <Form method="post" className="form-order">
-                  <div className="form-row">
-                    <label htmlFor="orderStatus" className="form-label">
-                      Cập nhật trạng thái:
-                    </label>
-                    <select
-                      className="form-select"
-                      name="orderStatus"
-                      // defaultValue={order.orderStatus}
-                    >
-                      {/* {ORDER_STATUS.map((item) => {
-                      return (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      );
-                    })} */}
-                    </select>
-                  </div>
-
-                  <button type="submit" className="btn" disabled={isSubmitting}>
-                    {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
-                  </button>
-                </Form>
-              </div>
-            </div>
+            <Button
+              size="large"
+              type="primary"
+              htmlType="submit"
+              // onClick={() => {
+              //   Modal.confirm({
+              //     title: "Confirm",
+              //     content: "Do you want submit?",
+              //     footer: (_, { OkBtn, CancelBtn }) => (
+              //       <>
+              //         <CancelBtn />
+              //         <OkBtn />
+              //       </>
+              //     ),
+              //   });
+              // }}
+            >
+              Submit
+            </Button>
           </div>
         </Form>
       </Wrapper>
