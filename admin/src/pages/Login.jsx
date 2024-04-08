@@ -1,31 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { Link, redirect, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { store } from "../state/store.js";
-import { login } from "../state/userSlice.js";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Button, Checkbox, Form, Input } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  try {
-    await customFetch.post("/auth/login", data);
-    const user = await customFetch
-      .get("/user/current-user")
-      .then(({ data }) => data.user);
-
-    if (user.role !== "admin") {
-      return redirect("/login");
-    }
-
-    store.dispatch(login({ user: user }));
-    return redirect("/");
-  } catch (error) {
-    return error;
-  }
-};
 
 const Wrapper = styled.div`
   .login-page {
@@ -124,15 +103,23 @@ const Wrapper = styled.div`
 `;
 
 const Login = () => {
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    await customFetch
+      .post("/auth/login", values)
+      .catch(() => console.log("Login Failed"));
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user)
+      .catch(() => console.log("Login Failed"));
+    if (user) navigate("/");
   };
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -152,9 +139,11 @@ const Login = () => {
               size="large"
               name="login-form"
               initialValues={{
-                remember: true,
+                email: "admin@gmail.com",
+                password: "admin123",
               }}
               onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
             >
               <p className="form-title">Welcome back</p>
               <p>Login to the Dashboard</p>
@@ -168,6 +157,7 @@ const Login = () => {
                 ]}
               >
                 <Input
+                  type="email"
                   prefix={<UserOutlined className="site-form-item-icon" />}
                   placeholder="Email"
                 />
@@ -190,10 +180,6 @@ const Login = () => {
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
-
-                <a className="login-form-forgot" href="">
-                  Forgot password
-                </a>
               </Form.Item>
 
               <Form.Item>
@@ -202,9 +188,8 @@ const Login = () => {
                   htmlType="submit"
                   className="login-form-button"
                 >
-                  Log in
+                  Login
                 </Button>
-                Or <a href="">register now!</a>
               </Form.Item>
             </Form>
           </div>

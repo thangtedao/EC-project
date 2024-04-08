@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
-import { useNavigate, useLoaderData, Form } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 
 import {
@@ -35,6 +35,7 @@ const Wrapper = styled.div`
     border-radius: 2px;
   }
 `;
+
 //Select row
 // rowSelection object indicates the need for row selection
 const rowSelection = {
@@ -51,14 +52,12 @@ const rowSelection = {
     status: record.status,
   }),
 };
+
 export const loader = async ({ request }) => {
   try {
     const params = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
     ]);
-    if (params && params.category === "all") {
-      delete params.category;
-    }
 
     const products = await customFetch
       .get(`/product/?populate=category,brand`)
@@ -72,26 +71,26 @@ export const loader = async ({ request }) => {
       .get("/brand/all-brands")
       .then(({ data }) => data);
 
-    return { products, categories, brands, searchParams: { ...params } };
+    return { products, categories, brands };
   } catch (error) {
     return error;
   }
 };
 
 const AllProduct = () => {
-  const { products, categories, brands, searchParams } = useLoaderData();
-  const { category, status } = searchParams;
+  const { products, categories, brands } = useLoaderData();
   const navigate = useNavigate();
 
-  const handleAddProductClick = () => {
+  const handleAddProduct = () => {
     navigate("/add-product");
   };
   const handleEditProduct = (id) => {
     navigate(`/edit-product/${id}`);
   };
   const handleReloadClick = () => {
-    navigate("/all-product");
+    navigate("/add-product");
   };
+
   //Search Product
   const { Search } = Input;
   const suffix = (
@@ -109,7 +108,7 @@ const AllProduct = () => {
       label: "View",
       key: "1",
       icon: <FormOutlined />,
-      onClick: () => handleAddProductClick(),
+      onClick: () => handleAddProduct(),
     },
   ];
 
@@ -217,6 +216,7 @@ const AllProduct = () => {
       ),
     },
   ];
+
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -226,6 +226,7 @@ const AllProduct = () => {
   const paginationConfig = {
     pageSize: 5,
   };
+
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
   //CheckBox
@@ -249,6 +250,7 @@ const AllProduct = () => {
             },
           ]}
         />
+
         <div className="title">Product</div>
 
         <div
@@ -276,7 +278,7 @@ const AllProduct = () => {
             icon={<PlusOutlined />}
             size="large"
             style={{ width: 150 }}
-            onClick={handleAddProductClick}
+            onClick={handleAddProduct}
           >
             Add Product
           </Button>
@@ -308,48 +310,6 @@ const AllProduct = () => {
             target: "sorter-icon",
           }}
         />
-        {/* <Form className="filter-bar">
-            <div className="form-filter">
-              <label htmlFor="category" className="form-filter-label">
-                Category
-              </label>
-              <select
-                name="category"
-                className="form-filter-select"
-                defaultValue={category || "all"}
-              >
-                <option value="all">All</option>
-                {categories.map((item) => {
-                  return (
-                    <option key={item._id} value={item.slug}>
-                      {item.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-
-            <div className="form-filter">
-              <label htmlFor="status" className="form-filter-label">
-                Status
-              </label>
-              <select
-                name="status"
-                className="form-filter-select"
-                defaultValue={status || "all"}
-              >
-                <option value="all">All</option>
-                <option value="available">Sẵn Hàng</option>
-                <option value="outOfStock">Hết Hàng</option>
-                <option value="discontinued">Ngưng Bán</option>
-                <option value="most-buy">Mua Nhiều Nhất</option>
-                <option value="less-buy">Ế Nhất</option>
-              </select>
-            </div>
-            <button type="submit" className="btn">
-              Apply
-            </button>
-          </Form> */}
       </Wrapper>
     </HelmetProvider>
   );

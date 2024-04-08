@@ -131,7 +131,6 @@ const AllCategory = () => {
         </>
       ),
     },
-
     {
       title: "Item",
       dataIndex: "itemPerCate",
@@ -164,13 +163,7 @@ const AllCategory = () => {
       ),
     },
   ];
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      category: ["developer"],
-    },
-  ];
+
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
 
@@ -178,6 +171,7 @@ const AllCategory = () => {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -185,6 +179,7 @@ const AllCategory = () => {
           <meta charSet="utf-8" />
           <title>All Category</title>
         </Helmet>
+
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
           items={[
@@ -196,7 +191,9 @@ const AllCategory = () => {
             },
           ]}
         />
+
         <div className="title">Category</div>
+
         <div
           style={{
             width: "100%",
@@ -227,6 +224,7 @@ const AllCategory = () => {
             Add Category
           </Button>
         </div>
+
         <Table
           className="table"
           columns={columns}

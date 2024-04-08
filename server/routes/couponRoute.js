@@ -2,17 +2,36 @@ import { Router } from "express";
 import {
   createCoupon,
   deleteCoupon,
-  getAllCoupon,
-  getSingleCoupon,
+  getCoupons,
+  getCoupon,
   updateCoupon,
 } from "../controller/couponController.js";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/", createCoupon);
-router.get("/", getAllCoupon);
-router.patch("/update/:name", updateCoupon);
-router.delete("/delete/:id", deleteCoupon);
-router.get("/:name", getSingleCoupon);
+router.post(
+  "/create",
+  authenticateUser,
+  authorizePermissions("admin"),
+  createCoupon
+);
+router.get("/all-coupons", getCoupons);
+router.patch(
+  "/update/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  updateCoupon
+);
+router.delete(
+  "/delete/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  deleteCoupon
+);
+router.get("/:id", getCoupon);
 
 export default router;

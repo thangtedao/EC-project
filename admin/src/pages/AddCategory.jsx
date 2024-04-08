@@ -2,12 +2,7 @@ import React, { useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import {
-  redirect,
-  useNavigation,
-  useLoaderData,
-  useNavigate,
-} from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import {
   Modal,
   Button,
@@ -18,17 +13,6 @@ import {
   Card,
   Breadcrumb,
 } from "antd";
-
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  console.log("cccccccccccccccccc", data);
-  try {
-    return null;
-  } catch (error) {
-    return error;
-  }
-};
 
 export const loader = async () => {
   try {
@@ -88,9 +72,7 @@ const Wrapper = styled.div`
 
 const AddCategory = () => {
   const { categories } = useLoaderData();
-  const navigation = useNavigation();
   const navigate = useNavigate();
-  const isSubmitting = navigation.state === "submitting";
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -109,10 +91,8 @@ const AddCategory = () => {
   };
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
-    if (values.parent) delete values.parent;
-    await customFetch.post("/category/create", values);
-    navigate("/all-category");
+    const response = await customFetch.post("/category/create", values);
+    if (response) navigate("/all-category");
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -141,13 +121,7 @@ const AddCategory = () => {
         </Helmet>
 
         <div className="title">Add Category</div>
-        <Form
-          name="basic"
-          // initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
+        <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
@@ -217,6 +191,7 @@ const AddCategory = () => {
               </Card>
             </div>
           </div>
+
           {/* BUTTON SUBMIT */}
           <div className="btn">
             <Button

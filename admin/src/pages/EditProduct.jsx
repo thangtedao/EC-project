@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { redirect, useNavigate, useLoaderData } from "react-router-dom";
 
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
@@ -19,17 +19,6 @@ import {
   Breadcrumb,
   Space,
 } from "antd";
-
-export const action = async ({ request, params }) => {
-  const { slug } = params;
-  try {
-    const formData = await request.formData();
-    await customFetch.patch(`/product/update/${slug}`, formData);
-    return redirect("/all-product");
-  } catch (error) {
-    return error;
-  }
-};
 
 export const loader = async ({ params }) => {
   try {
@@ -106,8 +95,7 @@ const Wrapper = styled.div`
 `;
 const EditProduct = () => {
   const { product, brands, categories, categoryChild } = useLoaderData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
+  const navigate = useNavigate();
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -125,6 +113,7 @@ const EditProduct = () => {
     setPreviewOpen(false);
     setModalOpen(false);
   };
+
   /* Upload Image and Preview */
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -184,20 +173,25 @@ const EditProduct = () => {
       });
       delete values.variations;
     }
-    Object.entries(values).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== "undefined" || value !== "null")
+        formData.append(key, value);
+    });
     fileList.forEach((file) => {
       formData.append("images", file.originFileObj);
     });
-    // await customFetch.post("/product/create", formData);
+    const response = await customFetch.patch(
+      `/product/update/${product?._id}`,
+      formData
+    );
+    if (response) navigate("/all-product");
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
-  const [categoryP, setCategoryP] = useState(product?.category[0]?._id);
-  const [categoryC, setCategoryC] = useState([]);
+  // const [categoryP, setCategoryP] = useState(product?.category[0]?._id);
+  // const [categoryC, setCategoryC] = useState([]);
   const [categoriesC, setCategoriesC] = useState(
     categoryChild.map((item) => {
       if (item.parent === product?.category[0]) return item;
@@ -323,6 +317,7 @@ const EditProduct = () => {
                       }}
                     />
                   </Form.Item>
+
                   <Form.Item name="images" label="Images">
                     <Upload
                       listType="picture-card"
@@ -516,6 +511,7 @@ const EditProduct = () => {
                     }
                   />
                 </Form.Item>
+
                 <Form.Item name="categoryC">
                   <Select
                     size="large"
@@ -576,23 +572,7 @@ const EditProduct = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>

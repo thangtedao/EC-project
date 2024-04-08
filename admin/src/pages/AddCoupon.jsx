@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow, FormRowSelect } from "../components/index.js";
 import {
   Modal,
   Button,
-  Select,
   Form,
   Input,
   Typography,
@@ -14,8 +12,8 @@ import {
   Breadcrumb,
   DatePicker,
   InputNumber,
-  Space,
 } from "antd";
+
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -86,8 +84,6 @@ const Wrapper = styled.div`
 `;
 
 const AddCoupon = () => {
-  // const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -106,6 +102,18 @@ const AddCoupon = () => {
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
+
+  const onFinish = async (values) => {
+    values.startDate = values.startDate.toISOString();
+    values.endDate = values.endDate.toISOString();
+    console.log(values);
+    const response = await customFetch.post("/coupon/create", values);
+    if (response) navigate("/all-coupon");
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -129,13 +137,7 @@ const AddCoupon = () => {
         </Helmet>
         <div className="title">Add Coupon</div>
 
-        <Form
-          name="basic"
-          // initialValues={{ remember: true }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
+        <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
@@ -165,11 +167,12 @@ const AddCoupon = () => {
                           <Input size="large" placeholder="Enter Coupon Code" />
                         </Form.Item>
                       </div>
+
                       <div className="discount-item-2">
                         <Typography.Title className="input-title">
                           Discount
                         </Typography.Title>
-                        <Form.Item name="discount">
+                        <Form.Item name="discountValue">
                           <InputNumber
                             suffix="%"
                             style={{ width: "100%" }}
@@ -179,6 +182,7 @@ const AddCoupon = () => {
                         </Form.Item>
                       </div>
                     </div>
+
                     <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
@@ -196,6 +200,7 @@ const AddCoupon = () => {
                 </div>
               </Card>
             </div>
+
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -204,7 +209,7 @@ const AddCoupon = () => {
                 <Typography.Title className="input-title">
                   Day Start
                 </Typography.Title>
-                <Form.Item name="dayStart">
+                <Form.Item name="startDate">
                   <DatePicker
                     size="large"
                     style={{ width: "100%" }}
@@ -212,10 +217,11 @@ const AddCoupon = () => {
                     needConfirm
                   />
                 </Form.Item>
+
                 <Typography.Title className="input-title">
                   Day End
                 </Typography.Title>
-                <Form.Item name="dayEnd">
+                <Form.Item name="endDate">
                   <DatePicker
                     size="large"
                     style={{ width: "100%" }}
@@ -226,6 +232,7 @@ const AddCoupon = () => {
               </Card>
             </div>
           </div>
+
           {/* BUTTON SUBMIT */}
           <div className="btn">
             <Button
@@ -247,23 +254,7 @@ const AddCoupon = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>

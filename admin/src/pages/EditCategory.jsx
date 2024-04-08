@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { redirect, useNavigate, useLoaderData } from "react-router-dom";
 import {
   Modal,
   Button,
@@ -79,8 +79,7 @@ export const loader = async ({ params }) => {
 
 const EditCategory = () => {
   const { category, categories } = useLoaderData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
+  const navigate = useNavigate();
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -100,9 +99,12 @@ const EditCategory = () => {
 
   const onFinish = async (values) => {
     console.log("Success:", values);
-    if (values.parent) delete values.parent;
-    // await customFetch.post("/category/create", values);
-    navigate("/all-category");
+    if (!values.parent) delete values.parent;
+    const response = await customFetch.patch(
+      `/category/update/${category._id}`,
+      values
+    );
+    if (response) navigate("/all-category");
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -133,16 +135,14 @@ const EditCategory = () => {
         <div className="title">Edit Category</div>
 
         <Form
-          name="basic"
           initialValues={{
             name: category?.name,
             slug: category?.slug,
             description: category?.description,
             parent: category?.parent,
           }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
-          autoComplete="off"
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
         >
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
@@ -188,6 +188,7 @@ const EditCategory = () => {
                 </div>
               </Card>
             </div>
+
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -212,6 +213,7 @@ const EditCategory = () => {
               </Card>
             </div>
           </div>
+
           {/* BUTTON SUBMIT */}
           <div className="btn">
             <Button
@@ -233,50 +235,11 @@ const EditCategory = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>
         </Form>
-
-        {/* <Form method="post" className="form-add">
-          <input name="id" hidden defaultValue={category?._id} />
-          <FormRow type="text" name="name" defaultValue={category?.name} />
-          <FormRow type="text" name="slug" defaultValue={category?.slug} />
-          <div className="form-row">
-            <label htmlFor="description" className="form-label">
-              Description
-            </label>
-            <textarea name="description" defaultValue={category?.description} />
-          </div>
-          <FormRowSelect
-            name="parent"
-            defaultValue={categoryP}
-            onChange={(e) => setCategoryP[e.target.value]}
-            list={categories || []}
-            id
-            optional
-          />
-          <button type="submit" className="btn" disabled={isSubmitting}>
-            {isSubmitting ? "Editing..." : "Edit"}
-          </button>
-        </Form> */}
       </Wrapper>
     </HelmetProvider>
   );

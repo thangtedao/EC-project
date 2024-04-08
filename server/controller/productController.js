@@ -177,36 +177,31 @@ export const updateProduct = async (req, res) => {
   try {
     const data = { ...req.body };
 
-    data.category2 = data.category2.split(",");
-    data.category = [data.category1, ...data.category2];
-    delete data.category1;
-    delete data.category2;
-
     let images = [];
     let publicIdImages = [];
-    if (data.images !== "") images = data.images.split(",");
-    if (req.files) {
-      const files = ["image1", "image2", "image3", "image4"];
+    if (data.merelink) {
+      images = data.merelink?.split(",");
+      delete data.merelink;
+    } else delete data.merelink;
 
-      await Promise.all(
-        files.map(async (fieldName) => {
-          if (req.files[fieldName]) {
-            const file = req.files[fieldName][0];
+    req.file?.images?.map(async (image) => {
+      const fileFormat = formatImage(image);
+      const response = await cloudinaryUploadImage(fileFormat);
 
-            const fileFormat = formatImage(file);
-            const response = await cloudinaryUploadImage(fileFormat);
+      images.push(response.secure_url);
+      publicIdImages.push(response.public_id);
+    });
 
-            images.push(response.secure_url);
-            publicIdImages.push(response.public_id);
-          }
-        })
-      );
-    }
+    const variations = data.variations;
+    delete data.variations;
     data.images = images;
     data.publicIdImages = publicIdImages;
+    data.slug = slugify(data.name);
+    data.category = data.category.split(",");
 
-    const { slug } = req.params;
-    const updatedProduct = await Product.findOneAndUpdate({ slug: slug }, data);
+    const { id } = req.params;
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, data);
     if (!updatedProduct) throw new NotFoundError(`Product Not Found`);
 
     if (req.files && updatedProduct.publicIdImages.length > 0) {
@@ -217,10 +212,10 @@ export const updateProduct = async (req, res) => {
       );
     }
 
-    res.status(200).json({ msg: "updated" });
+    res.status(StatusCodes.OK).json({ msg: "Product's Updated" });
   } catch (error) {
     console.log(error);
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 

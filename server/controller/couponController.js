@@ -1,50 +1,48 @@
 import Coupon from "../models/Coupon.js";
 import Cart from "../models/Cart.js";
+import { StatusCodes } from "http-status-codes";
 
 export const createCoupon = async (req, res) => {
   try {
+    req.body.code = req.body.code.toUpperCase();
     const newCoupon = await Coupon.create(req.body);
-    res.status(201).json(newCoupon);
+    res.status(StatusCodes.CREATED).json(newCoupon);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
-export const getAllCoupon = async (req, res) => {
+export const getCoupons = async (req, res) => {
   try {
     const coupons = await Coupon.find();
-    res.status(200).json({ coupons });
+    res.status(StatusCodes.OK).json(coupons);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
-export const getSingleCoupon = async (req, res) => {
+export const getCoupon = async (req, res) => {
   try {
-    let { name } = req.params;
-    name = name.toUpperCase();
-    const coupon = await Coupon.findOne({ name: name });
-    res.status(200).json({ coupon });
+    const { id } = req.params;
+    const coupon = await Coupon.findById(id);
+    res.status(StatusCodes.OK).json(coupon);
   } catch (error) {
     console.log(error);
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
 export const updateCoupon = async (req, res) => {
   try {
-    const { name } = req.params;
-    const updatedCoupon = await Coupon.findOneAndUpdate(
-      { name: name },
-      req.body,
-      {
-        new: true,
-      }
-    );
-    res.status(200).json({ updatedCoupon });
+    const { id } = req.params;
+    req.body.code.toUpperCase();
+    const updatedCoupon = await Coupon.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    res.status(StatusCodes.OK).json(updatedCoupon);
   } catch (error) {
     console.log(error);
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
@@ -52,9 +50,9 @@ export const deleteCoupon = async (req, res) => {
   try {
     const { id } = req.params;
     const deletedCoupon = await Coupon.findByIdAndDelete(id);
-    res.status(200).json({ deletedCoupon });
+    res.status(StatusCodes.OK).json(deletedCoupon);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
@@ -79,6 +77,6 @@ export const applyCoupon = async (req, res) => {
     );
     res.status(StatusCodes.OK).json({ totalAfterDiscount });
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
