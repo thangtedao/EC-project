@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { FormRow } from "../components/index.js";
-// import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
+import { redirect, useLoaderData } from "react-router-dom";
 import {
   Modal,
   Button,
-  Select,
   Form,
   Input,
   Typography,
@@ -15,7 +13,6 @@ import {
   Breadcrumb,
   DatePicker,
   InputNumber,
-  Space,
 } from "antd";
 
 const Wrapper = styled.div`
@@ -75,27 +72,16 @@ const Wrapper = styled.div`
     padding-left: 10px;
   }
 `;
-export const action = async ({ request, params }) => {
-  const { name } = params;
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  try {
-    await customFetch.patch(`/coupon/update/${name}`, data);
-    return redirect("/all-coupon");
-  } catch (error) {
-    return error;
-  }
-};
 
 export const loader = async ({ params }) => {
   try {
-    const { name } = params;
-    if (!name) {
+    const { id } = params;
+    if (!id) {
       return redirect("/all-coupon");
     }
     const coupon = await customFetch
-      .get(`/coupon/${name}`)
-      .then(({ data }) => data.coupon);
+      .get(`/coupon/${id}`)
+      .then(({ data }) => data);
 
     return coupon;
   } catch (error) {
@@ -104,12 +90,8 @@ export const loader = async ({ params }) => {
 };
 
 const EditCoupon = () => {
-  // const coupon = useLoaderData();
-  // const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
+  const coupon = useLoaderData();
 
-  // NEW
-  //NEW
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -128,7 +110,20 @@ const EditCoupon = () => {
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
-  //NEW
+
+  const onFinish = async (values) => {
+    values.startDate = values.startDate.toISOString();
+    values.endDate = values.endDate.toISOString();
+    console.log(values);
+    const response = await customFetch.patch(
+      `/coupon/update/${coupon._id}`,
+      values
+    );
+    if (response) navigate("/all-coupon");
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
 
   return (
     <HelmetProvider>
@@ -156,9 +151,16 @@ const EditCoupon = () => {
 
         <Form
           name="basic"
-          // initialValues={{ remember: true }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+          initialValues={{
+            name: coupon?.name,
+            code: coupon?.code,
+            discountValue: coupon?.discountValue,
+            description: coupon?.description,
+            // startDate: new Date(coupon?.startDate),
+            // endDate: new Date(coupon?.endDate),
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
@@ -178,7 +180,11 @@ const EditCoupon = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="Enter Coupon Name" />
+                      <Input
+                        size="large"
+                        placeholder="Enter Coupon Name"
+                        required
+                      />
                     </Form.Item>
 
                     <div className="discount">
@@ -187,15 +193,21 @@ const EditCoupon = () => {
                           Code
                         </Typography.Title>
                         <Form.Item name="code">
-                          <Input size="large" placeholder="Enter Coupon Code" />
+                          <Input
+                            size="large"
+                            placeholder="Enter Coupon Code"
+                            required
+                          />
                         </Form.Item>
                       </div>
+
                       <div className="discount-item-2">
                         <Typography.Title className="input-title">
                           Discount
                         </Typography.Title>
-                        <Form.Item name="discount">
+                        <Form.Item name="discountValue">
                           <InputNumber
+                            required
                             suffix="%"
                             style={{ width: "100%" }}
                             size="large"
@@ -204,6 +216,7 @@ const EditCoupon = () => {
                         </Form.Item>
                       </div>
                     </div>
+
                     <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
@@ -221,6 +234,7 @@ const EditCoupon = () => {
                 </div>
               </Card>
             </div>
+
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -229,19 +243,22 @@ const EditCoupon = () => {
                 <Typography.Title className="input-title">
                   Day Start
                 </Typography.Title>
-                <Form.Item name="dayStart">
+                <Form.Item name="startDate">
                   <DatePicker
+                    required
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
                     needConfirm
                   />
                 </Form.Item>
+
                 <Typography.Title className="input-title">
                   Day End
                 </Typography.Title>
-                <Form.Item name="dayEnd">
+                <Form.Item name="endDate">
                   <DatePicker
+                    required
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
@@ -251,6 +268,7 @@ const EditCoupon = () => {
               </Card>
             </div>
           </div>
+
           {/* BUTTON SUBMIT */}
           <div className="btn">
             <Button
@@ -272,49 +290,11 @@ const EditCoupon = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want submit?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>
         </Form>
-
-        {/* <Form method="post" className="form-add">
-          <FormRow type="text" name="name" defaultValue={coupon?.name} />
-          <FormRow
-            type="text"
-            name="description"
-            defaultValue={coupon?.description}
-          />
-          <FormRow
-            type="date"
-            name="expiry"
-            defaultValue={coupon.expiry.split("T")[0]}
-          />
-          <FormRow
-            type="number"
-            name="discount"
-            defaultValue={coupon.discount}
-          />
-          <button type="submit" className="btn" disabled={isSubmitting}>
-            {isSubmitting ? "Editing..." : "Edit"}
-          </button>
-        </Form> */}
       </Wrapper>
     </HelmetProvider>
   );

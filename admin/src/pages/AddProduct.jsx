@@ -3,7 +3,7 @@ import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { useNavigation, useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
@@ -88,6 +88,7 @@ const Wrapper = styled.div`
 
 const AddProduct = () => {
   const { brands, categories, categoryChild } = useLoaderData();
+  const navigate = useNavigate();
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -173,7 +174,8 @@ const AddProduct = () => {
     fileList.forEach((file) => {
       formData.append("images", file.originFileObj);
     });
-    await customFetch.post("/product/create", formData);
+    const response = await customFetch.post("/product/create", formData);
+    if (response) navigate("/all-product");
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -472,6 +474,7 @@ const AddProduct = () => {
                     }))}
                   />
                 </Form.Item>
+
                 <Form.Item name="categoryC">
                   <Select
                     size="large"
@@ -487,6 +490,7 @@ const AddProduct = () => {
                   />
                 </Form.Item>
               </Card>
+
               {/* Status */}
               <Card
                 className="col-2-item"

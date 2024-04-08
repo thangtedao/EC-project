@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 /* ACTION */
-import { action as editCouponAction } from "./pages/EditCoupon";
 import { action as addCouponAction } from "./pages/AddCoupon";
 import { action as editUserAction } from "./pages/EditUser";
 import { action as editOrderAction } from "./pages/EditOrder";
@@ -96,9 +95,8 @@ const router = createBrowserRouter([
         loader: allCouponLoader,
       },
       {
-        path: "edit-coupon/:name",
+        path: "edit-coupon/:id",
         element: <EditCoupon />,
-        action: editCouponAction,
         loader: editCouponLoader,
       },
       {

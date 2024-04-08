@@ -139,7 +139,8 @@ const Login = () => {
               size="large"
               name="login-form"
               initialValues={{
-                remember: true,
+                email: "admin@gmail.com",
+                password: "admin123",
               }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}

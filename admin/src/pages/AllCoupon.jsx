@@ -10,7 +10,7 @@ import {
   PlusOutlined,
   FormOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Button, Input, Tag, Dropdown } from "antd";
+import { Breadcrumb, Table, Button, Input, Dropdown } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -34,8 +34,8 @@ const Wrapper = styled.div`
 export const loader = async () => {
   try {
     const coupons = await customFetch
-      .get(`/coupon`)
-      .then(({ data }) => data.coupons);
+      .get(`/coupon/all-coupons`)
+      .then(({ data }) => data);
     return coupons;
   } catch (error) {
     return error;
@@ -45,25 +45,6 @@ export const loader = async () => {
 const AllCoupon = () => {
   const coupons = useLoaderData();
   const navigate = useNavigate();
-
-  const [open, setOpen] = useState(false);
-  const [coupon, setCoupon] = useState(null);
-
-  const handleClickOpen = (coupon) => {
-    setOpen(true);
-    setCoupon(coupon);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setCoupon(null);
-  };
-
-  const deleteCoupon = async (id) => {
-    await customFetch.delete(`/coupon/delete/${id}`);
-    console.log("deleted");
-    navigate("/all-coupon");
-  };
 
   //Search Product
   const { Search } = Input;
@@ -85,38 +66,52 @@ const AllCoupon = () => {
     },
   ];
 
+  const handleAddCoupon = () => {
+    navigate("/add-coupon");
+  };
+
+  const handleEditCoupon = (id) => {
+    navigate(`/edit-coupon/${id}`);
+  };
+
   //Danh sách các cột
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // render: (text) => <span className="md-font">{text}</span>,
     },
     {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      // render: (text) => <span className="md-font">{text}</span>,
     },
-    // {
-    //   title: "Description",
-    //   dataIndex: "description",
-    //   key: "description",
-    //   render: (text) => <span className="md-font">{text}</span>,
-    // },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
     {
       title: "Discount",
-      dataIndex: "discount",
-      key: "discount",
-      // render: (text) => <span className="md-font">{text}</span>,
+      dataIndex: "discountValue",
+      key: "discountValue",
     },
     {
       title: "Day start",
-      dataIndex: "start",
-      key: "start",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (startDate) => (
+        <span className="md-font">{startDate?.split("T")[0]}</span>
+      ),
+    },
+    {
+      title: "Day start",
+      dataIndex: "endDate",
+      key: "endDate",
 
-      // render: (text) => <span className="md-font">{text}</span>,
+      render: (endDate) => (
+        <span className="md-font">{endDate?.split("T")[0]}</span>
+      ),
     },
     {
       title: "Used",
@@ -124,23 +119,15 @@ const AllCoupon = () => {
       key: "used",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.sold - b.sold,
-      // render: (text) => <span className="md-font">{text}</span>,
     },
-    // {
-    //   title: "Expiry",
-    //   dataIndex: "expiry",
-    //   key: "expiry",
-    //   render: (_, { expiry }) => (
-    //     <span className="md-font">{expiry.split("T")[0]}</span>
-    //   ),
-    // },
     {
       title: "Action",
       key: "operation",
       width: 120,
       fixed: "right",
-      render: () => (
+      render: ({ _id }) => (
         <Dropdown.Button
+          onClick={() => handleEditCoupon(_id)}
           menu={{
             items,
           }}
@@ -149,16 +136,6 @@ const AllCoupon = () => {
           Edit
         </Dropdown.Button>
       ),
-      // render: (_, record) => (
-      //   <Space size="middle">
-      //     <a
-      //       className="ed-btn grid-center"
-      //       onClick={() => navigate(`/edit-coupon/${record.name}`)}
-      //     >
-      //       Edit
-      //     </a>
-      //   </Space>
-      // ),
     },
   ];
 
@@ -169,9 +146,7 @@ const AllCoupon = () => {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
-  const handleAddCouponClick = () => {
-    navigate("/add-coupon"); // Navigate to the "/add-coupon" route
-  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -191,7 +166,9 @@ const AllCoupon = () => {
             },
           ]}
         />
+
         <div className="title">Coupon</div>
+
         <div
           style={{
             width: "100%",
@@ -217,19 +194,20 @@ const AllCoupon = () => {
             icon={<PlusOutlined />}
             size="large"
             style={{ width: 150 }}
-            onClick={handleAddCouponClick}
+            onClick={handleAddCoupon}
           >
             Add Coupon
           </Button>
         </div>
+
         <Table
           className="table"
           columns={columns}
-          // dataSource={products.map((product) => ({
-          //   ...product,
-          //   key: product._id,
-          // }))}
-          // onChange={onChange}
+          dataSource={coupons.map((coupon) => ({
+            ...coupon,
+            key: coupon._id,
+          }))}
+          onChange={onChange}
           scroll={{ x: 1200 }}
           showSorterTooltip={{
             target: "sorter-icon",

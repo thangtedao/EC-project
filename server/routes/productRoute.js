@@ -27,12 +27,7 @@ router.patch(
   "/update/:id",
   authenticateUser,
   authorizePermissions("admin"),
-  upload.fields([
-    { name: "image1", maxCount: 1 },
-    { name: "image2", maxCount: 1 },
-    { name: "image3", maxCount: 1 },
-    { name: "image4", maxCount: 1 },
-  ]),
+  upload.fields([{ name: "images", maxCount: 5 }]),
   updateProduct
 );
 router.delete(
