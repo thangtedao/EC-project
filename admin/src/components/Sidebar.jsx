@@ -57,8 +57,8 @@ const items = [
     ],
     null
   ),
-  getItem("Order", "11", <ShoppingCartOutlined />, null, "/add-product"),
-  getItem("Customer", "12", <UserOutlined />, null, "/add-product"),
+  getItem("Order", "11", <ShoppingCartOutlined />, null, "/all-order"),
+  getItem("Customer", "12", <UserOutlined />, null, "/all-user"),
 ];
 
 const getLevelKeys = (items1) => {
