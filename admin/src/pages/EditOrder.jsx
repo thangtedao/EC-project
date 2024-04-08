@@ -428,7 +428,7 @@ const EditOrder = () => {
                       Amount paid::{" "}
                     </Typography.Text>
                   </div>
-                  <div style={{ marginLeft: "auto" }}>
+                  <div>
                     <Typography.Text size="large">
                       {"đ"}122222220000000000
                     </Typography.Text>
