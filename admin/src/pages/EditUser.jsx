@@ -8,7 +8,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { UserOutlined, EditOutlined, FormOutlined } from "@ant-design/icons";
-// import Avatar from "@mui/material/Avatar";
 import {
   Modal,
   Upload,
@@ -28,64 +27,6 @@ import {
   Table,
 } from "antd";
 
-// const Wrapper = styled.div`
-//   width: 100%;
-//   height: 800px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-
-//   .title {
-//     width: 1100px;
-//     text-align: left;
-//     font-size: 2rem;
-//     font-weight: bold;
-//     color: #00193b;
-//     margin-bottom: 1rem;
-//   }
-
-//   .user-container {
-//     display: flex;
-//     justify-content: center;
-//     gap: 2rem;
-//     width: 1100px;
-//     height: 100%;
-//   }
-//   .user-details {
-//     width: 40%;
-//     height: 500px;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     gap: 1rem;
-//     background-color: white;
-//     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
-//       0 2px 6px 2px rgba(60, 64, 67, 0.15);
-//     border-color: #f1f1f1;
-//     border-radius: 10px;
-//     padding: 1.2rem 1rem;
-//   }
-
-//   .flex-column {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 10px;
-//   }
-
-//   .grid-center {
-//     display: grid;
-//     place-items: center;
-//   }
-//   .ed-btn {
-//     border: 1px solid #035ecf;
-//     border-radius: 3px;
-//     padding: 0 5px;
-//     color: #035ecf;
-//   }
-//   .md-font {
-//     font-size: 0.95rem;
-//   }
-// `;
 const Wrapper = styled.div`
   width: 100%;
 
@@ -139,45 +80,35 @@ const Wrapper = styled.div`
   }
 `;
 
-export const action = async ({ request, params }) => {
-  const { id } = params;
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  try {
-    await customFetch.patch(`/user/update-user/${id}`, data);
-    return redirect("/all-user");
-  } catch (error) {
-    return error;
-  }
-};
-
 export const loader = async ({ params }) => {
   try {
     const { id } = params;
     if (!id) {
       return redirect("/all-user");
     }
-    const user = await customFetch
-      .get(`/user/single-user/${id}`)
-      .then(({ data }) => data.user);
 
-    const orders = await customFetch
-      .get(`/order/?userId=${user._id}`)
-      .then(({ data }) => data.orders);
-    return { user, orders };
+    const user = await customFetch
+      .get(`/user/admin/user-profile/${id}`)
+      .then(({ data }) => data);
+
+    // const orders = await customFetch
+    //   .get(`/order/?userId=${user._id}`)
+    //   .then(({ data }) => data.orders);
+
+    return { user };
   } catch (error) {
     return error;
   }
 };
 
 const EditUser = () => {
-  const { user, orders } = useLoaderData();
-  const navigation = useNavigation();
+  const { user } = useLoaderData();
   const navigate = useNavigate();
-  const isSubmitting = navigation.state === "submitting";
+
   const handleEditOrder = () => {
     navigate("/edit-order/:id");
   };
+
   const columns = [
     {
       title: "Id",
@@ -235,7 +166,6 @@ const EditUser = () => {
         </>
       ),
     },
-
     {
       title: "Action",
       key: "action",
@@ -256,18 +186,24 @@ const EditUser = () => {
   ];
   const data = [
     {
+      key: 1,
       orderId: "1",
       orderStatus: ["Pending", "Processing"],
     },
     {
+      key: 2,
+
       orderId: "2",
       orderStatus: ["Cancelled"],
     },
     {
+      key: 3,
+
       orderId: "3",
       orderStatus: ["Shipped", "Delivered"],
     },
   ];
+
   //Dropdown
   const items = [
     {
@@ -276,6 +212,7 @@ const EditUser = () => {
       icon: <FormOutlined />,
     },
   ];
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -283,6 +220,7 @@ const EditUser = () => {
           <meta charSet="utf-8" />
           <title>Edit User</title>
         </Helmet>
+
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
           items={[
@@ -297,8 +235,8 @@ const EditUser = () => {
             },
           ]}
         />
+
         <div className="title">Customer Detail</div>
-        {/* <div className="title">{user.fullName}</div> */}
 
         <Form
           name="basic"
@@ -320,34 +258,36 @@ const EditUser = () => {
               >
                 <Space wrap size={16}>
                   <Avatar size={64} icon={<UserOutlined />} />
-                  <Typography.Text>Nguyen Thanh Vy</Typography.Text>
+                  <Typography.Text>{user?.fullName}</Typography.Text>
                 </Space>
 
                 <Divider />
                 <Space wrap size={16}>
                   <Typography.Text strong>ID:</Typography.Text>
-                  <Typography.Text size="large">125445824</Typography.Text>
+                  <Typography.Text size="large">{user?._id}</Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Email: </Typography.Text>
-                  <Typography.Text size="large">@email.com</Typography.Text>
+                  <Typography.Text size="large">{user?.email}</Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Address: </Typography.Text>
-                  <Typography.Text>123</Typography.Text>
+                  <Typography.Text>{user?.address}</Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Last Activity </Typography.Text>
-                  <Typography.Text size="large">3 weeks ago</Typography.Text>
+                  <Typography.Text size="large">
+                    {"Bố thằng nào biết được =)))"}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
@@ -359,19 +299,23 @@ const EditUser = () => {
                 <Divider />
                 <Space wrap size={16}>
                   <Typography.Text strong>Status: </Typography.Text>
-                  <Tag color="red" size="large">
-                    Disabled
-                  </Tag>
-                  <Tag color="green" size="large">
-                    Active
-                  </Tag>
+                  {user?.isBlocked ? (
+                    <Tag color="red" size="large">
+                      Disabled
+                    </Tag>
+                  ) : (
+                    <Tag color="green" size="large">
+                      Active
+                    </Tag>
+                  )}
                 </Space>
               </Card>
+
               <Card className="col-1-item" size="large" title={`Change Status`}>
                 <Typography.Title className="input-title">
                   Change Status
                 </Typography.Title>
-                <Form.Item name="parent">
+                <Form.Item name="isBlocked">
                   <Select
                     size="large"
                     allowClear
@@ -405,7 +349,6 @@ const EditUser = () => {
                   //   key: category._id,
                   // }))}
                   dataSource={data}
-                  // onChange={onChange}
                   scroll={{ x: 1200 }}
                   showSorterTooltip={{
                     target: "sorter-icon",
@@ -419,23 +362,7 @@ const EditUser = () => {
               Cancel
             </Button>
 
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              // onClick={() => {
-              //   Modal.confirm({
-              //     title: "Confirm",
-              //     content: "Do you want submit?",
-              //     footer: (_, { OkBtn, CancelBtn }) => (
-              //       <>
-              //         <CancelBtn />
-              //         <OkBtn />
-              //       </>
-              //     ),
-              //   });
-              // }}
-            >
+            <Button size="large" type="primary" htmlType="submit">
               Submit
             </Button>
           </div>

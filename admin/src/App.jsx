@@ -2,8 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 /* ACTION */
 import { action as addCouponAction } from "./pages/AddCoupon";
-import { action as editUserAction } from "./pages/EditUser";
-import { action as editOrderAction } from "./pages/EditOrder";
 
 /* LOADER */
 import { loader as dashboardLoader } from "./pages/Dashboard";
@@ -107,7 +105,6 @@ const router = createBrowserRouter([
       {
         path: "edit-user/:id",
         element: <EditUser />,
-        action: editUserAction,
         loader: editUserLoader,
       },
       {
@@ -118,7 +115,6 @@ const router = createBrowserRouter([
       {
         path: "edit-order/:id",
         element: <EditOrder />,
-        action: editOrderAction,
         loader: editOrderLoader,
       },
     ],

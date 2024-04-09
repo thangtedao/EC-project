@@ -43,7 +43,7 @@ router.get(
   getUsers
 );
 router.get(
-  "admin/user-profile/:id",
+  "/admin/user-profile/:id",
   authenticateUser,
   authorizePermissions("admin"),
   getUser
