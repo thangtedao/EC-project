@@ -614,13 +614,18 @@ export const createPaymentUrl = (req, res, next) => {
   let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-  console.log("clgt");
+  // console.log("clgt");
   res.json({ redirectUrl: vnpUrl });
 };
 
 export const vnpayReturn = (req, res, next) => {
   console.log('calling vnpay return')
   let vnp_Params = req.query;
+  console.log('vnp params: ', vnp_Params)
+  console.log('vnp params: ', vnp_Params["vnp_SecureHash"])
+  console.log('vnp params: ', vnp_Params["vnp_Version"])
+
+
 
   let secureHash = vnp_Params["vnp_SecureHash"];
 
@@ -638,6 +643,8 @@ export const vnpayReturn = (req, res, next) => {
   // let crypto = require("crypto");
   let hmac = crypto.createHmac("sha512", secretKey);
   let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+  console.log('secureHash: ', secureHash)
+  console.log('signed: ', signed)
 
   if (secureHash === signed) {
     //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua

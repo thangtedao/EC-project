@@ -27,7 +27,6 @@ router.post(
 router.post("/create-order", createOrder);
 router.get("/", getAllOrder);
 router.get("/stats", showStats);
-router.get("/:id", getSingleOrder);
 router.patch("/update/:id", updateOrder);
 
 //vn-payment
@@ -35,4 +34,9 @@ router.post('/create_payment_url', createPaymentUrl)
 router.get('/vnpay_return', vnpayReturn)
 router.get('/vnpay_ipn', vnpayIpn)
 
+
+
+
+// should be at the endddd
+router.get("/:id", getSingleOrder);
 export default router;

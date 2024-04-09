@@ -7,8 +7,10 @@ const VnPay_return = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const queryParams = new URLSearchParams(window.location.search);
+                console.log(queryParams.toString())
                 // Gửi yêu cầu thanh toán đến backend
-                const response = await fetch('http://localhost:3001/api/order/vnpay_return', {
+                const response = await fetch('http://localhost:3001/api/order/vnpay_return?'+queryParams.toString(), {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

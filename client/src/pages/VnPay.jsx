@@ -20,7 +20,7 @@ const VnpayPayment = ( ) => {
             // const response = await customFetch('/order/create_payment_url',{ amount: amount, bankCode:'', locale:'vn' })
             const data = await response.json();
             // Chuyển hướng người dùng đến cổng thanh toán của VNPAY
-            console.log(response);
+            // console.log(response);
 
             // console.log(data);
             // const redirectUrl = new URL(data);
