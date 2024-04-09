@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import Radio from "@mui/material/Radio";
