@@ -6,13 +6,18 @@ const orderItemSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Order",
   },
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
+  product: {
+    id: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    name: String,
+    price: Number,
+    salePrice: Number,
+    images: Array,
   },
-  variationId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ProductVariation",
+  variation: {
+    id: { type: mongoose.Schema.Types.ObjectId, ref: "ProductVariation" },
+    name: String,
+    value: String,
+    price: Number,
   },
   quantity: {
     type: Number,

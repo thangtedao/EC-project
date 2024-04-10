@@ -43,6 +43,11 @@ const UserSchema = new mongoose.Schema({
   wishlist: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Product", default: [] },
   ],
+  rank: {
+    type: String,
+    enum: ["member", "silver", "gold", "diamond"],
+    default: "member",
+  },
   createdAt: {
     type: Date,
     default: timeStamp,
