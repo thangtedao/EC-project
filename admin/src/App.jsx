@@ -49,10 +49,8 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <Dashboard />,
-        // loader: dashboardLoader,
-        element: <AddProduct />,
-        loader: addProductLoader,
+        element: <Dashboard />,
+        loader: dashboardLoader,
       },
       {
         path: "all-product",

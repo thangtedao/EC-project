@@ -23,7 +23,7 @@ function getItem(label, key, icon, children, link) {
 }
 
 const items = [
-  getItem("Dashboard", "1", <ShopOutlined />, null, "/add-product"),
+  getItem("Dashboard", "1", <ShopOutlined />, null, "/"),
   getItem(
     "Product",
     "sub1",
