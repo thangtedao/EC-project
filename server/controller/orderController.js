@@ -238,7 +238,7 @@ export const createOrder = async (req, res) => {
   try {
     const { cart, user, coupon } = req.body;
 
-    const products = cart.map((product) => {
+    const products = cart.products.map((product) => {
       return {
         product: product.product._id,
         price: product.product.salePrice,
@@ -247,7 +247,7 @@ export const createOrder = async (req, res) => {
     });
 
     let totalPrice =
-      cart?.reduce(
+      cart?.products.reduce(
         (accumulator, item) =>
           accumulator + item.product.salePrice * item.count,
         0
@@ -303,7 +303,7 @@ export const createOrder = async (req, res) => {
     sendMail(user, order);
     res.status(200).json({ msg: "Payment Successful" });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 

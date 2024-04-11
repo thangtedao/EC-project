@@ -4,12 +4,12 @@ import { useSelector } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ProductCart } from "../components";
 import TextField from "@mui/material/TextField";
-import axios from "axios";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
+// import axios from "axios";
+// import InputLabel from "@mui/material/InputLabel";
+// import MenuItem from "@mui/material/MenuItem";
+// import FormControl from "@mui/material/FormControl";
 import { toast } from "react-toastify";
-import Select from "@mui/material/Select";
+// import Select from "@mui/material/Select";
 import { Form, redirect, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Checkbox, FormControlLabel } from "@mui/material";
@@ -245,86 +245,86 @@ const PaymentInfo = () => {
 
   //const cities = useLoaderData();
 
-  const [cities, setCities] = useState([]);
-  const [city, setCity] = useState("");
-  const [districts, setDistricts] = useState([]);
-  const [district, setDistrict] = useState("");
-  const [wards, setWards] = useState([]);
-  const [ward, setWard] = useState("");
+  // const [cities, setCities] = useState([]);
+  // const [city, setCity] = useState("");
+  // const [districts, setDistricts] = useState([]);
+  // const [district, setDistrict] = useState("");
+  // const [wards, setWards] = useState([]);
+  // const [ward, setWard] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const citiesResponse = await axios.get(
-          "https://provinces.open-api.vn/api/?depth=1"
-        );
-        setCities(citiesResponse.data);
-        setCity(citiesResponse.data[0] || "");
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const citiesResponse = await axios.get(
+  //         "https://partner.viettelpost.vn/v2/categories/listProvinceById?provinceId=-1"
+  //       );
+  //       const provinceNames = citiesResponse.data.map(province => province.PROVINCE_NAME);
+  //       setCities(provinceNames);
+  //       console.log(provinceNames)
+  //       setCity(provinceNames[0] || "");
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  useEffect(() => {
-    const fetchDistricts = async () => {
-      try {
-        const districtsResponse = await axios.get(
-          `https://provinces.open-api.vn/api/p/${city && city?.code}?depth=2`
-        );
-        const fetchedDistricts = districtsResponse.data.districts || [];
-        setDistricts(fetchedDistricts);
-        setDistrict(fetchedDistricts.length > 0 ? fetchedDistricts[0] : "");
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchDistricts = async () => {
+  //     try {
+  //       const districtsResponse = await axios.get(
+  //         `https://partner.viettelpost.vn/v2/categories/listProvinceById?provinceId=-1`
+  //       );
+  //       const fetchedDistricts = districtsResponse.data.districts || [];
+  //       setDistricts(fetchedDistricts);
+  //       setDistrict(fetchedDistricts.length > 0 ? fetchedDistricts[0] : "");
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
-    fetchDistricts();
-  }, [city]);
+  //   fetchDistricts();
+  // }, [city]);
 
-  useEffect(() => {
-    const fetchWards = async () => {
-      try {
-        const wardsResponse = await axios.get(
-          `https://provinces.open-api.vn/api/d/${
-            district && district?.code
-          }?depth=2`
-        );
-        const fetchedWards = wardsResponse.data.wards || [];
-        setWards(fetchedWards);
-        setWard(fetchedWards.length > 0 ? fetchedWards[0] : "");
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchWards = async () => {
+  //     try {
+  //       const wardsResponse = await axios.get(
+  //         `https://partner.viettelpost.vn/v2/categories/listProvinceById?provinceId=-1`
+  //       );
+  //       const fetchedWards = wardsResponse.data.wards || [];
+  //       setWards(fetchedWards);
+  //       setWard(fetchedWards.length > 0 ? fetchedWards[0] : "");
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
-    fetchWards();
-  }, [district]);
+  //   fetchWards();
+  // }, [district]);
 
-  const handleChange = (event) => {
-    const selectedCityName = event.target.value;
-    const selectedCity =
-      cities.find((city) => city.name === selectedCityName) || {};
-    setCity(selectedCity);
-  };
+  // const handleChange = (event) => {
+  //   const selectedCityName = event.target.value;
+  //   const selectedCity =
+  //     cities.find((city) => city.name === selectedCityName) || {};
+  //   setCity(selectedCity);
+  // };
 
-  const handleChange02 = (event) => {
-    const selectedDistrictName = event.target.value;
-    const selectedDistrict =
-      districts.find((district) => district.name === selectedDistrictName) ||
-      {};
-    setDistrict(selectedDistrict);
-  };
+  // const handleChange02 = (event) => {
+  //   const selectedDistrictName = event.target.value;
+  //   const selectedDistrict =
+  //     districts.find((district) => district.name === selectedDistrictName) ||
+  //     {};
+  //   setDistrict(selectedDistrict);
+  // };
 
-  const handleChange03 = (event) => {
-    const selectedWardName = event.target.value;
-    const selectedWard =
-      wards.find((ward) => ward.name === selectedWardName) || {};
-    setWard(selectedWard);
-  };
+  // const handleChange03 = (event) => {
+  //   const selectedWardName = event.target.value;
+  //   const selectedWard =
+  //     wards.find((ward) => ward.name === selectedWardName) || {};
+  //   setWard(selectedWard);
+  // };
 
   return (
     <HelmetProvider>
@@ -399,7 +399,7 @@ const PaymentInfo = () => {
               }}
               value={
                 user?.address &&
-                `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
+                `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`
               }
               variant="standard"
               sx={{ width: "100%" }}
@@ -417,84 +417,24 @@ const PaymentInfo = () => {
 
             {isCheck && (
               <div className="form-address">
-                <FormControl variant="standard">
-                  <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-                  <Select
-                    required
-                    labelId="city-select-label"
-                    name="city"
-                    value={city?.name || ""}
-                    label="Tỉnh/Thành phố"
-                    sx={{ width: "300px" }}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: "200px",
-                        },
-                      },
-                    }}
-                    onChange={handleChange}
-                  >
-                    {cities.map((city) => (
-                      <MenuItem key={city.code} value={city.name}>
-                        {city.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl variant="standard">
-                  <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-                  <Select
-                    required
-                    labelId="district-select-label"
-                    name="district"
-                    value={district?.name || ""}
-                    label="Quận/Huyện"
-                    sx={{ width: "300px" }}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: "200px",
-                        },
-                      },
-                    }}
-                    onChange={handleChange02}
-                  >
-                    {districts.map((district) => (
-                      <MenuItem key={district.code} value={district.name}>
-                        {district.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl variant="standard">
-                  <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-                  <Select
-                    required
-                    name="ward"
-                    labelId="ward-select-label"
-                    value={ward?.name || ""}
-                    label="Phường/Xã"
-                    sx={{ width: "300px" }}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: "200px",
-                        },
-                      },
-                    }}
-                    onChange={handleChange03}
-                  >
-                    {wards.map((ward) => (
-                      <MenuItem key={ward.code} value={ward.name}>
-                        {ward.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
+                <TextField
+                  required
+                  name="city"
+                  label="Tỉnh/Thành phố"
+                  variant="standard"
+                />
+                <TextField
+                  required
+                  name="district"
+                  label="Quận/Huyện"
+                  variant="standard"
+                />
+                <TextField
+                  required
+                  name="ward"
+                  label="Phường/Xã"
+                  variant="standard"
+                />
                 <TextField
                   required
                   name="home"
