@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         action: loginAction,
       },
       {
-        path: "product/:slug",
+        path: "product/:id",
         element: <Product />,
         loader: productLoader,
         action: productAction,
@@ -86,12 +86,12 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "category/:slug1",
+        path: "category/:id",
         element: <Category />,
         loader: categoryLoader,
         children: [
           {
-            path: ":slug2",
+            path: ":id",
             element: <Category />,
             loader: categoryLoader,
           },

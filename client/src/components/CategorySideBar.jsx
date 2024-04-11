@@ -89,7 +89,8 @@ const Wrapper = styled.div`
 `;
 
 const CategorySideBar = () => {
-  const { showSideBar, toggleSideBar } = useMainLayoutContext();
+  const { showSideBar, toggleSideBar, categories, categoriesChild } =
+    useMainLayoutContext();
 
   const [showCategory, setShowCategory] = useState(false);
   const [isHoverItemTree, setIsHoverItemTree] = useState(false);
@@ -111,8 +112,6 @@ const CategorySideBar = () => {
       setShowCategory(false);
     }
   };
-
-  const { categories, categoryChild } = useMainLayoutContext();
 
   return (
     <Wrapper>
@@ -156,8 +155,8 @@ const CategorySideBar = () => {
             <div className="category-product">
               {/* <p>Thương hiệu</p> */}
 
-              {categoryChild &&
-                categoryChild[activeItem.index]?.map((item) => {
+              {categoriesChild &&
+                categoriesChild[activeItem.index]?.map((item) => {
                   return (
                     <a
                       href={`/category/${categories[activeItem.index].slug}/${
@@ -169,21 +168,8 @@ const CategorySideBar = () => {
                     </a>
                   );
                 })}
-
-              {/*{activeItem?.categoryProduct?.map((item) => {
-                return <h5>{item.brandName}</h5>;
-              })} */}
-            </div>
-
-            <div className="category-product">
-              {/* <p>Bla bla</p> */}
-              {/* {activeItem?.categoryProduct?.map((item) => {
-                return <h5>{item.color}</h5>;
-              })} */}
             </div>
           </div>
-
-          <div></div>
         </div>
       </div>
     </Wrapper>

@@ -9,32 +9,18 @@ const promotionSchema = mongoose.Schema({
     type: String,
     default: "",
   },
-  type: {
+  discountType: {
     type: String,
-    enum: ["percentage", "fixed amount"],
-    default: "fixed amount",
+    enum: ["percentage", "fixed"],
+    default: "percentage",
   },
-  value: {
+  discountValue: {
     type: Number,
     default: 0,
   },
-  applicableProducts: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-      productVariant: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "ProductVariation",
-      },
-    },
-  ],
   startDate: Date,
   endDate: Date,
   isActive: Boolean,
-  targetCustomers: {
-    type: String,
-    enum: ["member", "silver", "gold", "diamond"],
-    default: "member",
-  },
   createdAt: {
     type: Date,
     default: timeStamp,
