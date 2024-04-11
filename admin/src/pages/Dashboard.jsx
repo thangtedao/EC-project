@@ -28,6 +28,7 @@ import {
   Tag,
   Dropdown,
   Card,
+  Segmented,
 } from "antd";
 const Wrapper = styled.div`
   width: 100%;
@@ -66,7 +67,13 @@ export const loader = async ({ request }) => {
     const params = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
     ]);
+
     const response = await customFetch.get("/order/stats", { params });
+
+    const products = await customFetch
+      .get(`/product/?populate=category,brand`)
+      .then(({ data }) => data);
+
     return {
       dataset: response.data.monthlyApplications,
       totalRevenue: response.data.totalRevenue,
@@ -74,6 +81,7 @@ export const loader = async ({ request }) => {
       totalProduct: response.data.totalProduct,
       productMostSold: response.data.productMostSold,
       params,
+      products,
     };
   } catch (error) {
     return error;
@@ -88,6 +96,7 @@ const Dashboard = () => {
     totalProduct,
     productMostSold,
     params,
+    products,
   } = useLoaderData();
 
   let start, end;
@@ -142,7 +151,20 @@ const Dashboard = () => {
               className="col-1-item"
               size="large"
               title={"column"}
-              extra={"select Day mond"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
             >
               <ChartLine />
             </Card>
@@ -150,7 +172,20 @@ const Dashboard = () => {
               className="col-1-item"
               size="large"
               title={"column"}
-              extra={"select Day mond"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
             >
               <ChartColumn />
             </Card>
@@ -158,9 +193,22 @@ const Dashboard = () => {
               className="col-1-item"
               size="large"
               title={"Order"}
-              extra={"select Day mond"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
             >
-              <DashboardOrder />
+              <DashboardOrder products2 />
             </Card>
           </div>
           <div
@@ -171,7 +219,20 @@ const Dashboard = () => {
               className="col-2-item"
               size="large"
               title={"Order Status"}
-              extra={"select Day mond"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
             >
               <ChartPie />
             </Card>
@@ -179,9 +240,22 @@ const Dashboard = () => {
               className="col-2-item"
               size="large"
               title={"Product"}
-              extra={"select Day mond"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
             >
-              <DashboardProduct />
+              <DashboardProduct products={products} />
             </Card>
           </div>
         </div>

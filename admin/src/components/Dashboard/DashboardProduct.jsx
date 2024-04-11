@@ -42,33 +42,9 @@ const rowSelection = {
   }),
 };
 
-export const loader = async ({ request }) => {
-  try {
-    const params = Object.fromEntries([
-      ...new URL(request.url).searchParams.entries(),
-    ]);
-
-    const products = await customFetch
-      .get(`/product/?populate=category,brand`)
-      .then(({ data }) => data);
-
-    const categories = await customFetch
-      .get("/category/all-categories")
-      .then(({ data }) => data);
-
-    const brands = await customFetch
-      .get("/brand/all-brands")
-      .then(({ data }) => data);
-
-    return { products, categories, brands };
-  } catch (error) {
-    return error;
-  }
-};
-
-const DashboardProduct = () => {
-  const { products, categories, brands } = useLoaderData();
+const DashboardProduct = ({ products }) => {
   const navigate = useNavigate();
+  console.log(products);
 
   const handleEditProduct = (id) => {
     navigate(`/edit-product/${id}`);
