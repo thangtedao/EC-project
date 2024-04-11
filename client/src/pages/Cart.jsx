@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { ProductCart } from "../components";
+import { CartItem } from "../components";
 import { useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/LogoNova.svg";
@@ -186,7 +186,7 @@ const Cart = () => {
           <a onClick={() => navigate("/")}>
             <ArrowBackIcon />
           </a>
-          Giỏ hàng của bạn
+          Cart
         </div>
         {cart.length <= 0 ? (
           <div className="cart-empty">
@@ -205,7 +205,7 @@ const Cart = () => {
           </div> */}
 
             {cart?.map((item, index) => {
-              return <ProductCart key={index} product={item} />;
+              return <CartItem key={index} product={item} />;
             })}
 
             <div className="bottom-bar">
@@ -220,7 +220,7 @@ const Cart = () => {
                   return navigate("payment-info");
                 }}
               >
-                Mua ngay
+                Buy Now
                 {` (${cart.reduce((acc, item) => acc + item.count, 0)})`}
               </button>
             </div>

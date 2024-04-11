@@ -26,13 +26,11 @@ export const loader = async () => {
       .get(`/category/get/child`)
       .then(({ data }) => data);
 
-    const filtercategoriesChild = categories.map((item, idx) => {
-      return categoriesChild.map((itemC) => {
-        if (itemC.parent === categories[idx]._id) return item;
-      });
+    const filtercategoriesChild = categories.map((category) => {
+      return categoriesChild.filter((child) => child.parent === category._id);
     });
 
-    return { categories, categoriesChild };
+    return { categories, categoriesChild, filtercategoriesChild };
   } catch (error) {
     console.log(error);
     return error;
@@ -42,7 +40,8 @@ export const loader = async () => {
 const MainLayoutContext = createContext();
 
 const MainLayout = () => {
-  const { categories, categoriesChild } = useLoaderData();
+  const { categories, categoriesChild, filtercategoriesChild } =
+    useLoaderData();
   const [showSideBar, setShowSideBar] = useState(false);
   const navigation = useNavigation();
 
@@ -57,6 +56,7 @@ const MainLayout = () => {
       value={{
         categories,
         categoriesChild,
+        filtercategoriesChild,
         showSideBar,
         toggleSideBar,
       }}

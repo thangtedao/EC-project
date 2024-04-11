@@ -89,8 +89,13 @@ const Wrapper = styled.div`
 `;
 
 const CategorySideBar = () => {
-  const { showSideBar, toggleSideBar, categories, categoriesChild } =
-    useMainLayoutContext();
+  const {
+    showSideBar,
+    toggleSideBar,
+    categories,
+    categoriesChild,
+    filtercategoriesChild,
+  } = useMainLayoutContext();
 
   const [showCategory, setShowCategory] = useState(false);
   const [isHoverItemTree, setIsHoverItemTree] = useState(false);
@@ -136,7 +141,7 @@ const CategorySideBar = () => {
                     handleItemLeave,
                   ]}
                 >
-                  <a className="nav-link" href={`/category/${item?.slug}`}>
+                  <a className="nav-link" href={`/category/${item?._id}`}>
                     {item?.name} <IoIosArrowForward />
                   </a>
                 </div>
@@ -156,11 +161,12 @@ const CategorySideBar = () => {
               {/* <p>Thương hiệu</p> */}
 
               {categoriesChild &&
-                categoriesChild[activeItem.index]?.map((item) => {
+                filtercategoriesChild &&
+                filtercategoriesChild[activeItem.index]?.map((item) => {
                   return (
                     <a
-                      href={`/category/${categories[activeItem.index].slug}/${
-                        item.slug
+                      href={`/category/${categories[activeItem.index]?._id}/${
+                        item?._id
                       }`}
                       key={item?._id}
                     >

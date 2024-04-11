@@ -1,11 +1,12 @@
-import { PRODUCT_STATUS } from "../utils/constants.js";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
-import day from "dayjs";
+import { PRODUCT_STATUS } from "../utils/constants.js";
 import { createPayPalOrder } from "../utils/paypal.js";
 import { sendMail } from "../utils/email.js";
+import { StatusCodes } from "http-status-codes";
+import day from "dayjs";
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";
@@ -34,72 +35,56 @@ export const paypalCaptureOrder = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { cart, user, coupon } = req.body;
+    const { cart, coupon } = req.body;
+    const { userId } = req.user;
 
-    const products = cart.products.map((product) => {
+    const orderItem = cart.cartItem.map((item) => {
+      let salePrice = item.product.price + item.variant.price;
+      if (coupon)
+        if (coupon.discountType === "percentage")
+          salePrice = salePrice - (salePrice * coupon.discountValue) / 100;
+        else if (coupon.discountType === "percentage")
+          salePrice = salePrice - coupon.discountValue;
+
       return {
-        product: product.product._id,
-        price: product.product.salePrice,
-        count: product.count,
+        product: {
+          id: item.product._id,
+          name: item.product.name,
+          price: item.product.price,
+          images: item.product.images,
+        },
+        variant: {
+          id: item.variant._id,
+          name: item.variant.name,
+          value: item.variant.name,
+          price: item.variant.price,
+        },
+        quantity: item.quantity,
+        priceAtOrder: salePrice,
+        subtotal: salePrice * item.quantity,
       };
     });
 
-    let totalPrice =
-      cart?.products.reduce(
-        (accumulator, item) =>
-          accumulator + item.product.salePrice * item.count,
-        0
-      ) || 0;
+    const totalAmount =
+      orderItem.reduce((accumulator, item) => accumulator + item.subtotal, 0) ||
+      0;
 
-    let newOrder;
-    if (coupon) {
-      totalPrice = (totalPrice - (totalPrice * coupon.discount) / 100).toFixed(
-        0
-      );
-      newOrder = new Order({
-        orderBy: user._id,
-        products: products,
-        totalPrice: totalPrice,
-        coupon: {
-          couponId: coupon.id,
-          name: coupon.name,
-          discount: coupon.discount,
-        },
-      });
-    } else {
-      newOrder = new Order({
-        orderBy: user._id,
-        products: products,
-        totalPrice: totalPrice,
-      });
-    }
-
-    const savedOrder = await newOrder.save();
-    await Cart.findOneAndRemove({ user: user._id });
-
-    const order = await Order.findById(savedOrder._id).populate({
-      path: "products.product",
-      select: ["_id", "name", "salePrice"],
+    newOrder = new Order({
+      user: userId,
+      orderItem: orderItem,
+      couponCode: coupon?._id || null,
+      discountAmount: coupon?.discountValue || null, //temp!!!!!!!!!!
+      shippingAddress: "HN",
+      totalAmount: totalAmount,
     });
 
-    order.products.map(async (item) => {
-      const product = await Product.findByIdAndUpdate(
-        item.product._id,
-        {
-          $inc: { sold: 1, stockQuantity: -1 },
-        },
-        { new: true }
-      );
+    const order = await newOrder.save();
+    // await Cart.findOneAndRemove({ user: userId });
 
-      if (product && product.stockQuantity <= 0) {
-        await Product.findByIdAndUpdate(product._id, {
-          $set: { status: PRODUCT_STATUS.OUT_OF_STOCK },
-        });
-      }
-    });
+    const user = await User.findById(userId);
 
-    sendMail(user, order);
-    res.status(200).json({ msg: "Payment Successful" });
+    // sendMail(user, order);
+    res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error.message);
   }
@@ -107,35 +92,21 @@ export const createOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
   try {
+    const queryObj = { ...req.query };
+    const excludeFields = ["page", "sort", "limit", "fields", "populate"];
+    excludeFields.forEach((el) => delete queryObj[el]);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(
+      /\b(gte|gt|lte|lt|eq|ne)\b/g,
+      (match) => `$${match}`
+    );
+
     let query;
-
-    if (req.query.userId) {
-      const id = req.query.userId;
-      query = Order.find({ orderBy: id });
-
-      query.populate([
-        {
-          path: "orderBy",
-          select: ["fullName"],
-        },
-        {
-          path: "products.product",
-          select: [
-            "name",
-            "price",
-            "salePrice",
-            "description",
-            "category",
-            "images",
-          ],
-        },
-      ]);
-    } else {
-      const { status } = req.query;
-      if (!status || status === "all") {
-        query = Order.find();
-      } else {
-        query = Order.find({ orderStatus: status });
+    if (req.user.role === "admin") query = Order.find(JSON.parse(queryStr));
+    else if (req.user.role === "user") {
+      query = Order.find({ user: req.user.userId });
+      if (queryStr !== "{}") {
+        query.find(JSON.parse(queryStr));
       }
     }
 
@@ -143,17 +114,29 @@ export const getOrders = async (req, res) => {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
     } else {
-      if (req.query.date && req.query.date === "old") {
-        query = query.sort("createdAt");
-      } else {
-        query = query.sort("-createdAt");
-      }
+      query = query.sort("-createdAt");
     }
 
-    query.populate({
-      path: "orderBy",
-      select: ["fullName"],
-    });
+    if (req.query.limit) {
+      query = query.limit(req.query.limit);
+    }
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      query = query.select(fields);
+    }
+
+    if (req.query.populate) {
+      const item = req.query.populate.split(",").join(" ");
+      query = query.populate(item);
+    }
+
+    query.populate([
+      {
+        path: "user",
+        select: ["fullName"],
+      },
+    ]);
 
     if (req.query.page) {
       const page = req.query.page;
@@ -167,41 +150,32 @@ export const getOrders = async (req, res) => {
     }
 
     const orders = await query;
-    res.status(200).json({ orders });
+    res.status(StatusCodes.OK).json(orders);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
 export const getOrder = async (req, res) => {
   try {
-    const orderId = req.params.id;
-    const order = await Order.findOne({ _id: orderId }).populate([
-      {
-        path: "products.product",
-        select: ["name", "images"],
-      },
-      {
-        path: "orderBy",
-        select: ["fullName", "email", "phone", "avatar", "address"],
-      },
-    ]);
-    res.status(200).json({ order });
+    const { id } = req.params;
+    const order = await Order.findOne({ _id: id });
+    res.status(StatusCodes.OK).json(order);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
 export const updateOrder = async (req, res) => {
   try {
-    const orderId = req.params.id;
-    const updatedOrder = await Order.findByIdAndUpdate(orderId, req.body, {
+    const { id } = req.params;
+    const updatedOrder = await Order.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    if (!updatedOrder) throw new NotFoundError(`this order does not exist`);
-    res.status(200).json({ updatedOrder });
+    if (!updatedOrder) throw new NotFoundError(`This order does not exist`);
+    res.status(StatusCodes.OK).json(updatedOrder);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
@@ -487,27 +461,37 @@ export const vnpayIpn = (req, res, next) => {
             //thanh cong
             //paymentStatus = '1'
             // Ở đây cập nhật trạng thái giao dịch thanh toán thành công vào CSDL của bạn
-            res.status(200).json({ RspCode: "00", Message: "Success" });
+            res
+              .status(StatusCodes.OK)
+              .json({ RspCode: "00", Message: "Success" });
           } else {
             //that bai
             //paymentStatus = '2'
             // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
-            res.status(200).json({ RspCode: "00", Message: "Success" });
+            res
+              .status(StatusCodes.OK)
+              .json({ RspCode: "00", Message: "Success" });
           }
         } else {
-          res.status(200).json({
+          res.status(StatusCodes.OK).json({
             RspCode: "02",
             Message: "This order has been updated to the payment status",
           });
         }
       } else {
-        res.status(200).json({ RspCode: "04", Message: "Amount invalid" });
+        res
+          .status(StatusCodes.OK)
+          .json({ RspCode: "04", Message: "Amount invalid" });
       }
     } else {
-      res.status(200).json({ RspCode: "01", Message: "Order not found" });
+      res
+        .status(StatusCodes.OK)
+        .json({ RspCode: "01", Message: "Order not found" });
     }
   } else {
-    res.status(200).json({ RspCode: "97", Message: "Checksum failed" });
+    res
+      .status(StatusCodes.OK)
+      .json({ RspCode: "97", Message: "Checksum failed" });
   }
 };
 function sortObject(obj) {

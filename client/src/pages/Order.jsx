@@ -118,17 +118,17 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user)
+      .catch(() => redirect("/login"));
 
-    if (user !== "null") {
-      user = JSON.parse(user);
-      const orders = await customFetch
-        .get(`/order/?userId=${user._id}`)
-        .then(({ data }) => data.orders);
+    if (user) {
+      const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
-      const response = await customFetch.get("/user/cart");
-      if (!response.data.cart) {
-        store.dispatch(setCart([]));
+      const cart = await customFetch.get("/user/cart").then(({ data }) => data);
+      if (!cart) {
+        // store.dispatch(setCart([]));
       }
 
       return orders;

@@ -154,7 +154,8 @@ const HomeContext = createContext();
 
 const Home = () => {
   window.scrollTo(0, 0);
-  const { categories, categoriesChild } = useMainLayoutContext();
+  const { categories, categoriesChild, filtercategoriesChild } =
+    useMainLayoutContext();
   // const { saleProducts, categories, productsArray } = useLoaderData();
 
   const img = [img1, img2];

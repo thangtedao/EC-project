@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import MenuBottom from "./MenuBottom";
 import Facebook from "../assets/facebook.svg";
 import Zalo from "../assets/zalo.svg";
 import Youtube from "../assets/youtube.svg";
@@ -19,13 +18,10 @@ const Wrapper = styled.div`
 
   .footer-container {
     width: 1100px;
-    //height: 300px;
-    //border: 1px solid red;
     display: flex;
     justify-content: space-between;
   }
   .footer-items {
-    //border: 1px solid green;
     display: flex;
     flex-direction: column;
   }
@@ -42,7 +38,6 @@ const Wrapper = styled.div`
 const Footer = () => {
   return (
     <Wrapper>
-      <MenuBottom />
       <div className="footer-container">
         <div className="footer-items">
           <div className="footer-items-title">Tổng đài hỗ trợ miễn phí</div>

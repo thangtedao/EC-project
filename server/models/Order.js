@@ -7,19 +7,44 @@ const orderSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  CouponCode: {
+  orderItem: [
+    {
+      product: {
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        name: String,
+        price: Number,
+        images: Array,
+      },
+      variant: {
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "ProductVariation" },
+        name: String,
+        value: String,
+        price: Number,
+      },
+      quantity: {
+        type: Number,
+      },
+      priceAtOrder: {
+        type: Number,
+      },
+      subtotal: {
+        type: Number,
+      },
+    },
+  ],
+  couponCode: {
     type: String,
   },
-  DiscountAmount: {
+  discountAmount: {
     type: Number,
   },
-  ShippingAddress: {
+  shippingAddress: {
     type: String,
   },
-  PaymentMethod: {
+  paymentMethod: {
     type: String,
   },
-  TotalAmount: {
+  totalAmount: {
     type: Number,
   },
   status: {
@@ -27,6 +52,7 @@ const orderSchema = mongoose.Schema({
     enum: Object.values(ORDER_STATUS),
     default: ORDER_STATUS.NOT_PROCESSED,
   },
+  cancelOrder: Boolean,
   createdAt: {
     type: Date,
     default: timeStamp,
