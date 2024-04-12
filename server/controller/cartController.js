@@ -1,67 +1,167 @@
 import { StatusCodes } from "http-status-codes";
 import User from "../models/User.js";
+import Product from "../models/Product.js";
+import ProductVariation from "../models/ProductVariation.js";
 import Cart from "../models/Cart.js";
+import { NotFoundError } from "../errors/customErrors.js";
 
-export const setUserCart = async (req, res) => {
+export const addToCart = async (req, res) => {
   try {
-    const { cart } = req.body;
+    const { product, variant } = req.body;
     const { userId } = req.user;
 
-    const alreadyExistCart = await Cart.findOne({ user: userId });
-    if (alreadyExistCart) {
-      await Cart.deleteOne({ _id: alreadyExistCart._id });
+    const isProductExist = await Product.findById(product._id);
+    if (!isProductExist) throw new NotFoundError("Product Not Found");
+
+    const isProductVariantExist = await ProductVariation.findById(variant._id);
+    if (!isProductVariantExist)
+      throw new NotFoundError("Product Variant Not Found");
+
+    let cart = await Cart.findOne({ user: userId });
+    let isAlreadyInCart = false;
+    if (cart) {
+      isAlreadyInCart = cart.cartItem.some(
+        (item) => item.product.toString() === product._id.toString()
+      );
     }
 
-    const productPromise = cart.map(async (item) => {
-      // const product = await Product.findById(item._id).select("price").exec();
-      return {
-        product: item._id,
-        count: item.count,
-        salePrice: item.salePrice,
+    if (isAlreadyInCart) {
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
+          "cartItem.product": product._id,
+          "cartItem.variant": variant._id,
+        },
+        { $inc: { "cartItem.$.quantity": 1 } },
+        { new: true }
+      );
+    } else {
+      const cartItemToAdd = {
+        product: product._id,
+        variant: variant._id,
+        quantity: 1,
       };
-    });
 
-    const products = await Promise.all(productPromise);
+      cart = await Cart.findOneAndUpdate(
+        { user: userId },
+        { $push: { cartItem: cartItemToAdd } },
+        { upsert: true, new: true }
+      );
+    }
 
-    let cartTotal = products.reduce(
-      (acc, product) => acc + product.salePrice * product.count,
-      0
-    );
-
-    const newCart = new Cart({
-      products,
-      cartTotal,
-      user: userId,
-    });
-
-    await newCart.save();
-
-    res.status(StatusCodes.OK).json({ newCart });
+    res.status(StatusCodes.OK).json(cart);
   } catch (error) {
     console.log(error);
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const increaseQuantity = async (req, res) => {
+  try {
+    const { cartItem } = req.body;
+    const { userId } = req.user;
+
+    const cart = await Cart.findOneAndUpdate(
+      {
+        user: userId,
+        "cartItem.product": cartItem.product._id,
+        "cartItem.variant": cartItem.variant._id,
+      },
+      { $inc: { "cartItem.$.quantity": 1 } },
+      { new: true }
+    );
+
+    res.status(StatusCodes.OK).json(cart);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const descreaseQuantity = async (req, res) => {
+  try {
+    const { cartItem } = req.body;
+    const { userId } = req.user;
+
+    const cart = await Cart.findOneAndUpdate(
+      {
+        user: userId,
+        "cartItem.product": cartItem.product._id,
+        "cartItem.variant": cartItem.variant._id,
+        "cartItem.quantity": { $gt: 0 },
+      },
+      { $inc: { "cartItem.$.quantity": -1 } },
+      { new: true }
+    );
+
+    res.status(StatusCodes.OK).json(cart);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const removeFromCart = async (req, res) => {
+  try {
+    const { cartItem } = req.body;
+    const { userId } = req.user;
+
+    const cart = await Cart.findOneAndUpdate(
+      {
+        user: userId,
+        "cartItem.product": cartItem.product._id,
+        "cartItem.variant": cartItem.variant._id,
+        "cartItem.quantity": { $gt: 0 },
+      },
+      {
+        $pull: {
+          cartItem: {
+            product: cartItem.product._id,
+            variant: cartItem.variant._id,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    res.status(StatusCodes.OK).json(cart);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
 export const getUserCart = async (req, res) => {
   try {
     const { userId } = req.user;
-    const cart = await Cart.findOne({ user: userId }).populate(
-      "products.product"
-    );
-    res.status(StatusCodes.OK).json({ cart });
+    const cart = await Cart.findOne({ user: userId }).populate({
+      path: "cartItem",
+      populate: [{ path: "product" }, { path: "variant" }],
+    });
+    res.status(StatusCodes.OK).json(cart);
   } catch (error) {
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const setUserCart = async (req, res) => {
+  try {
+    const { cartItem } = req.body;
+    const { userId } = req.user;
+
+    res.status(StatusCodes.OK).json();
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
 
 export const emptyCart = async (req, res) => {
   try {
     const { userId } = req.user;
-    const cart = await Cart.findOneAndRemove({ user: userId });
-    res.status(StatusCodes.OK).json({ cart });
+    res.status(StatusCodes.OK).json();
   } catch (error) {
     console.log(error);
-    res.status(409).json({ msg: error.message });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import styled from "styled-components";
-import { SlideProduct } from "../components";
+import { ProductCard, SlideProduct } from "../components";
 import { NavLink, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
@@ -143,7 +143,8 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    return null;
+    const products = await customFetch.get(`/product`).then(({ data }) => data);
+    return products;
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -157,6 +158,8 @@ const Home = () => {
   const { categories, categoriesChild, filtercategoriesChild } =
     useMainLayoutContext();
   // const { saleProducts, categories, productsArray } = useLoaderData();
+  const products = useLoaderData();
+  console.log("products", products);
 
   const img = [img1, img2];
 
@@ -169,7 +172,6 @@ const Home = () => {
             <title>Nova</title>
             <link rel="icon" type="image/svg+xml" href={NovaIcon} />
           </Helmet>
-
           <div className="block-top-home">
             {/* MENU TREE */}
             <div className="menu-container">
@@ -196,7 +198,6 @@ const Home = () => {
               <img src={img6} />
             </div>
           </div>
-
           {/* FLASH SALE */}
           {/* <div className="block-hot-sale">
             <div className="block-title">
@@ -207,7 +208,6 @@ const Home = () => {
               <SlideProduct products={saleProducts} />
             )}
           </div>*/}
-
           {/* PRODUCTS SALE */}
           {/* {categories.map((category, index) => {
             return (
@@ -224,6 +224,9 @@ const Home = () => {
               )
             );
           })} */}
+          {products.map((product) => {
+            return <ProductCard key={product._id} product={product} />;
+          })}
         </Wrapper>
       </HomeContext.Provider>
     </HelmetProvider>

@@ -4,6 +4,7 @@ import {
   deleteCoupon,
   getCoupons,
   getCoupon,
+  applyCoupon,
   updateCoupon,
 } from "../controller/couponController.js";
 import {
@@ -32,6 +33,7 @@ router.delete(
   authorizePermissions("admin"),
   deleteCoupon
 );
+router.get("/apply", authenticateUser, applyCoupon);
 router.get("/:id", getCoupon);
 
 export default router;

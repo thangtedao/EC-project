@@ -1,70 +1,84 @@
 import React from "react";
 import { debounce } from "lodash";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  decreaseCount,
-  increaseCount,
+  decreaseQuantity,
+  increaseQuantity,
   removeFromCart,
 } from "../state/cartSlice";
-import { NavLink, useNavigate } from "react-router-dom";
 
-const ProductCart = ({ product, isPayment }) => {
+const CartItem = ({ item, isPayment }) => {
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
-  const debouncedDecreaseCount = debounce((id, user) => {
-    dispatch(decreaseCount({ id, user }));
+  const debouncedDecreaseQuantity = debounce((item, user) => {
+    dispatch(decreaseQuantity({ item, user }));
   }, 300);
 
-  const debouncedIncreaseCount = debounce((id, user) => {
-    dispatch(increaseCount({ id, user }));
+  const debouncedIncreaseQuantity = debounce((item, user) => {
+    dispatch(increaseQuantity({ item, user }));
   }, 300);
 
   return (
     <div className="product-item-outer">
       <div className="product-item">
         <div className="product-image">
-          <img src={product?.images[0]} alt="product image" />
+          <img src={item?.product?.images[0]} alt="product image" />
         </div>
 
         <div className="product-info">
           <div className="product-info-name">
-            <NavLink to={`/product/${product?.slug}`} style={{ width: "70%" }}>
-              {product?.name}
+            <NavLink
+              to={`/product/${item?.product?._id}`}
+              style={{ width: "70%" }}
+            >
+              {item?.product?.name}
             </NavLink>
+
             {!isPayment && (
               <DeleteIcon
                 sx={{ cursor: "pointer" }}
-                onClick={() =>
-                  dispatch(removeFromCart({ id: product._id, user }))
-                }
+                onClick={() => dispatch(removeFromCart({ item, user }))}
               />
             )}
           </div>
+
           <div className="product-info-price">
             <div className="main-price">
-              <span>{product?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫</span>
-              <span className="strike">{product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫</span>
+              <span>
+                {item?.product?.salePrice
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                ₫
+              </span>
+              <span className="strike">
+                {item?.product?.price
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                ₫
+              </span>
             </div>
+
             {!isPayment ? (
               <div className="product-count">
                 <span
                   className="count-btn"
-                  onClick={() => debouncedDecreaseCount(product._id, user)}
+                  onClick={() => debouncedDecreaseQuantity(item, user)}
                 >
                   -
                 </span>
-                <input type="text" readOnly="readonly" value={product?.count} />
+                <input type="text" readOnly="readonly" value={item?.quantity} />
                 <span
                   className="count-btn"
-                  onClick={() => debouncedIncreaseCount(product._id, user)}
+                  onClick={() => debouncedIncreaseQuantity(item, user)}
                 >
                   +
                 </span>
               </div>
             ) : (
-              <div className="count">Số lượng: {product?.count}</div>
+              <div className="count">Số lượng: {item?.quantity}</div>
             )}
           </div>
         </div>
@@ -78,4 +92,4 @@ const ProductCart = ({ product, isPayment }) => {
   );
 };
 
-export default ProductCart;
+export default CartItem;

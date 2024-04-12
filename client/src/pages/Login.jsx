@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
-import { setCart, setCartTotal } from "../state/cartSlice.js";
 import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.section`

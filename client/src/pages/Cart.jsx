@@ -3,9 +3,11 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { CartItem } from "../components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/LogoNova.svg";
+import customFetch from "../utils/customFetch";
+import { setCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -155,7 +157,16 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    return null;
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+
+    let cart = [];
+    if (user) {
+      cart = await customFetch.get("/cart/get-cart").then(({ data }) => data);
+      return { cart };
+    }
+    return { cart };
   } catch (error) {
     return error;
   }
@@ -164,14 +175,27 @@ export const loader = async () => {
 const Cart = () => {
   window.scrollTo(0, 0);
   const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart.cart);
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const { cart } = useLoaderData();
+  console.log("cart", cart);
+  if (cart) dispatch(setCart(cart));
 
   const totalPrice =
-    cart?.reduce(
-      (accumulator, item) => accumulator + item.salePrice * item.count,
+    cart?.cartItem?.reduce(
+      (acc, item) => acc + item.product.salePrice * item.quantity, // sale price !!!!!!!!!!!!!!
       0
     ) || 0;
+
+  const totalItem = cart?.cartItem?.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
+
+  const submitPayment = () => {
+    if (!user) return navigate("/login");
+    return navigate("payment-info");
+  };
 
   return (
     <HelmetProvider>
@@ -190,7 +214,7 @@ const Cart = () => {
         </div>
         {cart.length <= 0 ? (
           <div className="cart-empty">
-            <p>Giỏ hàng của bạn đang trống.</p>
+            <p>Your cart is empty.</p>
             <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
           </div>
         ) : (
@@ -204,24 +228,18 @@ const Cart = () => {
             Chọn tất cả
           </div> */}
 
-            {cart?.map((item, index) => {
-              return <CartItem key={index} product={item} />;
+            {cart?.cartItem?.map((item, index) => {
+              return <CartItem key={index} item={item} />;
             })}
 
             <div className="bottom-bar">
               <div className="price-temp">
-                <p>Tạm tính</p>
+                <p>Total Price</p>
                 {totalPrice}₫
               </div>
-              <button
-                className="btn"
-                onClick={() => {
-                  if (!user) return navigate("/login");
-                  return navigate("payment-info");
-                }}
-              >
-                Buy Now
-                {` (${cart.reduce((acc, item) => acc + item.count, 0)})`}
+
+              <button className="btn" onClick={() => submitPayment}>
+                Buy Now {`(${totalItem})`}
               </button>
             </div>
           </div>

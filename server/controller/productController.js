@@ -167,7 +167,19 @@ export const getProduct = async (req, res) => {
 
     const product = await query;
 
-    res.status(StatusCodes.OK).json(product);
+    let variant = await ProductVariation.find({ productId: id });
+    if (variant) {
+      variant = variant.reduce((groups, item) => {
+        const { variationName } = item;
+        if (!groups[variationName]) {
+          groups[variationName] = [];
+        }
+        groups[variationName].push(item);
+        return groups;
+      }, {});
+    }
+
+    res.status(StatusCodes.OK).json({ product, variant });
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }

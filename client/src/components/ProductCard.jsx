@@ -134,7 +134,7 @@ const ProductCard = ({ product }) => {
   return (
     <Wrapper>
       <NavLink
-        to={`/product/${product.slug}`}
+        to={`/product/${product._id}`}
         className="product-card-container"
       >
         <div className="product-card-image">

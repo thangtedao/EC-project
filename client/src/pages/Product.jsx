@@ -208,7 +208,7 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.patch("/product/rating", data);
+    // await customFetch.patch("/product/rating", data);
     toast.success("Gửi đánh giá thành công", { autoClose: 1000 });
     return null;
   } catch (error) {
@@ -224,18 +224,16 @@ export const action = async ({ request }) => {
 
 export const loader = async ({ params }) => {
   try {
-    const { slug } = params;
-    const product = await customFetch
-      .get(
-        `/product/${slug}?fields=_id,name,price,salePrice,status,description,slug,category,images,specifications,review,ratings,totalRating&populate=ratings.postedby`
-      )
-      .then(({ data }) => data.product);
+    const { id } = params;
+    const { product, variant } = await customFetch
+      .get(`/product/${id}`)
+      .then(({ data }) => data);
 
-    const relatedProducts = await customFetch
-      .get(`/product/category/?category=${product.category[1]}&limit=10`)
-      .then(({ data }) => data.products);
+    // const relatedProducts = await customFetch
+    //   .get(`/product/category/?category=${product.category[1]}&limit=10`)
+    //   .then(({ data }) => data.products);
     window.scrollTo(0, 0);
-    return { product, relatedProducts };
+    return { product, variant };
   } catch (error) {
     return error;
   }
@@ -245,11 +243,11 @@ const Product = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { product, relatedProducts } = useLoaderData();
+  const { product, variant } = useLoaderData();
   const user = useSelector((state) => state.user.user);
 
-  const debouncedAddToCartBtn = debounce((product, user) => {
-    dispatch(addToCart({ product: { ...product, count: 1 }, user }));
+  const debouncedAddToCartBtn = debounce((product, variant, user) => {
+    dispatch(addToCart({ product, variant, user }));
     toast.success("Thêm vào giỏ thành công", {
       position: "top-center",
       autoClose: 1000,
@@ -275,11 +273,6 @@ const Product = () => {
             <div className="sliding-product-image">
               <SlideGallery image={product?.images} />
             </div>
-            {/* <div className="other-product-img">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div> */}
           </div>
 
           {product.status !== PRODUCT_STATUS.AVAILABLE ? (
@@ -302,12 +295,18 @@ const Product = () => {
                 })}
               </div>
 
-              {/* <p>Chọn màu</p>
-            <div className="box-product-variants">
-              {product?.colors?.map((color) => {
-                return <ProductType text={color} />;
-              })}
-            </div> */}
+              <p>Chọn màu</p>
+              <div className="box-product-variants">
+                {Object.entries(variant).map(([key, items]) => (
+                  <div key={key}>
+                    <p>{key}</p>
+                    {items.map((item) => (
+                      // <ProductType key={item._id} item={item} />
+                      <p key={item._id}>{item.variationValue}</p>
+                    ))}
+                  </div>
+                ))}
+              </div>
 
               <div className="box-product-price">
                 <p>
@@ -326,7 +325,7 @@ const Product = () => {
                 <button
                   className="btn-buynow"
                   onClick={() => [
-                    debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                    debouncedAddToCartBtn(product, variant, user),
                     navigate("/cart"),
                   ]}
                 >
@@ -335,7 +334,7 @@ const Product = () => {
                 <button
                   className="btn-addtocart"
                   onClick={() => [
-                    debouncedAddToCartBtn({ ...product, count: 1 }, user),
+                    debouncedAddToCartBtn(product, variant, user),
                   ]}
                 >
                   <AddShoppingCartIcon />
@@ -347,12 +346,12 @@ const Product = () => {
         </div>
 
         {/* MID */}
-        <div className="mid-container">
+        {/* <div className="mid-container">
           <span className="mid-title">SẢN PHẨM TƯƠNG TỰ</span>
           {relatedProducts.length > 0 && (
             <SlideProduct products={relatedProducts} />
           )}
-        </div>
+        </div> */}
 
         {/* BOT */}
         <div className="bot-container">
@@ -361,7 +360,7 @@ const Product = () => {
               <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
               <p style={{ whiteSpace: "pre-line" }}>{product?.description}</p>
             </div>
-            <ProductReview product={product} />
+            {/* <ProductReview product={product} /> */}
           </div>
           <div className="bot-container-column-2">
             <ProductSpecifications product={product} />

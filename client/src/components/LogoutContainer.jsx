@@ -17,7 +17,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { deleteCart } from "../state/cartSlice";
+import { emptyCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   position: relative;
@@ -69,7 +69,7 @@ const LogoutContainer = () => {
     await customFetch.get("/auth/logout");
     toast.success("Logged out");
     dispatch(logout());
-    dispatch(deleteCart());
+    dispatch(emptyCart());
     navigate("/");
   };
 

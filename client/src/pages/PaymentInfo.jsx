@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { ProductCart } from "../components";
+import { CartItem } from "../components";
 import TextField from "@mui/material/TextField";
 // import axios from "axios";
 // import InputLabel from "@mui/material/InputLabel";
@@ -343,7 +343,7 @@ const PaymentInfo = () => {
         </div>
         <div className="cart-container">
           {cart?.map((item, index) => {
-            return <ProductCart key={index} product={item} isPayment />;
+            return <CartItem key={index} product={item} isPayment />;
           })}
         </div>
 
