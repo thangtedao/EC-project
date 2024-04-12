@@ -157,9 +157,7 @@ const Home = () => {
   window.scrollTo(0, 0);
   const { categories, categoriesChild, filtercategoriesChild } =
     useMainLayoutContext();
-  // const { saleProducts, categories, productsArray } = useLoaderData();
   const products = useLoaderData();
-  console.log("products", products);
 
   const img = [img1, img2];
 
@@ -172,6 +170,7 @@ const Home = () => {
             <title>Nova</title>
             <link rel="icon" type="image/svg+xml" href={NovaIcon} />
           </Helmet>
+
           <div className="block-top-home">
             {/* MENU TREE */}
             <div className="menu-container">
@@ -198,6 +197,7 @@ const Home = () => {
               <img src={img6} />
             </div>
           </div>
+
           {/* FLASH SALE */}
           {/* <div className="block-hot-sale">
             <div className="block-title">

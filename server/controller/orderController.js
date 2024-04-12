@@ -35,16 +35,25 @@ export const paypalCaptureOrder = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { cart, coupon } = req.body;
+    const { cartItem, coupon } = req.body;
     const { userId } = req.user;
 
-    const orderItem = cart.cartItem.map((item) => {
+    const orderItem = cartItem.map((item) => {
       let salePrice = item.product.price + item.variant.price;
       if (coupon)
         if (coupon.discountType === "percentage")
           salePrice = salePrice - (salePrice * coupon.discountValue) / 100;
         else if (coupon.discountType === "percentage")
           salePrice = salePrice - coupon.discountValue;
+
+      const variant = item.variant.map((i) => {
+        return {
+          id: i._id,
+          name: i.name,
+          value: i.name,
+          price: i.price,
+        };
+      });
 
       return {
         product: {
@@ -53,12 +62,7 @@ export const createOrder = async (req, res) => {
           price: item.product.price,
           images: item.product.images,
         },
-        variant: {
-          id: item.variant._id,
-          name: item.variant.name,
-          value: item.variant.name,
-          price: item.variant.price,
-        },
+        variant: variant,
         quantity: item.quantity,
         priceAtOrder: salePrice,
         subtotal: salePrice * item.quantity,

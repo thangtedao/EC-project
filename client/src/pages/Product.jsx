@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import styled from "styled-components";
 import ProductType from "../components/productDetail/ProductType";
@@ -6,8 +6,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import SlideGallery from "../components/SlideGallery";
 import customFetch from "../utils/customFetch";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../state/cartSlice";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { debounce } from "lodash";
 import {
@@ -225,35 +224,59 @@ export const action = async ({ request }) => {
 export const loader = async ({ params }) => {
   try {
     const { id } = params;
-    const { product, variant } = await customFetch
+    let { product, variation } = await customFetch
       .get(`/product/${id}`)
       .then(({ data }) => data);
 
     // const relatedProducts = await customFetch
     //   .get(`/product/category/?category=${product.category[1]}&limit=10`)
     //   .then(({ data }) => data.products);
+
+    if (variation) {
+      variation = variation.reduce((groups, item) => {
+        const { variationName } = item;
+        if (!groups[variationName]) {
+          groups[variationName] = [];
+        }
+        groups[variationName].push(item);
+        return groups;
+      }, {});
+    }
+
     window.scrollTo(0, 0);
-    return { product, variant };
+    return { product, variation };
   } catch (error) {
     return error;
   }
 };
 
 const Product = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { product, variant } = useLoaderData();
+  const { product, variation } = useLoaderData();
   const user = useSelector((state) => state.user.user);
 
-  const debouncedAddToCartBtn = debounce((product, variant, user) => {
-    dispatch(addToCart({ product, variant, user }));
-    toast.success("Thêm vào giỏ thành công", {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
+  const [variant, setVariant] = useState();
+  // const [variant, setVariant] = useState(
+  //   [variation?.Color[0], variation?.RAM[1]] || []
+  // );
+
+  console.log(variant);
+
+  const addToCart = debounce(async (product, variant, user) => {
+    const cart = await customFetch
+      .post("/cart/add-to-cart", {
+        product,
+        variant,
+      })
+      .then(({ data }) => data);
+    cart &&
+      toast.success("Add to cart successful", {
+        position: "top-center",
+        autoClose: 1000,
+        pauseOnHover: false,
+        theme: "colored",
+      });
   }, 100);
 
   return (
@@ -295,9 +318,9 @@ const Product = () => {
                 })}
               </div>
 
-              <p>Chọn màu</p>
+              {/* Chọn variant */}
               <div className="box-product-variants">
-                {Object.entries(variant).map(([key, items]) => (
+                {Object.entries(variation)?.map(([key, items]) => (
                   <div key={key}>
                     <p>{key}</p>
                     {items.map((item) => (
@@ -320,12 +343,11 @@ const Product = () => {
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
                 </p>
               </div>
-
               <div className="btn-buy">
                 <button
                   className="btn-buynow"
                   onClick={() => [
-                    debouncedAddToCartBtn(product, variant, user),
+                    addToCart(product, variant, user),
                     navigate("/cart"),
                   ]}
                 >
@@ -333,9 +355,7 @@ const Product = () => {
                 </button>
                 <button
                   className="btn-addtocart"
-                  onClick={() => [
-                    debouncedAddToCartBtn(product, variant, user),
-                  ]}
+                  onClick={() => [addToCart(product, variant, user)]}
                 >
                   <AddShoppingCartIcon />
                   <p>Thêm vào giỏ</p>

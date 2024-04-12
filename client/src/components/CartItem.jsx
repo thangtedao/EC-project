@@ -1,25 +1,13 @@
 import React from "react";
-import { debounce } from "lodash";
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useCartContext } from "../pages/Cart";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  decreaseQuantity,
-  increaseQuantity,
-  removeFromCart,
-} from "../state/cartSlice";
 
 const CartItem = ({ item, isPayment }) => {
   const user = useSelector((state) => state.user.user);
-  const dispatch = useDispatch();
-
-  const debouncedDecreaseQuantity = debounce((item, user) => {
-    dispatch(decreaseQuantity({ item, user }));
-  }, 300);
-
-  const debouncedIncreaseQuantity = debounce((item, user) => {
-    dispatch(increaseQuantity({ item, user }));
-  }, 300);
+  const { increaseQuantity, descreaseQuantity, removeFromCart } =
+    useCartContext();
 
   return (
     <div className="product-item-outer">
@@ -40,7 +28,7 @@ const CartItem = ({ item, isPayment }) => {
             {!isPayment && (
               <DeleteIcon
                 sx={{ cursor: "pointer" }}
-                onClick={() => dispatch(removeFromCart({ item, user }))}
+                onClick={() => removeFromCart(item, user)}
               />
             )}
           </div>
@@ -65,14 +53,14 @@ const CartItem = ({ item, isPayment }) => {
               <div className="product-count">
                 <span
                   className="count-btn"
-                  onClick={() => debouncedDecreaseQuantity(item, user)}
+                  onClick={() => descreaseQuantity(item, user)}
                 >
                   -
                 </span>
                 <input type="text" readOnly="readonly" value={item?.quantity} />
                 <span
                   className="count-btn"
-                  onClick={() => debouncedIncreaseQuantity(item, user)}
+                  onClick={() => increaseQuantity(item, user)}
                 >
                   +
                 </span>

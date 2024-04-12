@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import customFetch from "../utils/customFetch";
 
 const initialState = {
-  cart: [],
+  cartItem: null,
   cartTotal: 0,
 };
 
@@ -11,55 +11,54 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     setCart: (state, action) => {
-      state.cart = action.payload.cart;
+      state.cartItem = action.payload.cartItem;
     },
 
-    addToCart: (state, action) => {
+    addToCart: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          const cart = await customFetch.post("/cart/add-to-cart", {
+        const cart = await customFetch
+          .post("/cart/add-to-cart", {
             product: action.payload.product,
-            variant: action.payload.variant,
-          });
-          setCart(cart);
-        };
+            variant: action.payload.variant, // array
+          })
+          .then(({ data }) => data);
       }
     },
 
-    removeFromCart: (state, action) => {
+    removeFromCart: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          const cart = await customFetch.post("/cart/remove-from-cart", {
+        const cart = await customFetch
+          .post("/cart/remove-from-cart", {
             cartItem: action.payload.item,
-          });
-          setCart(cart);
-        };
+          })
+          .then(({ data }) => data);
+        state.cartItem = cart.cartItem;
       }
     },
 
     emptyCart: (state, action) => {
-      state.cart = [];
+      state.cartItem = [];
     },
 
-    increaseQuantity: (state, action) => {
+    increaseQuantity: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          const cart = await customFetch.post("/cart/inc-qty", {
+        const cart = await customFetch
+          .post("/cart/inc-qty", {
             cartItem: action.payload.item,
-          });
-          setCart(cart);
-        };
+          })
+          .then(({ data }) => data);
+        state.cartItem = cart.cartItem;
       }
     },
 
-    decreaseQuantity: (state, action) => {
+    decreaseQuantity: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          const cart = await customFetch.post("/cart/des-qty", {
+        const cart = await customFetch
+          .post("/cart/des-qty", {
             cartItem: action.payload.item,
-          });
-          setCart(cart);
-        };
+          })
+          .then(({ data }) => data);
+        state.cartItem = cart.cartItem;
       }
     },
   },

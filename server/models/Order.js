@@ -15,12 +15,14 @@ const orderSchema = mongoose.Schema({
         price: Number,
         images: Array,
       },
-      variant: {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "ProductVariation" },
-        name: String,
-        value: String,
-        price: Number,
-      },
+      variant: [
+        {
+          id: { type: mongoose.Schema.Types.ObjectId, ref: "ProductVariation" },
+          name: String,
+          value: String,
+          price: Number,
+        },
+      ],
       quantity: {
         type: Number,
       },

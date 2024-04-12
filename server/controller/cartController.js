@@ -7,38 +7,69 @@ import { NotFoundError } from "../errors/customErrors.js";
 
 export const addToCart = async (req, res) => {
   try {
-    const { product, variant } = req.body;
+    let { product, variant } = req.body;
     const { userId } = req.user;
 
     const isProductExist = await Product.findById(product._id);
     if (!isProductExist) throw new NotFoundError("Product Not Found");
 
-    const isProductVariantExist = await ProductVariation.findById(variant._id);
-    if (!isProductVariantExist)
-      throw new NotFoundError("Product Variant Not Found");
-
-    let cart = await Cart.findOne({ user: userId });
+    let cart;
     let isAlreadyInCart = false;
-    if (cart) {
-      isAlreadyInCart = cart.cartItem.some(
-        (item) => item.product.toString() === product._id.toString()
-      );
+
+    // check if product in cart
+    if (variant && variant.length > 0) {
+      const variantIds = variant?.map((item) => item._id) || [];
+      cart = await Cart.findOne({
+        user: userId,
+        cartItem: {
+          $elemMatch: {
+            product: product._id,
+            variant: { $all: variantIds },
+          },
+        },
+      });
+      if (cart) isAlreadyInCart = true;
+    } else {
+      cart = await Cart.findOne({
+        user: userId,
+        "cartItem.product": product._id,
+      });
+      if (cart) isAlreadyInCart = true;
     }
 
+    // inc qty or add product
     if (isAlreadyInCart) {
-      cart = await Cart.findOneAndUpdate(
-        {
-          user: userId,
-          "cartItem.product": product._id,
-          "cartItem.variant": variant._id,
-        },
-        { $inc: { "cartItem.$.quantity": 1 } },
-        { new: true }
-      );
+      // inc qty
+      if (variant && variant.length > 0) {
+        const variantIds = variant.map((item) => item._id) || [];
+        cart = await Cart.findOneAndUpdate(
+          {
+            user: userId,
+            cartItem: {
+              $elemMatch: {
+                product: product._id,
+                variant: { $all: variantIds },
+              },
+            },
+          },
+          { $inc: { "cartItem.$.quantity": 1 } },
+          { new: true }
+        );
+      } else {
+        cart = await Cart.findOneAndUpdate(
+          {
+            user: userId,
+            "cartItem.product": product._id,
+          },
+          { $inc: { "cartItem.$.quantity": 1 } },
+          { new: true }
+        );
+      }
     } else {
+      // add product
       const cartItemToAdd = {
         product: product._id,
-        variant: variant._id,
+        variant: variant,
         quantity: 1,
       };
 
@@ -61,15 +92,34 @@ export const increaseQuantity = async (req, res) => {
     const { cartItem } = req.body;
     const { userId } = req.user;
 
-    const cart = await Cart.findOneAndUpdate(
-      {
-        user: userId,
-        "cartItem.product": cartItem.product._id,
-        "cartItem.variant": cartItem.variant._id,
-      },
-      { $inc: { "cartItem.$.quantity": 1 } },
-      { new: true }
-    );
+    let cart;
+    if (cartItem.variant.length > 0) {
+      const variantIds = cartItem.variant.map((item) => item._id) || [];
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
+          cartItem: {
+            $elemMatch: {
+              product: cartItem.product._id,
+              variant: { $all: variantIds },
+            },
+          },
+        },
+        { $inc: { "cartItem.$.quantity": 1 } },
+        { new: true }
+      )
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
+    } else {
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
+          "cartItem.product": cartItem.product._id,
+        },
+        { $inc: { "cartItem.$.quantity": 1 } },
+        { new: true }
+      ).populate("cartItem.product");
+    }
 
     res.status(StatusCodes.OK).json(cart);
   } catch (error) {
@@ -83,16 +133,40 @@ export const descreaseQuantity = async (req, res) => {
     const { cartItem } = req.body;
     const { userId } = req.user;
 
-    const cart = await Cart.findOneAndUpdate(
-      {
-        user: userId,
-        "cartItem.product": cartItem.product._id,
-        "cartItem.variant": cartItem.variant._id,
-        "cartItem.quantity": { $gt: 0 },
-      },
-      { $inc: { "cartItem.$.quantity": -1 } },
-      { new: true }
-    );
+    let cart;
+    if (cartItem.variant.length > 0) {
+      const variantIds = cartItem.variant.map((item) => item._id) || [];
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
+          cartItem: {
+            $elemMatch: {
+              product: cartItem.product._id,
+              variant: { $all: variantIds },
+              quantity: { $gt: 1 },
+            },
+          },
+        },
+        { $inc: { "cartItem.$.quantity": -1 } },
+        { new: true }
+      )
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
+    } else {
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
+          cartItem: {
+            $elemMatch: {
+              product: cartItem.product._id,
+              quantity: { $gt: 1 },
+            },
+          },
+        },
+        { $inc: { "cartItem.$.quantity": -1 } },
+        { new: true }
+      ).populate("cartItem.product");
+    }
 
     res.status(StatusCodes.OK).json(cart);
   } catch (error) {
@@ -106,23 +180,47 @@ export const removeFromCart = async (req, res) => {
     const { cartItem } = req.body;
     const { userId } = req.user;
 
-    const cart = await Cart.findOneAndUpdate(
-      {
-        user: userId,
-        "cartItem.product": cartItem.product._id,
-        "cartItem.variant": cartItem.variant._id,
-        "cartItem.quantity": { $gt: 0 },
-      },
-      {
-        $pull: {
+    let cart;
+    if (cartItem.variant.length > 0) {
+      const variantIds = cartItem.variant.map((item) => item._id) || [];
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
           cartItem: {
-            product: cartItem.product._id,
-            variant: cartItem.variant._id,
+            $elemMatch: {
+              product: cartItem.product._id,
+              variant: { $all: variantIds },
+            },
           },
         },
-      },
-      { new: true }
-    );
+        {
+          $pull: {
+            cartItem: {
+              $elemMatch: {
+                product: cartItem.product._id,
+                variant: { $all: variantIds },
+              },
+            },
+          },
+        },
+        { new: true }
+      )
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
+    } else {
+      cart = await Cart.findOneAndUpdate(
+        {
+          user: userId,
+          "cartItem.product": cartItem.product._id,
+        },
+        {
+          $pull: {
+            cartItem: { product: cartItem.product._id },
+          },
+        },
+        { new: true }
+      ).populate("cartItem.product");
+    }
 
     res.status(StatusCodes.OK).json(cart);
   } catch (error) {
