@@ -4,6 +4,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import EventInfor from "../components/EventPage/EventInfor.jsx";
 import EventProduct from "../components/EventPage/EventProduct.jsx";
 import EventCoupon from "../components/EventPage/EventCoupon.jsx";
+import EventCheck from "../components/EventPage/EventCheck.jsx";
 import {
   Button,
   message,
@@ -67,10 +68,10 @@ const steps = [
     title: "Coupon",
     content: <EventCoupon />,
   },
-  // {
-  //   title: "Check",
-  //   content: <EventCoupon />,
-  // },
+  {
+    title: "Check",
+    content: <EventCheck />,
+  },
 ];
 
 function Event() {
