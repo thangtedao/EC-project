@@ -18,7 +18,7 @@ export const addToCart = async (req, res) => {
 
     // check if product in cart
     if (variant && variant.length > 0) {
-      const variantIds = variant?.map((item) => item._id) || [];
+      const variantIds = variant?.map((item) => item);
       cart = await Cart.findOne({
         user: userId,
         cartItem: {
@@ -41,7 +41,7 @@ export const addToCart = async (req, res) => {
     if (isAlreadyInCart) {
       // inc qty
       if (variant && variant.length > 0) {
-        const variantIds = variant.map((item) => item._id) || [];
+        const variantIds = variant.map((item) => item);
         cart = await Cart.findOneAndUpdate(
           {
             user: userId,
@@ -94,7 +94,7 @@ export const increaseQuantity = async (req, res) => {
 
     let cart;
     if (cartItem.variant.length > 0) {
-      const variantIds = cartItem.variant.map((item) => item._id) || [];
+      const variantIds = cartItem.variant.map((item) => item);
       cart = await Cart.findOneAndUpdate(
         {
           user: userId,
@@ -135,7 +135,7 @@ export const descreaseQuantity = async (req, res) => {
 
     let cart;
     if (cartItem.variant.length > 0) {
-      const variantIds = cartItem.variant.map((item) => item._id) || [];
+      const variantIds = cartItem.variant.map((item) => item);
       cart = await Cart.findOneAndUpdate(
         {
           user: userId,
@@ -182,24 +182,14 @@ export const removeFromCart = async (req, res) => {
 
     let cart;
     if (cartItem.variant.length > 0) {
-      const variantIds = cartItem.variant.map((item) => item._id) || [];
+      const variantIds = cartItem.variant.map((item) => item);
       cart = await Cart.findOneAndUpdate(
-        {
-          user: userId,
-          cartItem: {
-            $elemMatch: {
-              product: cartItem.product._id,
-              variant: { $all: variantIds },
-            },
-          },
-        },
+        { user: userId },
         {
           $pull: {
             cartItem: {
-              $elemMatch: {
-                product: cartItem.product._id,
-                variant: { $all: variantIds },
-              },
+              product: cartItem.product._id,
+              variant: { $all: variantIds },
             },
           },
         },
@@ -208,16 +198,17 @@ export const removeFromCart = async (req, res) => {
         .populate("cartItem.product")
         .populate("cartItem.variant");
     } else {
-      cart = await Cart.findOneAndUpdate(
-        {
-          user: userId,
-          "cartItem.product": cartItem.product._id,
-        },
-        {
-          $pull: {
-            cartItem: { product: cartItem.product._id },
-          },
-        },
+      cart = await Cart.findOne({
+        user: userId,
+      });
+
+      cart.cartItem = cart.cartItem.filter(
+        (item) => item.product.toString() !== cartItem.product._id.toString()
+      );
+
+      cart = await Cart.findByIdAndUpdate(
+        cart._id,
+        { cartItem: cart.cartItem },
         { new: true }
       ).populate("cartItem.product");
     }

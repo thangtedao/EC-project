@@ -1,26 +1,26 @@
-import { useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import TextField from "@mui/material/TextField";
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
-import customFetch from "../utils/customFetch";
-import { Helmet, HelmetProvider } from "react-helmet-async";
-import { PayPalButton } from "../components";
+import { CartItem } from "../components/index.js";
 import { toast } from "react-toastify";
+import { Form, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import customFetch from "../utils/customFetch.js";
+import { store } from "../state/store.js";
+import { login } from "../state/userSlice.js";
 import NovaIcon from "../assets/LogoNova.svg";
+import { Button, message, Steps } from "antd";
+import { PaymentInfo } from "../components/index.js";
+import { PaymentCheckout } from "../components/index.js";
 
 const Wrapper = styled.div`
   width: 650px;
-  height: fit-content;
-  min-height: 800px;
+  height: 100%;
+  padding-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-
   .cart-header {
     padding: 1rem;
     text-align: center;
@@ -36,33 +36,26 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 1rem;
   }
-  .header-action {
-    //padding: 1rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+
   .product-item-outer {
+    width: 100%;
     background-color: white;
     border: 1px solid lightgray;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    padding: 0.5rem 0;
+    padding: 0.5rem 1rem;
   }
   .product-item {
     position: relative;
     display: flex;
-    //padding-left: 1rem;
-  }
-  .checkbox-btn {
-    width: 30px;
-    height: 30px;
+    height: 80px;
   }
   .product-image {
     width: 20%;
+    height: inherit;
     img {
-      width: 100%;
+      height: inherit;
     }
   }
   .product-info {
@@ -73,15 +66,33 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .product-info-name {
+    font-size: 0.9rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .product-info-price {
-    color: #cf0000;
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .count {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+  .main-price {
+    color: #cf0000;
+    display: flex;
+    gap: 1rem;
+    .strike {
+      font-size: 0.95rem;
+      color: #707070;
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+    }
   }
   .product-count {
     color: black;
@@ -103,38 +114,34 @@ const Wrapper = styled.div`
       cursor: pointer;
     }
   }
-
-  .info-payment {
-    background-color: white;
+  .form-info {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-top: 1rem;
+    p {
+      text-transform: uppercase;
+    }
+  }
+  .form-info-input {
+    background-color: white;
+    border: 1px solid lightgray;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 0.5rem 1rem 1rem 1rem;
+    gap: 1.5rem;
+  }
+  .form-address {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 2rem;
+    column-gap: 1rem;
+    background-color: white;
     border: 1px solid lightgray;
     border-radius: 10px;
-    padding: 0.5rem;
+    padding: 1rem;
   }
-  .flex-between {
-    display: flex;
-    justify-content: space-between;
-    //padding: 0.5rem 1rem 1rem 1rem;
-    padding: 0.25rem 1rem;
-    gap: 1rem;
-  }
-  .btn-apply {
-    width: 5rem;
-    margin-top: 0.75rem;
-    height: 2.3rem;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: none;
-    background: #d70018;
-    color: white;
-    cursor: pointer;
-  }
-  .payment-title {
-    margin: 1rem 0 0.5rem 0;
-  }
-
   .bottom-bar {
     width: 100%;
     align-self: flex-end;
@@ -163,232 +170,136 @@ const Wrapper = styled.div`
   }
 `;
 
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    const isValidAddress = (field) => field && field.trim() !== "";
+
+    if (
+      isValidAddress(data.city) &&
+      isValidAddress(data.district) &&
+      isValidAddress(data.ward) &&
+      isValidAddress(data.home)
+    ) {
+      await customFetch.patch("/user/update-user", formData);
+      const user = (await customFetch.get("/user/current-user")).data.user;
+      store.dispatch(login({ user }));
+      return redirect("/cart/payment");
+    }
+
+    if (
+      !isValidAddress(data.cityC) ||
+      !isValidAddress(data.districtC) ||
+      !isValidAddress(data.wardC) ||
+      !isValidAddress(data.homeC)
+    ) {
+      return toast.warning("Thông tin không hợp lệ");
+    }
+
+    return redirect("/cart/payment");
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 export const loader = async () => {
   try {
-    let { user } = JSON.parse(localStorage.getItem("persist:user"));
-    let { cart } = JSON.parse(localStorage.getItem("persist:cart"));
-    if (cart === "[]") return redirect("/cart");
-    if (user === "null") return redirect("/login");
-
     window.scrollTo(0, 0);
-    const response = await customFetch.get("/user/cart");
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
 
-    return response.data.cart;
+    let cartItem;
+    if (user) {
+      const cartData = await customFetch
+        .get("/cart/get-cart")
+        .then(({ data }) => data);
+      cartItem = cartData.cartItem;
+    }
+    return { cartItem };
   } catch (error) {
+    if (error?.response?.status === 401) return redirect("/login");
     return error;
   }
 };
 
 const Payment = () => {
-  const navigate = useNavigate();
-  const couponTextFieldRef = useRef();
+  const { cartItem } = useLoaderData();
   const user = useSelector((state) => state.user.user);
-  const cart = useLoaderData();
-  console.log(cart)
+  const navigate = useNavigate();
 
-  const [paymentMethod, setPaymentMethod] = useState("paypal");
-  const [totalAfterDiscount, setTotalAfterDiscount] = useState(cart.cartTotal);
-  const [coupon, setCoupon] = useState(null);
-  const [paypalButtonKey, setPaypalButtonKey] = useState(0);
+  const steps = [
+    {
+      title: "Info",
+      content: <PaymentInfo cartItem={cartItem} />,
+    },
+    {
+      title: "Checkout",
+      content: <PaymentCheckout />,
+    },
+  ];
 
-  const changePaymentMethod = (event) => {
-    setPaymentMethod(event.target.value);
+  // antd
+  const [current, setCurrent] = useState(0);
+  const next = () => {
+    setCurrent(current + 1);
   };
-
-  const totalPrice = cart.cartTotal;
-  // const totalPrice =
-  //   cart?.products.reduce(
-  //     (accumulator, item) => accumulator + item.salePrice * item.count,
-  //     0
-  //   ) || 0;
-
-  const handleCheckoutStripe = async () => {
-    try {
-      return;
-    } catch (error) {
-      toast.error(error?.response?.data?.msg);
-    }
+  const prev = () => {
+    setCurrent(current - 1);
   };
-
-  const handleCheckoutVnPay = async(totalPrice)=>{
-    try {
-      localStorage.setItem('cart', JSON.stringify(cart));
-      localStorage.setItem('coupon', JSON.stringify(coupon));
-
-      // Gửi yêu cầu thanh toán đến backend
-      const response = await fetch('http://localhost:3001/api/order/create_payment_url', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ amount: totalPrice, bankCode:'', language:'vn' })
-      });
-      // const response = await customFetch('/order/create_payment_url',{ amount: amount, bankCode:'', locale:'vn' })
-      const data = await response.json();
-      // Chuyển hướng người dùng đến cổng thanh toán của VNPAY
-      // console.log(response);
-
-      // console.log(data);
-      // const url = new URL(data.redirectUrl);
-      // url.searchParams.append('coupon', coupon);
-      // url.searchParams.append('cart', cart);
-
-      // console.log(url)
-      window.location.href = data.redirectUrl
-      } catch (error) {
-          console.error('Lỗi vnpay button:', error);
-      }
-  }
-
-  const applyCoupon = async () => {
-    if (coupon) {
-      toast.success("Đã áp mã giảm giá");
-      return;
-    }
-    const fetchCoupon = await customFetch
-      .get(`coupon/${couponTextFieldRef.current.value}`)
-      .then((response) => response.data.coupon);
-    if (!fetchCoupon) {
-      toast.warning("Mã giảm giá không hợp lệ");
-    } else {
-      const currentDate = new Date();
-      const expiryDate = new Date(fetchCoupon.expiry);
-
-      if (currentDate > expiryDate) {
-        toast.warning("Mã giảm giá đã hết hạn sử dụng");
-        return;
-      }
-      setCoupon(fetchCoupon);
-      setPaypalButtonKey((prevKey) => prevKey + 1);
-      const totalAfterDiscount = (
-        totalPrice -
-        (totalPrice * fetchCoupon.discount) / 100
-      ).toFixed(0);
-      setTotalAfterDiscount(totalAfterDiscount);
-      toast.success("Áp mã giảm giá thành công");
-    }
+  const items = steps.map((item) => ({
+    key: item.title,
+    title: item.title,
+  }));
+  const contentStyle = {
+    height: "fit-content",
+    textAlign: "center",
+    borderRadius: 5,
+    marginTop: 16,
   };
+  //antd
 
   return (
     <HelmetProvider>
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Payment</title>
+          <title>Payment Info</title>
           <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
-        <div className="cart-header">
-          <a onClick={() => navigate("/cart/payment-info")}>
-            <ArrowBackIcon />
-          </a>
-          Thanh toán
-        </div>
-        <div className="info-payment">
-          <div className="flex-between">
-            <TextField
-              label="Mã giảm giá"
-              variant="standard"
-              placeholder="Nhập mã giảm giá (chỉ áp dụng 1 lần)"
-              sx={{ width: "85%" }}
-              inputRef={couponTextFieldRef}
-            />
-            <button className="btn-apply" onClick={applyCoupon}>
-              Áp dụng
-            </button>
-          </div>
-          <div className="flex-between">
-            <p>Số lượng sản phẩm</p>
-            {cart?.products.reduce((acc, item) => acc + item.count, 0)}
-          </div>
-          <div className="flex-between">
-            <p>Tiền hàng (tạm tính)</p>
-            {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
-          </div>
-          <div className="flex-between">
-            <p>Phí vận chuyển</p>
-            Miễn phí
-          </div>
-          <div className="flex-between">
-            <p>Tổng tiền (đã gồm VAT)</p>
-            {totalAfterDiscount
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-            ₫
-          </div>
-        </div>
+        <Steps current={current} items={items} />
+        <div style={contentStyle}>{steps[current].content}</div>
 
-        <div>
-          <div className="payment-title">PHƯƠNG THỨC THANH TOÁN</div>
-          <RadioGroup
-            sx={{ marginLeft: "1rem" }}
-            value={paymentMethod}
-            onChange={changePaymentMethod}
-            name="radio-buttons-group"
-          >
-            <FormControlLabel
-              value="paypal"
-              control={<Radio />}
-              label="PayPal or Credit Card"
-            />
-            <FormControlLabel
-              value="stripe"
-              control={<Radio />}
-              label="Stripe"
-            />
-            <FormControlLabel
-              value="vnpay"
-              control={<Radio />}
-              label="VNPAY"
-            />
-          </RadioGroup>
-        </div>
-
-        <div className="payment-title">THÔNG TIN NHẬN HÀNG</div>
-        <div className="info-payment">
-          <div className="flex-between">
-            <p>Khách hàng:</p>
-            {user?.fullName}
-          </div>
-          <div className="flex-between">
-            <p>Số điện thoại:</p>
-            {user?.phone}
-          </div>
-          <div className="flex-between">
-            <p>Email:</p>
-            {user?.email}
-          </div>
-          <div className="flex-between">
-            <p>Nhận hàng tại:</p>
-            <p style={{ width: "70%" }}>
-              {user?.address &&
-                `${user?.address.city}, ${user?.address.district}, ${user?.address.ward}, ${user?.address.home}`}
-            </p>
-          </div>
-        </div>
-
-        <div className="bottom-bar">
-          <div className="price-temp">
-            <p>Tổng tiền tạm tính:</p>
-            {totalAfterDiscount}₫
-          </div>
-          {paymentMethod === "paypal" && (
-            <PayPalButton
-              key={paypalButtonKey}
-              cart={cart}
-              coupon={coupon}
-              user={user}
-            />
+        <div
+          style={{
+            marginTop: 24,
+          }}
+        >
+          {current < steps.length - 1 && (
+            <Button type="primary" onClick={() => next()}>
+              Next
+            </Button>
           )}
-          {paymentMethod === "stripe" && 
-            (<button className="btn" onClick={() => handleCheckoutStripe()}>
-              Thanh toán Stripe
-            </button>
+          {current === steps.length - 1 && (
+            <Button
+              type="primary"
+              onClick={() => message.success("Processing complete!")}
+            >
+              Done
+            </Button>
           )}
-          {paymentMethod === "vnpay" && 
-            (<button className="btn" onClick={() => handleCheckoutVnPay(totalAfterDiscount)}>
-              Thanh toán VNPAY
-            </button>
+          {current > 0 && (
+            <Button
+              style={{
+                margin: "0 8px",
+              }}
+              onClick={() => prev()}
+            >
+              Previous
+            </Button>
           )}
         </div>
       </Wrapper>
