@@ -16,6 +16,7 @@ import {
 } from "../components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/LogoNova.svg";
+import { Flex, Radio } from "antd";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -256,16 +257,11 @@ const Product = () => {
   const { product, variation } = useLoaderData();
   const user = useSelector((state) => state.user.user);
 
-  const [variant, setVariant] = useState();
-  // const [variant, setVariant] = useState(
-  //   [variation?.Color[0], variation?.RAM[1]] || []
-  // );
-
-  console.log(variant);
-
   const addToCart = debounce(async (product, variant, user) => {
+    if (Object.keys(variant).length !== 0) variant = Object.values(variant);
+    else variant = [];
     const cart = await customFetch
-      .post("/cart/add-to-cart", {
+      .patch("/cart/add-to-cart", {
         product,
         variant,
       })
@@ -278,6 +274,25 @@ const Product = () => {
         theme: "colored",
       });
   }, 100);
+
+  // Khởi tạo state để lưu trữ giá trị đầu tiên cho mỗi loại biến thể
+  const [selectedVariants, setselectedVariants] = useState(() => {
+    const initialValues = {};
+    Object.entries(variation).forEach(([key, items]) => {
+      initialValues[key] = items[0]._id;
+    });
+    return initialValues;
+  });
+
+  // Hàm để cập nhật giá trị được chọn cho mỗi loại biến thể
+  const handleChange = (key, value) => {
+    setselectedVariants({
+      ...selectedVariants,
+      [key]: value,
+    });
+  };
+
+  console.log(selectedVariants);
 
   return (
     <HelmetProvider>
@@ -323,10 +338,16 @@ const Product = () => {
                 {Object.entries(variation)?.map(([key, items]) => (
                   <div key={key}>
                     <p>{key}</p>
-                    {items.map((item) => (
-                      // <ProductType key={item._id} item={item} />
-                      <p key={item._id}>{item.variationValue}</p>
-                    ))}
+                    <Radio.Group
+                      value={selectedVariants[key]}
+                      onChange={(e) => handleChange(key, e.target.value)}
+                    >
+                      {items.map((item) => (
+                        <Radio.Button value={item._id} key={item._id}>
+                          {item.variationValue}
+                        </Radio.Button>
+                      ))}
+                    </Radio.Group>
                   </div>
                 ))}
               </div>
@@ -355,7 +376,7 @@ const Product = () => {
                 </button>
                 <button
                   className="btn-addtocart"
-                  onClick={() => [addToCart(product, variant, user)]}
+                  onClick={() => [addToCart(product, selectedVariants, user)]}
                 >
                   <AddShoppingCartIcon />
                   <p>Thêm vào giỏ</p>

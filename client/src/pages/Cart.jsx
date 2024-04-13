@@ -161,8 +161,6 @@ export const loader = async () => {
       .get("/user/current-user")
       .then(({ data }) => data.user);
 
-    if (!user) redirect("/login");
-
     let cart;
     if (user) {
       const cartData = await customFetch
@@ -170,8 +168,10 @@ export const loader = async () => {
         .then(({ data }) => data);
       cart = cartData.cartItem;
     }
+    window.scrollTo(0, 0);
     return { cart };
   } catch (error) {
+    if (error?.response?.status === 401) return redirect("/login");
     return error;
   }
 };
@@ -179,7 +179,6 @@ export const loader = async () => {
 const CartContext = createContext();
 
 const Cart = () => {
-  window.scrollTo(0, 0);
   const navigate = useNavigate();
   const { cart } = useLoaderData();
   const [cartItem, setCartItem] = useState(cart);
@@ -195,31 +194,31 @@ const Cart = () => {
     cartItem?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
   const submitPayment = () => {
-    if (!user) return navigate("/login");
-    return navigate("payment-info");
+    if (!user) navigate("/login");
+    else navigate("payment");
   };
 
-  const increaseQuantity = debounce(async (item, user) => {
+  const increaseQuantity = async (item, user) => {
     const cart = await customFetch
-      .post("/cart/inc-qty", {
+      .patch("/cart/inc-qty", {
         cartItem: item,
       })
       .then(({ data }) => data);
     cart && setCartItem(cart.cartItem);
-  }, 300);
+  };
 
-  const descreaseQuantity = debounce(async (item, user) => {
+  const descreaseQuantity = async (item, user) => {
     const cart = await customFetch
-      .post("/cart/des-qty", {
+      .patch("/cart/des-qty", {
         cartItem: item,
       })
       .then(({ data }) => data);
     cart && setCartItem(cart.cartItem);
-  }, 300);
+  };
 
   const removeFromCart = async (item, user) => {
     const cart = await customFetch
-      .post("/cart/remove-from-cart", {
+      .patch("/cart/remove-from-cart", {
         cartItem: item,
       })
       .then(({ data }) => data);
@@ -274,7 +273,7 @@ const Cart = () => {
                   {totalPrice}₫
                 </div>
 
-                <button className="btn" onClick={() => submitPayment}>
+                <button className="btn" onClick={() => submitPayment()}>
                   Buy Now {`(${totalItem})`}
                 </button>
               </div>

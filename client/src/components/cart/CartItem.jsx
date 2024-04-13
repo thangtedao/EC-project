@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useCartContext } from "../pages/Cart";
+import { useCartContext } from "../../pages/Cart";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const CartItem = ({ item, isPayment }) => {
@@ -25,12 +25,16 @@ const CartItem = ({ item, isPayment }) => {
               {item?.product?.name}
             </NavLink>
 
-            {!isPayment && (
-              <DeleteIcon
-                sx={{ cursor: "pointer" }}
-                onClick={() => removeFromCart(item, user)}
-              />
-            )}
+            <DeleteIcon
+              sx={{ cursor: "pointer" }}
+              onClick={() => removeFromCart(item, user)}
+            />
+          </div>
+
+          <div>
+            {item?.variant?.map((i) => {
+              return <div key={i._id}>{i.variationValue}</div>;
+            })}
           </div>
 
           <div className="product-info-price">
@@ -49,25 +53,21 @@ const CartItem = ({ item, isPayment }) => {
               </span>
             </div>
 
-            {!isPayment ? (
-              <div className="product-count">
-                <span
-                  className="count-btn"
-                  onClick={() => descreaseQuantity(item, user)}
-                >
-                  -
-                </span>
-                <input type="text" readOnly="readonly" value={item?.quantity} />
-                <span
-                  className="count-btn"
-                  onClick={() => increaseQuantity(item, user)}
-                >
-                  +
-                </span>
-              </div>
-            ) : (
-              <div className="count">Số lượng: {item?.quantity}</div>
-            )}
+            <div className="product-count">
+              <span
+                className="count-btn"
+                onClick={() => descreaseQuantity(item, user)}
+              >
+                -
+              </span>
+              <input type="text" readOnly="readonly" value={item?.quantity} />
+              <span
+                className="count-btn"
+                onClick={() => increaseQuantity(item, user)}
+              >
+                +
+              </span>
+            </div>
           </div>
         </div>
       </div>

@@ -10,10 +10,10 @@ import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/add-to-cart", authenticateUser, addToCart);
-router.post("/remove-from-cart", authenticateUser, removeFromCart);
-router.post("/inc-qty", authenticateUser, increaseQuantity);
-router.post("/des-qty", authenticateUser, descreaseQuantity);
+router.patch("/add-to-cart", authenticateUser, addToCart);
+router.patch("/remove-from-cart", authenticateUser, removeFromCart);
+router.patch("/inc-qty", authenticateUser, increaseQuantity);
+router.patch("/des-qty", authenticateUser, descreaseQuantity);
 router.get("/get-cart", authenticateUser, getUserCart);
 
 export default router;

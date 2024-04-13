@@ -11,7 +11,6 @@ import {
   Product,
   Cart,
   Payment,
-  PaymentInfo,
   Order,
   Wishlist,
   Profile,
@@ -24,7 +23,6 @@ import { action as loginAction } from "./pages/Login";
 import { action as registerAction } from "./pages/Register";
 import { action as productAction } from "./pages/Product";
 import { action as profileAction } from "./pages/Profile";
-import { action as paymentInfoAction } from "./pages/PaymentInfo";
 
 /* LOADER */
 import { loader as mainLayoutLoader } from "./pages/MainLayout";
@@ -32,7 +30,6 @@ import { loader as homeLoader } from "./pages/Home";
 import { loader as productLoader } from "./pages/Product";
 import { loader as categoryLoader } from "./pages/Category";
 import { loader as cartLoader } from "./pages/Cart";
-import { loader as paymentInfoLoader } from "./pages/PaymentInfo";
 import { loader as paymentLoader } from "./pages/Payment";
 import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
@@ -73,12 +70,6 @@ const router = createBrowserRouter([
             index: true,
             element: <Cart />,
             loader: cartLoader,
-          },
-          {
-            path: "payment-info",
-            element: <PaymentInfo />,
-            action: paymentInfoAction,
-            loader: paymentInfoLoader,
           },
           {
             path: "payment",
