@@ -12,3 +12,7 @@ export { default as PaymentInfo } from "../pages/PaymentInfo";
 export { default as Order } from "../pages/Order";
 export { default as Wishlist } from "../pages/Wishlist";
 export { default as Profile } from "../pages/Profile";
+export { default as VnpayPayment } from "../pages/VnPay";
+export { default as VnPay_return } from "../pages/VnPay_return";
+
+

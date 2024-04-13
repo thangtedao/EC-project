@@ -5,6 +5,9 @@ const productVariationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
   },
+  image: {
+    type: String,
+  },
   variationName: {
     type: String,
   },

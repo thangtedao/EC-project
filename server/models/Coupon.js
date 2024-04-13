@@ -12,15 +12,29 @@ const couponSchema = mongoose.Schema({
   },
   discountType: {
     type: String,
-    enum: ["percentage", "fixed amount"],
-    default: "fixed amount",
+    enum: ["percentage", "fixed"],
+    default: "fixed",
   },
   discountValue: {
     type: Number,
   },
+  numberOfUses: {
+    type: Number,
+    default: 1,
+  },
   description: {
     type: String,
     default: "",
+  },
+  promotionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Promotion",
+    default: null,
+  },
+  targetCustomers: {
+    type: String,
+    enum: ["member", "silver", "gold", "diamond"],
+    default: "member",
   },
   startDate: {
     type: Date,

@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
-import { setCart, setCartTotal } from "../state/cartSlice.js";
 import NovaIcon from "../assets/LogoNova.svg";
 
 const Wrapper = styled.section`
@@ -73,34 +72,39 @@ export const action = async ({ request }) => {
       .then(({ data }) => data.user);
 
     if (user.isBlocked) {
-      toast.success("Bạn đã bị block");
+      toast.success("You are blocked");
       await customFetch.get("/auth/logout");
-      dispatch(logout());
       return redirect("/login");
     }
+
     if (token) {
-      store.dispatch(login({ user: user, token: token }));
+      store.dispatch(
+        login({
+          user: { fullName: user.fullName, avatar: user.avatar },
+          token: token,
+        })
+      );
     }
 
-    const response = await customFetch.get("/user/cart");
-    if (response.data.cart) {
-      const cart = response.data.cart?.products?.map((item) => {
-        return {
-          _id: item.product._id,
-          name: item.product.name,
-          price: item.product.price,
-          salePrice: item.product.salePrice,
-          images: item.product.images,
-          count: item.count,
-          category: item.product.category,
-          slug: item.product.slug,
-        };
-      });
-      store.dispatch(setCartTotal(response.data.cart.cartTotal));
-      store.dispatch(setCart(cart));
-    } else {
-      store.dispatch(setCart([]));
-    }
+    // const response = await customFetch.get("/user/cart");
+    // if (response.data.cart) {
+    //   const cart = response.data.cart?.products?.map((item) => {
+    //     return {
+    //       _id: item.product._id,
+    //       name: item.product.name,
+    //       price: item.product.price,
+    //       salePrice: item.product.salePrice,
+    //       images: item.product.images,
+    //       count: item.count,
+    //       category: item.product.category,
+    //       slug: item.product.slug,
+    //     };
+    //   });
+    //   store.dispatch(setCartTotal(response.data.cart.cartTotal));
+    //   store.dispatch(setCart(cart));
+    // } else {
+    //   store.dispatch(setCart([]));
+    // }
 
     toast.success("Login successful");
     return redirect("/");
@@ -130,16 +134,16 @@ const Login = () => {
         </Helmet>
 
         <Form method="post" className="form-login">
-          <h4>Đăng nhập</h4>
+          <h4>Login</h4>
           <FormRow type="text" name="email" defaultValue="" />
           <FormRow type="password" name="password" defaultValue="" />
           <button type="submit" className="btn-block" disabled={isSubmitting}>
-            {isSubmitting ? "đang đăng nhập..." : "đăng nhập"}
+            {isSubmitting ? "..." : "Login"}
           </button>
           <p>
-            Bạn chưa có tài khoản?
+            Don't have account?
             <Link to="/register" className="member-btn">
-              Đăng ký ngay
+              Register Now
             </Link>
           </p>
         </Form>

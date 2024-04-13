@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import Radio from "@mui/material/Radio";
@@ -184,6 +184,7 @@ const Payment = () => {
   const couponTextFieldRef = useRef();
   const user = useSelector((state) => state.user.user);
   const cart = useLoaderData();
+  console.log(cart)
 
   const [paymentMethod, setPaymentMethod] = useState("paypal");
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(cart.cartTotal);
@@ -201,13 +202,43 @@ const Payment = () => {
   //     0
   //   ) || 0;
 
-  const handleCheckout = async () => {
+  const handleCheckoutStripe = async () => {
     try {
       return;
     } catch (error) {
       toast.error(error?.response?.data?.msg);
     }
   };
+
+  const handleCheckoutVnPay = async(totalPrice)=>{
+    try {
+      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem('coupon', JSON.stringify(coupon));
+
+      // Gửi yêu cầu thanh toán đến backend
+      const response = await fetch('http://localhost:3001/api/order/create_payment_url', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ amount: totalPrice, bankCode:'', language:'vn' })
+      });
+      // const response = await customFetch('/order/create_payment_url',{ amount: amount, bankCode:'', locale:'vn' })
+      const data = await response.json();
+      // Chuyển hướng người dùng đến cổng thanh toán của VNPAY
+      // console.log(response);
+
+      // console.log(data);
+      // const url = new URL(data.redirectUrl);
+      // url.searchParams.append('coupon', coupon);
+      // url.searchParams.append('cart', cart);
+
+      // console.log(url)
+      window.location.href = data.redirectUrl
+      } catch (error) {
+          console.error('Lỗi vnpay button:', error);
+      }
+  }
 
   const applyCoupon = async () => {
     if (coupon) {
@@ -305,6 +336,11 @@ const Payment = () => {
               control={<Radio />}
               label="Stripe"
             />
+            <FormControlLabel
+              value="vnpay"
+              control={<Radio />}
+              label="VNPAY"
+            />
           </RadioGroup>
         </div>
 
@@ -336,16 +372,22 @@ const Payment = () => {
             <p>Tổng tiền tạm tính:</p>
             {totalAfterDiscount}₫
           </div>
-          {paymentMethod === "paypal" ? (
+          {paymentMethod === "paypal" && (
             <PayPalButton
               key={paypalButtonKey}
               cart={cart}
               coupon={coupon}
               user={user}
             />
-          ) : (
-            <button className="btn" onClick={() => handleCheckout()}>
-              Thanh toán
+          )}
+          {paymentMethod === "stripe" && 
+            (<button className="btn" onClick={() => handleCheckoutStripe()}>
+              Thanh toán Stripe
+            </button>
+          )}
+          {paymentMethod === "vnpay" && 
+            (<button className="btn" onClick={() => handleCheckoutVnPay(totalAfterDiscount)}>
+              Thanh toán VNPAY
             </button>
           )}
         </div>

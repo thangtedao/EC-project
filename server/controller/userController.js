@@ -14,7 +14,7 @@ export const getUsers = async (req, res) => {
     if (!users) {
       return res.json({ msg: "Users does not exist" });
     }
-    res.status(StatusCodes.OK).json({ users });
+    res.status(StatusCodes.OK).json(users);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
@@ -24,7 +24,7 @@ export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-    res.status(StatusCodes.OK).json({ user });
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }

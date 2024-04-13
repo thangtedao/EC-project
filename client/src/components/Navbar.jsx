@@ -85,7 +85,7 @@ const Navbar = () => {
           </NavLink>
 
           <NavLink className="nav-link" to="/cart">
-            <StyledBadge badgeContent={cart.length > 0 && cart.length}>
+            <StyledBadge badgeContent={cart?.length > 0 && cart.length}>
               <HiOutlineShoppingBag className="icon" />
             </StyledBadge>
             <Typography>Giỏ hàng</Typography>

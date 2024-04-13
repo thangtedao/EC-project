@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import TextField from "@mui/material/TextField";
 import customFetch from "../utils/customFetch";
-import axios from "axios";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+// import axios from "axios";
+// import InputLabel from "@mui/material/InputLabel";
+// import MenuItem from "@mui/material/MenuItem";
+// import FormControl from "@mui/material/FormControl";
+// import Select from "@mui/material/Select";
 import { toast } from "react-toastify";
 import { Form, useNavigate, useNavigation } from "react-router-dom";
 import { store } from "../state/store.js";
@@ -102,11 +102,7 @@ export const action = async ({ request }) => {
 };
 
 export const loader = async () => {
-  try {
-    return null;
-  } catch (error) {
-    return error;
-  }
+  return null;
 };
 
 const Profile = () => {
@@ -128,86 +124,13 @@ const Profile = () => {
     setIsCheck(event.target.checked);
   };
 
-  const [cities, setCities] = useState([]);
-  const [city, setCity] = useState("");
-  const [districts, setDistricts] = useState([]);
-  const [district, setDistrict] = useState("");
-  const [wards, setWards] = useState([]);
-  const [ward, setWard] = useState("");
+  // const [cities, setCities] = useState([]);
+  // const [city, setCity] = useState("");
+  // const [districts, setDistricts] = useState([]);
+  // const [district, setDistrict] = useState("");
+  // const [wards, setWards] = useState([]);
+  // const [ward, setWard] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const citiesResponse = await axios.get(
-          "https://provinces.open-api.vn/api/?depth=1"
-        );
-        setCities(citiesResponse.data);
-        setCity(citiesResponse.data[0] || "");
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchDistricts = async () => {
-      try {
-        const districtsResponse = await axios.get(
-          `https://provinces.open-api.vn/api/p/${city && city?.code}?depth=2`
-        );
-        const fetchedDistricts = districtsResponse.data.districts || [];
-        setDistricts(fetchedDistricts);
-        setDistrict(fetchedDistricts.length > 0 ? fetchedDistricts[0] : "");
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchDistricts();
-  }, [city]);
-
-  useEffect(() => {
-    const fetchWards = async () => {
-      try {
-        const wardsResponse = await axios.get(
-          `https://provinces.open-api.vn/api/d/${
-            district && district?.code
-          }?depth=2`
-        );
-        const fetchedWards = wardsResponse.data.wards || [];
-        setWards(fetchedWards);
-        setWard(fetchedWards.length > 0 ? fetchedWards[0] : "");
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchWards();
-  }, [district]);
-
-  const handleChange = (event) => {
-    const selectedCityName = event.target.value;
-    const selectedCity =
-      cities.find((city) => city.name === selectedCityName) || {};
-    setCity(selectedCity);
-  };
-
-  const handleChange02 = (event) => {
-    const selectedDistrictName = event.target.value;
-    const selectedDistrict =
-      districts.find((district) => district.name === selectedDistrictName) ||
-      {};
-    setDistrict(selectedDistrict);
-  };
-
-  const handleChange03 = (event) => {
-    const selectedWardName = event.target.value;
-    const selectedWard =
-      wards.find((ward) => ward.name === selectedWardName) || {};
-    setWard(selectedWard);
-  };
 
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -288,92 +211,32 @@ const Profile = () => {
               }
               label="Thay đổi địa chỉ"
             />
+
             {isCheck && (
-              <div className="form-info-select">
-                <FormControl variant="standard">
-                  <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-                  <Select
-                    labelId="city-select-label"
-                    name="city"
-                    value={city?.name || ""}
-                    // value={user?.address.city || ""}
-                    label="Tỉnh/Thành phố"
-                    sx={{ width: "300px" }}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: "200px",
-                        },
-                      },
-                    }}
-                    onChange={handleChange}
-                  >
-                    {cities.map((city) => (
-                      <MenuItem key={city.code} value={city.name}>
-                        {city.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl variant="standard">
-                  <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-                  <Select
-                    labelId="district-select-label"
-                    name="district"
-                    value={district?.name || ""}
-                    // value={user?.address.district || ""}
-                    label="Quận/Huyện"
-                    sx={{ width: "300px" }}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: "200px",
-                        },
-                      },
-                    }}
-                    onChange={handleChange02}
-                  >
-                    {districts.map((district) => (
-                      <MenuItem key={district.code} value={district.name}>
-                        {district.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl variant="standard">
-                  <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-                  <Select
-                    labelId="ward-select-label"
-                    name="ward"
-                    value={ward?.name || ""}
-                    // defaultValue={user?.address.ward || ""}
-                    label="Phường/Xã"
-                    sx={{ width: "300px" }}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: "200px",
-                        },
-                      },
-                    }}
-                    onChange={handleChange03}
-                  >
-                    {wards.map((ward) => (
-                      <MenuItem key={ward.code} value={ward.name}>
-                        {ward.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
+              <div className="form-address">
+                <TextField
+                  required
+                  name="city"
+                  label="Tỉnh/Thành phố"
+                  variant="standard"
+                />
+                <TextField
+                  required
+                  name="district"
+                  label="Quận/Huyện"
+                  variant="standard"
+                />
+                <TextField
+                  required
+                  name="ward"
+                  label="Phường/Xã"
+                  variant="standard"
+                />
                 <TextField
                   required
                   name="home"
                   label="Số nhà, tên đường"
                   variant="standard"
-                  sx={{ width: "300px" }}
                 />
               </div>
             )}

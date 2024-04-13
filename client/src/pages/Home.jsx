@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import styled from "styled-components";
-import { SlideProduct } from "../components";
+import { ProductCard, SlideProduct } from "../components";
 import { NavLink, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import SlideGallery from "../components/SlideGallery";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/LogoNova.svg";
+import { useMainLayoutContext } from "../pages/MainLayout";
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
@@ -142,25 +143,8 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    const categories = await customFetch
-      .get("/category/get/parent")
-      .then(({ data }) => data.categories);
-
-    const saleProducts = await customFetch
-      .get("/product/?sort=createdAt&limit=6&status=available")
-      .then(({ data }) => data.products);
-
-    const productsArray = await Promise.all(
-      categories.map(async (category) => {
-        const products = await customFetch
-          .get(`/product/?category=${category.slug}&limit=20&status=available`)
-          .then(({ data }) => data.products);
-
-        return products;
-      })
-    );
-
-    return { saleProducts, categories, productsArray };
+    const products = await customFetch.get(`/product`).then(({ data }) => data);
+    return products;
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -171,7 +155,9 @@ const HomeContext = createContext();
 
 const Home = () => {
   window.scrollTo(0, 0);
-  const { saleProducts, categories, productsArray } = useLoaderData();
+  const { categories, categoriesChild, filtercategoriesChild } =
+    useMainLayoutContext();
+  const products = useLoaderData();
 
   const img = [img1, img2];
 
@@ -188,12 +174,12 @@ const Home = () => {
           <div className="block-top-home">
             {/* MENU TREE */}
             <div className="menu-container">
-              {categories?.map((category, index) => {
+              {categories?.map((category) => {
                 return (
                   <NavLink
                     className="nav-link"
-                    key={index}
-                    to={`/category/${category.slug}`}
+                    key={category._id}
+                    to={`/category/${category._id}`}
                   >
                     {category.name} <IoIosArrowForward />
                   </NavLink>
@@ -213,23 +199,22 @@ const Home = () => {
           </div>
 
           {/* FLASH SALE */}
-          <div className="block-hot-sale">
+          {/* <div className="block-hot-sale">
             <div className="block-title">
               <div className="sale-title">FLASH SALE</div>
-              {/* <div className="box-countdown">00:11:22:33</div> */}
+               <div className="box-countdown">00:11:22:33</div>
             </div>
             {saleProducts?.length > 0 && (
               <SlideProduct products={saleProducts} />
             )}
-          </div>
-
+          </div>*/}
           {/* PRODUCTS SALE */}
-          {categories.map((category, index) => {
+          {/* {categories.map((category, index) => {
             return (
               productsArray[index].length > 0 && (
                 <div key={index} className="product-by-category">
                   <NavLink
-                    to={`/category/${category.slug}`}
+                    to={`/category/${category._id}`}
                     className="product-by-category-title"
                   >
                     {productsArray[index].length > 0 && category.name}
@@ -238,6 +223,9 @@ const Home = () => {
                 </div>
               )
             );
+          })} */}
+          {products.map((product) => {
+            return <ProductCard key={product._id} product={product} />;
           })}
         </Wrapper>
       </HomeContext.Provider>

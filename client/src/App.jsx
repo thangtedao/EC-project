@@ -15,6 +15,8 @@ import {
   Order,
   Wishlist,
   Profile,
+  VnpayPayment,
+  VnPay_return,
 } from "./pages";
 
 /* ACTION */
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
         action: loginAction,
       },
       {
-        path: "product/:slug",
+        path: "product/:id",
         element: <Product />,
         loader: productLoader,
         action: productAction,
@@ -83,15 +85,23 @@ const router = createBrowserRouter([
             element: <Payment />,
             loader: paymentLoader,
           },
+          {
+            path: "vnpay-payment",
+            element: <VnpayPayment />,
+          },
+          {
+            path: "vnpay-return",
+            element: <VnPay_return />,
+          },
         ],
       },
       {
-        path: "category/:slug1",
+        path: "category/:id",
         element: <Category />,
         loader: categoryLoader,
         children: [
           {
-            path: ":slug2",
+            path: ":id",
             element: <Category />,
             loader: categoryLoader,
           },

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import customFetch from "../utils/customFetch";
 
 const initialState = {
-  cart: [],
+  cartItem: null,
   cartTotal: 0,
 };
 
@@ -11,71 +11,55 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     setCart: (state, action) => {
-      state.cart = action.payload;
+      state.cartItem = action.payload.cartItem;
     },
-    addToCart: (state, action) => {
-      const product = state.cart.find(
-        (item) => item._id === action.payload.product._id
-      );
 
-      if (!product) {
-        state.cart.push(action.payload.product);
-      } else {
-        product.count++;
-      }
-
+    addToCart: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          await customFetch.post("/user/cart", { cart: state.cart });
-        };
-        setCart();
+        const cart = await customFetch
+          .post("/cart/add-to-cart", {
+            product: action.payload.product,
+            variant: action.payload.variant, // array
+          })
+          .then(({ data }) => data);
       }
     },
-    removeFromCart: (state, action) => {
-      state.cart = state.cart.filter((item) => item._id !== action.payload.id);
 
+    removeFromCart: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          await customFetch.post("/user/cart", { cart: state.cart });
-        };
-        setCart();
+        const cart = await customFetch
+          .post("/cart/remove-from-cart", {
+            cartItem: action.payload.item,
+          })
+          .then(({ data }) => data);
+        state.cartItem = cart.cartItem;
       }
     },
-    deleteCart: (state, action) => {
-      state.cart = [];
-    },
-    increaseCount: (state, action) => {
-      state.cart = state.cart.map((item) => {
-        if (item._id === action.payload.id) {
-          item.count++;
-        }
-        return item;
-      });
 
-      if (action.payload.user) {
-        const setCart = async () => {
-          await customFetch.post("/user/cart", { cart: state.cart });
-        };
-        setCart();
-      }
+    emptyCart: (state, action) => {
+      state.cartItem = [];
     },
-    decreaseCount: (state, action) => {
-      state.cart = state.cart.map((item) => {
-        if (item._id === action.payload.id && item.count > 1) {
-          item.count--;
-        }
-        return item;
-      });
 
+    increaseQuantity: async (state, action) => {
       if (action.payload.user) {
-        const setCart = async () => {
-          await customFetch.post("/user/cart", { cart: state.cart });
-        };
-        setCart();
+        const cart = await customFetch
+          .post("/cart/inc-qty", {
+            cartItem: action.payload.item,
+          })
+          .then(({ data }) => data);
+        state.cartItem = cart.cartItem;
       }
     },
-    setCartTotal: (state, action) => {
-      state.cartTotal = action.payload;
+
+    decreaseQuantity: async (state, action) => {
+      if (action.payload.user) {
+        const cart = await customFetch
+          .post("/cart/des-qty", {
+            cartItem: action.payload.item,
+          })
+          .then(({ data }) => data);
+        state.cartItem = cart.cartItem;
+      }
     },
   },
 });
@@ -84,9 +68,8 @@ export const {
   setCart,
   addToCart,
   removeFromCart,
-  deleteCart,
-  increaseCount,
-  decreaseCount,
-  setCartTotal,
+  emptyCart,
+  increaseQuantity,
+  decreaseQuantity,
 } = cartSlice.actions;
 export default cartSlice.reducer;

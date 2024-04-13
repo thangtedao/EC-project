@@ -89,7 +89,13 @@ const Wrapper = styled.div`
 `;
 
 const CategorySideBar = () => {
-  const { showSideBar, toggleSideBar } = useMainLayoutContext();
+  const {
+    showSideBar,
+    toggleSideBar,
+    categories,
+    categoriesChild,
+    filtercategoriesChild,
+  } = useMainLayoutContext();
 
   const [showCategory, setShowCategory] = useState(false);
   const [isHoverItemTree, setIsHoverItemTree] = useState(false);
@@ -111,8 +117,6 @@ const CategorySideBar = () => {
       setShowCategory(false);
     }
   };
-
-  const { categories, categoryChild } = useMainLayoutContext();
 
   return (
     <Wrapper>
@@ -137,7 +141,7 @@ const CategorySideBar = () => {
                     handleItemLeave,
                   ]}
                 >
-                  <a className="nav-link" href={`/category/${item?.slug}`}>
+                  <a className="nav-link" href={`/category/${item?._id}`}>
                     {item?.name} <IoIosArrowForward />
                   </a>
                 </div>
@@ -156,12 +160,13 @@ const CategorySideBar = () => {
             <div className="category-product">
               {/* <p>Thương hiệu</p> */}
 
-              {categoryChild &&
-                categoryChild[activeItem.index]?.map((item) => {
+              {categoriesChild &&
+                filtercategoriesChild &&
+                filtercategoriesChild[activeItem.index]?.map((item) => {
                   return (
                     <a
-                      href={`/category/${categories[activeItem.index].slug}/${
-                        item.slug
+                      href={`/category/${categories[activeItem.index]?._id}/${
+                        item?._id
                       }`}
                       key={item?._id}
                     >
@@ -169,21 +174,8 @@ const CategorySideBar = () => {
                     </a>
                   );
                 })}
-
-              {/*{activeItem?.categoryProduct?.map((item) => {
-                return <h5>{item.brandName}</h5>;
-              })} */}
-            </div>
-
-            <div className="category-product">
-              {/* <p>Bla bla</p> */}
-              {/* {activeItem?.categoryProduct?.map((item) => {
-                return <h5>{item.color}</h5>;
-              })} */}
             </div>
           </div>
-
-          <div></div>
         </div>
       </div>
     </Wrapper>

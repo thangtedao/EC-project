@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { ProductCart } from "../components";
-import { useNavigate } from "react-router-dom";
+import { CartItem } from "../components";
+import { redirect, useNavigate, useLoaderData } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/LogoNova.svg";
+import customFetch from "../utils/customFetch";
+import { debounce } from "lodash";
 
 const Wrapper = styled.div`
   width: 650px;
@@ -155,47 +157,105 @@ const Wrapper = styled.div`
 
 export const loader = async () => {
   try {
-    return null;
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+
+    if (!user) redirect("/login");
+
+    let cart;
+    if (user) {
+      const cartData = await customFetch
+        .get("/cart/get-cart")
+        .then(({ data }) => data);
+      cart = cartData.cartItem;
+    }
+    return { cart };
   } catch (error) {
     return error;
   }
 };
 
+const CartContext = createContext();
+
 const Cart = () => {
   window.scrollTo(0, 0);
   const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart.cart);
+  const { cart } = useLoaderData();
+  const [cartItem, setCartItem] = useState(cart);
   const user = useSelector((state) => state.user.user);
 
   const totalPrice =
-    cart?.reduce(
-      (accumulator, item) => accumulator + item.salePrice * item.count,
+    cartItem?.reduce(
+      (acc, item) => acc + item.product.salePrice * item.quantity, // sale price !!!!!!!!!!!!!!
       0
     ) || 0;
 
-  return (
-    <HelmetProvider>
-      <Wrapper>
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>Cart</title>
-          <link rel="icon" type="image/svg+xml" href={NovaIcon} />
-        </Helmet>
+  const totalItem =
+    cartItem?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
-        <div className="cart-header">
-          <a onClick={() => navigate("/")}>
-            <ArrowBackIcon />
-          </a>
-          Giỏ hàng của bạn
-        </div>
-        {cart.length <= 0 ? (
-          <div className="cart-empty">
-            <p>Giỏ hàng của bạn đang trống.</p>
-            <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
+  const submitPayment = () => {
+    if (!user) return navigate("/login");
+    return navigate("payment-info");
+  };
+
+  const increaseQuantity = debounce(async (item, user) => {
+    const cart = await customFetch
+      .post("/cart/inc-qty", {
+        cartItem: item,
+      })
+      .then(({ data }) => data);
+    cart && setCartItem(cart.cartItem);
+  }, 300);
+
+  const descreaseQuantity = debounce(async (item, user) => {
+    const cart = await customFetch
+      .post("/cart/des-qty", {
+        cartItem: item,
+      })
+      .then(({ data }) => data);
+    cart && setCartItem(cart.cartItem);
+  }, 300);
+
+  const removeFromCart = async (item, user) => {
+    const cart = await customFetch
+      .post("/cart/remove-from-cart", {
+        cartItem: item,
+      })
+      .then(({ data }) => data);
+    cart && setCartItem(cart.cartItem);
+  };
+
+  return (
+    <CartContext.Provider
+      value={{
+        increaseQuantity,
+        descreaseQuantity,
+        removeFromCart,
+      }}
+    >
+      <HelmetProvider>
+        <Wrapper>
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Cart</title>
+            <link rel="icon" type="image/svg+xml" href={NovaIcon} />
+          </Helmet>
+
+          <div className="cart-header">
+            <a onClick={() => navigate("/")}>
+              <ArrowBackIcon />
+            </a>
+            Cart
           </div>
-        ) : (
-          <div className="cart-container">
-            {/* <div className="header-action">
+          {cartItem?.length <= 0 ? (
+            <div className="cart-empty">
+              <p>Your cart is empty.</p>
+              <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
+            </div>
+          ) : (
+            <div className="cart-container">
+              {/* <div className="header-action">
             <Checkbox
               className="checkbox-btn"
               icon={<CircleOutlinedIcon />}
@@ -204,31 +264,27 @@ const Cart = () => {
             Chọn tất cả
           </div> */}
 
-            {cart?.map((item, index) => {
-              return <ProductCart key={index} product={item} />;
-            })}
+              {cartItem?.map((item, index) => {
+                return <CartItem key={index} item={item} />;
+              })}
 
-            <div className="bottom-bar">
-              <div className="price-temp">
-                <p>Tạm tính</p>
-                {totalPrice}₫
+              <div className="bottom-bar">
+                <div className="price-temp">
+                  <p>Total Price</p>
+                  {totalPrice}₫
+                </div>
+
+                <button className="btn" onClick={() => submitPayment}>
+                  Buy Now {`(${totalItem})`}
+                </button>
               </div>
-              <button
-                className="btn"
-                onClick={() => {
-                  if (!user) return navigate("/login");
-                  return navigate("payment-info");
-                }}
-              >
-                Mua ngay
-                {` (${cart.reduce((acc, item) => acc + item.count, 0)})`}
-              </button>
             </div>
-          </div>
-        )}
-      </Wrapper>
-    </HelmetProvider>
+          )}
+        </Wrapper>
+      </HelmetProvider>
+    </CartContext.Provider>
   );
 };
 
+export const useCartContext = () => useContext(CartContext);
 export default Cart;

@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Cart from "../models/Cart.js";
 import { StatusCodes } from "http-status-codes";
 import { UnauthenticatedError } from "../errors/customErrors.js";
 import { passwordHash, comparePassword } from "../utils/passwordHash.js";
@@ -11,7 +12,12 @@ export const register = async (req, res) => {
 
     req.body.password = await passwordHash(req.body.password);
 
-    await User.create(req.body);
+    const user = await User.create(req.body);
+
+    await Cart.create({
+      user: user._id,
+    });
+
     res.status(StatusCodes.CREATED).json({ msg: "User Created" });
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

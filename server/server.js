@@ -13,6 +13,7 @@ import blogRouter from "../server/routes/blogRoute.js";
 import couponRouter from "../server/routes/couponRoute.js";
 import orderRouter from "../server/routes/orderRoute.js";
 import brandRouter from "../server/routes/brandRoute.js";
+import cartRoute from "../server/routes/cartRoute.js";
 
 // public
 import { dirname } from "path";
@@ -58,6 +59,7 @@ app.use("/api/product", productRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/cart", cartRoute);
 
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../admin/dist", "index.html"));

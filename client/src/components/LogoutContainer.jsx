@@ -17,7 +17,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { deleteCart } from "../state/cartSlice";
+import { emptyCart } from "../state/cartSlice";
 
 const Wrapper = styled.div`
   position: relative;
@@ -61,7 +61,6 @@ const Wrapper = styled.div`
 `;
 
 const LogoutContainer = () => {
-  // const [showLogout, setShowLogout] = useState(false);
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -70,7 +69,7 @@ const LogoutContainer = () => {
     await customFetch.get("/auth/logout");
     toast.success("Logged out");
     dispatch(logout());
-    dispatch(deleteCart());
+    dispatch(emptyCart());
     navigate("/");
   };
 
@@ -85,21 +84,6 @@ const LogoutContainer = () => {
 
   return (
     <Wrapper>
-      {/* <div className="logout" onClick={() => setShowLogout(!showLogout)}>
-        {user?.avatar ? (
-          <img src={user.avatar} alt="avatar" className="img" />
-        ) : (
-          <FaUserCircle />
-        )}
-        {user?.fullName}
-        <FaCaretDown />
-      </div>
-      <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
-        <button type="button" className="dropdown-btn" onClick={logoutUser}>
-          logout
-        </button>
-      </div> */}
-
       <Tooltip title="Account settings">
         <IconButton
           onClick={handleClick}
