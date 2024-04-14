@@ -23,7 +23,7 @@ function getItem(label, key, icon, children, link) {
 }
 
 const items = [
-  getItem("Dashboard", "1", <ShopOutlined />, null, "/add-product"),
+  getItem("Dashboard", "1", <ShopOutlined />, null, "/"),
   getItem(
     "Product",
     "sub1",
@@ -47,13 +47,12 @@ const items = [
     null
   ),
   getItem(
-    "Coupon",
+    "Promotion",
     "sub3",
     <DollarOutlined />,
     [
       getItem("All Coupon", "8", null, null, "/all-coupon"),
-      getItem("Add Coupon", "9", null, null, "/add-coupon"),
-      getItem("Detail Coupon", "10", null, null, null),
+      getItem("All Event", "9", null, null, "/event"),
     ],
     null
   ),

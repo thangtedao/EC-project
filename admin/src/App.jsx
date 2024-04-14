@@ -37,6 +37,7 @@ import Login from "./pages/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
+import Event from "./pages/Event";
 
 const router = createBrowserRouter([
   {
@@ -47,10 +48,12 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <Dashboard />,
-        // loader: dashboardLoader,
-        element: <AddProduct />,
-        loader: addProductLoader,
+        element: <Dashboard />,
+        loader: dashboardLoader,
+      },
+      {
+        path: "event",
+        element: <Event />,
       },
       {
         path: "all-product",

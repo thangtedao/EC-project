@@ -3,76 +3,61 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
-import { BarChart } from "@mui/x-charts/BarChart";
-import { LineChart } from "@mui/x-charts/LineChart";
-import { PieChart } from "@mui/x-charts/PieChart";
+// import { BarChart } from "@mui/x-charts/BarChart";
+// import { LineChart } from "@mui/x-charts/LineChart";
+// import { PieChart } from "@mui/x-charts/PieChart";
 import { axisClasses } from "@mui/x-charts";
-
+import { Line } from "@ant-design/charts";
+import ChartPie from "../components/Dashboard/ChartPie.jsx";
+import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
+import ChartLine from "../components/Dashboard/ChartLine.jsx";
+import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
+import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
+import {
+  EditOutlined,
+  AudioOutlined,
+  PlusOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Table,
+  Button,
+  Typography,
+  Tag,
+  Dropdown,
+  Card,
+  Segmented,
+} from "antd";
 const Wrapper = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: center;
 
   .title {
-    font-size: 2rem;
+    text-align: left;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #00193b;
     margin-bottom: 1rem;
   }
-  .dashboard-container {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .input-title {
+    font-size: 0.95rem;
+    font-weight: 400;
   }
-  .card-statistic {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+  .col-1 {
+    width: 60%;
+    height: fit-content;
   }
-  .card-item {
-    width: 30%;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    border: transparent;
-    border-radius: 5px;
-    padding: 1rem;
-    box-shadow: 0 1px 3px #00000026;
-    background-color: white;
-    .card-title {
-      font-size: 1.1rem;
-      color: #8d8d99;
-    }
-    .card-content {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #00193b;
-    }
+  .col-2 {
+    width: 40%;
+    height: fit-content;
   }
-
-  .charts-container {
-    width: 100%;
-    display: grid;
-    place-items: center;
-    gap: 2rem;
+  .col-2-item {
+    border: 1px solid lightgray;
+    border-radius: 10px;
   }
-
-  .btn {
-    width: 75px;
-    height: 28px;
-    border-radius: 5px;
-    background-color: #035ecf;
-    color: white;
-    font-weight: bolder;
-  }
-  .dtp {
-    width: 150px;
-    height: 28px;
-    border-radius: 5px;
-    padding: 10px;
+  .col-1-item {
+    border: 1px solid lightgray;
+    border-radius: 10px;
   }
 `;
 
@@ -81,7 +66,13 @@ export const loader = async ({ request }) => {
     const params = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
     ]);
+
     const response = await customFetch.get("/order/stats", { params });
+
+    const products = await customFetch
+      .get(`/product/?populate=category,brand`)
+      .then(({ data }) => data);
+
     return {
       dataset: response.data.monthlyApplications,
       totalRevenue: response.data.totalRevenue,
@@ -89,6 +80,7 @@ export const loader = async ({ request }) => {
       totalProduct: response.data.totalProduct,
       productMostSold: response.data.productMostSold,
       params,
+      products,
     };
   } catch (error) {
     return error;
@@ -103,6 +95,7 @@ const Dashboard = () => {
     totalProduct,
     productMostSold,
     params,
+    products,
   } = useLoaderData();
 
   let start, end;
@@ -138,138 +131,132 @@ const Dashboard = () => {
           <meta charSet="utf-8" />
           <title>Dashboard</title>
         </Helmet>
+        <Breadcrumb
+          style={{ paddingBottom: "1rem" }}
+          items={[
+            {
+              title: "Dashboard",
+            },
+          ]}
+        />
 
-        <div className="dashboard-container">
-          <div className="title">Dashboard</div>
-
-          <div className="card-statistic">
-            <div className="card-item">
-              <div className="card-title">Total Revenue</div>
-              <div className="card-content">
-                {totalRevenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
-                  "₫"}
-              </div>
-            </div>
-            <div className="card-item">
-              <div className="card-title">Total Products Sold</div>
-              <div className="card-content">{totalProduct}</div>
-            </div>
-            <div className="card-item">
-              <div className="card-title">Total Orders</div>
-              <div className="card-content">{totalCount}</div>
-            </div>
-          </div>
-
-          <Form>
-            <div style={{ display: "flex", gap: "1rem", padding: "1rem 0" }}>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  alignItems: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                <div>From</div>
-                <input
-                  className="dtp"
-                  type="date"
-                  name="start"
-                  required
-                  value={startDate ? startDate?.split("T")[0] : ""}
-                  onChange={(event) => {
-                    setStartDate(event.target.value);
-                  }}
-                />
-                <div>To</div>
-                <input
-                  className="dtp"
-                  type="date"
-                  name="end"
-                  required
-                  value={endDate ? endDate?.split("T")[0] : ""}
-                  onChange={(event) => {
-                    setEndDate(event.target.value);
-                  }}
-                />
-              </div>
-              <button type="submit" className="btn">
-                Apply
-              </button>
-            </div>
-          </Form>
-
+        <div className="title">Dashboard</div>
+        <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
           <div
-            style={{
-              width: "100%",
-              display: "flex",
-              gap: "1rem",
-              flexDirection: "column",
-            }}
+            className="col-1"
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
           >
-            {startDate && endDate && productMostSold.length > 0 && (
-              <div style={{ fontSize: "1.1rem" }}>
-                Top products from{" "}
-                <span style={{ fontWeight: "bold" }}>{startDate}</span> to{" "}
-                <span style={{ fontWeight: "bold" }}>{endDate}</span>
-              </div>
-            )}
-            <div
-              style={{
-                width: "100%",
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
-                columnGap: "1rem",
-              }}
+            <Card
+              className="col-1-item"
+              size="large"
+              title={"column"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
             >
-              {/* {productMostSold?.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))} */}
-            </div>
+              <ChartLine />
+            </Card>
+            <Card
+              className="col-1-item"
+              size="large"
+              title={"column"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
+            >
+              <ChartColumn />
+            </Card>
+            <Card
+              className="col-1-item"
+              size="large"
+              title={"Order"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
+            >
+              <DashboardOrder products2 />
+            </Card>
           </div>
-
-          {/* STATS GRAPH */}
-          {dataset.length > 0 && (
-            <div className="charts-container">
-              <BarChart
-                dataset={dataset}
-                xAxis={[{ scaleType: "band", dataKey: "date" }]}
-                series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
-                width={800}
-                height={400}
-                margin={{
-                  left: 100,
-                }}
-                {...chartSetting}
-              />
-              <LineChart
-                dataset={dataset}
-                xAxis={[{ scaleType: "band", dataKey: "date" }]}
-                series={[{ dataKey: "totalRevenue", label: "Total Revenue" }]}
-                width={800}
-                height={400}
-                margin={{
-                  left: 100,
-                }}
-                {...chartSetting}
-              />
-              <PieChart
-                series={[
-                  {
-                    data: dataset.map((dataPoint, index) => {
-                      return {
-                        id: index,
-                        value: dataPoint.totalRevenue,
-                        label: dataPoint.date,
-                      };
-                    }),
-                  },
-                ]}
-                width={600}
-                height={400}
-              />
-            </div>
-          )}
+          <div
+            className="col-2"
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
+            <Card
+              className="col-2-item"
+              size="large"
+              title={"Order Status"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
+            >
+              <ChartPie />
+            </Card>
+            <Card
+              className="col-2-item"
+              size="large"
+              title={"Product"}
+              extra={
+                <Segmented
+                  options={[
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly",
+                  ]}
+                  onChange={(value) => {
+                    console.log(value); // string
+                  }}
+                />
+              }
+            >
+              <DashboardProduct products={products} />
+            </Card>
+          </div>
         </div>
       </Wrapper>
     </HelmetProvider>
