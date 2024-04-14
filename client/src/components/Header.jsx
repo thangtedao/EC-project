@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import Navbar from "./Navbar";
-import CategorySideBar from "./CategorySideBar";
+import Navbar from "./navbar/Navbar";
+import CategorySideBar from "./navbar/CategorySideBar";
 
 const Wrapper = styled.div`
   width: 100%;

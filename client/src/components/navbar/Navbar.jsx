@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useMainLayoutContext } from "../pages/MainLayout";
+import { useMainLayoutContext } from "../../pages/MainLayout";
 import LogoutContainer from "./LogoutContainer";
 import SearchBar from "./SearchBar";
 import { MdOutlineAccountCircle } from "react-icons/md";

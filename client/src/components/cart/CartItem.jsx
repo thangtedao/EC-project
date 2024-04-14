@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useCartContext } from "../../pages/Cart";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const CartItem = ({ item, isPayment }) => {
+const CartItem = ({ item }) => {
   const user = useSelector((state) => state.user.user);
   const { increaseQuantity, descreaseQuantity, removeFromCart } =
     useCartContext();
@@ -32,8 +32,8 @@ const CartItem = ({ item, isPayment }) => {
           </div>
 
           <div>
-            {item?.variant?.map((i) => {
-              return <div key={i._id}>{i.variationValue}</div>;
+            {item.variant?.map((i, index) => {
+              return <div key={index}>{i.variationValue}</div>;
             })}
           </div>
 

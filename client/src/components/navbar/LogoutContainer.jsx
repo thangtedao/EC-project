@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import customFetch from "../utils/customFetch";
-import { logout } from "../state/userSlice";
+import customFetch from "../../utils/customFetch";
+import { logout } from "../../state/userSlice";
 
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -17,7 +17,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { emptyCart } from "../state/cartSlice";
+import { emptyCart } from "../../state/cartSlice";
 
 const Wrapper = styled.div`
   position: relative;

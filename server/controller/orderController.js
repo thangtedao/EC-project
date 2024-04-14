@@ -43,7 +43,7 @@ export const createOrder = async (req, res) => {
       if (coupon)
         if (coupon.discountType === "percentage")
           salePrice = salePrice - (salePrice * coupon.discountValue) / 100;
-        else if (coupon.discountType === "percentage")
+        else if (coupon.discountType === "fixed")
           salePrice = salePrice - coupon.discountValue;
 
       const variant = item.variant.map((i) => {
