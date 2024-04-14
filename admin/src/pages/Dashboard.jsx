@@ -2,33 +2,13 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { Form, redirect, useNavigation, useLoaderData } from "react-router-dom";
-// import { BarChart } from "@mui/x-charts/BarChart";
-// import { LineChart } from "@mui/x-charts/LineChart";
-// import { PieChart } from "@mui/x-charts/PieChart";
-import { axisClasses } from "@mui/x-charts";
-import { Line } from "@ant-design/charts";
+import { Form, redirect, useLoaderData } from "react-router-dom";
 import ChartPie from "../components/Dashboard/ChartPie.jsx";
 import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
-import {
-  EditOutlined,
-  AudioOutlined,
-  PlusOutlined,
-  FormOutlined,
-} from "@ant-design/icons";
-import {
-  Breadcrumb,
-  Table,
-  Button,
-  Typography,
-  Tag,
-  Dropdown,
-  Card,
-  Segmented,
-} from "antd";
+import { Breadcrumb, Card, Segmented } from "antd";
 const Wrapper = styled.div`
   width: 100%;
 
@@ -67,19 +47,13 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    const response = await customFetch.get("/order/stats", { params });
+    // const response = await customFetch.get("/order/stats", { params });
 
     const products = await customFetch
       .get(`/product/?populate=category,brand`)
       .then(({ data }) => data);
 
     return {
-      dataset: response.data.monthlyApplications,
-      totalRevenue: response.data.totalRevenue,
-      totalCount: response.data.totalCount,
-      totalProduct: response.data.totalProduct,
-      productMostSold: response.data.productMostSold,
-      params,
       products,
     };
   } catch (error) {
@@ -88,41 +62,19 @@ export const loader = async ({ request }) => {
 };
 
 const Dashboard = () => {
-  const {
-    dataset,
-    totalRevenue,
-    totalCount,
-    totalProduct,
-    productMostSold,
-    params,
-    products,
-  } = useLoaderData();
+  const { products } = useLoaderData();
 
-  let start, end;
-  if (!params.start && !params.end) {
-    end = new Date();
-    start = new Date(end);
-    start.setMonth(start.getMonth() - 10);
-    end = end.toISOString().split("T")[0];
-    start = start.toISOString().split("T")[0];
-  }
+  // let start, end;
+  // if (!params.start && !params.end) {
+  //   end = new Date();
+  //   start = new Date(end);
+  //   start.setMonth(start.getMonth() - 10);
+  //   end = end.toISOString().split("T")[0];
+  //   start = start.toISOString().split("T")[0];
+  // }
 
-  const [startDate, setStartDate] = useState(params.start || start);
-  const [endDate, setEndDate] = useState(params.end || end);
-
-  const chartSetting = {
-    yAxis: [
-      {
-        label: "vnđ",
-      },
-    ],
-    sx: {
-      [`.${axisClasses.left} .${axisClasses.label}`]: {
-        transform: "translate(-60px, 0)",
-        fontWeight: "bold",
-      },
-    },
-  };
+  // const [startDate, setStartDate] = useState(params.start || start);
+  // const [endDate, setEndDate] = useState(params.end || end);
 
   return (
     <HelmetProvider>
