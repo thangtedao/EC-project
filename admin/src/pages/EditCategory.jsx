@@ -161,14 +161,22 @@ const EditCategory = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="Enter Category Name" />
+                      <Input
+                        required
+                        size="large"
+                        placeholder="Enter Category Name"
+                      />
                     </Form.Item>
 
                     <Typography.Title className="input-title">
                       Category Slug
                     </Typography.Title>
                     <Form.Item name="slug">
-                      <Input size="large" placeholder="Enter Category Slug" />
+                      <Input
+                        required
+                        size="large"
+                        placeholder="Enter Category Slug"
+                      />
                     </Form.Item>
 
                     <Typography.Title className="input-title">

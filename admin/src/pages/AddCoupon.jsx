@@ -155,7 +155,11 @@ const AddCoupon = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="Enter Coupon Name" />
+                      <Input
+                        required
+                        size="large"
+                        placeholder="Enter Coupon Name"
+                      />
                     </Form.Item>
 
                     <div className="discount">
@@ -164,7 +168,11 @@ const AddCoupon = () => {
                           Code
                         </Typography.Title>
                         <Form.Item name="code">
-                          <Input size="large" placeholder="Enter Coupon Code" />
+                          <Input
+                            required
+                            size="large"
+                            placeholder="Enter Coupon Code"
+                          />
                         </Form.Item>
                       </div>
 
@@ -174,6 +182,7 @@ const AddCoupon = () => {
                         </Typography.Title>
                         <Form.Item name="discountValue">
                           <InputNumber
+                            required
                             suffix="%"
                             style={{ width: "100%" }}
                             size="large"
@@ -211,6 +220,7 @@ const AddCoupon = () => {
                 </Typography.Title>
                 <Form.Item name="startDate">
                   <DatePicker
+                    required
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
@@ -223,6 +233,7 @@ const AddCoupon = () => {
                 </Typography.Title>
                 <Form.Item name="endDate">
                   <DatePicker
+                    required
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}

@@ -288,11 +288,15 @@ const EditProduct = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="Enter Product Name" />
+                      <Input
+                        required
+                        size="large"
+                        placeholder="Enter Product Name"
+                      />
                     </Form.Item>
 
                     <Typography.Title className="input-title">
-                      Description
+                      Blog
                     </Typography.Title>
                     <Form.Item>
                       <Editor
@@ -327,6 +331,7 @@ const EditProduct = () => {
                     </Typography.Title>
                     <Form.Item name="specifications">
                       <Input.TextArea
+                        required
                         size="large"
                         placeholder="Type your specifications..."
                         autoSize={{
@@ -392,7 +397,7 @@ const EditProduct = () => {
               {/* VARIATIONS FIELDS*/}
               <Card className="col-1-item" size="large" title={`Variants`}>
                 <Typography.Title className="input-title">
-                  Options
+                  Variant
                 </Typography.Title>
                 <Form.List name="variations">
                   {(fields, { add, remove }) => (
@@ -431,7 +436,11 @@ const EditProduct = () => {
                                 },
                               ]}
                             /> */}
-                            <Input size="large" placeholder="Enter Value" />
+                            <Input
+                              required
+                              size="large"
+                              placeholder="Enter Value"
+                            />
                           </Form.Item>
                           <Form.Item
                             name={[name, "variationValue"]}
@@ -443,7 +452,11 @@ const EditProduct = () => {
                               },
                             ]}
                           >
-                            <Input size="large" placeholder="Enter Value" />
+                            <Input
+                              required
+                              size="large"
+                              placeholder="Enter Value"
+                            />
                           </Form.Item>
                           <Form.Item
                             name={[name, "priceModifier"]}
@@ -456,6 +469,7 @@ const EditProduct = () => {
                             ]}
                           >
                             <InputNumber
+                              required
                               style={{ width: "100%" }}
                               size="large"
                               placeholder="eg. 100000"
@@ -471,7 +485,7 @@ const EditProduct = () => {
                           block
                           icon={<PlusOutlined />}
                         >
-                          Add another option
+                          New Variant
                         </Button>
                       </Form.Item>
                     </>
@@ -491,6 +505,7 @@ const EditProduct = () => {
                 </Typography.Title>
                 <Form.Item name="price">
                   <InputNumber
+                    required
                     suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
@@ -503,6 +518,7 @@ const EditProduct = () => {
                 </Typography.Title>
                 <Form.Item name="salePrice">
                   <InputNumber
+                    required
                     suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
@@ -518,6 +534,7 @@ const EditProduct = () => {
                 </Typography.Title>
                 <Form.Item name="brand">
                   <Select
+                    required
                     size="large"
                     placeholder="Select Brand"
                     options={brands?.map((brand) => {
@@ -534,6 +551,7 @@ const EditProduct = () => {
                 </Typography.Title>
                 <Form.Item name="category">
                   <Select
+                    required
                     size="large"
                     placeholder="Select category"
                     onChange={(value) => handleChangeC(value)}
@@ -578,6 +596,7 @@ const EditProduct = () => {
                 </Typography.Title>
                 <Form.Item name="status">
                   <Select
+                    required
                     size="large"
                     placeholder="Select Status"
                     options={Object.keys(PRODUCT_STATUS).map((key) => ({
