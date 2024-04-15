@@ -39,7 +39,10 @@ export const createOrder = async (req, res) => {
     const { userId } = req.user;
 
     const orderItem = cartItem.map((item) => {
-      let salePrice = item.product.price + item.variant.price;
+      const priceOfVariant =
+        item.variant.reduce((acc, item) => acc + item.priceModifier, 0) || 0;
+      let salePrice = item.product.price + priceOfVariant;
+
       if (coupon)
         if (coupon.discountType === "percentage")
           salePrice = salePrice - (salePrice * coupon.discountValue) / 100;
@@ -74,11 +77,11 @@ export const createOrder = async (req, res) => {
 
     const user = await User.findById(userId);
 
-    newOrder = new Order({
+    const newOrder = new Order({
       user: userId,
       orderItem: orderItem,
-      couponCode: coupon?._id || null,
-      discountAmount: coupon?.discountValue || null,
+      couponCode: coupon?._id,
+      discountAmount: coupon?.discountValue,
       shippingAddress: user.address,
       totalAmount: totalAmount,
     });
