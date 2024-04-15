@@ -10,27 +10,37 @@ const OrderCard = ({ order }) => {
         <div>
           Tổng tiền{" "}
           <span className="normal-text">
-            {order.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+            {order.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+            ₫
           </span>
         </div>
         <div>
-          Trạng thái: <span className="normal-text">{order.orderStatus}</span>
+          Trạng thái: <span className="normal-text">{order.status}</span>
         </div>
       </div>
 
-      {order.products.map((item) => {
+      {order.orderItem.map((item, idx) => {
         return (
-          <div key={item._id} className="product-item">
+          <div key={idx} className="product-item">
             <div className="product-image">
               <img src={item.product?.images[0]} alt="product image" />
             </div>
 
             <div className="product-info">
               <div className="product-info-name">{item.product?.name}</div>
+              <div className="product-info-name">
+                {item.variant?.map((i, index) => {
+                  return <div key={index}>{i.value}</div>;
+                })}
+              </div>
               <div className="product-info-price">
                 <div className="main-price">
                   <span>
-                    {item.price
+                    {(
+                      (item.variant?.reduce((a, i) => a + i.price, 0) +
+                        item.product.price) *
+                      item.quantity
+                    )
                       .toString()
                       .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                     ₫
@@ -38,10 +48,10 @@ const OrderCard = ({ order }) => {
                   {/* <span className="strike">{item.product?.price}₫</span> */}
                 </div>
               </div>
-              <p>Số lượng: {item.count}</p>
+              <p>Số lượng: {item.quantity}</p>
             </div>
 
-            <div className="order-status">{order.orderStatus}</div>
+            <div className="order-status">{order.status}</div>
           </div>
         );
       })}

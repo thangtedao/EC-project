@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { redirect, useLoaderData } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import {
   Modal,
   Button,
   Form,
+  Select,
   Input,
   Typography,
   Card,
@@ -60,16 +61,19 @@ const Wrapper = styled.div`
   }
   .discount {
     display: flex;
+    gap: 10px;
   }
   .discount-item-1 {
-    flex-grow: 7;
+    flex-grow: 5;
     box-sizing: border-box;
-    padding-right: 10px;
   }
   .discount-item-2 {
+    flex-grow: 2;
+    box-sizing: border-box;
+  }
+  .discount-item-3 {
     flex-grow: 3;
     box-sizing: border-box;
-    padding-left: 10px;
   }
 `;
 
@@ -91,6 +95,9 @@ export const loader = async ({ params }) => {
 
 const EditCoupon = () => {
   const coupon = useLoaderData();
+  const navigate = useNavigate();
+
+  const [discountType, setDiscountType] = useState(coupon?.discountType);
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -154,6 +161,7 @@ const EditCoupon = () => {
           initialValues={{
             name: coupon?.name,
             code: coupon?.code,
+            discountType: coupon?.discountType,
             discountValue: coupon?.discountValue,
             description: coupon?.description,
             // startDate: new Date(coupon?.startDate),
@@ -203,12 +211,37 @@ const EditCoupon = () => {
 
                       <div className="discount-item-2">
                         <Typography.Title className="input-title">
+                          Type
+                        </Typography.Title>
+                        <Form.Item name="discountType">
+                          <Select
+                            required
+                            size="large"
+                            placeholder="Select option"
+                            value={discountType}
+                            onChange={(value) => setDiscountType(value)}
+                            options={[
+                              {
+                                value: "percentage",
+                                label: "Percentage",
+                              },
+                              {
+                                value: "fixed",
+                                label: "Fixed",
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="discount-item-3">
+                        <Typography.Title className="input-title">
                           Discount
                         </Typography.Title>
                         <Form.Item name="discountValue">
                           <InputNumber
                             required
-                            suffix="%"
+                            suffix={discountType === "percentage" ? "%" : "VND"}
                             style={{ width: "100%" }}
                             size="large"
                             placeholder="eg. 10"

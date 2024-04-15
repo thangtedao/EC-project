@@ -38,23 +38,31 @@ export const createOrder = async (req, res) => {
     const { cartItem, coupon } = req.body;
     const { userId } = req.user;
 
+    let discountAmount = 0;
+
     const orderItem = cartItem.map((item) => {
       const priceOfVariant =
         item.variant.reduce((acc, item) => acc + item.priceModifier, 0) || 0;
       let salePrice = item.product.price + priceOfVariant;
 
       if (coupon)
-        if (coupon.discountType === "percentage")
-          salePrice = salePrice - (salePrice * coupon.discountValue) / 100;
-        else if (coupon.discountType === "fixed")
+        if (coupon.discountType === "percentage") {
+          discountAmount += (salePrice * coupon.discountValue) / 100;
+          salePrice = (
+            salePrice -
+            (salePrice * coupon.discountValue) / 100
+          ).toFixed(0);
+        } else if (coupon.discountType === "fixed") {
+          discountAmount += coupon.discountValue;
           salePrice = salePrice - coupon.discountValue;
+        }
 
       const variant = item.variant.map((i) => {
         return {
           id: i._id,
-          name: i.name,
-          value: i.name,
-          price: i.price,
+          name: i.variationName,
+          value: i.variationValue,
+          price: i.priceModifier,
         };
       });
 
@@ -80,8 +88,8 @@ export const createOrder = async (req, res) => {
     const newOrder = new Order({
       user: userId,
       orderItem: orderItem,
-      couponCode: coupon?._id,
-      discountAmount: coupon?.discountValue,
+      couponCode: coupon?.code,
+      discountAmount: coupon && discountAmount.toFixed(0),
       shippingAddress: user.address,
       totalAmount: totalAmount,
     });

@@ -220,7 +220,11 @@ export const loader = async () => {
     }
     const totalPrice =
       cartItem?.reduce(
-        (acc, item) => acc + item.product.salePrice * item.quantity,
+        (acc, item) =>
+          acc +
+          (item.variant?.reduce((a, i) => a + i.priceModifier, 0) +
+            item.product.price) *
+            item.quantity,
         0
       ) || 0;
 
@@ -237,6 +241,7 @@ const Payment = () => {
   const navigate = useNavigate();
   const [totalAmount, setTotalAmount] = useState(totalPrice || 0);
   const [coupon, setCoupon] = useState(null);
+  const [paypalButtonKey, setPaypalButtonKey] = useState(0);
 
   const applyCoupon = async (code) => {
     const couponData = await customFetch
@@ -246,12 +251,15 @@ const Payment = () => {
     if (couponData) {
       if (couponData.discountType === "percentage")
         setTotalAmount(
-          totalPrice - (totalPrice * couponData.discountValue) / 100
+          (totalPrice - (totalPrice * couponData.discountValue) / 100).toFixed(
+            0
+          )
         );
       else if (couponData.discountType === "fixed")
         setTotalAmount(totalPrice - couponData.discountValue);
       setCoupon(couponData);
     }
+    setPaypalButtonKey((prevKey) => prevKey + 1);
   };
 
   const steps = [
@@ -267,6 +275,7 @@ const Payment = () => {
           coupon={coupon}
           applyCoupon={applyCoupon}
           totalAmount={totalAmount}
+          paypalButtonKey={paypalButtonKey}
         />
       ),
     },

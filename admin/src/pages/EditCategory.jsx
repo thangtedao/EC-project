@@ -68,9 +68,10 @@ export const loader = async ({ params }) => {
     const category = await customFetch
       .get(`/category/${id}`)
       .then(({ data }) => data);
-    const categories = await customFetch
+    let categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
+    if (categories) categories = categories?.filter((item) => item._id !== id);
     return { category, categories };
   } catch (error) {
     return error;

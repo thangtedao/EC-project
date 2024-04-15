@@ -52,7 +52,8 @@ const items = [
     <DollarOutlined />,
     [
       getItem("All Coupon", "8", null, null, "/all-coupon"),
-      getItem("All Event", "9", null, null, "/event"),
+      getItem("Add Coupon", "9", null, null, "/add-coupon"),
+      getItem("All Event", "10", null, null, "/event"),
     ],
     null
   ),

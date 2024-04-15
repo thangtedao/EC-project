@@ -186,7 +186,11 @@ const Cart = () => {
 
   const totalPrice =
     cartItem?.reduce(
-      (acc, item) => acc + item.product.salePrice * item.quantity, // sale price !!!!!!!!!!!!!!
+      (acc, item) =>
+        acc +
+        (item.variant?.reduce((a, i) => a + i.priceModifier, 0) +
+          item.product.price) *
+          item.quantity,
       0
     ) || 0;
 

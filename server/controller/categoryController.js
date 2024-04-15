@@ -65,6 +65,7 @@ export const getCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!req.body.parent) req.body.parent = null;
     const updatedCategory = await Category.findByIdAndUpdate(id, req.body, {
       new: true,
     });

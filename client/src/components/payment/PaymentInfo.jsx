@@ -43,6 +43,17 @@ const PaymentInfo = ({ cartItem }) => {
             </div>
 
             <span>
+              {(
+                (item.variant?.reduce((a, i) => a + i.priceModifier, 0) +
+                  item.product.price) *
+                item.quantity
+              )
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              ₫
+            </span>
+
+            <span>
               {item?.product?.salePrice
                 .toString()
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}

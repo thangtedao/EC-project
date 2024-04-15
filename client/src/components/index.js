@@ -13,7 +13,7 @@ export { default as ProductCard } from "./ProductCard";
 export { default as ProductList } from "./ProductList";
 export { default as AllProduct } from "./ProductList";
 export { default as CartItem } from "./cart/CartItem";
-export { default as OrderCard } from "./OrderCard";
+export { default as OrderCard } from "./order/OrderCard";
 export { default as Loading } from "./Loading";
 export { default as FormRow } from "./FormRow";
 export { default as FormRowSelect } from "./FormRowSelect";

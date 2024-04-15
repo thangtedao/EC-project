@@ -120,28 +120,24 @@ export const loader = async () => {
   try {
     const user = await customFetch
       .get("/user/current-user")
-      .then(({ data }) => data.user)
-      .catch(() => redirect("/login"));
+      .then(({ data }) => data.user);
 
     if (user) {
-      const orders = await customFetch.get(`/order/`).then(({ data }) => data);
-
-      const cart = await customFetch.get("/user/cart").then(({ data }) => data);
-      if (!cart) {
-        // store.dispatch(setCart([]));
-      }
-
-      return orders;
+      const orders = await customFetch
+        .get(`/order/?user=${user._id}`)
+        .then(({ data }) => data);
+      return { orders };
     }
-    return redirect("/login");
+    return null;
   } catch (error) {
+    if (error?.response?.status === 401) return redirect("/login");
     return error;
   }
 };
 
 const Order = () => {
   window.scrollTo(0, 0);
-  const orders = useLoaderData();
+  const { orders } = useLoaderData();
 
   return (
     <HelmetProvider>

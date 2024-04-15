@@ -95,6 +95,12 @@ const AllCoupon = () => {
       title: "Discount",
       dataIndex: "discountValue",
       key: "discountValue",
+      render: (discountValue, record) =>
+        record.discountType === "percentage" ? (
+          <p>{discountValue + "%"}</p>
+        ) : (
+          <p>{discountValue + "₫"}</p>
+        ),
     },
     {
       title: "Day start",
