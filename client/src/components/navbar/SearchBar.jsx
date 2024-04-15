@@ -5,7 +5,7 @@ import { useState } from "react";
 import customFetch from "../../utils/customFetch";
 import { debounce } from "lodash";
 import styled from "styled-components";
-import img from "../assets/react.svg";
+import img from "../../assets/react.svg";
 
 const Wrapper = styled.div`
   position: relative;

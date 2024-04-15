@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { categoryData } from "../assets/data/categoryData";
-import { FAQ, ProductList, SlideProduct } from "../components";
+import { ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
 import { NavLink, useLoaderData } from "react-router-dom";
 import { debounce } from "lodash";

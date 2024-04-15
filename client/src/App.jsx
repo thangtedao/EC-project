@@ -14,7 +14,6 @@ import {
   Order,
   Wishlist,
   Profile,
-  VnpayPayment,
   VnPay_return,
 } from "./pages";
 
@@ -75,10 +74,6 @@ const router = createBrowserRouter([
             path: "payment",
             element: <Payment />,
             loader: paymentLoader,
-          },
-          {
-            path: "vnpay-payment",
-            element: <VnpayPayment />,
           },
           {
             path: "vnpay-return",

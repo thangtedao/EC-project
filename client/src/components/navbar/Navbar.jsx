@@ -11,7 +11,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { FaRegHeart } from "react-icons/fa";
-import Logo from "../assets/Nova.svg";
+import Logo from "../../assets/Nova.svg";
 
 const Wrapper = styled.div`
   width: 100%;
