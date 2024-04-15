@@ -33,7 +33,7 @@ router.delete(
   authorizePermissions("admin"),
   deleteCoupon
 );
-router.get("/apply", authenticateUser, applyCoupon);
+router.post("/apply", authenticateUser, applyCoupon);
 router.get("/:id", getCoupon);
 
 export default router;

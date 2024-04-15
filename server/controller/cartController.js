@@ -94,14 +94,13 @@ export const increaseQuantity = async (req, res) => {
 
     let cart;
     if (cartItem.variant.length > 0) {
-      const variantIds = cartItem.variant.map((item) => item);
       cart = await Cart.findOneAndUpdate(
         {
           user: userId,
           cartItem: {
             $elemMatch: {
               product: cartItem.product._id,
-              variant: { $all: variantIds },
+              variant: { $all: cartItem.variant },
             },
           },
         },
@@ -118,7 +117,9 @@ export const increaseQuantity = async (req, res) => {
         },
         { $inc: { "cartItem.$.quantity": 1 } },
         { new: true }
-      ).populate("cartItem.product");
+      )
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
     }
 
     res.status(StatusCodes.OK).json(cart);
@@ -135,14 +136,13 @@ export const descreaseQuantity = async (req, res) => {
 
     let cart;
     if (cartItem.variant.length > 0) {
-      const variantIds = cartItem.variant.map((item) => item);
       cart = await Cart.findOneAndUpdate(
         {
           user: userId,
           cartItem: {
             $elemMatch: {
               product: cartItem.product._id,
-              variant: { $all: variantIds },
+              variant: { $all: cartItem.variant },
               quantity: { $gt: 1 },
             },
           },
@@ -165,7 +165,9 @@ export const descreaseQuantity = async (req, res) => {
         },
         { $inc: { "cartItem.$.quantity": -1 } },
         { new: true }
-      ).populate("cartItem.product");
+      )
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
     }
 
     res.status(StatusCodes.OK).json(cart);
@@ -182,14 +184,13 @@ export const removeFromCart = async (req, res) => {
 
     let cart;
     if (cartItem.variant.length > 0) {
-      const variantIds = cartItem.variant.map((item) => item);
       cart = await Cart.findOneAndUpdate(
         { user: userId },
         {
           $pull: {
             cartItem: {
               product: cartItem.product._id,
-              variant: { $all: variantIds },
+              variant: { $all: cartItem.variant },
             },
           },
         },
@@ -210,7 +211,9 @@ export const removeFromCart = async (req, res) => {
         cart._id,
         { cartItem: cart.cartItem },
         { new: true }
-      ).populate("cartItem.product");
+      )
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
     }
 
     res.status(StatusCodes.OK).json(cart);
@@ -229,6 +232,7 @@ export const getUserCart = async (req, res) => {
     });
     res.status(StatusCodes.OK).json(cart);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

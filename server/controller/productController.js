@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 import ProductVariation from "../models/ProductVariation.js";
+import ProductBlog from "../models/ProductBlog.js";
 import Review from "../models/Review.js";
 import slugify from "slugify";
 import { NotFoundError } from "../errors/customErrors.js";
@@ -29,7 +30,9 @@ export const createProduct = async (req, res) => {
       publicIdImages.push(response.public_id);
     });
 
-    const variations = data.variations;
+    let variations = data.variations;
+    const blog = data.blog;
+    delete data.blog;
     delete data.variations;
     data.images = images;
     data.publicIdImages = publicIdImages;
@@ -37,16 +40,19 @@ export const createProduct = async (req, res) => {
     data.category = data.category.split(",");
 
     const newProduct = await Product.create(data);
+    await ProductBlog.create({ productId: newProduct._id, content: blog });
 
-    if (variations)
-      variations.map(async (item) => {
-        await ProductVariation.create({
+    if (variations) {
+      variations = variations.map((item) => {
+        return {
           productId: newProduct._id,
           variationName: item.variationName,
           variationValue: item.variationValue,
           priceModifier: item.priceModifier,
-        });
+        };
       });
+      await ProductVariation.insertMany(variations);
+    }
 
     res.status(StatusCodes.CREATED).json(newProduct);
   } catch (error) {
@@ -168,6 +174,8 @@ export const getProduct = async (req, res) => {
     const product = await query;
 
     let variation = await ProductVariation.find({ productId: id });
+
+    const productBlog = await ProductBlog.findOne({ productId: id });
     // if (variation) {
     //   variation = variation.reduce((groups, item) => {
     //     const { variationName } = item;
@@ -179,7 +187,7 @@ export const getProduct = async (req, res) => {
     //   }, {});
     // }
 
-    res.status(StatusCodes.OK).json({ product, variation });
+    res.status(StatusCodes.OK).json({ product, variation, productBlog });
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
@@ -204,7 +212,9 @@ export const updateProduct = async (req, res) => {
       publicIdImages.push(response.public_id);
     });
 
-    const variations = data.variations;
+    let variations = data.variations;
+    const blog = data.blog;
+    delete data.blog;
     delete data.variations;
     data.images = images;
     data.publicIdImages = publicIdImages;
@@ -215,6 +225,24 @@ export const updateProduct = async (req, res) => {
 
     const updatedProduct = await Product.findByIdAndUpdate(id, data);
     if (!updatedProduct) throw new NotFoundError(`Product Not Found`);
+
+    await ProductBlog.findOneAndUpdate(
+      { productId: updatedProduct._id },
+      { content: blog }
+    );
+
+    if (variations) {
+      variations = variations.map((item) => {
+        return {
+          productId: updatedProduct._id,
+          variationName: item.variationName,
+          variationValue: item.variationValue,
+          priceModifier: item.priceModifier,
+        };
+      });
+      await ProductVariation.deleteMany({ productId: updatedProduct._id });
+      await ProductVariation.insertMany(variations);
+    } else await ProductVariation.deleteMany({ productId: updatedProduct._id });
 
     if (req.files && updatedProduct.publicIdImages.length > 0) {
       await Promise.all(

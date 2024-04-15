@@ -1,3 +1,4 @@
+import { NotFoundError } from "../errors/customErrors.js";
 import Coupon from "../models/Coupon.js";
 import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
@@ -56,9 +57,10 @@ export const deleteCoupon = async (req, res) => {
 
 export const applyCoupon = async (req, res) => {
   try {
-    const { coupon } = req.body;
+    let { code } = req.body;
     const { userId } = req.user;
-    const validCoupon = await Coupon.findById(coupon._id);
+    if (code) code = code.toString().toUpperCase();
+    const validCoupon = await Coupon.findOne({ code: code });
     if (!validCoupon) throw new NotFoundError("Invalid Coupon");
 
     const user = await User.findById(userId);
@@ -67,6 +69,7 @@ export const applyCoupon = async (req, res) => {
 
     res.status(StatusCodes.OK).json(validCoupon);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import { useMainLayoutContext } from "../pages/MainLayout";
+import { useMainLayoutContext } from "../../pages/MainLayout";
 import { IoIosArrowForward } from "react-icons/io";
 
 const Wrapper = styled.div`

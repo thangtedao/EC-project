@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useNavigate } from "react-router-dom";
-import customFetch from "../utils/customFetch";
+import customFetch from "../../utils/customFetch";
 
-const PayPalPayment = ({ cart, user, coupon }) => {
+const PayPalPayment = ({ cartItem, coupon, totalAmount }) => {
   const navigate = useNavigate();
 
   const convertVNDToUSD = (vndAmount) => {
@@ -12,17 +12,7 @@ const PayPalPayment = ({ cart, user, coupon }) => {
     return usdAmount.toFixed(2);
   };
 
-  let totalPrice =
-    cart?.products.reduce(
-      (accumulator, item) => accumulator + item.product.salePrice * item.count,
-      0
-    ) || 0;
-
-  if (coupon) {
-    totalPrice -= (totalPrice * coupon.discount) / 100;
-  }
-
-  totalPrice = convertVNDToUSD(totalPrice);
+  totalAmount = convertVNDToUSD(totalAmount);
 
   const createOrder = (data, actions) => {
     return actions.order.create({
@@ -30,7 +20,7 @@ const PayPalPayment = ({ cart, user, coupon }) => {
         {
           amount: {
             currency_code: "USD",
-            value: totalPrice,
+            value: totalAmount,
           },
         },
       ],
@@ -39,11 +29,8 @@ const PayPalPayment = ({ cart, user, coupon }) => {
 
   const onApprove = async (data, actions) => {
     const order = await actions.order.capture();
-    await customFetch.post("/order/create-order", {
-      cart: cart.products,
-      user,
-      coupon,
-    });
+    console.log(order);
+    await customFetch.post("/order/create-order", { cartItem, coupon });
     navigate("/order");
   };
 

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
 
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
@@ -90,6 +91,16 @@ const AddProduct = () => {
   const { brands, categories, categoryChild } = useLoaderData();
   const navigate = useNavigate();
 
+  // Product blog
+  const [blog, setBlog] = useState();
+  const editorRef = useRef(null);
+  const blogChange = () => {
+    if (editorRef.current) {
+      const blogContent = String(editorRef.current.getContent());
+      setBlog(blogContent);
+    }
+  };
+
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -154,7 +165,7 @@ const AddProduct = () => {
   );
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
+    values["blog"] = blog;
     const formData = new FormData();
     if (values.categoryC) {
       values.category = [values.category, ...values.categoryC];
@@ -235,13 +246,17 @@ const AddProduct = () => {
                       Name
                     </Typography.Title>
                     <Form.Item name="name">
-                      <Input size="large" placeholder="Enter Product Name" />
+                      <Input
+                        required
+                        size="large"
+                        placeholder="Enter Product Name"
+                      />
                     </Form.Item>
 
                     <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
-                    <Form.Item name="description">
+                    {/* <Form.Item name="description">
                       <Input.TextArea
                         size="large"
                         placeholder="Type your description..."
@@ -249,6 +264,33 @@ const AddProduct = () => {
                           minRows: 3,
                           maxRows: 5,
                         }}
+                      />
+                    </Form.Item> */}
+                    <Form.Item>
+                      <Editor
+                        // apiKey="cmlltcvw2ydrtenwdgwdwqqrvsje6foe8t5xtyaq6lo2ufki"
+                        apiKey="jbmjv3n0hzwml063re0ackyls29g62lc76t23ptagoco48ip"
+                        language="vi"
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                        initialValue={""}
+                        init={{
+                          height: 500,
+                          menubar:
+                            "file edit view insert format tools table tc help",
+                          plugins: [
+                            "advlist autolink lists link image charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table paste code help wordcount",
+                          ],
+                          toolbar:
+                            "undo redo | formatselect | " +
+                            "bold italic backcolor | alignleft aligncenter " +
+                            "alignright alignjustify | bullist numlist outdent indent | " +
+                            "removeformat | help",
+                          content_style:
+                            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                        }}
+                        onChange={blogChange}
                       />
                     </Form.Item>
 
@@ -346,7 +388,7 @@ const AddProduct = () => {
                               },
                             ]}
                           >
-                            <Select
+                            {/* <Select
                               size="large"
                               placeholder="Select option"
                               options={[
@@ -359,7 +401,8 @@ const AddProduct = () => {
                                   label: "RAM-ROM",
                                 },
                               ]}
-                            />
+                            /> */}
+                            <Input size="large" placeholder="Enter Value" />
                           </Form.Item>
                           <Form.Item
                             name={[name, "variationValue"]}
@@ -419,6 +462,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="price">
                   <InputNumber
+                    required
                     suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
@@ -431,6 +475,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="salePrice">
                   <InputNumber
+                    required
                     suffix="VND"
                     style={{ width: "100%" }}
                     size="large"
@@ -446,6 +491,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="brand">
                   <Select
+                    required
                     size="large"
                     placeholder="Select Brand"
                     options={brands?.map((brand) => {
@@ -462,6 +508,7 @@ const AddProduct = () => {
                 </Typography.Title>
                 <Form.Item name="category">
                   <Select
+                    required
                     size="large"
                     placeholder="Select category"
                     onChange={handleChangeC}
@@ -477,6 +524,7 @@ const AddProduct = () => {
 
                 <Form.Item name="categoryC">
                   <Select
+                    allowClear
                     size="large"
                     mode="multiple"
                     placeholder="Select category"

@@ -200,6 +200,7 @@ const EditCategory = () => {
                 </Typography.Title>
                 <Form.Item name="parent">
                   <Select
+                    allowClear
                     size="large"
                     placeholder="Select Parent"
                     options={categories?.map((item) => {

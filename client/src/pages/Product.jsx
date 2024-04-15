@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import styled from "styled-components";
-import ProductType from "../components/productDetail/ProductType";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import SlideGallery from "../components/SlideGallery";
 import customFetch from "../utils/customFetch";
@@ -10,13 +9,14 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { debounce } from "lodash";
 import {
+  ProductBlog,
   ProductReview,
   ProductSpecifications,
   SlideProduct,
 } from "../components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/LogoNova.svg";
-import { Flex, Radio } from "antd";
+import { Radio } from "antd";
 
 const Wrapper = styled.div`
   width: 1100px;
@@ -63,15 +63,6 @@ const Wrapper = styled.div`
   }
   .product-img {
     height: 350px;
-  }
-  .other-product-img {
-    display: flex;
-    gap: 1rem;
-    div {
-      border: 0.5px solid green;
-      width: 50px;
-      height: 50px;
-    }
   }
 
   .box-product-variants {
@@ -146,29 +137,19 @@ const Wrapper = styled.div`
   /* BOT */
   .bot-container {
     width: 100%;
-    display: flex;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 1rem;
     border-top: 1px solid lightgray;
     padding-top: 2rem;
     margin-top: 1rem;
   }
   .bot-container-column-1 {
-    flex: 2;
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
   .bot-container-column-2 {
-    flex: 1;
-  }
-  .product-description {
-    border: 0.5px solid lightgrey;
-    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
   }
 
   /* MEDIA QUERIES */
@@ -198,8 +179,70 @@ const Wrapper = styled.div`
     }
 
     /* BOT */
+    .bot-container {
+      grid-template-columns: 1fr;
+    }
     .bot-container-column-2 {
       display: none;
+    }
+  }
+
+  #blog {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid black;
+    background-color: #fff;
+    text-align: left;
+    border: 0.5px solid lightgrey;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+  .blog-content {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+  }
+  .blog-content p {
+    text-align: justify;
+    font-size: 15px;
+    line-height: 1.5;
+
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  .blog-content h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0.3rem;
+  }
+  .blog-content h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem 0;
+  }
+  .blog-content img {
+    width: 100%;
+  }
+  .blog-showmore {
+    padding-top: 50px;
+    text-align: center;
+
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    cursor: pointer;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.91) 50%,
+      #fff 55%
+    );
+
+    :hover {
+      color: #e04040;
     }
   }
 `;
@@ -225,7 +268,7 @@ export const action = async ({ request }) => {
 export const loader = async ({ params }) => {
   try {
     const { id } = params;
-    let { product, variation } = await customFetch
+    let { product, variation, productBlog } = await customFetch
       .get(`/product/${id}`)
       .then(({ data }) => data);
 
@@ -245,7 +288,7 @@ export const loader = async ({ params }) => {
     }
 
     window.scrollTo(0, 0);
-    return { product, variation };
+    return { product, variation, productBlog };
   } catch (error) {
     return error;
   }
@@ -254,7 +297,7 @@ export const loader = async ({ params }) => {
 const Product = () => {
   const navigate = useNavigate();
 
-  const { product, variation } = useLoaderData();
+  const { product, variation, productBlog } = useLoaderData();
   const user = useSelector((state) => state.user.user);
 
   const addToCart = debounce(async (product, variant, user) => {
@@ -291,8 +334,6 @@ const Product = () => {
       [key]: value,
     });
   };
-
-  console.log(selectedVariants);
 
   return (
     <HelmetProvider>
@@ -376,7 +417,7 @@ const Product = () => {
                 </button>
                 <button
                   className="btn-addtocart"
-                  onClick={() => [addToCart(product, selectedVariants, user)]}
+                  onClick={() => addToCart(product, selectedVariants, user)}
                 >
                   <AddShoppingCartIcon />
                   <p>Thêm vào giỏ</p>
@@ -397,10 +438,7 @@ const Product = () => {
         {/* BOT */}
         <div className="bot-container">
           <div className="bot-container-column-1">
-            <div className="product-description">
-              <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
-              <p style={{ whiteSpace: "pre-line" }}>{product?.description}</p>
-            </div>
+            <ProductBlog productBlog={productBlog} />
             {/* <ProductReview product={product} /> */}
           </div>
           <div className="bot-container-column-2">

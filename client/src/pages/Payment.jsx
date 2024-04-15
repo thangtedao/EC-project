@@ -218,7 +218,13 @@ export const loader = async () => {
         .then(({ data }) => data);
       cartItem = cartData.cartItem;
     }
-    return { cartItem };
+    const totalPrice =
+      cartItem?.reduce(
+        (acc, item) => acc + item.product.salePrice * item.quantity,
+        0
+      ) || 0;
+
+    return { cartItem, totalPrice };
   } catch (error) {
     if (error?.response?.status === 401) return redirect("/login");
     return error;
@@ -226,9 +232,27 @@ export const loader = async () => {
 };
 
 const Payment = () => {
-  const { cartItem } = useLoaderData();
+  const { cartItem, totalPrice } = useLoaderData();
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
+  const [totalAmount, setTotalAmount] = useState(totalPrice || 0);
+  const [coupon, setCoupon] = useState(null);
+
+  const applyCoupon = async (code) => {
+    const couponData = await customFetch
+      .post("/coupon/apply", { code })
+      .then(({ data }) => data);
+
+    if (couponData) {
+      if (couponData.discountType === "percentage")
+        setTotalAmount(
+          totalPrice - (totalPrice * couponData.discountValue) / 100
+        );
+      else if (couponData.discountType === "fixed")
+        setTotalAmount(totalPrice - couponData.discountValue);
+      setCoupon(couponData);
+    }
+  };
 
   const steps = [
     {
@@ -237,7 +261,14 @@ const Payment = () => {
     },
     {
       title: "Checkout",
-      content: <PaymentCheckout />,
+      content: (
+        <PaymentCheckout
+          cartItem={cartItem}
+          coupon={coupon}
+          applyCoupon={applyCoupon}
+          totalAmount={totalAmount}
+        />
+      ),
     },
   ];
 

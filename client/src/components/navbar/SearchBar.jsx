@@ -2,10 +2,10 @@ import { InputBase } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { Form, NavLink } from "react-router-dom";
 import { useState } from "react";
-import customFetch from "../utils/customFetch";
+import customFetch from "../../utils/customFetch";
 import { debounce } from "lodash";
 import styled from "styled-components";
-import img from "../assets/react.svg";
+import img from "../../assets/react.svg";
 
 const Wrapper = styled.div`
   position: relative;
@@ -140,8 +140,14 @@ const SearchBar = () => {
                 <div className="product-card-info">
                   <div className="name">{product?.name}</div>
                   <div className="price">
-                    {product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
-                    <div className="strike">{product?.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}</div>
+                    {product?.price
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                    <div className="strike">
+                      {product?.salePrice
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
+                    </div>
                   </div>
                 </div>
               </NavLink>
