@@ -40,7 +40,11 @@ const PaymentCheckout = ({ cartItem, coupon, applyCoupon, totalAmount }) => {
       )}
 
       <h4>{totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫</h4>
-      <PayPalButton cartItem={cartItem} coupon={coupon} />
+      <PayPalButton
+        cartItem={cartItem}
+        coupon={coupon}
+        totalAmount={totalAmount}
+      />
       <VnPayButton totalPrice={totalAmount} />
     </div>
   );
