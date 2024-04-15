@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PayPalButton } from "../../components";
+import { VnPayButton } from "../../components";
 
 const PaymentCheckout = ({ cartItem, coupon, applyCoupon, totalAmount }) => {
   const [code, setCode] = useState();
@@ -39,7 +40,12 @@ const PaymentCheckout = ({ cartItem, coupon, applyCoupon, totalAmount }) => {
       )}
 
       <h4>{totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫</h4>
-      <PayPalButton cartItem={cartItem} coupon={coupon} />
+      <PayPalButton
+        cartItem={cartItem}
+        coupon={coupon}
+        totalAmount={totalAmount}
+      />
+      <VnPayButton totalPrice={totalAmount} />
     </div>
   );
 };

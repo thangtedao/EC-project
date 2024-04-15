@@ -31,7 +31,7 @@ const PayPalPayment = ({ cartItem, coupon, totalAmount }) => {
     const order = await actions.order.capture();
     console.log(order);
     await customFetch.post("/order/create-order", { cartItem, coupon });
-    // navigate("/order");
+    navigate("/order");
   };
 
   return (
