@@ -66,10 +66,12 @@ const Wrapper = styled.div`
   }
 
   .box-product-variants {
-    width: 100%;
+    /* width: 100%;
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: wrap; */
+    display: flex;
+    flex-direction: column;
   }
   .box-product-price {
     padding: 1rem 0;
@@ -245,6 +247,12 @@ const Wrapper = styled.div`
       color: #e04040;
     }
   }
+  .ant-radio-group .ant-radio-button-wrapper + .ant-radio-button-wrapper {
+    margin-left: 10px; /* Khoảng cách giữa các mục */
+  }
+  .ant-radio-button-wrapper {
+    line-height: 15px; //chiều cao của button
+  }
 `;
 
 export const action = async ({ request }) => {
@@ -378,14 +386,34 @@ const Product = () => {
               <div className="box-product-variants">
                 {Object.entries(variation)?.map(([key, items]) => (
                   <div key={key}>
-                    <p>{key}</p>
+                    <p style={{ marginBottom: "10px", marginTop: "10px" }}>
+                      {key}
+                    </p>
                     <Radio.Group
                       value={selectedVariants[key]}
                       onChange={(e) => handleChange(key, e.target.value)}
                     >
                       {items.map((item) => (
-                        <Radio.Button value={item._id} key={item._id}>
-                          {item.variationValue}
+                        <Radio.Button
+                          value={item._id}
+                          key={item._id}
+                          style={{ height: "auto" }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "11px",
+                              textAlign: "center",
+                            }}
+                          >
+                            {item.variationValue}
+                          </div>
+                          {/*  item.variationPrice */}
+                          <span
+                            style={{ fontSize: "11px", textAlign: "center" }}
+                          >
+                            20.000.000đ
+                          </span>
                         </Radio.Button>
                       ))}
                     </Radio.Group>
