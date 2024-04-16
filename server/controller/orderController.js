@@ -75,8 +75,8 @@ export const createOrder = async (req, res) => {
         },
         variant: variant,
         quantity: item.quantity,
-        priceAtOrder: salePrice,
-        subtotal: salePrice * item.quantity,
+        priceAtOrder: item.product.price + priceOfVariant,
+        subtotal: (item.product.price + priceOfVariant) * item.quantity,
       };
     });
 
@@ -91,7 +91,7 @@ export const createOrder = async (req, res) => {
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
       shippingAddress: user.address,
-      totalAmount: totalAmount,
+      totalAmount: totalAmount - discountAmount.toFixed(0),
     });
 
     const order = await newOrder.save();
@@ -174,7 +174,7 @@ export const getOrders = async (req, res) => {
 export const getOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).populate("user");
     res.status(StatusCodes.OK).json(order);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

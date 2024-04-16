@@ -3,21 +3,21 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ORDER_STATUS } from "../utils/constants.js";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { ProductBar } from "../components/index.js";
-import { redirect, useNavigation, useLoaderData } from "react-router-dom";
+import {
+  redirect,
+  useNavigation,
+  useLoaderData,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import img from "../assets/react.svg";
-// import Avatar from "@mui/material/Avatar";
 import { UserOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
-  Modal,
-  Upload,
   Button,
   Select,
   Avatar,
   Form,
-  Input,
   Typography,
-  InputNumber,
   Card,
   Breadcrumb,
   Space,
@@ -27,122 +27,6 @@ import {
   List,
 } from "antd";
 
-// const Wrapper = styled.div`
-//   width: 100%;
-//   height: 800px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-
-//   .title {
-//     font-size: 2rem;
-//     font-weight: bold;
-//     color: #00193b;
-//     margin-bottom: 1rem;
-//   }
-//   .order-container {
-//     display: flex;
-//     justify-content: center;
-//     gap: 2rem;
-//     width: 100%;
-//     height: 100%;
-//   }
-
-//   .order-details {
-//     width: 600px;
-//     height: 730px;
-//     display: flex;
-//     flex-direction: column;
-//     gap: 1rem;
-//     background-color: white;
-//     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
-//       0 2px 6px 2px rgba(60, 64, 67, 0.15);
-//     border-color: #f1f1f1;
-//     border-radius: 10px;
-//     padding: 1rem;
-//   }
-//   .product-list {
-//     width: 100%;
-//     height: 100%;
-//     display: flex;
-//     flex-direction: column;
-//     gap: 1rem;
-//     overflow: auto;
-//   }
-
-//   .form-row {
-//     margin-top: 2rem;
-//     .form-label {
-//       font-size: 0.9rem;
-//       color: #00193b;
-//     }
-//     .form-input {
-//       border: 1px solid #e2e1e1;
-//       border-radius: 8px;
-//       padding: 0 20px;
-//       height: 44px;
-//     }
-//     .form-select {
-//       border: 1px solid #e2e1e1;
-//       border-radius: 8px;
-//       padding: 0 20px;
-//       height: 44px;
-//     }
-//   }
-//   .btn {
-//     height: 30px;
-//     border-radius: 10px;
-//     background-color: #035ecf;
-//     color: white;
-//     font-size: 1.1rem;
-//     font-weight: bolder;
-//   }
-
-//   .user-info-container {
-//     width: 300px;
-//     height: 100%;
-//     display: flex;
-//     flex-direction: column;
-//     gap: 2rem;
-//   }
-//   .user-info {
-//     display: flex;
-//     flex-direction: column;
-//     padding: 1rem;
-//     gap: 1.2rem;
-//     border-radius: 5px;
-//     background-color: white;
-//     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
-//       0 2px 6px 2px rgba(60, 64, 67, 0.15);
-//   }
-
-//   .flex-column {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 10px;
-//   }
-
-//   .flex {
-//     display: flex;
-//     align-items: center;
-//     text-transform: capitalize;
-//     gap: 1rem;
-//   }
-
-//   .bold {
-//     font-size: 1rem;
-//     font-weight: bold;
-//     color: #00193b;
-//   }
-
-//   .form-order {
-//     width: 100%;
-//     height: 200px;
-//     display: flex;
-//     flex-direction: column;
-//     gap: 1rem;
-//   }
-// `;
 const Wrapper = styled.div`
   width: 100%;
 
@@ -205,12 +89,13 @@ export const action = async ({ request, params }) => {
 
 export const loader = async ({ params }) => {
   try {
+    const { id } = params;
     if (!id) {
       return redirect("/all-order");
     }
     const order = await customFetch
       .get(`/order/${id}`)
-      .then(({ data }) => data.order);
+      .then(({ data }) => data);
     return order;
   } catch (error) {
     return error;
@@ -218,35 +103,23 @@ export const loader = async ({ params }) => {
 };
 
 const EditOrder = () => {
-  // const order = useLoaderData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
-  const data = [
-    {
-      title: "SAMSUNG GALAXY ULTRAHD 15",
-      color: "Red",
-      spec: "8GB - 128 GB",
-      price: "30.000.000 VND",
-      sl: "X2",
-      tprice: "60.000.000 VND",
-    },
-    {
-      title: "SAMSUNG GALAXY ULTRAHD 15",
-      color: "Red",
-      spec: "8GB - 128 GB",
-      price: "3.000.000 VND",
-      sl: "X2",
-      tprice: "60.000.000 VND",
-    },
-    {
-      title: "SAMSUNG GALAXY ULTRAHD 15",
-      color: "Red",
-      spec: "8GB - 128 GB",
-      price: "300 VND",
-      sl: "X2",
-      tprice: "600 VND",
-    },
-  ];
+  const order = useLoaderData();
+  const navigate = useNavigate();
+
+  console.log(order);
+
+  const onFinish = async (values) => {
+    console.log(values);
+    const updatedOrder = await customFetch.patch(
+      `/order/update/${order._id}`,
+      values
+    );
+    if (updatedOrder) navigate("/all-order");
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -271,9 +144,9 @@ const EditOrder = () => {
         <div className="title">Order Detail</div>
         <Form
           name="basic"
-          initialValues={{ remember: true }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+          initialValues={{ status: order.status }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
@@ -285,13 +158,17 @@ const EditOrder = () => {
               <Card
                 className="col-1-item"
                 size="large"
-                title={`Ở đây là ID Order`}
-                extra={`Ngay2 tạo order ở đây`}
+                title={"#" + order?._id.slice(18) || "None"}
+                extra={
+                  order.createdAt.split("T")[1].split(".")[0] +
+                    " " +
+                    order.createdAt.split("T")[0] || "None"
+                }
               >
                 {/* LIST PRODUCT */}
                 <List
                   itemLayout="horizontal"
-                  dataSource={data}
+                  dataSource={order.orderItem}
                   renderItem={(item, index) => (
                     <List.Item
                       style={{
@@ -306,35 +183,49 @@ const EditOrder = () => {
                           avatar={
                             <Image
                               width={70}
-                              src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                              src={
+                                item.product?.images[0] ||
+                                "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                              }
                             />
                           }
                           title={
                             <Typography.Text strong>
-                              <a href="/">{item.title}</a>
+                              <a href="/">{item.product?.name}</a>
                             </Typography.Text>
                           }
                           description={
                             <div>
-                              <Typography.Text strong>Color: </Typography.Text>
-                              {item.color}
-                              <br />
-                              <Typography.Text strong>Spec: </Typography.Text>
-                              {item.spec}
-                              <br />
+                              {item.variant?.map((i) => {
+                                return (
+                                  <div key={i._id}>
+                                    <Typography.Text strong>
+                                      {i.name + ": "}
+                                    </Typography.Text>
+                                    {i.value}
+                                    <br />
+                                  </div>
+                                );
+                              })}
                             </div>
                           }
                         />
                       </div>
 
                       <div style={{ textAlign: "center" }}>
-                        <Typography.Text strong>{item.price} </Typography.Text>{" "}
+                        <Typography.Text strong>
+                          {item.priceAtOrder + "đ"}
+                        </Typography.Text>
                       </div>
                       <div style={{ textAlign: "center" }}>
-                        <Typography.Text strong>{item.sl} </Typography.Text>{" "}
+                        <Typography.Text strong>
+                          {"x" + item.quantity}
+                        </Typography.Text>
                       </div>
                       <div style={{ textAlign: "right" }}>
-                        <Typography.Text strong>{item.tprice} </Typography.Text>{" "}
+                        <Typography.Text strong>
+                          {item.subtotal + "đ"}
+                        </Typography.Text>
                       </div>
                     </List.Item>
                   )}
@@ -347,30 +238,45 @@ const EditOrder = () => {
                 >
                   <div style={{ width: "40%" }}>
                     <Typography.Text size="large" strong>
-                      Total:{" "}
+                      Total:
                     </Typography.Text>
                   </div>
                   <div style={{ marginLeft: "auto" }}>
                     <Typography.Text size="large">
-                      {"đ"} 123456789000
+                      {order.orderItem
+                        ?.reduce((a, i) => a + i.subtotal, 0)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                      ₫
                     </Typography.Text>
                   </div>
                 </div>
+
                 {/* TOTAL PRICE 2 */}
-                <div
-                  style={{ width: "40%", marginLeft: "auto", display: "flex" }}
-                >
-                  <div style={{ width: "40%" }}>
-                    <Typography.Text size="large" strong>
-                      Coupon:{" "}
-                    </Typography.Text>
+                {order.discountAmount && (
+                  <div
+                    style={{
+                      width: "40%",
+                      marginLeft: "auto",
+                      display: "flex",
+                    }}
+                  >
+                    <div style={{ width: "40%" }}>
+                      <Typography.Text size="large" strong>
+                        Coupon:
+                      </Typography.Text>
+                    </div>
+                    <div style={{ marginLeft: "auto" }}>
+                      <Typography.Text size="large">
+                        {"-" +
+                          order.discountAmount
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                        ₫
+                      </Typography.Text>
+                    </div>
                   </div>
-                  <div style={{ marginLeft: "auto" }}>
-                    <Typography.Text size="large">
-                      -{"đ"}12222222
-                    </Typography.Text>
-                  </div>
-                </div>
+                )}
 
                 {/* TOTAL PRICE 3 */}
                 <div
@@ -378,12 +284,15 @@ const EditOrder = () => {
                 >
                   <div style={{ width: "40%" }}>
                     <Typography.Text size="large" strong>
-                      Amount paid::{" "}
+                      Amount paid:
                     </Typography.Text>
                   </div>
                   <div style={{ marginLeft: "auto" }}>
                     <Typography.Text size="large">
-                      {"đ"}122222220000000000
+                      {order.totalAmount
+                        ?.toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                      ₫
                     </Typography.Text>
                   </div>
                 </div>
@@ -398,41 +307,56 @@ const EditOrder = () => {
             >
               <Card className="col-2-item" size="large" title={`Customer`}>
                 <Space wrap size={16}>
-                  <Avatar size={64} icon={<UserOutlined />} />
-                  <Typography.Text>Nguyen Thanh Vy</Typography.Text>
+                  <Avatar
+                    size={64}
+                    icon={<UserOutlined />}
+                    src={
+                      order.user?.avatar ||
+                      "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                    }
+                  />
+                  <Typography.Text>{order.user?.fullName}</Typography.Text>
                 </Space>
 
                 <Divider />
                 <Space wrap size={16}>
                   <Typography.Text strong>ID:</Typography.Text>
-                  <Typography.Text size="large">125445824</Typography.Text>
+                  <Typography.Text size="large">
+                    {order.user?._id}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Phone Number: </Typography.Text>
-                  <Typography.Text size="large">123456789</Typography.Text>
+                  <Typography.Text size="large">
+                    {order.user?.phone}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Email: </Typography.Text>
-                  <Typography.Text size="large">@email.com</Typography.Text>
+                  <Typography.Text size="large">
+                    {order.user?.email}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Delivery Address: </Typography.Text>
-                  <Typography.Text>123</Typography.Text>
+                  <Typography.Text>{order.user?.address}</Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
-                  <Typography.Text strong>Status: </Typography.Text>
+                  <Typography.Text strong>
+                    Status: {order.status}
+                  </Typography.Text>
                   <Tag color="red" size="large">
                     Cancelled
                   </Tag>
@@ -451,25 +375,22 @@ const EditOrder = () => {
                 </Space>
               </Card>
               <Card className="col-2-item" size="large" title={`Change Status`}>
-                <Typography.Title className="input-title">
+                {/* <Typography.Title className="input-title">
                   Change Status
-                </Typography.Title>
-                <Form.Item name="parent">
+                </Typography.Title> */}
+                <Form.Item name="status">
                   <Select
                     size="large"
-                    allowClear
                     placeholder="Select Status"
-                    options={[
-                      {
-                        value: "OK",
-                        label: "OK",
-                      },
-                    ]}
+                    options={Object.keys(ORDER_STATUS).map((key) => ({
+                      value: ORDER_STATUS[key],
+                      label: ORDER_STATUS[key],
+                    }))}
                   />
                 </Form.Item>
               </Card>
             </div>
-          </div>{" "}
+          </div>
           {/* BUTTON SUBMIT */}
           <div className="btn">
             <Button danger size="large">

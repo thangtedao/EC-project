@@ -213,9 +213,16 @@ const EditCoupon = () => {
                         <Typography.Title className="input-title">
                           Type
                         </Typography.Title>
-                        <Form.Item name="discountType">
+                        <Form.Item
+                          name="discountType"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select discount type",
+                            },
+                          ]}
+                        >
                           <Select
-                            required
                             size="large"
                             placeholder="Select option"
                             value={discountType}

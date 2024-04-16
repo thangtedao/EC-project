@@ -415,12 +415,6 @@ const EditProduct = () => {
                           <Form.Item
                             {...restField}
                             name={[name, "variationName"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing",
-                              },
-                            ]}
                           >
                             {/* <Select
                               size="large"
@@ -532,9 +526,11 @@ const EditProduct = () => {
                 <Typography.Title className="input-title">
                   Brand
                 </Typography.Title>
-                <Form.Item name="brand">
+                <Form.Item
+                  name="brand"
+                  rules={[{ required: true, message: "Please select a brand" }]}
+                >
                   <Select
-                    required
                     size="large"
                     placeholder="Select Brand"
                     options={brands?.map((brand) => {
@@ -549,9 +545,13 @@ const EditProduct = () => {
                 <Typography.Title className="input-title">
                   Category
                 </Typography.Title>
-                <Form.Item name="category">
+                <Form.Item
+                  name="category"
+                  rules={[
+                    { required: true, message: "Please select a category" },
+                  ]}
+                >
                   <Select
-                    required
                     size="large"
                     placeholder="Select category"
                     onChange={(value) => handleChangeC(value)}
@@ -594,9 +594,13 @@ const EditProduct = () => {
                 <Typography.Title className="input-title">
                   Status
                 </Typography.Title>
-                <Form.Item name="status">
+                <Form.Item
+                  name="status"
+                  rules={[
+                    { required: true, message: "Please select a status" },
+                  ]}
+                >
                   <Select
-                    required
                     size="large"
                     placeholder="Select Status"
                     options={Object.keys(PRODUCT_STATUS).map((key) => ({

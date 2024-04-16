@@ -1,10 +1,10 @@
-export const ORDER_STATUS = [
-  "Chờ Xác Nhận",
-  "Đang Xử Lý",
-  "Đang Giao Hàng",
-  "Đã Giao Hàng",
-  "Đã Hủy",
-];
+export const ORDER_STATUS = {
+  PENDING: "Pending",
+  PROCESSING: "Processing",
+  DELIVERING: "Delivering",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
+};
 export const ORDER_STATUS_2 = [
   "Not Processed",
   "Cash on Delivery",

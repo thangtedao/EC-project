@@ -35,44 +35,41 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    const orders = await customFetch
-      .get(`/order/`, { params })
-      .then(({ data }) => data.orders);
+    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
     return { orders };
   } catch (error) {
     return error;
   }
 };
-//Search Product
-const { Search } = Input;
-const suffix = (
-  <AudioOutlined
-    style={{
-      fontSize: 16,
-      color: "#1677ff",
-    }}
-  />
-);
-
-//Dropdown
-const items = [
-  {
-    label: "View",
-    key: "1",
-    icon: <FormOutlined />,
-  },
-];
 
 const AllOrder = () => {
   const { orders } = useLoaderData();
   const navigate = useNavigate();
 
-  console.log(orders);
-
-  const handleEditOrder = () => {
-    navigate("/edit-order/:id");
+  const handleEditOrder = (id) => {
+    navigate(`/edit-order/${id}`);
   };
+
+  //Search Product
+  const { Search } = Input;
+  const suffix = (
+    <AudioOutlined
+      style={{
+        fontSize: 16,
+        color: "#1677ff",
+      }}
+    />
+  );
+
+  //Dropdown
+  const items = [
+    {
+      label: "View",
+      key: "1",
+      icon: <FormOutlined />,
+    },
+  ];
 
   //Danh sách các cột
   const columns = [
@@ -82,6 +79,7 @@ const AllOrder = () => {
       dataIndex: "_id",
       key: "_id",
       fixed: "left",
+      render: (_id) => "#" + _id.slice(18),
     },
     {
       title: "Image",
@@ -97,62 +95,58 @@ const AllOrder = () => {
       dataIndex: "user",
       key: "user",
       fixed: "left",
+      render: (user) => user.fullName,
     },
 
     {
       title: "TotalAmount",
-      dataIndex: "TotalAmount",
-      key: "TotalAmount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
       width: 150,
+      render: (totalAmount) =>
+        totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (createdAt) => createdAt.split("T")[0],
     },
     {
       title: "Time",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (createdAt) => createdAt.split("T")[1].split(".")[0],
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       width: 200,
-      render: (_, { status }) => (
-        <>
-          {status.map((tag) => {
-            let color = "";
-
-            if (tag === "Cancelled") {
-              color = "red";
-            } else if (tag === "Delivered") {
-              color = "green";
-            } else if (tag === "Processing") {
-              color = "orange";
-            } else if (tag === "Pending") {
-              color = "gold";
-            } else if (tag === "Shipped") {
-              color = "blue";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      render: (status) => {
+        let color = "";
+        if (status === "Cancelled") {
+          color = "red";
+        } else if (status === "Delivered") {
+          color = "green";
+        } else if (status === "Processing") {
+          color = "orange";
+        } else if (status === "Pending") {
+          color = "gold";
+        } else if (status === "Delivering") {
+          color = "blue";
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
     },
     {
       title: "Action",
       key: "operation",
       fixed: "right",
       width: 150,
-      render: () => (
+      render: ({ _id }) => (
         <Dropdown.Button
-          onClick={handleEditOrder}
+          onClick={() => handleEditOrder(_id)}
           menu={{
             items,
           }}
@@ -240,11 +234,10 @@ const AllOrder = () => {
           className="table"
           pagination={paginationConfig}
           columns={columns}
-          dataSource={data}
-          // dataSource={products.map((product) => ({
-          //   ...product,
-          //   key: product._id,
-          // }))}
+          dataSource={orders.map((order) => ({
+            ...order,
+            key: order._id,
+          }))}
           onChange={onChange}
           scroll={{ x: 1200 }}
           showSorterTooltip={{

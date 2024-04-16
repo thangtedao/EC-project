@@ -169,11 +169,6 @@ const ProductCard = ({ product }) => {
             </div>
           )}
         </div>
-        {/* {product.description && (
-          <div className="product-card-description">
-            <p>{product.description}</p>
-          </div>
-        )} */}
       </NavLink>
 
       <div className="product-card-bottom">
