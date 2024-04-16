@@ -386,9 +386,7 @@ const Product = () => {
               <div className="box-product-variants">
                 {Object.entries(variation)?.map(([key, items]) => (
                   <div key={key}>
-                    <p style={{ marginBottom: "10px", marginTop: "10px" }}>
-                      {key}
-                    </p>
+                    <p style={{ margin: "10px 0" }}>{key}</p>
                     <Radio.Group
                       value={selectedVariants[key]}
                       onChange={(e) => handleChange(key, e.target.value)}
@@ -397,23 +395,27 @@ const Product = () => {
                         <Radio.Button
                           value={item._id}
                           key={item._id}
-                          style={{ height: "auto" }}
+                          style={{
+                            width: 130,
+                            height: "auto",
+                            fontSize: 14,
+                            textAlign: "center",
+                            color: "#444444",
+                            border:
+                              selectedVariants[key] === item._id
+                                ? "1.5px solid #e04040"
+                                : "1.5px solid lightgray",
+                          }}
                         >
                           <div
                             style={{
                               fontWeight: "bold",
-                              fontSize: "11px",
-                              textAlign: "center",
+                              height: 20,
                             }}
                           >
                             {item.variationValue}
                           </div>
-                          {/*  item.variationPrice */}
-                          <span
-                            style={{ fontSize: "11px", textAlign: "center" }}
-                          >
-                            20.000.000đ
-                          </span>
+                          <div>{item.priceModifier}đ</div>
                         </Radio.Button>
                       ))}
                     </Radio.Group>
