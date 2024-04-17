@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import {
   Modal,
@@ -99,6 +101,11 @@ const EditCoupon = () => {
 
   const [discountType, setDiscountType] = useState(coupon?.discountType);
 
+  dayjs.extend(customParseFormat);
+  const dateFormat = "YYYY-MM-DD";
+
+  console.log(coupon);
+
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -164,8 +171,8 @@ const EditCoupon = () => {
             discountType: coupon?.discountType,
             discountValue: coupon?.discountValue,
             description: coupon?.description,
-            // startDate: new Date(coupon?.startDate),
-            // endDate: new Date(coupon?.endDate),
+            startDate: dayjs(coupon.startDate?.split("T")[0], dateFormat),
+            endDate: dayjs(coupon.endDate?.split("T")[0], dateFormat),
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}

@@ -8,7 +8,9 @@ import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
-import { Breadcrumb, Card, Segmented } from "antd";
+import { Breadcrumb, Card, Segmented, DatePicker, Button } from "antd";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -67,20 +69,52 @@ const DashboardContext = createContext();
 const Dashboard = () => {
   const { products, orders } = useLoaderData();
 
-  // let start, end;
-  // if (!params.start && !params.end) {
-  //   end = new Date();
-  //   start = new Date(end);
-  //   start.setMonth(start.getMonth() - 10);
-  //   end = end.toISOString().split("T")[0];
-  //   start = start.toISOString().split("T")[0];
-  // }
+  dayjs.extend(customParseFormat);
+  const dateFormat = "YYYY-MM-DD";
 
-  // const [startDate, setStartDate] = useState(params.start || start);
-  // const [endDate, setEndDate] = useState(params.end || end);
+  const [minDate, setMinDate] = useState(null);
+  const [maxDate, setMaxDate] = useState(null);
+
+  const [selectType, setSelectType] = useState("Daily");
+
+  const startDateChange = (dates, dateString) => {
+    if (dates) {
+      const date = new Date(dateString);
+      date.setDate(date.getDate() + 1);
+      setMinDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
+
+      switch (selectType) {
+        case "Daily": {
+          date.setDate(date.getDate() + 6);
+          setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
+          break;
+        }
+
+        case "Monthly": {
+          date.setMonth(date.getMonth() + 12);
+          setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
+          break;
+        }
+
+        default: {
+          date.setFullYear(date.getFullYear() + 12);
+          setMaxDate(
+            dayjs(date.toISOString().slice(0, 10).toString(), dateFormat)
+          );
+          break;
+        }
+      }
+    }
+  };
+
+  const endDateChange = (date, dateString) => {};
+
+  const applyDateChange = async () => {
+    //fetch data
+  };
 
   return (
-    <DashboardContext.Provider value={{ products, orders }}>
+    <DashboardContext.Provider value={{ products, orders, selectType }}>
       <HelmetProvider>
         <Wrapper>
           <Helmet>
@@ -107,18 +141,23 @@ const Dashboard = () => {
                 size="large"
                 title={"Revenue"}
                 extra={
-                  <Segmented
-                    options={[
-                      "Daily",
-                      "Weekly",
-                      "Monthly",
-                      "Quarterly",
-                      "Yearly",
-                    ]}
-                    onChange={(value) => {
-                      console.log(value); // string
-                    }}
-                  />
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <DatePicker onChange={startDateChange} size="middle" />
+                    <DatePicker
+                      onChange={endDateChange}
+                      minDate={minDate}
+                      maxDate={maxDate}
+                      size="middle"
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                    <Segmented
+                      options={["Daily", "Monthly", "Yearly"]}
+                      onChange={(value) => {
+                        console.log(value); // string
+                        setSelectType(value);
+                      }}
+                    />
+                  </div>
                 }
               >
                 <ChartLine />
@@ -129,18 +168,22 @@ const Dashboard = () => {
                 size="large"
                 title={"Revenue"}
                 extra={
-                  <Segmented
-                    options={[
-                      "Daily",
-                      "Weekly",
-                      "Monthly",
-                      "Quarterly",
-                      "Yearly",
-                    ]}
-                    onChange={(value) => {
-                      console.log(value); // string
-                    }}
-                  />
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <DatePicker size="middle" />
+                    <DatePicker size="middle" />
+                    <Segmented
+                      options={[
+                        "Daily",
+                        "Weekly",
+                        "Monthly",
+                        "Quarterly",
+                        "Yearly",
+                      ]}
+                      onChange={(value) => {
+                        console.log(value); // string
+                      }}
+                    />
+                  </div>
                 }
               >
                 <ChartColumn />
