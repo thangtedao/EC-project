@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { EditOutlined, AudioOutlined, FormOutlined } from "@ant-design/icons";
 import { Breadcrumb, Tag, Table, Input, Dropdown } from "antd";
+import { ORDER_STATUS } from "../utils/constants.js";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -138,6 +139,13 @@ const AllOrder = () => {
         }
         return <Tag color={color}>{status.toUpperCase()}</Tag>;
       },
+      filters: Object.keys(ORDER_STATUS).map((key) => {
+        return {
+          text: ORDER_STATUS[key],
+          value: ORDER_STATUS[key],
+        };
+      }),
+      onFilter: (value, record) => record?.status === value,
     },
     {
       title: "Action",
@@ -155,24 +163,6 @@ const AllOrder = () => {
           Edit
         </Dropdown.Button>
       ),
-    },
-  ];
-
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      status: ["Pending", "Processing"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      status: ["Cancelled"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      status: ["Shipped", "Delivered"],
     },
   ];
 
@@ -199,7 +189,7 @@ const AllOrder = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
               title: "Order",

@@ -103,7 +103,7 @@ const AllCoupon = () => {
         ),
     },
     {
-      title: "Day start",
+      title: "Start",
       dataIndex: "startDate",
       key: "startDate",
       render: (startDate) => (
@@ -111,7 +111,7 @@ const AllCoupon = () => {
       ),
     },
     {
-      title: "Day start",
+      title: "End",
       dataIndex: "endDate",
       key: "endDate",
 
@@ -129,7 +129,7 @@ const AllCoupon = () => {
     {
       title: "Action",
       key: "operation",
-      width: 120,
+      width: 150,
       fixed: "right",
       render: ({ _id }) => (
         <Dropdown.Button
@@ -165,7 +165,7 @@ const AllCoupon = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
               title: "Coupon",

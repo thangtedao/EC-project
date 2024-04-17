@@ -139,10 +139,10 @@ const EditCoupon = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
-              title: <a href="/all-coupon">Coupon</a>,
+              title: <a onClick={() => navigate("/all-coupon")}>Coupon</a>,
             },
             {
               title: "Edit Coupon",

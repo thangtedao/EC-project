@@ -11,7 +11,7 @@ import {
   PlusOutlined,
   FormOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Button, Input, Dropdown } from "antd";
+import { Breadcrumb, Table, Image, Button, Input, Dropdown, Tag } from "antd";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -71,15 +71,26 @@ export const loader = async ({ request }) => {
       .get("/brand/all-brands")
       .then(({ data }) => data);
 
-    return { products, categories, brands };
+    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+
+    return { products, categories, brands, orders };
   } catch (error) {
     return error;
   }
 };
 
 const AllProduct = () => {
-  const { products, categories, brands } = useLoaderData();
+  const { products, categories, brands, orders } = useLoaderData();
   const navigate = useNavigate();
+
+  products.forEach((product) => {
+    product.sold = orders.reduce((total, order) => {
+      return (
+        total +
+        order.orderItem.filter((item) => product._id === item.product.id).length
+      );
+    }, 0);
+  });
 
   const handleAddProduct = () => {
     navigate("/add-product");
@@ -116,11 +127,11 @@ const AllProduct = () => {
   const columns = [
     {
       title: "Image",
-      width: 120,
+      width: 100,
       dataIndex: "images",
       key: "images",
       fixed: "left",
-      render: (images) => <Image width={100} height={100} src={images[0]} />,
+      render: (images) => <Image width={80} height={80} src={images[0]} />,
     },
     {
       title: "Name",
@@ -167,7 +178,7 @@ const AllProduct = () => {
       key: "price",
       width: 150,
       render: (value) =>
-        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
       title: "Sale Price",
@@ -175,13 +186,24 @@ const AllProduct = () => {
       key: "salePrice",
       width: 150,
       render: (value) =>
-        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: 200,
+      width: 150,
+      render: (status) => {
+        let color = "";
+        if (status === "Available") {
+          color = "green";
+        } else if (status === "Out of stock") {
+          color = "orange";
+        } else if (status === "Discontinued") {
+          color = "red";
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
       filters: Object.keys(PRODUCT_STATUS).map((key) => {
         return {
           text: PRODUCT_STATUS[key],
@@ -190,14 +212,14 @@ const AllProduct = () => {
       }),
       onFilter: (value, record) => record?.status === value,
     },
-    // {
-    //   title: "Sold",
-    //   dataIndex: "sold",
-    //   key: "sold",
-    //   width: 100,
-    //   defaultSortOrder: "descend",
-    //   sorter: (a, b) => a.sold - b.sold,
-    // },
+    {
+      title: "Sold",
+      dataIndex: "sold",
+      key: "sold",
+      width: 100,
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.sold - b.sold,
+    },
     {
       title: "Action",
       key: "operation",
@@ -243,7 +265,7 @@ const AllProduct = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
               title: "Product",
@@ -305,7 +327,7 @@ const AllProduct = () => {
             key: product._id,
           }))}
           onChange={onChange}
-          scroll={{ x: 1200 }}
+          scroll={{ x: 1350 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

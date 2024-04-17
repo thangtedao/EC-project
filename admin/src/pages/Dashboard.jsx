@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { Form, redirect, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import ChartPie from "../components/Dashboard/ChartPie.jsx";
 import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
 import { Breadcrumb, Card, Segmented } from "antd";
+
 const Wrapper = styled.div`
   width: 100%;
 
@@ -53,16 +54,18 @@ export const loader = async ({ request }) => {
       .get(`/product/?populate=category,brand`)
       .then(({ data }) => data);
 
-    return {
-      products,
-    };
+    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+
+    return { products, orders };
   } catch (error) {
     return error;
   }
 };
 
+const DashboardContext = createContext();
+
 const Dashboard = () => {
-  const { products } = useLoaderData();
+  const { products, orders } = useLoaderData();
 
   // let start, end;
   // if (!params.start && !params.end) {
@@ -77,142 +80,148 @@ const Dashboard = () => {
   // const [endDate, setEndDate] = useState(params.end || end);
 
   return (
-    <HelmetProvider>
-      <Wrapper>
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>Dashboard</title>
-        </Helmet>
-        <Breadcrumb
-          style={{ paddingBottom: "1rem" }}
-          items={[
-            {
-              title: "Dashboard",
-            },
-          ]}
-        />
+    <DashboardContext.Provider value={{ products, orders }}>
+      <HelmetProvider>
+        <Wrapper>
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Dashboard</title>
+          </Helmet>
+          <Breadcrumb
+            style={{ paddingBottom: "1rem" }}
+            items={[
+              {
+                title: "Dashboard",
+              },
+            ]}
+          />
 
-        <div className="title">Dashboard</div>
-        <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
-          <div
-            className="col-1"
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <Card
-              className="col-1-item"
-              size="large"
-              title={"column"}
-              extra={
-                <Segmented
-                  options={[
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Quarterly",
-                    "Yearly",
-                  ]}
-                  onChange={(value) => {
-                    console.log(value); // string
-                  }}
-                />
-              }
+          <div className="title">Dashboard</div>
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
+            <div
+              className="col-1"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              <ChartLine />
-            </Card>
-            <Card
-              className="col-1-item"
-              size="large"
-              title={"column"}
-              extra={
-                <Segmented
-                  options={[
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Quarterly",
-                    "Yearly",
-                  ]}
-                  onChange={(value) => {
-                    console.log(value); // string
-                  }}
-                />
-              }
+              <Card
+                className="col-1-item"
+                size="large"
+                title={"Revenue"}
+                extra={
+                  <Segmented
+                    options={[
+                      "Daily",
+                      "Weekly",
+                      "Monthly",
+                      "Quarterly",
+                      "Yearly",
+                    ]}
+                    onChange={(value) => {
+                      console.log(value); // string
+                    }}
+                  />
+                }
+              >
+                <ChartLine />
+              </Card>
+
+              <Card
+                className="col-1-item"
+                size="large"
+                title={"Revenue"}
+                extra={
+                  <Segmented
+                    options={[
+                      "Daily",
+                      "Weekly",
+                      "Monthly",
+                      "Quarterly",
+                      "Yearly",
+                    ]}
+                    onChange={(value) => {
+                      console.log(value); // string
+                    }}
+                  />
+                }
+              >
+                <ChartColumn />
+              </Card>
+
+              <Card
+                className="col-1-item"
+                size="large"
+                title={"Order"}
+                extra={
+                  <Segmented
+                    options={[
+                      "Daily",
+                      "Weekly",
+                      "Monthly",
+                      "Quarterly",
+                      "Yearly",
+                    ]}
+                    onChange={(value) => {
+                      console.log(value); // string
+                    }}
+                  />
+                }
+              >
+                <DashboardOrder />
+              </Card>
+            </div>
+
+            <div
+              className="col-2"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              <ChartColumn />
-            </Card>
-            <Card
-              className="col-1-item"
-              size="large"
-              title={"Order"}
-              extra={
-                <Segmented
-                  options={[
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Quarterly",
-                    "Yearly",
-                  ]}
-                  onChange={(value) => {
-                    console.log(value); // string
-                  }}
-                />
-              }
-            >
-              <DashboardOrder products2 />
-            </Card>
+              <Card
+                className="col-2-item"
+                size="large"
+                title={"Order Status"}
+                extra={
+                  <Segmented
+                    options={[
+                      "Daily",
+                      "Weekly",
+                      "Monthly",
+                      "Quarterly",
+                      "Yearly",
+                    ]}
+                    onChange={(value) => {
+                      console.log(value); // string
+                    }}
+                  />
+                }
+              >
+                <ChartPie />
+              </Card>
+              <Card
+                className="col-2-item"
+                size="large"
+                title={"Product"}
+                extra={
+                  <Segmented
+                    options={[
+                      "Daily",
+                      "Weekly",
+                      "Monthly",
+                      "Quarterly",
+                      "Yearly",
+                    ]}
+                    onChange={(value) => {
+                      console.log(value); // string
+                    }}
+                  />
+                }
+              >
+                <DashboardProduct />
+              </Card>
+            </div>
           </div>
-          <div
-            className="col-2"
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
-            <Card
-              className="col-2-item"
-              size="large"
-              title={"Order Status"}
-              extra={
-                <Segmented
-                  options={[
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Quarterly",
-                    "Yearly",
-                  ]}
-                  onChange={(value) => {
-                    console.log(value); // string
-                  }}
-                />
-              }
-            >
-              <ChartPie />
-            </Card>
-            <Card
-              className="col-2-item"
-              size="large"
-              title={"Product"}
-              extra={
-                <Segmented
-                  options={[
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Quarterly",
-                    "Yearly",
-                  ]}
-                  onChange={(value) => {
-                    console.log(value); // string
-                  }}
-                />
-              }
-            >
-              <DashboardProduct products={products} />
-            </Card>
-          </div>
-        </div>
-      </Wrapper>
-    </HelmetProvider>
+        </Wrapper>
+      </HelmetProvider>
+    </DashboardContext.Provider>
   );
 };
 
+export const useDashboardContext = () => useContext(DashboardContext);
 export default Dashboard;

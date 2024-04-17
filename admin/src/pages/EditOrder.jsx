@@ -1,17 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ORDER_STATUS } from "../utils/constants.js";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import {
-  redirect,
-  useNavigation,
-  useLoaderData,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
-import img from "../assets/react.svg";
-import { UserOutlined, MinusCircleOutlined } from "@ant-design/icons";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { UserOutlined } from "@ant-design/icons";
 import {
   Button,
   Select,
@@ -131,10 +124,10 @@ const EditOrder = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
-              title: <a href="/all-order">Order</a>,
+              title: <a onClick={() => navigate("/all-order")}>Order</a>,
             },
             {
               title: "Order Detail",

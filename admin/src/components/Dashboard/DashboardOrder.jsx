@@ -1,15 +1,11 @@
 import React from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
-import customFetch from "../../utils/customFetch";
+import { HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
-import { useNavigate, useLoaderData, Form } from "react-router-dom";
-import {
-  EditOutlined,
-  AudioOutlined,
-  PlusOutlined,
-  FormOutlined,
-} from "@ant-design/icons";
-import { Breadcrumb, Tag, Table, Image, Button, Input, Dropdown } from "antd";
+import { useNavigate } from "react-router-dom";
+import { EditOutlined, FormOutlined } from "@ant-design/icons";
+import { Tag, Table, Dropdown } from "antd";
+import { useDashboardContext } from "../../pages/Dashboard";
+
 const Wrapper = styled.div`
   width: 100%;
 
@@ -22,97 +18,73 @@ const Wrapper = styled.div`
   }
 `;
 
-export const loader = async ({ request }) => {
-  try {
-    const params = Object.fromEntries([
-      ...new URL(request.url).searchParams.entries(),
-    ]);
-    const orders = await customFetch
-      .get(`/order/`, { params })
-      .then(({ data }) => data.orders);
-
-    return { orders, params };
-  } catch (error) {
-    return error;
-  }
-};
-//Dropdown
-const items = [
-  {
-    label: "View",
-    key: "1",
-    icon: <FormOutlined />,
-  },
-];
-
 const DashboardOrder = () => {
-  const { orders, params } = useLoaderData();
+  const { orders } = useDashboardContext();
   const navigate = useNavigate();
 
-  console.log(orders);
-  const handleEditOrder = () => {
-    navigate("/edit-order/:id");
+  const handleEditOrder = (id) => {
+    navigate(`/edit-order/${id}`);
   };
-  //Danh sách các cột
+
   const columns = [
     {
       title: "ID Order",
-      width: 120,
-      dataIndex: "id",
-      key: "id",
-      fixed: "left",
+      width: 90,
+      dataIndex: "_id",
+      key: "_id",
+      // fixed: "left",
+      render: (_id) => "#" + _id.slice(18),
     },
     {
       title: "Customer",
       width: 150,
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "user",
+      key: "user",
       fixed: "left",
-      render: (text) => <a>{text}</a>,
+      render: (user) => user.fullName,
     },
     {
       title: "Date",
+      width: 110,
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (createdAt) => createdAt.split("T")[0],
+    },
+    {
+      title: "Time",
+      width: 110,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => createdAt.split("T")[1].split(".")[0],
     },
     {
       title: "Status",
+      width: 110,
       dataIndex: "status",
       key: "status",
-      width: 120,
-      render: (_, { status }) => (
-        <>
-          {status.map((tag) => {
-            let color = "";
-
-            if (tag === "Cancelled") {
-              color = "red";
-            } else if (tag === "Delivered") {
-              color = "green";
-            } else if (tag === "Processing") {
-              color = "orange";
-            } else if (tag === "Pending") {
-              color = "gold";
-            } else if (tag === "Shipped") {
-              color = "blue";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      render: (status) => {
+        let color = "";
+        if (status === "Cancelled") {
+          color = "red";
+        } else if (status === "Delivered") {
+          color = "green";
+        } else if (status === "Processing") {
+          color = "orange";
+        } else if (status === "Pending") {
+          color = "gold";
+        } else if (status === "Delivering") {
+          color = "blue";
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
     },
     {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 120,
-      render: () => (
+      render: ({ _id }) => (
         <Dropdown.Button
-          onClick={handleEditOrder}
+          onClick={() => handleEditOrder(_id)}
           menu={{
             items,
           }}
@@ -123,25 +95,16 @@ const DashboardOrder = () => {
       ),
     },
   ];
-  const data = [
+
+  //Dropdown
+  const items = [
     {
+      label: "View",
       key: "1",
-      name: "John Brown",
-
-      status: ["Pending", "Processing"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-
-      status: ["Cancelled"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      status: ["Shipped", "Delivered"],
+      icon: <FormOutlined />,
     },
   ];
+
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -150,6 +113,7 @@ const DashboardOrder = () => {
   const paginationConfig = {
     pageSize: 5,
   };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -161,12 +125,12 @@ const DashboardOrder = () => {
           // }}
           pagination={paginationConfig}
           columns={columns}
-          dataSource={data}
-          // dataSource={products.map((product) => ({
-          //   ...product,
-          //   key: product._id,
-          // }))}
+          dataSource={orders.map((order) => ({
+            ...order,
+            key: order._id,
+          }))}
           onChange={onChange}
+          scroll={{ x: 710 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

@@ -127,6 +127,7 @@ const Login = () => {
           <meta charSet="utf-8" />
           <title>Login</title>
         </Helmet>
+
         <div className="login-page">
           <div className="login-box">
             <div className="illustration-wrapper">
@@ -162,6 +163,7 @@ const Login = () => {
                   placeholder="Email"
                 />
               </Form.Item>
+
               <Form.Item
                 name="password"
                 rules={[
@@ -176,6 +178,7 @@ const Login = () => {
                   placeholder="Password"
                 />
               </Form.Item>
+
               <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
