@@ -9,6 +9,7 @@ import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
 import { Breadcrumb, Card, Segmented } from "antd";
+import { DateRangePicker } from "react-date-range";
 const Wrapper = styled.div`
   width: 100%;
 

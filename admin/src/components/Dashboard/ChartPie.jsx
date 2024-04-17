@@ -4,7 +4,7 @@ import Chart from "react-apexcharts";
 
 const Wrapper = styled.div``;
 
-function ChartPie() {
+const ChartPie = () => {
   const options = {
     series: [20, 55, 13, 33, 20],
     labels: ["Pending", "Shipped", "Processing", "Cancelled", "Delivered"],
@@ -54,6 +54,6 @@ function ChartPie() {
       />
     </Wrapper>
   );
-}
+};
 
 export default ChartPie;

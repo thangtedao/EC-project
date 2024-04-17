@@ -253,6 +253,9 @@ const Wrapper = styled.div`
   .ant-radio-button-wrapper {
     line-height: 15px; //chiều cao của button
   }
+  .ant-radio-button-wrapper:not(:first-child)::before {
+    content: none; //Bỏ cái viền xanh xanh
+  }
 `;
 
 export const action = async ({ request }) => {
@@ -405,6 +408,8 @@ const Product = () => {
                               selectedVariants[key] === item._id
                                 ? "1.5px solid #e04040"
                                 : "1.5px solid lightgray",
+
+                            borderRadius: 0,
                           }}
                         >
                           <div

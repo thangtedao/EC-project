@@ -21,12 +21,12 @@ const config = {
   xField: "day", // Đổi xField thành "value"
   yField: "value", // Đổi yField thành "day"
 };
-function ChartColumn() {
+const ChartColumn = () => {
   return (
     <Wrapper>
       <Column {...config} />
     </Wrapper>
   );
-}
+};
 
 export default ChartColumn;

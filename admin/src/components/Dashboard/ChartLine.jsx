@@ -21,12 +21,12 @@ const config = {
   xField: "day", // Đổi xField thành "value"
   yField: "value", // Đổi yField thành "day"
 };
-function ChartLine() {
+const ChartLine = () => {
   return (
     <Wrapper>
       <Line {...config} />
     </Wrapper>
   );
-}
+};
 
 export default ChartLine;
