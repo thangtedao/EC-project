@@ -67,7 +67,7 @@ const Wrapper = styled.div`
     height: 31px;
     top: 5px;
     left: -2px;
-    background: url("/src/assets/percent.svg") 50% no-repeat;
+    background: url("/src/assets/logo/percent.svg") 50% no-repeat;
     color: white;
     font-size: small;
     font-weight: bold;

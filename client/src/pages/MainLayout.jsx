@@ -1,20 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { Footer, Header, Loading } from "../components";
-import styled from "styled-components";
+import Wrapper from "../assets/wrappers/MainLayout.js";
 import customFetch from "../utils/customFetch";
 import { Outlet, useLoaderData, useNavigation } from "react-router-dom";
-
-const Wrapper = styled.div`
-  width: 100%;
-  position: relative;
-
-  .main-layout {
-    min-height: 700px;
-    display: flex;
-    justify-content: center;
-    padding-bottom: 2rem;
-  }
-`;
 
 export const loader = async () => {
   try {

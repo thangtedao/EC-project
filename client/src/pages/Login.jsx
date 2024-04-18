@@ -1,63 +1,13 @@
 import React from "react";
-import styled from "styled-components";
-import { FormRow } from "../components";
-import { Link, Form, redirect, useNavigation } from "react-router-dom";
+import Wrapper from "../assets/wrappers/Login.js";
 import customFetch from "../utils/customFetch.js";
+import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { store } from "../state/store.js";
 import { login } from "../state/userSlice.js";
-import NovaIcon from "../assets/LogoNova.svg";
-
-const Wrapper = styled.section`
-  padding: 3rem;
-  margin-bottom: 5rem;
-
-  .form-login {
-    width: 30vw;
-    background-color: var(--background-color);
-    border: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  h4 {
-    font-weight: 700;
-    margin-bottom: 2rem;
-  }
-  .form-row {
-    width: 100%;
-  }
-  .form-label {
-    font-size: 1rem;
-    font-weight: 400;
-  }
-  .form-input {
-    font-size: medium;
-    height: 2.5rem;
-    border: transparent;
-    border-bottom: 1px solid lightgray;
-    background-color: var(--background-color);
-  }
-  .btn-block {
-    height: 2.5rem;
-    border: transparent;
-    background-color: #e0052b;
-    text-transform: capitalize;
-    font-size: 1rem;
-    font-weight: 700;
-    color: white;
-    border-radius: 5px;
-  }
-  p {
-    color: #3d3d3d;
-  }
-  .member-btn {
-    margin-left: 0.5rem;
-    color: #e0052b;
-  }
-`;
+import { TextField } from "@mui/material";
+import NovaIcon from "../assets/logo/LogoNova.svg";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -85,26 +35,6 @@ export const action = async ({ request }) => {
         })
       );
     }
-
-    // const response = await customFetch.get("/user/cart");
-    // if (response.data.cart) {
-    //   const cart = response.data.cart?.products?.map((item) => {
-    //     return {
-    //       _id: item.product._id,
-    //       name: item.product.name,
-    //       price: item.product.price,
-    //       salePrice: item.product.salePrice,
-    //       images: item.product.images,
-    //       count: item.count,
-    //       category: item.product.category,
-    //       slug: item.product.slug,
-    //     };
-    //   });
-    //   store.dispatch(setCartTotal(response.data.cart.cartTotal));
-    //   store.dispatch(setCart(cart));
-    // } else {
-    //   store.dispatch(setCart([]));
-    // }
 
     toast.success("Login successful");
     return redirect("/");
@@ -134,9 +64,22 @@ const Login = () => {
         </Helmet>
 
         <Form method="post" className="form-login">
-          <h4>Login</h4>
-          <FormRow type="text" name="email" defaultValue="" />
-          <FormRow type="password" name="password" defaultValue="" />
+          <h3>Login</h3>
+          <TextField
+            required
+            size="small"
+            name="email"
+            label="Email"
+            sx={{ width: "100%" }}
+          />
+          <TextField
+            required
+            type="password"
+            size="small"
+            name="password"
+            label="Password"
+            sx={{ width: "100%" }}
+          />
           <button type="submit" className="btn-block" disabled={isSubmitting}>
             {isSubmitting ? "..." : "Login"}
           </button>

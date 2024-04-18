@@ -7,6 +7,7 @@ export { default as PayPalButton } from "./payment/PayPalButton";
 export { default as VnPayButton } from "./payment/VnPayButton";
 export { default as PaymentInfo } from "./payment/PaymentInfo";
 export { default as PaymentCheckout } from "./payment/PaymentCheckout";
+export { default as ListItem } from "./payment/ListItem";
 export { default as Header } from "./Header";
 export { default as Footer } from "./Footer";
 export { default as ProductCard } from "./ProductCard";

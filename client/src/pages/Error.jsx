@@ -1,35 +1,8 @@
 import React from "react";
-import styled from "styled-components";
+import Wrapper from "../assets/wrappers/Error.js";
 import { Link, useRouteError } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import NovaIcon from "../assets/LogoNova.svg";
-
-const Wrapper = styled.main`
-  min-height: 100vh;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  img {
-    max-width: 600px;
-    display: block;
-    margin-bottom: 2rem;
-    margin-top: -3rem;
-  }
-  h3 {
-    margin-bottom: 0.5rem;
-  }
-  p {
-    line-height: 1.5;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-    color: var(--text-secondary-color);
-  }
-  a {
-    color: var(--primary-500);
-    text-transform: capitalize;
-  }
-`;
+import NovaIcon from "../assets/logo/LogoNova.svg";
 
 const Error = () => {
   window.scrollTo(0, 0);
@@ -45,9 +18,9 @@ const Error = () => {
           </Helmet>
 
           <div>
-            <img src="#" alt="not found" />
+            <img src={NovaIcon} alt="not found" />
             <h3>Ohh! Page Not Found</h3>
-            <p>we cant seem to find the page you are looking for</p>
+            <p>we can't seem to find the page you are looking for</p>
             <Link to="/">back home</Link>
           </div>
         </Wrapper>

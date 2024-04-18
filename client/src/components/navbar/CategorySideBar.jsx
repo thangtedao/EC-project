@@ -164,12 +164,7 @@ const CategorySideBar = () => {
                 filtercategoriesChild &&
                 filtercategoriesChild[activeItem.index]?.map((item) => {
                   return (
-                    <a
-                      href={`/category/${categories[activeItem.index]?._id}/${
-                        item?._id
-                      }`}
-                      key={item?._id}
-                    >
+                    <a href={`/category/${item?._id}`} key={item?._id}>
                       {item?.name}
                     </a>
                   );

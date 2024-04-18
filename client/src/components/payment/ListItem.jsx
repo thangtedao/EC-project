@@ -1,14 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useCartContext } from "../../pages/Cart";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 const CartItem = ({ item }) => {
-  const user = useSelector((state) => state.user.user);
-  const { increaseQuantity, descreaseQuantity, removeFromCart } =
-    useCartContext();
-
   return (
     <div className="product-item-outer">
       <img className="product-img" src={item?.product?.images[0]} alt="Image" />
@@ -17,11 +10,6 @@ const CartItem = ({ item }) => {
         <NavLink to={`/product/${item?.product?._id}`}>
           {item?.product?.name}
         </NavLink>
-
-        <DeleteIcon
-          className="remove-btn"
-          onClick={() => removeFromCart(item, user)}
-        />
 
         <div className="product-variant">
           {item.variant?.map((i, index) => {
@@ -40,25 +28,12 @@ const CartItem = ({ item }) => {
               .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             ₫
           </span>
-          <span className="strike">99999999</span>
 
-          <div className="product-quantity">
-            <span
-              className="count-btn"
-              onClick={() => descreaseQuantity(item, user)}
-            >
-              -
-            </span>
-            <span style={{ fontSize: "0.9rem" }}>{item?.quantity} </span>
-            <span
-              className="count-btn"
-              onClick={() => increaseQuantity(item, user)}
-            >
-              +
-            </span>
-          </div>
+          <span className="strike">9999999999</span>
         </div>
       </div>
+
+      <div className="product-quantity">{"x" + item?.quantity}</div>
     </div>
   );
 };
