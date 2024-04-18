@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
@@ -8,9 +8,11 @@ import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
-import { Breadcrumb, Card, Segmented, DatePicker, Button } from "antd";
+import { Breadcrumb, Card, Segmented, DatePicker, Button, message } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+const dateFormat = "YYYY-MM-DD";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -50,7 +52,16 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    // const response = await customFetch.get("/order/stats", { params });
+    const endDate = dayjs().startOf("day").format(dateFormat);
+    const startDate = dayjs()
+      .subtract(12, "month")
+      .startOf("day")
+      .format("YYYY-MM-DD");
+    const response = await customFetch.post("/order/stats", {
+      startDate,
+      endDate,
+    });
+    const { monthlyApplications } = response.data;
 
     const products = await customFetch
       .get(`/product/?populate=category,brand`)
@@ -58,7 +69,7 @@ export const loader = async ({ request }) => {
 
     const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
-    return { products, orders };
+    return { products, orders, monthlyApplications };
   } catch (error) {
     return error;
   }
@@ -67,54 +78,51 @@ export const loader = async ({ request }) => {
 const DashboardContext = createContext();
 
 const Dashboard = () => {
-  const { products, orders } = useLoaderData();
+  const { products, orders, monthlyApplications } = useLoaderData();
 
-  dayjs.extend(customParseFormat);
-  const dateFormat = "YYYY-MM-DD";
+  const [showWarningMessage, setShowWarningMessage] = useState(false);
+  useEffect(() => {
+    if (showWarningMessage) {
+      message.warning("Please select date!!!");
+      setShowWarningMessage(false);
+    }
+  }, [showWarningMessage]);
 
   const [minDate, setMinDate] = useState(null);
   const [maxDate, setMaxDate] = useState(null);
-
-  const [selectType, setSelectType] = useState("Daily");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [monthlyStats, setMonthlyStats] = useState(monthlyApplications);
 
   const startDateChange = (dates, dateString) => {
     if (dates) {
       const date = new Date(dateString);
-      date.setDate(date.getDate() + 1);
       setMinDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-
-      switch (selectType) {
-        case "Daily": {
-          date.setDate(date.getDate() + 6);
-          setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-          break;
-        }
-
-        case "Monthly": {
-          date.setMonth(date.getMonth() + 12);
-          setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-          break;
-        }
-
-        default: {
-          date.setFullYear(date.getFullYear() + 12);
-          setMaxDate(
-            dayjs(date.toISOString().slice(0, 10).toString(), dateFormat)
-          );
-          break;
-        }
-      }
+      date.setMonth(11);
+      date.setDate(31);
+      console.log(date);
+      setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
+      setStartDate(dateString);
     }
   };
 
-  const endDateChange = (date, dateString) => {};
+  const endDateChange = (date, dateString) => {
+    setEndDate(dateString);
+  };
 
   const applyDateChange = async () => {
-    //fetch data
+    console.log(startDate + " || " + endDate);
+    if (startDate && endDate) {
+      const response = await customFetch.post("/order/stats", {
+        startDate,
+        endDate,
+      });
+      setMonthlyStats(response.data.monthlyApplications);
+    } else setShowWarningMessage(true);
   };
 
   return (
-    <DashboardContext.Provider value={{ products, orders, selectType }}>
+    <DashboardContext.Provider value={{ products, orders, monthlyStats }}>
       <HelmetProvider>
         <Wrapper>
           <Helmet>
@@ -142,21 +150,19 @@ const Dashboard = () => {
                 title={"Revenue"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
-                    <DatePicker onChange={startDateChange} size="middle" />
                     <DatePicker
+                      defaultValue={startDate}
+                      onChange={startDateChange}
+                      size="middle"
+                    />
+                    <DatePicker
+                      defaultValue={endDate}
                       onChange={endDateChange}
                       minDate={minDate}
                       maxDate={maxDate}
                       size="middle"
                     />
                     <Button onClick={() => applyDateChange()}>Apply</Button>
-                    <Segmented
-                      options={["Daily", "Monthly", "Yearly"]}
-                      onChange={(value) => {
-                        console.log(value); // string
-                        setSelectType(value);
-                      }}
-                    />
                   </div>
                 }
               >
@@ -171,18 +177,6 @@ const Dashboard = () => {
                   <div style={{ display: "flex", gap: 20 }}>
                     <DatePicker size="middle" />
                     <DatePicker size="middle" />
-                    <Segmented
-                      options={[
-                        "Daily",
-                        "Weekly",
-                        "Monthly",
-                        "Quarterly",
-                        "Yearly",
-                      ]}
-                      onChange={(value) => {
-                        console.log(value); // string
-                      }}
-                    />
                   </div>
                 }
               >
@@ -193,20 +187,20 @@ const Dashboard = () => {
                 className="col-1-item"
                 size="large"
                 title={"Order"}
-                extra={
-                  <Segmented
-                    options={[
-                      "Daily",
-                      "Weekly",
-                      "Monthly",
-                      "Quarterly",
-                      "Yearly",
-                    ]}
-                    onChange={(value) => {
-                      console.log(value); // string
-                    }}
-                  />
-                }
+                // extra={
+                //   <Segmented
+                //     options={[
+                //       "Daily",
+                //       "Weekly",
+                //       "Monthly",
+                //       "Quarterly",
+                //       "Yearly",
+                //     ]}
+                //     onChange={(value) => {
+                //       console.log(value); // string
+                //     }}
+                //   />
+                // }
               >
                 <DashboardOrder />
               </Card>
@@ -216,46 +210,10 @@ const Dashboard = () => {
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              <Card
-                className="col-2-item"
-                size="large"
-                title={"Order Status"}
-                extra={
-                  <Segmented
-                    options={[
-                      "Daily",
-                      "Weekly",
-                      "Monthly",
-                      "Quarterly",
-                      "Yearly",
-                    ]}
-                    onChange={(value) => {
-                      console.log(value); // string
-                    }}
-                  />
-                }
-              >
+              <Card className="col-2-item" size="large" title={"Order Status"}>
                 <ChartPie />
               </Card>
-              <Card
-                className="col-2-item"
-                size="large"
-                title={"Product"}
-                extra={
-                  <Segmented
-                    options={[
-                      "Daily",
-                      "Weekly",
-                      "Monthly",
-                      "Quarterly",
-                      "Yearly",
-                    ]}
-                    onChange={(value) => {
-                      console.log(value); // string
-                    }}
-                  />
-                }
-              >
+              <Card className="col-2-item" size="large" title={"Product"}>
                 <DashboardProduct />
               </Card>
             </div>

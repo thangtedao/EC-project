@@ -194,7 +194,7 @@ export const updateOrder = async (req, res) => {
   }
 };
 
-export const showStats = async (req, res) => {
+export const showStatss = async (req, res) => {
   /* SHOW STATS BY DATE */
   let startDate = new Date(req.query.start);
   let endDate = new Date(req.query.end);
@@ -339,6 +339,108 @@ export const showStats = async (req, res) => {
     totalProduct,
     productMostSold,
   });
+};
+
+export const showStats = async (req, res) => {
+  try {
+    let { startDate, endDate } = req.body;
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    endDate.setDate(endDate.getDate() + 1);
+
+    /* CALCULATE THE STATS */
+    const result = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $unwind: "$orderItem",
+      },
+      {
+        $group: {
+          _id: {
+            orderId: "$_id",
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          products: {
+            $addToSet: {
+              name: "$orderItem.product.name",
+              quantity: "$orderItem.quantity",
+              variant: "$orderItem.variant._id",
+            },
+          },
+          totalAmount: { $first: "$totalAmount" },
+          totalProduct: { $sum: "$orderItem.quantity" },
+        },
+      },
+    ]);
+
+    let totalCount = result.length || 0;
+    let totalRevenue = 0;
+    let totalProduct = 0;
+    if (result.length > 0) {
+      result.map((item) => {
+        totalRevenue += item.totalAmount;
+        totalProduct += item.totalProduct;
+      });
+    }
+
+    /* FORMAT DATA TO SHOW IN GRAPH */
+    let monthlyApplications = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
+      },
+      { $limit: 12 },
+    ]);
+
+    monthlyApplications = monthlyApplications
+      .map((item) => {
+        const {
+          _id: { month },
+          totalRevenue,
+        } = item;
+        const date = day()
+          .month(month - 1)
+          .format("MMMM");
+        return { date, totalRevenue };
+      })
+      .reverse();
+
+    res.json({
+      monthlyApplications,
+      totalRevenue,
+      totalCount,
+      totalProduct,
+    });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 };
 
 //vn-payment:

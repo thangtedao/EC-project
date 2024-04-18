@@ -8,58 +8,43 @@ const Wrapper = styled.div`
 `;
 
 const ChartLine = () => {
-  const { selectType } = useDashboardContext();
+  const { monthlyStats } = useDashboardContext();
 
-  let data;
+  const month = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-  switch (selectType) {
-    case "Daily":
-      data = [
-        { day: "Mon", value: 3 },
-        { day: "Tues", value: 4 },
-        { day: "Wed", value: 3.5 },
-        { day: "Thurs", value: 5 },
-        { day: "Fri", value: 4.9 },
-        { day: "Sat", value: 6 },
-        { day: "Sun", value: 20 },
-      ];
-      break;
-
-    case "Monthly":
-      data = [
-        { day: "T1", value: 3 },
-        { day: "T2", value: 4 },
-        { day: "T3", value: 3.5 },
-        { day: "T4", value: 5 },
-        { day: "T5", value: 4.9 },
-        { day: "T6", value: 6 },
-        { day: "T7", value: 20 },
-        { day: "T8", value: 4 },
-        { day: "T9", value: 3.5 },
-        { day: "T10", value: 5 },
-        { day: "T11", value: 4.9 },
-        { day: "T12", value: 6 },
-      ];
-      break;
-
-    default:
-      data = [
-        { day: "Mon", value: 3 },
-        { day: "Tues", value: 0 },
-        { day: "Wed", value: 0 },
-        { day: "Thurs", value: 0 },
-        { day: "Fri", value: 0 },
-        { day: "Sat", value: 0 },
-        { day: "Sun", value: 0 },
-      ];
-      break;
-  }
+  const data = month.map((item) => {
+    let totalRevenue = 0;
+    let found = false;
+    monthlyStats.forEach((element) => {
+      if (element.date === item && !found) {
+        totalRevenue += element.totalRevenue;
+        found = true;
+      }
+    });
+    return {
+      date: item,
+      revenue: totalRevenue,
+    };
+  });
 
   const config = {
     data,
     height: 400,
-    xField: "day", // Đổi xField thành "value"
-    yField: "value", // Đổi yField thành "day"
+    xField: "date",
+    yField: "revenue",
   };
 
   return (

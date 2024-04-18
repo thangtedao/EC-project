@@ -37,7 +37,7 @@ router.patch(
   authorizePermissions("admin"),
   updateOrder
 );
-router.get(
+router.post(
   "/stats",
   authenticateUser,
   authorizePermissions("admin"),
