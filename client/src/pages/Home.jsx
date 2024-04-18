@@ -15,6 +15,8 @@ import img2 from "../assets/data/image/asus1.png";
 import img4 from "../assets/data/image/1.png";
 import img5 from "../assets/data/image/2.png";
 import img6 from "../assets/data/image/3.png";
+import AppChat from "../components/AppChat/AppChat";
+import { useSelector } from "react-redux";
 
 const Wrapper = styled.div`
   display: flex;
@@ -154,6 +156,8 @@ export const loader = async () => {
 const HomeContext = createContext();
 
 const Home = () => {
+  const user = useSelector((state) => state.user.user);
+
   window.scrollTo(0, 0);
   const { categories, categoriesChild, filtercategoriesChild } =
     useMainLayoutContext();
@@ -227,6 +231,9 @@ const Home = () => {
           {products.map((product) => {
             return <ProductCard key={product._id} product={product} />;
           })}
+          {
+            user && user.role !== 'admin' ? (<AppChat></AppChat>) : ""
+            }
         </Wrapper>
       </HomeContext.Provider>
     </HelmetProvider>
