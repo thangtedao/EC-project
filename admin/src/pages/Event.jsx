@@ -74,7 +74,7 @@ const steps = [
   },
 ];
 
-function Event() {
+const Event = () => {
   const [current, setCurrent] = useState(0);
 
   const next = () => {
@@ -143,6 +143,6 @@ function Event() {
       </Wrapper>
     </HelmetProvider>
   );
-}
+};
 
 export default Event;

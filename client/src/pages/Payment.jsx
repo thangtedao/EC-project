@@ -13,9 +13,10 @@ import NovaIcon from "../assets/LogoNova.svg";
 import { Button, message, Steps } from "antd";
 import { PaymentInfo } from "../components/index.js";
 import { PaymentCheckout } from "../components/index.js";
-
+import PaymentProduct from "../components/payment/PaymentProduct.jsx";
 const Wrapper = styled.div`
-  width: 650px;
+  /* width: 650px; */
+  width: 80%;
   height: 100%;
   padding-bottom: 1rem;
   display: flex;
