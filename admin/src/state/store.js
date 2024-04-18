@@ -11,6 +11,7 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+import { ChatReducer } from "./chatSlice.js";
 
 const userPersistConfig = {
   key: "user",
@@ -21,6 +22,7 @@ const userPersistConfig = {
 export const store = configureStore({
   reducer: {
     user: persistReducer(userPersistConfig, userReducer),
+    chat: ChatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

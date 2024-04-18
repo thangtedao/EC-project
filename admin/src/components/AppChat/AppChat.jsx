@@ -5,7 +5,7 @@ import './AppChat.css'
 function AppChat(props) {
     return (
       <section id="appchat">
-        <span>Messages</span>
+        {/* <span>Messages</span> */}
         <div className="appchat">
           <Contact></Contact>
           <div className="chat">

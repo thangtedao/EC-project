@@ -6,7 +6,7 @@ import {ConversationModel} from '../../models/Conversation.js'
 export const ConnectSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: ["http://localhost:5173","http://localhost:4000"],
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
       credentials: true,
@@ -60,20 +60,38 @@ export const ConnectSocket = (server) => {
         _id,
         sender,
         message,
-        idConversation
+        idConversation,
+        isUser
       } = data
 
-      const conversation = await ConversationModel.updateOne(
-      {
-        _id: idConversation
-      },
-      {
-        lastMessage: message,
-      },
-      // {new: true}
-      
-      )
-      io.emit('lastMessage', conversation)
+      if(isUser){
+        const conversation = await ConversationModel.updateOne(
+          {
+            _id: idConversation
+          },
+          {
+            lastMessage: message,
+            seen:false
+          },
+          // {new: true}
+          
+          )
+          io.emit('lastMessage', conversation)
+      }
+      else{
+        const conversation = await ConversationModel.updateOne(
+          {
+            _id: idConversation
+          },
+          {
+            lastMessage: message,
+            seen:true
+          },
+          // {new: true}
+          
+          )
+          io.emit('lastMessage', conversation)
+      }
 
       const payload = {
         idConversation,

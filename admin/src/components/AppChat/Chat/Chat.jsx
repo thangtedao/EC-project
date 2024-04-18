@@ -7,9 +7,12 @@ import TypeMessage from "./TypeMessage";
 
 function Chat(props) {
   let socket;
-  const ENDPOINT = "localhost:3001";
+  const ENDPOINT = "http://localhost:3001";
   const [messages, setMessages] = useState([]);
-  const user = useSelector((state) => state.user.user);
+  // const user = useSelector((state) => state.user.user);
+  const user ={
+    fullName:'Admin'
+  }
   const idConversation = useSelector((state) => state.chat.idConversation);
   const nameConversation = useSelector(state => state.chat.nameConversation)
 
@@ -40,7 +43,8 @@ function Chat(props) {
   useEffect(() => {
     const scrollMessage = () => {
       var element = document.querySelector(".ad-chatuser-listmessage");
-      element.scrollTop = element.scrollHeight;
+      if(element)
+        element.scrollTop = element.scrollHeight;
     }
     
       scrollMessage()
@@ -56,26 +60,35 @@ function Chat(props) {
       idConversation,
     };
     const { data } = await axios.post(
-      "http://localhost:3001/chat/save",
+      "http://localhost:3001/api/chat/save",
       payload
     );
     socket.emit('chat', data);
   };
+
+
   return (
    
-      <div className="ad-chatuser">
-        <div className="ad-chatuser-user">
-          <span className="ad-chatuser-user-name">{nameConversation}</span>
-        </div>
-
-        {messages ? (
-          <ListMessage messages={messages} user={user}></ListMessage>
-        ) : (
-          ""
-        )}
-
-        <TypeMessage onSubmit={handleFormSubmit}></TypeMessage>
+<div className="ad-chatuser">
+  {idConversation ? (
+    <>
+      <div className="ad-chatuser-user">
+        <span className="ad-chatuser-user-name">{nameConversation}</span>
       </div>
+
+      {messages ? (
+        <ListMessage messages={messages} user={user}></ListMessage>
+      ) : (
+        ""
+      )}
+
+      <TypeMessage onSubmit={handleFormSubmit}></TypeMessage>
+    </>
+  ):
+  (
+    <div className="choose-user-message">Hãy chọn người dùng để chat</div>
+  ) }
+</div>
       
    
   );

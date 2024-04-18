@@ -1,6 +1,9 @@
 #appchat{
     position: fixed;
+    top:70px;
+    left:250px;
     width: 80%;
+    /* height: ; */
 }
 #appchat > span{
     display: flex;
@@ -46,6 +49,9 @@
     margin-top: 1rem;
     cursor: pointer;
 }
+.unseen{
+    background-color: bisque;
+}
 .contact-list-item-avarta{
     min-width: 50px;
     width: 50px;
@@ -59,8 +65,12 @@
     background: #eee;
 
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .contact-list-item-content{
+    padding-top: 5px;
     margin-left: 1rem;
 }
 .contact-list-item-name{
@@ -104,7 +114,7 @@
 }
 .ad-chatuser-listmessage-message{
     display: flex;
-    padding: 1rem;
+    padding: 0.25rem;
     word-break: break-word;
 }
 .ad-chatuser-listmessage-message p{
@@ -122,6 +132,12 @@
     background: #1890ff;
     color: white;
 }
+.choose-user-message {
+    font-size: 50px;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 
 .ad-chatuser-typemessage{
     display: flex;

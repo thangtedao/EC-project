@@ -68,7 +68,7 @@ function AppChat(props) {
 
         const {data} = await axios.post('http://localhost:3001/api/chat/save', payload);
         console.log(data)
-        socket.emit('chat', data);
+        socket.emit('chat', {...data, isUser:true});
       });
     } else {
       const idConversation = messages[0].idConversation._id || messages[0].idConversation;
@@ -81,7 +81,7 @@ function AppChat(props) {
       // console.log(payload)
       const {data} = await axios.post('http://localhost:3001/api/chat/save', payload)
       console.log(data)
-      socket.emit('chat', data);
+      socket.emit('chat', {...data, isUser:true});
     } 
   };
 

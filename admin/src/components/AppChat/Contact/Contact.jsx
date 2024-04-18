@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux'
-import { getAllConversationList, showConversation, updateIdConversation, updateLastMessageConversation } from '../../../../../actions/ChatAction';
+import { getAllConversationList, showConversation, updateIdConversation, updateLastMessageConversation } from '../../../actions/chatAction';
 import ListConversation from './ListConversation';
 import io from 'socket.io-client'
 
@@ -17,11 +17,11 @@ function Contact(props) {
         dispatch(getAllConversationList())
     }, [])
 
-    useEffect(() => {
-        if(conversationList){
-            dispatch(updateIdConversation(conversationList[0]))
-        }
-    }, [conversationList])
+    // useEffect(() => {
+    //     if(conversationList){
+    //         dispatch(updateIdConversation(conversationList[0]))
+    //     }
+    // }, [conversationList])
 
     // useEffect(() => {
     //     dispatch(SeenConversation(idConversation))
@@ -44,6 +44,7 @@ function Contact(props) {
 
     const onConversationClick = (conversation) => {
         dispatch(updateIdConversation(conversation))
+        conversation.seen = true
     }
     return (
         <div className="contact">
