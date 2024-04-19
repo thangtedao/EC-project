@@ -38,6 +38,7 @@ import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
 import Event from "./pages/Event";
+import Chat from "./pages/Chat";
 
 const router = createBrowserRouter([
   {
@@ -119,6 +120,11 @@ const router = createBrowserRouter([
         path: "edit-order/:id",
         element: <EditOrder />,
         loader: editOrderLoader,
+      },
+      {
+        path: "chat",
+        element: <Chat />,
+        // loader: editOrderLoader,
       },
     ],
   },

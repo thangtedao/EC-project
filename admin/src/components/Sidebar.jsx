@@ -9,6 +9,7 @@ import {
   ShoppingCartOutlined,
   ProfileOutlined,
   DollarOutlined,
+  WechatOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 
@@ -59,6 +60,8 @@ const items = [
   ),
   getItem("Order", "11", <ShoppingCartOutlined />, null, "/all-order"),
   getItem("Customer", "12", <UserOutlined />, null, "/all-user"),
+  getItem("Chat", "13", <WechatOutlined />, null, "/chat"),
+
 ];
 
 const getLevelKeys = (items1) => {

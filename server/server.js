@@ -14,15 +14,20 @@ import couponRouter from "../server/routes/couponRoute.js";
 import orderRouter from "../server/routes/orderRoute.js";
 import brandRouter from "../server/routes/brandRoute.js";
 import cartRoute from "../server/routes/cartRoute.js";
+import chatRoute from "../server/routes/chatRoute.js";
+
 
 // public
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import path from "path";
+import { ConnectSocket } from "./config/socket/socket.js";
+import { createServer } from "http";
 
 dotenv.config();
 
 const app = express();
+const server = createServer(app)
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -45,6 +50,10 @@ app.use(
     },
   })
 );
+
+ConnectSocket(server)
+
+
 app.use(cors());
 
 // app.use(express.static(path.resolve(__dirname, "../admin/dist")));
@@ -60,6 +69,7 @@ app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/cart", cartRoute);
+app.use("/api/chat", chatRoute)
 
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../admin/dist", "index.html"));
@@ -82,6 +92,6 @@ const PORT = process.env.PORT || 3001;
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
-    app.listen(PORT, () => console.log(`Listen on port ${PORT}`));
+    server.listen(PORT, () => console.log(`Listen on port ${PORT}`));
   })
   .catch((error) => console.log(error));
