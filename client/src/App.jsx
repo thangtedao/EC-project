@@ -33,6 +33,7 @@ import { loader as paymentLoader } from "./pages/Payment";
 import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as profileLoader } from "./pages/Profile";
+import SearchPage from "./pages/Search";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
         element: <Product />,
         loader: productLoader,
         action: productAction,
+      },
+      {
+        path: "search/:keyword",
+        element: <SearchPage />,
       },
       {
         path: "cart",

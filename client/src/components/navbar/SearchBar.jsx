@@ -1,6 +1,6 @@
 import { InputBase } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import { Form, NavLink } from "react-router-dom";
+import { Form, NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import customFetch from "../../utils/customFetch";
 import { debounce } from "lodash";
@@ -91,6 +91,7 @@ const Wrapper = styled.div`
 `;
 
 const SearchBar = () => {
+  const navigate = useNavigate()
   const [input, setInput] = useState("");
   const [products, setProducts] = useState([]);
   const [isShow, setIsShow] = useState(false);
@@ -98,7 +99,8 @@ const SearchBar = () => {
   const fetchData = debounce(async (name) => {
     if (name !== "") {
       const response = await customFetch.get(`/product/search/?name=${name}`);
-      setProducts(response.data.products || []);
+      setProducts(response.data || []);
+      // console.log(response.data)
     } else {
       setProducts([]);
     }
@@ -109,9 +111,19 @@ const SearchBar = () => {
     fetchData(e.target.value);
   };
 
+  const handleSumit = (e)=>{
+    e.preventDefault()
+    const keyword = input.trim()
+    if(!keyword){
+      return
+    } else{
+      navigate(`/search/${keyword}`)
+    }
+  }
+
   return (
     <Wrapper>
-      <Form className="search-bar">
+      <Form className="search-bar" onSubmit={handleSumit} >
         <InputBase
           className="search-input"
           placeholder="Tìm kiếm"
@@ -121,8 +133,8 @@ const SearchBar = () => {
           onFocus={() => setTimeout(() => setIsShow(true), 100)}
           onBlur={() => setTimeout(() => setIsShow(false), 100)}
         />
-        <div className="search-icon">
-          <Search />
+        <div className="search-icon" onClick={(e)=>handleSumit(e)}>
+          <Search/>
         </div>
       </Form>
       {products.length > 0 && isShow && (

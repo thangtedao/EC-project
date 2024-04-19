@@ -8,6 +8,7 @@ import {
   getProduct,
   searchProduct,
   rating,
+  searchPageProduct,
 } from "../controller/productController.js";
 import {
   authenticateUser,
@@ -39,6 +40,7 @@ router.delete(
 
 router.get("/", getProducts);
 router.get("/search", searchProduct);
+router.get("/searchproducts", searchPageProduct);
 router.patch("/rating", authenticateUser, rating);
 router.get("/:id", getProduct);
 

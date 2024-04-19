@@ -1,5 +1,21 @@
 import mongoose from "mongoose";
 
+
+const replieCommentBlog = new mongoose.Schema({
+  content: {type: String},
+  isAdmin: Boolean,
+  nameUser: {type: String},
+  byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+})
+const CommentBlog = mongoose.Schema({
+  author: {type: String},
+  status: String,
+  isAdmin: Boolean,
+  avatar: {type: String},
+  content: {type:String},
+  byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  replies: [replieCommentBlog]
+})
 const BlogSchema = mongoose.Schema(
   {
     title: {
@@ -10,44 +26,11 @@ const BlogSchema = mongoose.Schema(
       type: String,
       require: true,
     },
-    category: {
-      type: String,
-      default: "",
-    },
-    numViews: {
-      type: Number,
-      default: 0,
-    },
-    isLiked: {
-      type: Boolean,
-      default: false,
-    },
-    isDisliked: {
-      type: Boolean,
-      default: false,
-    },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    dislikes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    images: {
-      type: Array,
-      default: [],
-    },
+    content: String,
+    comment:[CommentBlog]
+
   },
   {
-    toJSON: { virtual: true },
-    toObject: {
-      virtual: true,
-    },
     timestamps: true,
   }
 );

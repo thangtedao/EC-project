@@ -30,7 +30,7 @@ function AppChat(props) {
   useEffect(() => {
 
     socket = io(ENDPOINT);
-    console.log(user)
+    // console.log(user)
     socket.emit('join_conversation', user._id);
     //setup response
     socket.on('newMessage', (message) => {
