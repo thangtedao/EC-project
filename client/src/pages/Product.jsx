@@ -19,20 +19,16 @@ import NovaIcon from "../assets/logo/LogoNova.svg";
 import { Radio } from "antd";
 
 export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
   try {
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
     // await customFetch.patch("/product/rating", data);
     toast.success("Gửi đánh giá thành công", { autoClose: 1000 });
     return null;
   } catch (error) {
-    toast.error(error?.response?.data?.msg, {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-    return error;
+    if (error?.response?.status === 401)
+      return toast.success("Please login to rating", { autoClose: 1000 });
+    return toast.error(error?.response?.data?.msg);
   }
 };
 
@@ -42,10 +38,6 @@ export const loader = async ({ params }) => {
     let { product, variation, productBlog } = await customFetch
       .get(`/product/${id}`)
       .then(({ data }) => data);
-
-    // const relatedProducts = await customFetch
-    //   .get(`/product/category/?category=${product.category[1]}&limit=10`)
-    //   .then(({ data }) => data.products);
 
     if (variation) {
       variation = variation.reduce((groups, item) => {
@@ -58,9 +50,16 @@ export const loader = async ({ params }) => {
       }, {});
     }
 
+    let relatedProducts = await customFetch
+      .get(`/product/?category=${product.category[0]}&limit=10`)
+      .then(({ data }) => data);
+
+    relatedProducts = relatedProducts.filter((i) => i._id !== id);
+
     window.scrollTo(0, 0);
-    return { product, variation, productBlog };
+    return { product, variation, productBlog, relatedProducts };
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -68,7 +67,7 @@ export const loader = async ({ params }) => {
 const Product = () => {
   const navigate = useNavigate();
 
-  const { product, variation, productBlog } = useLoaderData();
+  const { product, variation, productBlog, relatedProducts } = useLoaderData();
   const user = useSelector((state) => state.user.user);
 
   const addToCart = debounce(async (product, variant, user) => {
@@ -80,13 +79,7 @@ const Product = () => {
         variant,
       })
       .then(({ data }) => data);
-    cart &&
-      toast.success("Add to cart successful", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-        theme: "colored",
-      });
+    cart && toast.success("Add to cart successful");
   }, 100);
 
   // Khởi tạo state để lưu trữ giá trị đầu tiên cho mỗi loại biến thể
@@ -139,13 +132,7 @@ const Product = () => {
             </div>
           ) : (
             <div className="top-container-column-2">
-              <div className="box-product-variants">
-                {product?.types?.map((type) => {
-                  return <ProductType text={type} />;
-                })}
-              </div>
-
-              {/* Chọn variant */}
+              {/* VARIANTS */}
               <div className="box-product-variants">
                 {Object.entries(variation)?.map(([key, items]) => (
                   <div key={key}>
@@ -161,26 +148,22 @@ const Product = () => {
                           style={{
                             width: 130,
                             height: "auto",
-                            fontSize: 14,
+                            fontSize: 12,
                             textAlign: "center",
                             color: "#444444",
+                            padding: "3px 0",
                             border:
                               selectedVariants[key] === item._id
-                                ? "1.5px solid #e04040"
+                                ? "1.5px solid #fd2424"
                                 : "1.5px solid lightgray",
 
-                            borderRadius: 0,
+                            borderRadius: 8,
                           }}
                         >
-                          <div
-                            style={{
-                              fontWeight: "bold",
-                              height: 20,
-                            }}
-                          >
+                          <div style={{ fontWeight: "500", height: 20 }}>
                             {item.variationValue}
                           </div>
-                          <div>{item.priceModifier}đ</div>
+                          <div>+{item.priceModifier}đ</div>
                         </Radio.Button>
                       ))}
                     </Radio.Group>
@@ -189,17 +172,21 @@ const Product = () => {
               </div>
 
               <div className="box-product-price">
-                <p>
+                <span>
                   {product?.salePrice
                     .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
-                </p>
-                <p className="strike">
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  <span style={{ fontSize: 16 }}>₫</span>
+                </span>
+
+                <span className="strike">
                   {product?.price
                     .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"}
-                </p>
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  <span style={{ fontSize: 13 }}>₫</span>
+                </span>
               </div>
+
               <div className="btn-buy">
                 <button
                   className="btn-buynow"
@@ -210,6 +197,7 @@ const Product = () => {
                 >
                   Mua ngay
                 </button>
+
                 <button
                   className="btn-addtocart"
                   onClick={() => addToCart(product, selectedVariants, user)}
@@ -223,12 +211,12 @@ const Product = () => {
         </div>
 
         {/* MID */}
-        {/* <div className="mid-container">
+        <div className="mid-container">
           <span className="mid-title">SẢN PHẨM TƯƠNG TỰ</span>
           {relatedProducts.length > 0 && (
             <SlideProduct products={relatedProducts} />
           )}
-        </div> */}
+        </div>
 
         {/* BOT */}
         <div className="bot-container">

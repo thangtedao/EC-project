@@ -13,15 +13,13 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 1rem;
   }
-  .product-specifications {
+  .technical-content {
+    display: flex;
+    flex-direction: column;
     border-radius: 10px;
     border: 0.5px solid lightgrey;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-  }
-  .technical-content {
-    display: flex;
-    flex-direction: column;
   }
   .technical-content-item {
     display: grid;
@@ -56,25 +54,23 @@ const ProductSpecifications = ({ product }) => {
     <Wrapper>
       <div className="product-specifications-container">
         Thông số kỹ thuật
-        <div className="product-specifications">
-          <ul className="technical-content">
-            {productSpecifications?.map((item, index) => {
-              return (
-                <li
-                  key={index}
-                  className={
-                    index % 2 !== 0
-                      ? "technical-content-item"
-                      : "technical-content-item gray-background"
-                  }
-                >
-                  <p>{item.split("=")[0]}</p>
-                  <p>{item.split("=")[1]}</p>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        <ul className="technical-content">
+          {productSpecifications?.map((item, index) => {
+            return (
+              <li
+                key={index}
+                className={
+                  index % 2 !== 0
+                    ? "technical-content-item"
+                    : "technical-content-item gray-background"
+                }
+              >
+                <p>{item.split("=")[0]}</p>
+                <p>{item.split("=")[1]}</p>
+              </li>
+            );
+          })}
+        </ul>
         {/* <button className="button-show-model-technical">
           Xem cấu hình chi tiết
           <KeyboardArrowDownIcon />

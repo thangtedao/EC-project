@@ -3,8 +3,6 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 1rem;
   padding: 1rem 0;
   width: 1100px;
@@ -13,7 +11,6 @@ const Wrapper = styled.div`
   /* TOP HOME */
   .block-top-home {
     width: 100%;
-    //height: 350px;
     display: flex;
     justify-content: space-between;
   }
@@ -31,11 +28,18 @@ const Wrapper = styled.div`
     width: 100%;
     padding: 0.3rem 0.2rem;
     border-radius: 5px;
-    color: #4a4a4a;
-    font-weight: 700;
+    color: #444;
+    font-weight: 500;
     :hover {
       background-color: lightgray;
     }
+  }
+  .sliding-banner {
+    width: calc(100% - 420px);
+    border-radius: 10px;
+    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
+    margin: 0 0.75rem;
+    overflow: hidden;
   }
   .right-banner {
     display: flex;
@@ -48,19 +52,12 @@ const Wrapper = styled.div`
       border-radius: 5px;
     }
   }
-  .sliding-banner {
-    width: calc(100% - 420px);
-    border-radius: 10px;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
-    margin: 0 0.75rem;
-    overflow: hidden;
-  }
 
   /* FLASH SALE */
   .block-hot-sale {
     width: 100%;
     border-radius: 10px;
-    background-color: #580f0f;
+    background-color: #fa4457;
     box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
   }
@@ -73,10 +70,11 @@ const Wrapper = styled.div`
   .sale-title {
     font-size: 2rem;
     font-weight: 700;
-    color: red;
+    color: white;
   }
   .box-countdown {
     color: white;
+    font-weight: 500;
   }
 
   /* PRODUCTS SALE  */
@@ -88,9 +86,10 @@ const Wrapper = styled.div`
     width: 100%;
   }
   .product-by-category-title {
-    color: black;
-    font-size: 2rem;
+    color: #444;
+    font-size: 1.5rem;
     font-weight: bold;
+    text-transform: uppercase;
   }
 
   /* MEDIA QUERIES */

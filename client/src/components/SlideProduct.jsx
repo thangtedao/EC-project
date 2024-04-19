@@ -48,12 +48,6 @@ const SlideProduct = ({ products }) => {
   if (products.length > 12) doubleSlide = 2;
   else doubleSlide = 1;
 
-  console.log(products[0]);
-  // products.map((item, idx) => {
-  //   console.log(item);
-  //   console.log(idx);
-  // });
-
   return (
     <Wrapper>
       {!check ? (

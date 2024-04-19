@@ -64,14 +64,15 @@ const Wrapper = styled.div`
     position: absolute;
     right: 10px;
     top: 15px;
+    cursor: pointer;
   }
   .product-variant {
     display: flex;
     gap: 1rem;
   }
   .product-price {
-    font-size: 1.1rem;
-    font-weight: bold;
+    font-size: 1.05rem;
+    font-weight: 500;
     display: flex;
     gap: 1.5rem;
     align-items: center;

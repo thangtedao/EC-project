@@ -115,48 +115,6 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getProductsByCategory = async (req, res) => {
-  try {
-    if (req.query.category) {
-      let query = Product.find({ category: { $in: req.query.category } });
-
-      if (req.query.parent) {
-        query = Product.find({
-          category: { $all: [req.query.category, req.query.parent] },
-        });
-      }
-
-      if (req.query.status === "available") {
-        query.where("status").equals("Sẵn Hàng");
-      }
-
-      if (req.query.sort) {
-        const sortBy = req.query.sort.split(",").join(" ");
-        query = query.sort(sortBy);
-      } else {
-        query = query.sort("-createdAt");
-      }
-
-      const page = req.query.page;
-      const limit = req.query.limit;
-      const skip = (page - 1) * limit;
-      query = query.skip(skip).limit(limit);
-      if (req.query.page) {
-        const productCount = await Product.countDocuments();
-        if (skip >= productCount)
-          throw new NotFoundError(`This page does not exists`);
-      }
-
-      const products = await query;
-      res.status(200).json(products);
-    } else {
-      res.status(200).json({ products: [] });
-    }
-  } catch (error) {
-    res.status(409).json({ msg: error.message });
-  }
-};
-
 export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;

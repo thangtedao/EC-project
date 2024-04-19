@@ -1,133 +1,24 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React from "react";
+import Wrapper from "../assets/wrappers/ProductCard.js";
 import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
 import Rating from "@mui/material/Rating";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
-
-const Wrapper = styled.div`
-  width: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: 380px;
-  background-color: var(--background-secondary-color);
-  border: 0.5px solid lightgrey;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
-    0 2px 6px 2px rgba(60, 64, 67, 0.15);
-  padding: 0.5rem;
-
-  .product-card-container {
-    width: 100%;
-    height: 90%;
-    background-color: var(--background-secondary-color);
-    display: flex;
-    flex-direction: column;
-    padding-top: 1.2rem;
-    overflow: hidden;
-    gap: 1rem;
-  }
-  .product-card-image {
-    height: 135px;
-    display: grid;
-    place-items: center;
-    img {
-      border-radius: 10px;
-      height: inherit;
-    }
-  }
-  .product-card-name {
-    font-weight: bold;
-    color: #444;
-  }
-  .product-card-price {
-    font-size: 1.1rem;
-    color: #d70018;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 0.5rem;
-    font-weight: bold;
-  }
-  .strike {
-    font-size: 0.9rem;
-    color: #707070;
-    text-decoration: line-through;
-    text-decoration-thickness: 1px;
-  }
-  .product-price-percent {
-    position: absolute;
-    width: 80px;
-    height: 31px;
-    top: 5px;
-    left: -2px;
-    background: url("/src/assets/logo/percent.svg") 50% no-repeat;
-    color: white;
-    font-size: small;
-    font-weight: bold;
-    p {
-      margin-top: 6px;
-      width: 100%;
-      text-align: center;
-    }
-  }
-  .product-card-description {
-    width: 100%;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    padding: 5px;
-    line-height: 1.5;
-    border-radius: 3px;
-    font-size: 12px;
-    color: #444;
-    overflow-wrap: break-word;
-  }
-  .product-card-bottom {
-    width: 100%;
-    max-height: 10%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .product-rating {
-    width: 24px;
-  }
-  .wishlist-btn {
-    color: #777;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    .heart {
-      margin-left: 2px;
-      color: #d70018;
-      cursor: pointer;
-    }
-  }
-`;
+import percent from "../assets/logo/percent.svg";
 
 const ProductCard = ({ product }) => {
-  const user = useSelector((state) => state.user.user);
-  const navigate = useNavigate();
-
   const addToWishlist = async () => {
-    if (!user) {
-      navigate("/login");
-    } else {
-      try {
-        await customFetch.patch("/user/wishlist", {
-          productId: product._id,
-        });
-        toast.success("Đã thêm sản phẩm yêu thich");
-      } catch (error) {
-        console.log(error);
-        return error;
-      }
+    try {
+      await customFetch.patch("/user/wishlist", {
+        productId: product._id,
+      });
+      toast.success("Added to wishlist");
+    } catch (error) {
+      if (error?.response?.status === 401) return toast.warning("Please Login");
+      else return error;
     }
   };
 
@@ -140,32 +31,35 @@ const ProductCard = ({ product }) => {
         <div className="product-card-image">
           <img src={product.images[0]} alt={product.name} />
         </div>
-        <div className="product-card-name">
-          <p> {product.name}</p>
-        </div>
+
+        <div className="product-card-name">{product.name}</div>
+
         <div className="product-card-price">
-          <p>
+          <span>
             {product.salePrice
               ? product.salePrice
                   ?.toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "₫"
-              : product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
-                "₫"}
-          </p>
-          <p className="strike">
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+              : product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+            <span style={{ fontSize: 15 }}>₫</span>
+          </span>
+
+          <span className="strike">
             {product.salePrice &&
-              product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
-                "₫"}
-          </p>
+              product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+            <span style={{ fontSize: 12 }}>₫</span>
+          </span>
+
           {product.salePrice && (
-            <div className="product-price-percent">
-              <p>
+            <div>
+              <img className="product-price-percent" src={percent} />
+              <span className="product-price-percent-value">
                 <span>{"Giảm "}</span>
                 {Math.round(
                   ((product.price - product.salePrice) / product.price) * 100
                 )}
                 %
-              </p>
+              </span>
             </div>
           )}
         </div>
@@ -182,6 +76,7 @@ const ProductCard = ({ product }) => {
             readOnly
           />
         </div>
+
         <div className="wishlist-btn">
           Yêu Thích
           <FavoriteIcon className="heart" onClick={() => addToWishlist()} />

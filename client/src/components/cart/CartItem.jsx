@@ -38,7 +38,7 @@ const CartItem = ({ item }) => {
             )
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-            ₫
+            <span style={{ fontSize: 15 }}>₫</span>
           </span>
           <span className="strike">99999999</span>
 
@@ -49,7 +49,9 @@ const CartItem = ({ item }) => {
             >
               -
             </span>
-            <span style={{ fontSize: "0.9rem" }}>{item?.quantity} </span>
+            <span style={{ fontSize: "0.9rem", fontWeight: "500" }}>
+              {item?.quantity}
+            </span>
             <span
               className="count-btn"
               onClick={() => increaseQuantity(item, user)}

@@ -61,13 +61,6 @@ const Register = () => {
           <TextField
             required
             size="small"
-            name="fullName"
-            label="Full Name"
-            sx={{ width: "100%" }}
-          />
-          <TextField
-            required
-            size="small"
             name="email"
             label="Email"
             sx={{ width: "100%" }}

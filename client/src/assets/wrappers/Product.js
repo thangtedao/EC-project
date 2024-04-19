@@ -5,15 +5,13 @@ const Wrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 1rem;
   padding: 1rem 0;
 
   .top-product-title {
     width: 100%;
     font-size: 1.3rem;
-    font-weight: bold;
+    font-weight: 700;
     padding-bottom: 1rem;
     border-bottom: 1px solid lightgray;
   }
@@ -31,10 +29,10 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .top-container-column-2 {
+    width: 40%;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    width: 40%;
   }
   .sliding-product-image {
     width: 100%;
@@ -48,10 +46,7 @@ const Wrapper = styled.div`
   }
 
   .box-product-variants {
-    /* width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap; */
+    width: 100%;
     display: flex;
     flex-direction: column;
   }
@@ -62,7 +57,7 @@ const Wrapper = styled.div`
     align-items: center;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #e04040;
+    color: #fd2424;
     .strike {
       font-size: 1rem;
       color: #707070;
@@ -81,7 +76,7 @@ const Wrapper = styled.div`
     border: none;
     background: linear-gradient(#f52f32, #e11b1e);
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: white;
     text-transform: uppercase;
     cursor: pointer;
@@ -114,7 +109,7 @@ const Wrapper = styled.div`
     .mid-title {
       font-size: 1.3rem;
       font-weight: bold;
-      color: #4a4a4a;
+      color: #444;
     }
   }
 
@@ -211,6 +206,7 @@ const Wrapper = styled.div`
   .blog-showmore {
     padding-top: 50px;
     text-align: center;
+    font-weight: 500;
 
     position: absolute;
     bottom: 0;
@@ -226,7 +222,7 @@ const Wrapper = styled.div`
     );
 
     :hover {
-      color: #e04040;
+      color: #fd2424;
     }
   }
   .ant-radio-group .ant-radio-button-wrapper + .ant-radio-button-wrapper {
