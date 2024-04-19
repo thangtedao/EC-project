@@ -94,6 +94,20 @@ export const getProducts = async (req, res) => {
       query = query.populate(item);
     }
 
+    if (req.query.page) {
+      const page = req.query.page;
+      const limit = req.query.limit;
+      const skip = (page - 1) * limit;
+      query = query.skip(skip).limit(limit);
+      const productCount = await Product.countDocuments();
+      if (skip >= productCount) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ msg: `This page does not exists` });
+        throw new NotFoundError(`This page does not exists`);
+      }
+    }
+
     const products = await query;
     res.status(StatusCodes.OK).json(products);
   } catch (error) {

@@ -1,24 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import Wrapper from "../assets/wrappers/Order.js";
-import { OrderCard } from "../components";
+import { OrderItem } from "../components";
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { store } from "../state/store.js";
-import { setCart } from "../state/cartSlice.js";
 import NovaIcon from "../assets/logo/LogoNova.svg";
+import { debounce } from "lodash";
+import { Tabs, Tab, Box } from "@mui/material";
+import { ORDER_STATUS } from "../utils/constants.js";
 
 export const loader = async () => {
   try {
+    window.scrollTo(0, 0);
     const user = await customFetch
       .get("/user/current-user")
       .then(({ data }) => data.user);
 
     if (user) {
-      const orders = await customFetch
-        .get(`/order/?user=${user._id}`)
+      const ordersData = await customFetch
+        .get(`/order/?user=${user._id}&status=Pending`)
         .then(({ data }) => data);
-      return { orders };
+      return { user, ordersData };
     }
     return null;
   } catch (error) {
@@ -28,8 +30,44 @@ export const loader = async () => {
 };
 
 const Order = () => {
-  window.scrollTo(0, 0);
-  const { orders } = useLoaderData();
+  const { user, ordersData } = useLoaderData();
+  const navigate = useNavigate();
+
+  const [value, setValue] = useState(ORDER_STATUS.PENDING);
+  const [orders, setOrders] = useState(ordersData);
+
+  const cancelOrder = debounce(async (id, isCancel) => {
+    try {
+      const cancelOrder = await customFetch
+        .patch(`/order/cancel/${id}`, { isCancel })
+        .then(({ data }) => data);
+
+      if (cancelOrder) {
+        const fetchOrders = await customFetch
+          .get(`/order/?user=${user._id}&status=${value}`)
+          .then(({ data }) => data);
+        setOrders(fetchOrders);
+      }
+    } catch (error) {
+      if (error?.response?.status === 401) return navigate("/login");
+      return error;
+    }
+  }, 500);
+
+  const handleChange = debounce(async (event, newValue) => {
+    console.log(newValue);
+    try {
+      setValue(newValue);
+      const fetchOrders = await customFetch
+        .get(`/order/?user=${user._id}&status=${newValue}`)
+        .then(({ data }) => data);
+
+      setOrders(fetchOrders);
+    } catch (error) {
+      if (error?.response?.status === 401) return navigate("/login");
+      return error;
+    }
+  }, 300);
 
   return (
     <HelmetProvider>
@@ -40,18 +78,40 @@ const Order = () => {
           <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
-        <div className="title">Đơn hàng của bạn</div>
+        <div className="title">Order</div>
+
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+          aria-label="secondary tabs example"
+        >
+          {Object.keys(ORDER_STATUS).map((key, idx) => {
+            return (
+              <Tab
+                key={idx}
+                value={ORDER_STATUS[key]}
+                label={ORDER_STATUS[key]}
+              />
+            );
+          })}
+        </Tabs>
+
         {orders && orders.length > 0 ? (
           <div className="order-list">
             {orders?.map((order) => {
-              return <OrderCard key={order._id} order={order} />;
+              return (
+                <OrderItem
+                  key={order._id}
+                  order={order}
+                  cancelOrder={cancelOrder}
+                />
+              );
             })}
           </div>
         ) : (
-          <div className="order-empty">
-            <p>Bạn chưa có hóa đơn nào</p>
-            <p>Hãy chọn mua sản phẩm để có hóa đơn nhé</p>
-          </div>
+          <div className="order-empty">You haven't had any orders yet.</div>
         )}
       </Wrapper>
     </HelmetProvider>

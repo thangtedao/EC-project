@@ -15,7 +15,6 @@ const Wrapper = styled.div`
     text-align: center;
   }
   .order-list {
-    margin-top: 2rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -25,8 +24,10 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    padding: 1rem 0 3rem 0;
+    border-bottom: 2px solid #e04040;
   }
-  .order-title {
+  .order-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -34,64 +35,62 @@ const Wrapper = styled.div`
     padding-bottom: 1rem;
     border-bottom: 1px solid lightgray;
   }
-  .product-item {
+  .order-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: bold;
+  }
+
+  .product-item-outer {
+    position: relative;
     background-color: white;
     border: 1px solid lightgray;
-    border-radius: 5px;
-    padding: 0.5rem 0;
-    height: 120px;
     display: flex;
     gap: 1rem;
-    align-items: center;
-    overflow: hidden;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    height: 120px;
   }
   .product-image {
-    text-align: center;
-    width: 20%;
-    img {
-      height: 110px;
-    }
+    width: 100px;
+    height: 100px;
+    display: grid;
+    place-items: center;
   }
   .product-info {
-    width: 50%;
+    width: 70%;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    justify-content: center;
+    gap: 0.75rem;
   }
-  .product-info-name {
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .product-info-price {
-    font-size: 1.1rem;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .main-price {
-    color: #cf0000;
+  .product-variant {
     display: flex;
     gap: 1rem;
+  }
+  .product-price {
+    font-size: 1.05rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+
     .strike {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: #707070;
       text-decoration: line-through;
       text-decoration-thickness: 1px;
     }
   }
-  .order-status {
-    border-radius: 20px;
-    background-color: #d1f5ea;
-    padding: 0.5rem;
-    width: 120px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 0.8rem;
+  .product-quantity {
+    position: absolute;
+    right: 15px;
+    bottom: 50px;
+    display: grid;
+    place-items: center;
   }
+
   .normal-text {
     font-weight: 500;
     color: #4d4b4b;

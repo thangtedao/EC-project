@@ -54,7 +54,10 @@ const orderSchema = mongoose.Schema({
     enum: Object.values(ORDER_STATUS),
     default: ORDER_STATUS.PENDING,
   },
-  cancelOrder: Boolean,
+  isCancel: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: timeStamp,

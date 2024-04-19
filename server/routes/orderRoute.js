@@ -4,6 +4,7 @@ import {
   getOrders,
   getOrder,
   updateOrder,
+  cancelOrder,
   showStats,
   paypalPayment,
   paypalCaptureOrder,
@@ -37,6 +38,7 @@ router.patch(
   authorizePermissions("admin"),
   updateOrder
 );
+router.patch("/cancel/:id", authenticateUser, cancelOrder);
 router.post(
   "/stats",
   authenticateUser,

@@ -16,7 +16,6 @@ import brandRouter from "../server/routes/brandRoute.js";
 import cartRoute from "../server/routes/cartRoute.js";
 import chatRoute from "../server/routes/chatRoute.js";
 
-
 // public
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -27,7 +26,7 @@ import { createServer } from "http";
 dotenv.config();
 
 const app = express();
-const server = createServer(app)
+const server = createServer(app);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -41,7 +40,6 @@ app.use(
       "img-src": ["'self'", "https: data:"],
       "connect-src": [
         "'self'",
-        "https://provinces.open-api.vn",
         "https://www.paypal.com",
         "https://www.sandbox.paypal.com",
       ],
@@ -51,8 +49,7 @@ app.use(
   })
 );
 
-ConnectSocket(server)
-
+ConnectSocket(server);
 
 app.use(cors());
 
@@ -69,7 +66,7 @@ app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/cart", cartRoute);
-app.use("/api/chat", chatRoute)
+app.use("/api/chat", chatRoute);
 
 // app.get("/*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../admin/dist", "index.html"));

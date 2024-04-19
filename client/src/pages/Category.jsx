@@ -10,6 +10,7 @@ import { FaSortAmountDown } from "react-icons/fa";
 import { FaSortAmountUp } from "react-icons/fa";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/logo/LogoNova.svg";
+import { Skeleton, Grid, Box } from "@mui/material";
 
 export const loader = async ({ params }) => {
   try {
@@ -35,6 +36,7 @@ const Category = () => {
   const [products, setProducts] = useState(productData);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
+  const [isShow, setIsShow] = useState(true);
 
   let firstUrl = `/product/?category=${id}&page=${page}&limit=10&status=Available`;
 
@@ -47,10 +49,12 @@ const Category = () => {
       const fetchData = await customFetch.get(url).then(({ data }) => data);
       setProducts([...products, ...fetchData]);
     } catch (error) {
-      console.log(error);
+      if (error?.response?.status === 404) setIsShow(false);
+      else console.log(error);
     } finally {
       setIsLoading(false);
       setPage(page + 1);
+      console.log(page);
     }
   }, 200);
 
@@ -71,6 +75,7 @@ const Category = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setIsShow(true);
       setPage(2);
     }
   }, 300);
@@ -92,6 +97,7 @@ const Category = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setIsShow(true);
       setPage(2);
     }
   }, 300);
@@ -113,6 +119,7 @@ const Category = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setIsShow(true);
       setPage(2);
     }
   }, 300);
@@ -198,11 +205,25 @@ const Category = () => {
               <span>Xem nhiều</span>
             </div>
           </div>
-          <ProductList products={products} />
+
+          {isLoading ? (
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Skeleton variant="rectangular" width={200} height={380} />
+              <Skeleton variant="rectangular" width={200} height={380} />
+              <Skeleton variant="rectangular" width={200} height={380} />
+              <Skeleton variant="rectangular" width={200} height={380} />
+              <Skeleton variant="rectangular" width={200} height={380} />
+            </div>
+          ) : (
+            <ProductList products={products} />
+          )}
         </div>
-        <div className="btn-load" onClick={() => loadMore()}>
-          {isLoading ? "Loading" : "Xem thêm"}
-        </div>
+
+        {isShow && (
+          <div className="btn-load" onClick={() => loadMore()}>
+            {isLoading ? "Loading" : "Xem thêm"}
+          </div>
+        )}
 
         {/* BOT */}
         <div className="bot-container">
@@ -211,7 +232,6 @@ const Category = () => {
               <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
               {/* <p style={{ whiteSpace: "pre-line" }}>{fetchCate?.description}</p> */}
             </div>
-            {/* <FAQ /> */}
           </div>
           <div className="bot-container-column-2"></div>
         </div>

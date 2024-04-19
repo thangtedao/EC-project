@@ -194,6 +194,22 @@ export const updateOrder = async (req, res) => {
   }
 };
 
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isCancel } = req.body;
+    const cancelOrder = await Order.findByIdAndUpdate(
+      id,
+      { isCancel: isCancel },
+      { new: true }
+    );
+    if (!cancelOrder) throw new NotFoundError(`This order does not exist`);
+    res.status(StatusCodes.OK).json(cancelOrder);
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
 export const showStatss = async (req, res) => {
   /* SHOW STATS BY DATE */
   let startDate = new Date(req.query.start);
