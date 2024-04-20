@@ -35,6 +35,7 @@ import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as profileLoader } from "./pages/Profile";
 
+import Event from "./pages/Event";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
         loader: homeLoader,
+      },
+      {
+        path: "event",
+        element: <Event />,
+        action: registerAction,
       },
       {
         path: "register",
