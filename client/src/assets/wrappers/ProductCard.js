@@ -36,18 +36,19 @@ const Wrapper = styled.div`
   }
   .product-card-name {
     height: 3rem;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 700;
     color: #444;
   }
   .product-card-price {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #d70018;
     display: flex;
     gap: 0.5rem;
     font-weight: bold;
   }
   .strike {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #707070;
     text-decoration: line-through;
     text-decoration-thickness: 1px;

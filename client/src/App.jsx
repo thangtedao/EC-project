@@ -37,6 +37,7 @@ import { loader as profileLoader } from "./pages/Profile";
 import SearchPage from "./pages/Search";
 
 import Event from "./pages/Event";
+import Coupon from "./pages/Coupon";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,7 +53,10 @@ const router = createBrowserRouter([
       {
         path: "event",
         element: <Event />,
-        action: registerAction,
+      },
+      {
+        path: "coupon",
+        element: <Coupon />,
       },
       {
         path: "register",

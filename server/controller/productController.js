@@ -104,7 +104,6 @@ export const getProducts = async (req, res) => {
         return res
           .status(StatusCodes.NOT_FOUND)
           .json({ msg: `This page does not exists` });
-        throw new NotFoundError(`This page does not exists`);
       }
     }
 
@@ -246,28 +245,60 @@ export const deleteProduct = async (req, res) => {
 export const searchProduct = async (req, res) => {
   try {
     if (req.query.name) {
+      const queryObj = { ...req.query };
+      const excludeFields = [
+        "page",
+        "sort",
+        "limit",
+        "fields",
+        "populate",
+        "name",
+      ];
+      excludeFields.forEach((el) => delete queryObj[el]);
+      let queryStr = JSON.stringify(queryObj);
+      queryStr = queryStr.replace(
+        /\b(gte|gt|lte|lt|eq|ne)\b/g,
+        (match) => `$${match}`
+      );
+
       let query = Product.find({
         name: { $regex: req.query.name, $options: "i" },
+        ...JSON.parse(queryStr),
       });
 
-      query = query.sort("-createdAt");
-      query = query.limit(10);
+      if (req.query.sort) {
+        const sortBy = req.query.sort.split(",").join(" ");
+        query = query.sort(sortBy);
+      } else {
+        query = query.sort("-createdAt");
+      }
 
-      const products = await query;
-      res.status(StatusCodes.OK).json(products);
-    }
-  } catch (error) {
-    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
-  }
-};
-export const searchPageProduct = async (req, res) => {
-  try {
-    if (req.query.name) {
-      let query = Product.find({
-        name: { $regex: req.query.name, $options: "i" },
-      });
+      if (req.query.limit) {
+        query = query.limit(req.query.limit);
+      }
 
-      query = query.sort("-createdAt");
+      if (req.query.fields) {
+        const fields = req.query.fields.split(",").join(" ");
+        query = query.select(fields);
+      }
+
+      if (req.query.populate) {
+        const item = req.query.populate.split(",").join(" ");
+        query = query.populate(item);
+      }
+
+      if (req.query.page) {
+        const page = req.query.page;
+        const limit = req.query.limit;
+        const skip = (page - 1) * limit;
+        query = query.skip(skip).limit(limit);
+        const productCount = await Product.countDocuments();
+        if (skip >= productCount) {
+          return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ msg: `This page does not exists` });
+        }
+      }
 
       const products = await query;
       res.status(StatusCodes.OK).json(products);

@@ -103,7 +103,9 @@ const SearchBar = () => {
 
   const fetchData = debounce(async (name) => {
     if (name !== "") {
-      const response = await customFetch.get(`/product/search/?name=${name}`);
+      const response = await customFetch.get(
+        `/product/search/?name=${name}&limit=10&status=Available`
+      );
       setProducts(response.data || []);
     } else {
       setProducts([]);
@@ -148,7 +150,7 @@ const SearchBar = () => {
             return (
               <NavLink
                 key={product._id}
-                to={`/product/${product.slug}`}
+                to={`/product/${product._id}`}
                 className="product-card"
               >
                 <div className="product-card-image">
