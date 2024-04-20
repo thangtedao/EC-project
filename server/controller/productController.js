@@ -260,6 +260,22 @@ export const searchProduct = async (req, res) => {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
+export const searchPageProduct = async (req, res) => {
+  try {
+    if (req.query.name) {
+      let query = Product.find({
+        name: { $regex: req.query.name, $options: "i" },
+      });
+
+      query = query.sort("-createdAt");
+
+      const products = await query;
+      res.status(StatusCodes.OK).json(products);
+    }
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
 
 export const rating = async (req, res) => {
   try {
