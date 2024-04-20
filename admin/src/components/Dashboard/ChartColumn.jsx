@@ -1,32 +1,57 @@
 import React from "react";
 import styled from "styled-components";
 import { Column } from "@ant-design/charts";
+import { useDashboardContext } from "../../pages/Dashboard";
 
 const Wrapper = styled.div`
   /* margin: 64px 32px; */
 `;
 
-const data = [
-  { day: "Mon", value: 3 },
-  { day: "Tues", value: 4 },
-  { day: "Wed", value: 3.5 },
-  { day: "Thurs", value: 5 },
-  { day: "Fri", value: 4.9 },
-  { day: "Sat", value: 6 },
-  { day: "Sun", value: 20 },
-];
-const config = {
-  data,
-  height: 400,
-  xField: "day", // Đổi xField thành "value"
-  yField: "value", // Đổi yField thành "day"
-};
-function ChartColumn() {
+const ChartColumn = () => {
+  const { monthlyStats } = useDashboardContext();
+
+  const month = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const data = month.map((item) => {
+    let totalRevenue = 0;
+    let found = false;
+    monthlyStats.forEach((element) => {
+      if (element.date === item && !found) {
+        totalRevenue += element.totalRevenue;
+        found = true;
+      }
+    });
+    return {
+      date: item,
+      revenue: totalRevenue,
+    };
+  });
+
+  const config = {
+    data,
+    height: 400,
+    xField: "date",
+    yField: "revenue",
+  };
+
   return (
     <Wrapper>
       <Column {...config} />
     </Wrapper>
   );
-}
+};
 
 export default ChartColumn;

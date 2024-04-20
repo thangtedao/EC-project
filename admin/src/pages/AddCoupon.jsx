@@ -127,10 +127,10 @@ const AddCoupon = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
-              title: <a href="/all-coupon">Coupon</a>,
+              title: <a onClick={() => navigate("/all-coupon")}>Coupon</a>,
             },
             {
               title: "Add Coupon",
@@ -186,9 +186,16 @@ const AddCoupon = () => {
                         <Typography.Title className="input-title">
                           Type
                         </Typography.Title>
-                        <Form.Item name="discountType">
+                        <Form.Item
+                          name="discountType"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select disount type",
+                            },
+                          ]}
+                        >
                           <Select
-                            required
                             size="large"
                             placeholder="Select option"
                             value={discountType}

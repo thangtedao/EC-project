@@ -1,17 +1,12 @@
 import React, { useState } from "react";
-import customFetch from "../../utils/customFetch.js";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import { HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PRODUCT_STATUS } from "../../utils/constants.js";
 
-import {
-  EditOutlined,
-  AudioOutlined,
-  PlusOutlined,
-  FormOutlined,
-} from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Button, Input, Dropdown } from "antd";
+import { EditOutlined, FormOutlined } from "@ant-design/icons";
+import { Table, Image, Dropdown, Tag } from "antd";
+import { useDashboardContext } from "../../pages/Dashboard.jsx";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -25,29 +20,48 @@ const Wrapper = styled.div`
   }
 `;
 
-//Select row
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  // Column configuration not to be checked
-  getCheckboxProps: (record) => ({
-    disabled: record.status === "Out of stock",
-    status: record.status,
-  }),
-};
-
-const DashboardProduct = ({ products }) => {
+const DashboardProduct = () => {
+  const { products, orders } = useDashboardContext();
   const navigate = useNavigate();
-  console.log(products);
+
+  // products.map((product) => {
+  //   let sold = 0;
+  //   orders.map((order) => {
+  //     order.orderItem.map((item) => {
+  //       if (product._id === item.product.id) sold++;
+  //     });
+  //   });
+  //   product.sold = sold;
+  // });
+
+  products.forEach((product) => {
+    product.sold = orders.reduce((total, order) => {
+      return (
+        total +
+        order.orderItem.filter((item) => product._id === item.product.id).length
+      );
+    }, 0);
+  });
 
   const handleEditProduct = (id) => {
     navigate(`/edit-product/${id}`);
+  };
+
+  //Select row
+  // rowSelection object indicates the need for row selection
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
+    },
+    // Column configuration not to be checked
+    getCheckboxProps: (record) => ({
+      disabled: record.status === "Out of stock",
+      status: record.status,
+    }),
   };
 
   //Dropdown
@@ -64,11 +78,11 @@ const DashboardProduct = ({ products }) => {
   const columns = [
     {
       title: "Image",
-      width: 100,
       dataIndex: "images",
+      width: 80,
       key: "images",
-      // fixed: "left",
-      render: (images) => <Image width={100} height={100} src={images[0]} />,
+      fixed: "left",
+      render: (images) => <Image width={50} height={50} src={images[0]} />,
     },
     {
       title: "Name",
@@ -82,6 +96,7 @@ const DashboardProduct = ({ products }) => {
       title: "Sold",
       dataIndex: "sold",
       key: "sold",
+      width: 70,
       defaultSortOrder: "descend",
       sorter: (a, b) => a.sold - b.sold,
     },
@@ -89,7 +104,18 @@ const DashboardProduct = ({ products }) => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: 150,
+      width: 130,
+      render: (status) => {
+        let color = "";
+        if (status === "Available") {
+          color = "green";
+        } else if (status === "Out of stock") {
+          color = "orange";
+        } else if (status === "Discontinued") {
+          color = "red";
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
       filters: Object.keys(PRODUCT_STATUS).map((key) => {
         return {
           text: PRODUCT_STATUS[key],
@@ -103,7 +129,6 @@ const DashboardProduct = ({ products }) => {
       title: "Action",
       key: "operation",
       // fixed: "right",
-      width: 150,
       render: ({ _id }) => (
         <Dropdown.Button
           onClick={() => handleEditProduct(_id)}
@@ -147,7 +172,7 @@ const DashboardProduct = ({ products }) => {
             key: product._id,
           }))}
           onChange={onChange}
-          // scroll={{ x: 600 }}
+          scroll={{ x: 610 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

@@ -50,7 +50,7 @@ const Wrapper = styled.div`
 //Rangepicker
 const { RangePicker } = DatePicker;
 
-function EventInfor() {
+const EventInfor = () => {
   // UPload IMG
 
   /* Upload Image and Preview */
@@ -221,6 +221,6 @@ function EventInfor() {
       </Wrapper>
     </HelmetProvider>
   );
-}
+};
 
 export default EventInfor;

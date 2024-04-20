@@ -75,8 +75,8 @@ export const createOrder = async (req, res) => {
         },
         variant: variant,
         quantity: item.quantity,
-        priceAtOrder: salePrice,
-        subtotal: salePrice * item.quantity,
+        priceAtOrder: item.product.price + priceOfVariant,
+        subtotal: (item.product.price + priceOfVariant) * item.quantity,
       };
     });
 
@@ -91,7 +91,7 @@ export const createOrder = async (req, res) => {
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
       shippingAddress: user.address,
-      totalAmount: totalAmount,
+      totalAmount: totalAmount - discountAmount.toFixed(0),
     });
 
     const order = await newOrder.save();
@@ -174,7 +174,7 @@ export const getOrders = async (req, res) => {
 export const getOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).populate("user");
     res.status(StatusCodes.OK).json(order);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -194,7 +194,23 @@ export const updateOrder = async (req, res) => {
   }
 };
 
-export const showStats = async (req, res) => {
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isCancel } = req.body;
+    const cancelOrder = await Order.findByIdAndUpdate(
+      id,
+      { isCancel: isCancel },
+      { new: true }
+    );
+    if (!cancelOrder) throw new NotFoundError(`This order does not exist`);
+    res.status(StatusCodes.OK).json(cancelOrder);
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const showStatss = async (req, res) => {
   /* SHOW STATS BY DATE */
   let startDate = new Date(req.query.start);
   let endDate = new Date(req.query.end);
@@ -339,6 +355,108 @@ export const showStats = async (req, res) => {
     totalProduct,
     productMostSold,
   });
+};
+
+export const showStats = async (req, res) => {
+  try {
+    let { startDate, endDate } = req.body;
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    endDate.setDate(endDate.getDate() + 1);
+
+    /* CALCULATE THE STATS */
+    const result = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $unwind: "$orderItem",
+      },
+      {
+        $group: {
+          _id: {
+            orderId: "$_id",
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          products: {
+            $addToSet: {
+              name: "$orderItem.product.name",
+              quantity: "$orderItem.quantity",
+              variant: "$orderItem.variant._id",
+            },
+          },
+          totalAmount: { $first: "$totalAmount" },
+          totalProduct: { $sum: "$orderItem.quantity" },
+        },
+      },
+    ]);
+
+    let totalCount = result.length || 0;
+    let totalRevenue = 0;
+    let totalProduct = 0;
+    if (result.length > 0) {
+      result.map((item) => {
+        totalRevenue += item.totalAmount;
+        totalProduct += item.totalProduct;
+      });
+    }
+
+    /* FORMAT DATA TO SHOW IN GRAPH */
+    let monthlyApplications = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
+      },
+      { $limit: 12 },
+    ]);
+
+    monthlyApplications = monthlyApplications
+      .map((item) => {
+        const {
+          _id: { month },
+          totalRevenue,
+        } = item;
+        const date = day()
+          .month(month - 1)
+          .format("MMMM");
+        return { date, totalRevenue };
+      })
+      .reverse();
+
+    res.json({
+      monthlyApplications,
+      totalRevenue,
+      totalCount,
+      totalProduct,
+    });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 };
 
 //vn-payment:

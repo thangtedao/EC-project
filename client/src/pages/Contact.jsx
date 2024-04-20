@@ -1,13 +1,7 @@
 import React from "react";
-import styled from "styled-components";
+import Wrapper from "../assets/wrappers/Contact.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import NovaIcon from "../assets/LogoNova.svg";
-
-const Wrapper = styled.div`
-  width: 1100px;
-  display: flex;
-  justify-content: center;
-`;
+import NovaIcon from "../assets/logo/LogoNova.svg";
 
 const Contact = () => {
   window.scrollTo(0, 0);

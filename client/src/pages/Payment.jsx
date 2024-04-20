@@ -1,174 +1,23 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import Wrapper from "../assets/wrappers/Payment.js";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { CartItem } from "../components/index.js";
+import { ListItem } from "../components";
 import { toast } from "react-toastify";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import { store } from "../state/store.js";
-import { login } from "../state/userSlice.js";
-import NovaIcon from "../assets/LogoNova.svg";
-import { Button, message, Steps } from "antd";
-import { PaymentInfo } from "../components/index.js";
-import { PaymentCheckout } from "../components/index.js";
-
-const Wrapper = styled.div`
-  width: 650px;
-  height: 100%;
-  padding-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  .cart-header {
-    padding: 1rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: large;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    place-items: center;
-    border-bottom: 1px solid lightgray;
-  }
-  .cart-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .product-item-outer {
-    width: 100%;
-    background-color: white;
-    border: 1px solid lightgray;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    padding: 0.5rem 1rem;
-  }
-  .product-item {
-    position: relative;
-    display: flex;
-    height: 80px;
-  }
-  .product-image {
-    width: 20%;
-    height: inherit;
-    img {
-      height: inherit;
-    }
-  }
-  .product-info {
-    width: 80%;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .product-info-name {
-    font-size: 0.9rem;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .product-info-price {
-    font-size: 1.1rem;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .count {
-      font-size: 1rem;
-      font-weight: 500;
-    }
-  }
-  .main-price {
-    color: #cf0000;
-    display: flex;
-    gap: 1rem;
-    .strike {
-      font-size: 0.95rem;
-      color: #707070;
-      text-decoration: line-through;
-      text-decoration-thickness: 1px;
-    }
-  }
-  .product-count {
-    color: black;
-    display: flex;
-    input {
-      width: 30px;
-      text-align: center;
-      font-size: 14px;
-      border: transparent;
-      background-color: transparent;
-    }
-    .count-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 3px;
-      background-color: lightgray;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-  }
-  .form-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-    p {
-      text-transform: uppercase;
-    }
-  }
-  .form-info-input {
-    background-color: white;
-    border: 1px solid lightgray;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    padding: 0.5rem 1rem 1rem 1rem;
-    gap: 1.5rem;
-  }
-  .form-address {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 2rem;
-    column-gap: 1rem;
-    background-color: white;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    padding: 1rem;
-  }
-  .bottom-bar {
-    width: 100%;
-    align-self: flex-end;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    background-color: white;
-    gap: 1rem;
-    .btn {
-      height: 2.5rem;
-      border-radius: 5px;
-      border: none;
-      background: #d70018;
-      font-size: medium;
-      color: white;
-      cursor: pointer;
-    }
-  }
-  .price-temp {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    font-weight: bold;
-  }
-`;
+import NovaIcon from "../assets/logo/LogoNova.svg";
+import { PayPalButton } from "../components";
+import { VnPayButton } from "../components";
+import {
+  Checkbox,
+  FormControlLabel,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
+  TextField,
+} from "@mui/material";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -228,7 +77,7 @@ export const loader = async () => {
         0
       ) || 0;
 
-    return { cartItem, totalPrice };
+    return { cartItem, totalPrice, user };
   } catch (error) {
     if (error?.response?.status === 401) return redirect("/login");
     return error;
@@ -236,13 +85,21 @@ export const loader = async () => {
 };
 
 const Payment = () => {
-  const { cartItem, totalPrice } = useLoaderData();
-  const user = useSelector((state) => state.user.user);
+  const { cartItem, totalPrice, user } = useLoaderData();
   const navigate = useNavigate();
+
   const [totalAmount, setTotalAmount] = useState(totalPrice || 0);
   const [coupon, setCoupon] = useState(null);
+  const [code, setCode] = useState();
   const [paypalButtonKey, setPaypalButtonKey] = useState(0);
 
+  // Change address
+  const [isCheck, setIsCheck] = useState(false);
+  const changeAddress = (event) => {
+    setIsCheck(event.target.checked);
+  };
+
+  // Apply coupon
   const applyCoupon = async (code) => {
     const couponData = await customFetch
       .post("/coupon/apply", { code })
@@ -262,86 +119,275 @@ const Payment = () => {
     setPaypalButtonKey((prevKey) => prevKey + 1);
   };
 
-  const steps = [
-    {
-      title: "Info",
-      content: <PaymentInfo cartItem={cartItem} />,
-    },
-    {
-      title: "Checkout",
-      content: (
-        <PaymentCheckout
-          cartItem={cartItem}
-          coupon={coupon}
-          applyCoupon={applyCoupon}
-          totalAmount={totalAmount}
-          paypalButtonKey={paypalButtonKey}
-        />
-      ),
-    },
-  ];
-
-  // antd
-  const [current, setCurrent] = useState(0);
-  const next = () => {
-    setCurrent(current + 1);
-  };
-  const prev = () => {
-    setCurrent(current - 1);
-  };
-  const items = steps.map((item) => ({
-    key: item.title,
-    title: item.title,
-  }));
-  const contentStyle = {
-    height: "fit-content",
-    textAlign: "center",
-    borderRadius: 5,
-    marginTop: 16,
-  };
-  //antd
-
   return (
     <HelmetProvider>
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Payment Info</title>
+          <title>Payment</title>
           <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
-        <Steps current={current} items={items} />
-        <div style={contentStyle}>{steps[current].content}</div>
+        <div className="header">
+          <a onClick={() => navigate("/cart")}>
+            <ArrowBackIcon />
+          </a>
+          Payment Information
+        </div>
 
-        <div
-          style={{
-            marginTop: 24,
-          }}
-        >
-          {current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()}>
-              Next
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button
-              type="primary"
-              onClick={() => message.success("Processing complete!")}
-            >
-              Done
-            </Button>
-          )}
-          {current > 0 && (
-            <Button
-              style={{
-                margin: "0 8px",
-              }}
-              onClick={() => prev()}
-            >
-              Previous
-            </Button>
+        <div className="list-item">
+          {cartItem?.map((item, index) => {
+            return <ListItem key={index} item={item} />;
+          })}
+        </div>
+
+        <div className="form-info">
+          <p>Customer Information</p>
+          <div className="form-info-input">
+            <div style={{ display: "flex", gap: "1.5rem" }}>
+              <TextField
+                required
+                size="small"
+                name="fullName"
+                label="Full Name"
+                defaultValue={user?.fullName}
+                sx={{ width: "50%" }}
+              />
+              <TextField
+                required
+                size="small"
+                name="phone"
+                label="Phone Number"
+                defaultValue={user?.phone}
+                sx={{ width: "50%" }}
+              />
+            </div>
+            <TextField
+              required
+              size="small"
+              name="email"
+              label="Email"
+              defaultValue={user?.email}
+            />
+          </div>
+        </div>
+
+        <div className="form-info">
+          <p>Shipping Address</p>
+
+          <TextField
+            size="small"
+            InputProps={{
+              readOnly: true,
+            }}
+            value={
+              user?.address &&
+              `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
+            }
+            sx={{ width: "100%" }}
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isCheck}
+                onChange={changeAddress}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            }
+            label="Change Address"
+          />
+
+          {isCheck && (
+            <div className="form-address">
+              <TextField
+                required
+                size="small"
+                name="home"
+                label="Home Number"
+              />
+            </div>
           )}
         </div>
+
+        {/* COUPON FIELD */}
+        <div className="coupon-field">
+          <TextField
+            size="small"
+            label="Coupon"
+            placeholder="Enter coupon"
+            onChange={(event) => setCode(event.target.value)}
+          />
+          <button className="btn-apply" onClick={() => applyCoupon(code)}>
+            Apply
+          </button>
+        </div>
+
+        {coupon && (
+          <div className="coupon-card">
+            <span style={{ fontWeight: 700 }}>{coupon.name}</span>
+            <span>{coupon.code}</span>
+            <span>
+              Discount{" "}
+              {coupon.discountValue
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              {coupon.discountType === "percentage" ? "%" : "vnd"}
+            </span>
+          </div>
+        )}
+
+        <div className="price">
+          <div className="price-item">
+            <span>Subtotal:</span>
+            <span>
+              {totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+            </span>
+          </div>
+          <div className="price-item">
+            <span>Discount Amount:</span>
+            <span>
+              {totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+            </span>
+          </div>
+          <div className="price-item">
+            <span>Total Amount:</span>
+            <span>
+              {totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+            </span>
+          </div>
+        </div>
+
+        <PayPalButton
+          key={paypalButtonKey}
+          cartItem={cartItem}
+          coupon={coupon}
+          totalAmount={totalAmount}
+        />
+        <VnPayButton totalPrice={totalAmount} />
+
+        {/* <div className="form-info">
+          <p>Thông tin nhận hàng</p>
+          <input name="cityC" defaultValue={user?.address.city} hidden />
+          <input
+            name="districtC"
+            defaultValue={user?.address.district}
+            hidden
+          />
+          <input name="wardC" defaultValue={user?.address.ward} hidden />
+          <input name="homeC" defaultValue={user?.address.home} hidden />
+
+          <TextField
+            InputProps={{
+              readOnly: true,
+            }}
+            value={
+              user?.address &&
+              `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
+            }
+            variant="standard"
+            sx={{ width: "100%" }}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isCheck}
+                onChange={changeAddress}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            }
+            label="Thay đổi địa chỉ"
+          />
+
+          {isCheck && (
+            <div className="form-address">
+              <FormControl variant="standard">
+                <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
+                <Select
+                  required
+                  labelId="city-select-label"
+                  name="city"
+                  value={city?.name || ""}
+                  label="Tỉnh/Thành phố"
+                  sx={{ width: "300px" }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: "200px",
+                      },
+                    },
+                  }}
+                  onChange={handleChange}
+                >
+                  {cities.map((city) => (
+                    <MenuItem key={city.code} value={city.name}>
+                      {city.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl variant="standard">
+                <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
+                <Select
+                  required
+                  labelId="district-select-label"
+                  name="district"
+                  value={district?.name || ""}
+                  label="Quận/Huyện"
+                  sx={{ width: "300px" }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: "200px",
+                      },
+                    },
+                  }}
+                  onChange={handleChange02}
+                >
+                  {districts.map((district) => (
+                    <MenuItem key={district.code} value={district.name}>
+                      {district.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl variant="standard">
+                <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
+                <Select
+                  required
+                  name="ward"
+                  labelId="ward-select-label"
+                  value={ward?.name || ""}
+                  label="Phường/Xã"
+                  sx={{ width: "300px" }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: "200px",
+                      },
+                    },
+                  }}
+                  onChange={handleChange03}
+                >
+                  {wards.map((ward) => (
+                    <MenuItem key={ward.code} value={ward.name}>
+                      {ward.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                required
+                name="home"
+                label="Số nhà, tên đường"
+                variant="standard"
+              />
+            </div>
+          )}
+        </div> */}
       </Wrapper>
     </HelmetProvider>
   );

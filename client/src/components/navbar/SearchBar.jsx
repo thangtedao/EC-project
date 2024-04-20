@@ -5,7 +5,7 @@ import { useState } from "react";
 import customFetch from "../../utils/customFetch";
 import { debounce } from "lodash";
 import styled from "styled-components";
-import img from "../../assets/react.svg";
+import NovaIcon from "../../assets/logo/LogoNova.svg";
 
 const Wrapper = styled.div`
   position: relative;
@@ -54,12 +54,17 @@ const Wrapper = styled.div`
     gap: 10px;
     height: 50px;
     padding: 5px;
+
+    :hover {
+      background: #f0f0f0;
+    }
   }
   .product-card-image {
     height: 45px;
     display: grid;
     place-items: center;
     img {
+      width: 50px;
       border-radius: 10px;
       height: inherit;
     }
@@ -100,7 +105,6 @@ const SearchBar = () => {
     if (name !== "") {
       const response = await customFetch.get(`/product/search/?name=${name}`);
       setProducts(response.data || []);
-      // console.log(response.data)
     } else {
       setProducts([]);
     }
@@ -133,10 +137,12 @@ const SearchBar = () => {
           onFocus={() => setTimeout(() => setIsShow(true), 100)}
           onBlur={() => setTimeout(() => setIsShow(false), 100)}
         />
-        <div className="search-icon" onClick={(e)=>handleSumit(e)}>
-          <Search/>
+
+        <div className="search-icon">
+          <Search />
         </div>
       </Form>
+
       {products.length > 0 && isShow && (
         <div className="search-result">
           {products?.map((product) => {
@@ -147,8 +153,9 @@ const SearchBar = () => {
                 className="product-card"
               >
                 <div className="product-card-image">
-                  <img src={product?.images[0] || img} />
+                  <img src={product?.images[0] || NovaIcon} />
                 </div>
+
                 <div className="product-card-info">
                   <div className="name">{product?.name}</div>
                   <div className="price">

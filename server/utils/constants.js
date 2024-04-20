@@ -1,9 +1,9 @@
 export const ORDER_STATUS = {
-  NOT_PROCESSED: "Chờ Xác Nhận",
-  PROCESSING: "Đang Xử Lý",
-  DELIVERING: "Đang Giao Hàng",
-  DELIVERED: "Đã Giao Hàng",
-  CANCELLED: "Đã Hủy Đơn",
+  PENDING: "Pending",
+  PROCESSING: "Processing",
+  DELIVERING: "Delivering",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
 export const PRODUCT_STATUS = {

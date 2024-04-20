@@ -105,10 +105,10 @@ const AddCategory = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
-              title: <a href="/all-category">Category</a>,
+              title: <a onClick={() => navigate("/all-category")}>Category</a>,
             },
             {
               title: "Add Category",

@@ -14,6 +14,7 @@ import {
   Order,
   Wishlist,
   Profile,
+  Error,
   VnPay_return,
 } from "./pages";
 
@@ -69,34 +70,22 @@ const router = createBrowserRouter([
       },
       {
         path: "cart",
-        children: [
-          {
-            index: true,
-            element: <Cart />,
-            loader: cartLoader,
-          },
-          {
-            path: "payment",
-            element: <Payment />,
-            loader: paymentLoader,
-          },
-          {
-            path: "vnpay-return",
-            element: <VnPay_return />,
-          },
-        ],
+        element: <Cart />,
+        loader: cartLoader,
+      },
+      {
+        path: "payment",
+        element: <Payment />,
+        loader: paymentLoader,
+      },
+      {
+        path: "vnpay-return",
+        element: <VnPay_return />,
       },
       {
         path: "category/:id",
         element: <Category />,
         loader: categoryLoader,
-        children: [
-          {
-            path: ":id",
-            element: <Category />,
-            loader: categoryLoader,
-          },
-        ],
       },
       {
         path: "contact",

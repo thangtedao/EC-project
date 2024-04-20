@@ -1,152 +1,40 @@
 import React, { createContext, useContext } from "react";
-import styled from "styled-components";
-import { ProductCard, SlideProduct } from "../components";
+import Wrapper from "../assets/wrappers/Home.js";
+import { SlideProduct } from "../components";
 import { NavLink, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { IoIosArrowForward } from "react-icons/io";
 import SlideGallery from "../components/SlideGallery";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import NovaIcon from "../assets/LogoNova.svg";
+import NovaIcon from "../assets/logo/LogoNova.svg";
 import { useMainLayoutContext } from "../pages/MainLayout";
+import AppChat from "../components/AppChat/AppChat";
+import { useSelector } from "react-redux";
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
 import img4 from "../assets/data/image/1.png";
 import img5 from "../assets/data/image/2.png";
 import img6 from "../assets/data/image/3.png";
-import AppChat from "../components/AppChat/AppChat";
-import { useSelector } from "react-redux";
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
-  width: 1100px;
-  height: 100%;
-
-  /* TOP HOME */
-  .block-top-home {
-    width: 100%;
-    //height: 350px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .menu-container {
-    border: 1px solid lightgray;
-    width: 200px;
-    border-radius: 5px;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-  }
-  .nav-link {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.3rem 0.2rem;
-    border-radius: 5px;
-    color: #4a4a4a;
-    font-weight: 700;
-    :hover {
-      background-color: lightgray;
-    }
-  }
-  .right-banner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 240px;
-    img {
-      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1),
-        0 2px 6px 2px rgba(60, 64, 67, 0.15);
-      border-radius: 5px;
-    }
-  }
-  .sliding-banner {
-    width: calc(100% - 420px);
-    border-radius: 10px;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
-    margin: 0 0.75rem;
-    overflow: hidden;
-  }
-
-  /* FLASH SALE */
-  .block-hot-sale {
-    width: 100%;
-    border-radius: 10px;
-    background-color: #580f0f;
-    box-shadow: 1px 2px 1px 1px rgba(0, 0, 0, 0.1);
-    padding: 0.75rem;
-  }
-  .block-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-  }
-  .sale-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: red;
-  }
-  .box-countdown {
-    color: white;
-  }
-
-  /* PRODUCTS SALE  */
-  .product-by-category {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-    width: 100%;
-  }
-  .product-by-category-title {
-    color: black;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-
-  /* MEDIA QUERIES */
-  @media (max-width: 1100px) {
-    width: 100%;
-  }
-  @media (max-width: 960px) {
-    .sliding-banner {
-      width: calc(100% - 220px);
-    }
-    .right-banner {
-      display: none;
-    }
-  }
-  @media (max-width: 800px) {
-  }
-  @media (max-width: 700px) {
-    .menu-container {
-      width: 150px;
-    }
-    .sliding-banner {
-      width: calc(100% - 170px);
-    }
-  }
-  @media (max-width: 550px) {
-    .sliding-banner {
-      width: 95%;
-    }
-    .menu-container {
-      display: none;
-    }
-  }
-`;
 
 export const loader = async () => {
   try {
-    const products = await customFetch.get(`/product`).then(({ data }) => data);
-    return products;
+    const categories = await customFetch
+      .get("/category/get/parent")
+      .then(({ data }) => data);
+
+    const productsArray = await Promise.all(
+      categories.map(async (category) => {
+        const products = await customFetch
+          .get(`/product/?category=${category._id}&limit=20&status=Available`)
+          .then(({ data }) => data);
+
+        return products;
+      })
+    );
+
+    return { productsArray };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -159,11 +47,29 @@ const Home = () => {
   const user = useSelector((state) => state.user.user);
 
   window.scrollTo(0, 0);
-  const { categories, categoriesChild, filtercategoriesChild } =
-    useMainLayoutContext();
-  const products = useLoaderData();
+  const { categories } = useMainLayoutContext();
+  const { productsArray } = useLoaderData();
 
-  const img = [img1, img2];
+  // const productsArray = categories.map((cat) => {
+  //   return products.filter((product) => {
+  //     return product.category.includes(cat._id.toString());
+  //   });
+  // });
+
+  // const productsArray = [];
+  // for (let i = 0; i < categories.length; i++) {
+  //   const cat = categories[i];
+  //   const categoryProducts = [];
+  //   for (let j = 0; j < products.length; j++) {
+  //     const product = products[j];
+  //     if (product.category.includes(cat._id.toString())) {
+  //       categoryProducts.push(product);
+  //     }
+  //   }
+  //   if (categoryProducts.length > 0) {
+  //     productsArray.push(categoryProducts);
+  //   }
+  // }
 
   return (
     <HelmetProvider>
@@ -193,7 +99,7 @@ const Home = () => {
 
             {/* SLIDE */}
             <div className="sliding-banner">
-              <SlideGallery image={img} />
+              <SlideGallery image={[img1, img2]} />
             </div>
             <div className="right-banner">
               <img src={img4} />
@@ -203,23 +109,24 @@ const Home = () => {
           </div>
 
           {/* FLASH SALE */}
-          {/* <div className="block-hot-sale">
+          <div className="block-hot-sale">
             <div className="block-title">
               <div className="sale-title">FLASH SALE</div>
-               <div className="box-countdown">00:11:22:33</div>
+              <div className="box-countdown">00:11:22:33</div>
             </div>
-            {saleProducts?.length > 0 && (
-              <SlideProduct products={saleProducts} />
+            {productsArray[0]?.length > 0 && (
+              <SlideProduct products={productsArray[0]} />
             )}
-          </div>*/}
+          </div>
+
           {/* PRODUCTS SALE */}
-          {/* {categories.map((category, index) => {
+          {categories.map((category, index) => {
             return (
-              productsArray[index].length > 0 && (
+              productsArray[index] && (
                 <div key={index} className="product-by-category">
                   <NavLink
-                    to={`/category/${category._id}`}
                     className="product-by-category-title"
+                    to={`/category/${category._id}`}
                   >
                     {productsArray[index].length > 0 && category.name}
                   </NavLink>
@@ -227,13 +134,9 @@ const Home = () => {
                 </div>
               )
             );
-          })} */}
-          {products.map((product) => {
-            return <ProductCard key={product._id} product={product} />;
           })}
-          {
-            user && user.role !== 'admin' ? (<AppChat></AppChat>) : ""
-            }
+
+          {user && <AppChat />}
         </Wrapper>
       </HomeContext.Provider>
     </HelmetProvider>

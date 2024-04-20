@@ -1,12 +1,13 @@
 import React from "react";
 import { Link, Form, redirect, useNavigation } from "react-router-dom";
-import styled from "styled-components";
+import Wrapper from "../assets/wrappers/Register.js";
 import { FormRow } from "../components";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import NovaIcon from "../assets/LogoNova.svg";
+import { TextField } from "@mui/material";
+import NovaIcon from "../assets/logo/LogoNova.svg";
 
 /* ACTION */
 export const action = async ({ request }) => {
@@ -27,56 +28,6 @@ export const action = async ({ request }) => {
   }
 };
 
-const Wrapper = styled.section`
-  padding: 3rem;
-  margin-bottom: 2rem;
-  //height: 60vh;
-  .form-register {
-    width: 30vw;
-    background-color: var(--background-color);
-    border: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  h4 {
-    font-weight: 700;
-    margin-bottom: 2rem;
-  }
-  .form-row {
-    width: 100%;
-  }
-  .form-label {
-    font-size: 1rem;
-    font-weight: 400;
-  }
-  .form-input {
-    font-size: medium;
-    height: 2.5rem;
-    border: transparent;
-    border-bottom: 1px solid lightgray;
-    background-color: var(--background-color);
-  }
-  .btn-block {
-    height: 2.5rem;
-    border: transparent;
-    background-color: #e0052b;
-    text-transform: capitalize;
-    font-size: 1rem;
-    font-weight: 700;
-    color: white;
-    border-radius: 5px;
-  }
-  p {
-    color: #3d3d3d;
-  }
-  .member-btn {
-    margin-left: 0.5rem;
-    color: #e0052b;
-  }
-`;
-
 const Register = () => {
   window.scrollTo(0, 0);
   const navigation = useNavigation();
@@ -92,32 +43,47 @@ const Register = () => {
         </Helmet>
 
         <Form method="post" className="form-register">
-          <h4>Đăng ký</h4>
-          <FormRow
-            type="text"
+          <h3>Register</h3>
+          <TextField
+            required
+            size="small"
             name="fullName"
-            lableText="Họ và Tên"
-            defaultValue=""
+            label="Full Name"
+            sx={{ width: "100%" }}
           />
-          <FormRow
-            type="number"
+          <TextField
+            required
+            size="small"
             name="phone"
-            lableText="Số điện thoại"
-            defaultValue=""
+            label="Phone Number"
+            sx={{ width: "100%" }}
           />
-          <FormRow type="email" name="email" defaultValue="" />
-          <FormRow type="password" name="password" defaultValue="" />
+          <TextField
+            required
+            size="small"
+            name="email"
+            label="Email"
+            sx={{ width: "100%" }}
+          />
+          <TextField
+            required
+            type="password"
+            size="small"
+            name="password"
+            label="Password"
+            sx={{ width: "100%" }}
+          />
           <button
             type="submit"
             className="btn btn-block"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "đang đăng ký..." : "đăng ký"}
+            {isSubmitting ? "Register..." : "Register"}
           </button>
           <p>
-            Bạn đã có tài khoản?
+            Already have account?
             <Link to="/login" className="member-btn">
-              Đăng nhập ngay
+              Login Now
             </Link>
           </p>
         </Form>

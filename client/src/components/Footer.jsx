@@ -1,39 +1,10 @@
 import React from "react";
-import styled from "styled-components";
-import Facebook from "../assets/facebook.svg";
-import Zalo from "../assets/zalo.svg";
-import Youtube from "../assets/youtube.svg";
-import Stripe from "../assets/stripe.svg";
-import Paypal from "../assets/paypal.svg";
-
-const Wrapper = styled.div`
-  width: 100%;
-  height: 170px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  border-top: 1px solid lightgray;
-  padding-top: 1rem;
-  margin-bottom: 26px;
-
-  .footer-container {
-    width: 1100px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .footer-items {
-    display: flex;
-    flex-direction: column;
-  }
-  .footer-items-title {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  .footer-items-content {
-    font-size: 13px;
-    margin-bottom: 10px;
-  }
-`;
+import Wrapper from "../assets/wrappers/Footer.js";
+import Facebook from "../assets/logo/facebook.svg";
+import Zalo from "../assets/logo/zalo.svg";
+import Youtube from "../assets/logo/youtube.svg";
+import Stripe from "../assets/logo/stripe.svg";
+import Paypal from "../assets/logo/paypal.svg";
 
 const Footer = () => {
   return (

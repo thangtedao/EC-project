@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { useNavigate, useLoaderData } from "react-router-dom";
-import img from "../assets/react.svg";
+import { useNavigate, useLoaderData, Link } from "react-router-dom";
 
 import { EditOutlined, AudioOutlined, FormOutlined } from "@ant-design/icons";
 import { Breadcrumb, Table, Image, Input, Dropdown } from "antd";
@@ -37,15 +36,13 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    // const orders = await customFetch
-    //   .get(`/order/`)
-    //   .then(({ data }) => data);
+    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
     const users = await customFetch
       .get("/user/admin/all-users")
       .then(({ data }) => data);
 
-    return { users };
+    return { users, orders };
   } catch (error) {
     return error;
   }
@@ -72,8 +69,30 @@ const items = [
 ];
 
 const AllUser = () => {
-  const { users } = useLoaderData();
+  const { users, orders } = useLoaderData();
   const navigate = useNavigate();
+
+  // users.map((user) => {
+  //   let numOfOrder = 0;
+  //   let totalSpent = 0;
+  //   orders.map((order) => {
+  //     if (order.user._id === user._id) {
+  //       numOfOrder++;
+  //       totalSpent += order.totalAmount;
+  //     }
+  //   });
+  //   user.numOfOrder = numOfOrder;
+  //   user.totalSpent = totalSpent;
+  // });
+
+  users.forEach((user) => {
+    const userOrders = orders.filter((order) => order.user._id === user._id);
+    user.numOfOrder = userOrders.length;
+    user.totalSpent = userOrders.reduce(
+      (total, order) => total + order.totalAmount,
+      0
+    );
+  });
 
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -92,14 +111,19 @@ const AllUser = () => {
       title: "Image",
       dataIndex: "avatar",
       key: "avatar",
-      width: 120,
+      width: 90,
       fixed: "left",
       render: (avatar) => (
         <>
           {avatar ? (
             <Image width={45} src={avatar} />
           ) : (
-            <Image width={45} src={img} />
+            <Image
+              width={45}
+              src={
+                "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+              }
+            />
           )}
         </>
       ),
@@ -113,31 +137,39 @@ const AllUser = () => {
     },
     {
       title: "Email",
+      width: 150,
       dataIndex: "email",
       key: "email",
     },
     {
       title: "Phone",
+      width: 150,
       dataIndex: "phone",
       key: "phone",
     },
     {
       title: "Address",
+      width: 150,
       dataIndex: "address",
       key: "address",
     },
     {
       title: "Order",
-      dataIndex: "order",
+      width: 80,
+      dataIndex: "numOfOrder",
       key: "order",
     },
     {
       title: "Total spent",
-      dataIndex: "spent",
+      width: 150,
+      dataIndex: "totalSpent",
       key: "spent",
+      render: (totalSpent) =>
+        totalSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
       title: "Role",
+      width: 80,
       dataIndex: "role",
       key: "role",
     },
@@ -146,7 +178,7 @@ const AllUser = () => {
       title: "Last Activity",
       dataIndex: "activity",
       key: "activity",
-      width: 100,
+      width: 150,
     },
     {
       title: "Status",
@@ -185,10 +217,10 @@ const AllUser = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
-              title: "User",
+              title: "Customer",
             },
           ]}
         />

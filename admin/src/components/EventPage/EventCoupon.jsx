@@ -54,7 +54,7 @@ const Wrapper = styled.div`
     text-align: left;
   }
 `;
-function EventCoupon() {
+const EventCoupon = () => {
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
   return (
@@ -200,6 +200,6 @@ function EventCoupon() {
       </Wrapper>
     </HelmetProvider>
   );
-}
+};
 
 export default EventCoupon;

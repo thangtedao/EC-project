@@ -1,23 +1,14 @@
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import {
-  redirect,
-  useNavigation,
-  useLoaderData,
-  useNavigate,
-} from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { UserOutlined, EditOutlined, FormOutlined } from "@ant-design/icons";
 import {
-  Modal,
-  Upload,
   Button,
   Select,
   Avatar,
   Form,
-  Input,
   Typography,
-  InputNumber,
   Card,
   Breadcrumb,
   Space,
@@ -91,89 +82,96 @@ export const loader = async ({ params }) => {
       .get(`/user/admin/user-profile/${id}`)
       .then(({ data }) => data);
 
-    // const orders = await customFetch
-    //   .get(`/order/?userId=${user._id}`)
-    //   .then(({ data }) => data.orders);
+    const orders = await customFetch
+      .get(`/order/?user=${user._id}`)
+      .then(({ data }) => data);
 
-    return { user };
+    return { user, orders };
   } catch (error) {
     return error;
   }
 };
 
 const EditUser = () => {
-  const { user } = useLoaderData();
+  const { user, orders } = useLoaderData();
   const navigate = useNavigate();
 
-  const handleEditOrder = () => {
-    navigate("/edit-order/:id");
+  const userOrders = orders.filter((order) => order.user._id === user._id);
+  user.totalSpent = userOrders.reduce(
+    (total, order) => total + order.totalAmount,
+    0
+  );
+
+  const handleEditOrder = (id) => {
+    navigate(`/edit-order/${id}`);
   };
 
   const columns = [
     {
-      title: "Id",
-      dataIndex: "orderId",
-      key: "orderId",
-      width: 120,
+      title: "ID Order",
+      width: 100,
+      dataIndex: "_id",
+      key: "_id",
       fixed: "left",
-    },
-    {
-      title: "Date",
-      dataIndex: "createdAt",
-      key: "createdAt",
-    },
-    {
-      title: "Time",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      render: (_id) => "#" + _id.slice(18),
     },
     {
       title: "Items",
-      dataIndex: "products",
-      key: "products",
+      width: 70,
+      key: "items",
+      render: (_, record) => record.orderItem.length,
     },
     {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
+      title: "TotalAmount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      width: 150,
+      render: (totalAmount) =>
+        totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+    },
+    {
+      title: "Date",
+      width: 120,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => createdAt.split("T")[0],
+    },
+    {
+      title: "Time",
+      width: 120,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => createdAt.split("T")[1].split(".")[0],
     },
     {
       title: "Status",
-      dataIndex: "orderStatus",
-      key: "orderStatus",
-      render: (_, { orderStatus }) => (
-        <>
-          {orderStatus.map((tag) => {
-            let color = "";
-
-            if (tag === "Cancelled") {
-              color = "red";
-            } else if (tag === "Delivered") {
-              color = "green";
-            } else if (tag === "Processing") {
-              color = "orange";
-            } else if (tag === "Pending") {
-              color = "gold";
-            } else if (tag === "Shipped") {
-              color = "blue";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      dataIndex: "status",
+      key: "status",
+      width: 150,
+      render: (status) => {
+        let color = "";
+        if (status === "Cancelled") {
+          color = "red";
+        } else if (status === "Delivered") {
+          color = "green";
+        } else if (status === "Processing") {
+          color = "orange";
+        } else if (status === "Pending") {
+          color = "gold";
+        } else if (status === "Delivering") {
+          color = "blue";
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
     },
     {
       title: "Action",
-      key: "action",
+      key: "operation",
       fixed: "right",
-      width: 150,
-      render: () => (
+      width: 120,
+      render: ({ _id }) => (
         <Dropdown.Button
-          onClick={handleEditOrder}
+          onClick={() => handleEditOrder(_id)}
           menu={{
             items,
           }}
@@ -182,25 +180,6 @@ const EditUser = () => {
           Edit
         </Dropdown.Button>
       ),
-    },
-  ];
-  const data = [
-    {
-      key: 1,
-      orderId: "1",
-      orderStatus: ["Pending", "Processing"],
-    },
-    {
-      key: 2,
-
-      orderId: "2",
-      orderStatus: ["Cancelled"],
-    },
-    {
-      key: 3,
-
-      orderId: "3",
-      orderStatus: ["Shipped", "Delivered"],
     },
   ];
 
@@ -225,10 +204,10 @@ const EditUser = () => {
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a href="/">Dashboard</a>,
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
             },
             {
-              title: <a href="/all-user">Customer</a>,
+              title: <a onClick={() => navigate("/all-user")}>Customer</a>,
             },
             {
               title: "Customer Detail",
@@ -253,8 +232,8 @@ const EditUser = () => {
               <Card
                 className="col-1-item"
                 size="large"
-                title={`Customer`}
-                extra={"ID: 123"}
+                title={user?.fullName || "Customer"}
+                extra={"ID: " + user?._id || "ID: 123"}
               >
                 <Space wrap size={16}>
                   <Avatar size={64} icon={<UserOutlined />} />
@@ -312,9 +291,6 @@ const EditUser = () => {
               </Card>
 
               <Card className="col-1-item" size="large" title={`Change Status`}>
-                <Typography.Title className="input-title">
-                  Change Status
-                </Typography.Title>
                 <Form.Item name="isBlocked">
                   <Select
                     size="large"
@@ -339,17 +315,20 @@ const EditUser = () => {
                 className="col-2-item"
                 size="large"
                 title={`Orders`}
-                extra={`Total spent 1 tỷ on 100 orders`}
+                extra={`Total spent ${user.totalSpent
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}vnđ on ${
+                  orders.length
+                } orders`}
               >
                 <Table
                   className="col-2-item"
                   columns={columns}
-                  // dataSource={categories.map((category) => ({
-                  //   ...category,
-                  //   key: category._id,
-                  // }))}
-                  dataSource={data}
-                  scroll={{ x: 1200 }}
+                  dataSource={orders.map((order) => ({
+                    ...order,
+                    key: order._id,
+                  }))}
+                  scroll={{ x: 980 }}
                   showSorterTooltip={{
                     target: "sorter-icon",
                   }}

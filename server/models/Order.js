@@ -52,9 +52,12 @@ const orderSchema = mongoose.Schema({
   status: {
     type: String,
     enum: Object.values(ORDER_STATUS),
-    default: ORDER_STATUS.NOT_PROCESSED,
+    default: ORDER_STATUS.PENDING,
   },
-  cancelOrder: Boolean,
+  isCancel: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: timeStamp,
