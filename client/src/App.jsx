@@ -36,6 +36,7 @@ import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as profileLoader } from "./pages/Profile";
 
 import Event from "./pages/Event";
+import Coupon from "./pages/Coupon";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +52,11 @@ const router = createBrowserRouter([
       {
         path: "event",
         element: <Event />,
+        action: registerAction,
+      },
+      {
+        path: "coupon",
+        element: <Coupon />,
         action: registerAction,
       },
       {
