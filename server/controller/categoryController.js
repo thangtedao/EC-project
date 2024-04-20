@@ -1,10 +1,16 @@
 import Category from "../models/Category.js";
+import ItemBlog from "../models/ItemBlog.js";
 import Product from "../models/Product.js";
 import { StatusCodes } from "http-status-codes";
 
 export const createCategory = async (req, res) => {
   try {
-    const newCategory = await Category.create(req.body);
+    const data = { ...req.body };
+    const blog = data.blog;
+    delete data.blog;
+
+    const newCategory = await Category.create(data);
+    await ItemBlog.create({ categoryId: newCategory._id, content: blog });
     res.status(StatusCodes.CREATED).json(newCategory);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -55,8 +61,9 @@ export const getCategory = async (req, res) => {
     }
 
     const category = await query;
+    const categoryBlog = await ItemBlog.findOne({ categoryId: id });
 
-    res.status(StatusCodes.OK).json(category);
+    res.status(StatusCodes.OK).json({ category, categoryBlog });
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
@@ -64,11 +71,22 @@ export const getCategory = async (req, res) => {
 
 export const updateCategory = async (req, res) => {
   try {
+    const data = { ...req.body };
     const { id } = req.params;
+
+    const blog = data.blog;
+    delete data.blog;
+
     if (!req.body.parent) req.body.parent = null;
-    const updatedCategory = await Category.findByIdAndUpdate(id, req.body, {
+    const updatedCategory = await Category.findByIdAndUpdate(id, data, {
       new: true,
     });
+
+    await ItemBlog.findOneAndUpdate(
+      { categoryId: updatedProduct._id },
+      { content: blog }
+    );
+
     res.status(StatusCodes.OK).json(updatedCategory);
   } catch (error) {
     console.log(error);

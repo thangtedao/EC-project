@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/Category.js";
 import { categoryData } from "../assets/data/categoryData.js";
-import { ProductList, SlideProduct } from "../components";
+import { ProductBlog, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
 import { NavLink, useLoaderData } from "react-router-dom";
 import { debounce } from "lodash";
@@ -24,15 +24,19 @@ export const loader = async ({ params }) => {
       .get(`/product?category=${id}&sort=-viewed&limit=10&status=Available`)
       .then(({ data }) => data);
 
+    const { categoryBlog } = await customFetch
+      .get(`/category/${id}`)
+      .then(({ data }) => data);
+
     window.scrollTo(0, 0);
-    return { productData, id, productsMostView };
+    return { productData, id, productsMostView, categoryBlog };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { productData, id, productsMostView } = useLoaderData();
+  const { productData, id, productsMostView, categoryBlog } = useLoaderData();
   const [products, setProducts] = useState(productData);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
@@ -228,10 +232,7 @@ const Category = () => {
         {/* BOT */}
         <div className="bot-container">
           <div className="bot-container-column-1">
-            <div className="product-description">
-              <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
-              {/* <p style={{ whiteSpace: "pre-line" }}>{fetchCate?.description}</p> */}
-            </div>
+            <ProductBlog productBlog={categoryBlog} />
           </div>
           <div className="bot-container-column-2"></div>
         </div>

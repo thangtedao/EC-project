@@ -13,6 +13,8 @@ import {
   Card,
   Breadcrumb,
 } from "antd";
+import { Editor } from "@tinymce/tinymce-react";
+import { useRef } from "react";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -65,22 +67,34 @@ export const loader = async ({ params }) => {
     if (!id) {
       return redirect("/all-category");
     }
-    const category = await customFetch
+    const { category, categoryBlog } = await customFetch
       .get(`/category/${id}`)
       .then(({ data }) => data);
     let categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
     if (categories) categories = categories?.filter((item) => item._id !== id);
-    return { category, categories };
+    return { category, categories, categoryBlog };
   } catch (error) {
     return error;
   }
 };
 
 const EditCategory = () => {
-  const { category, categories } = useLoaderData();
+  const { category, categories, categoryBlog } = useLoaderData();
   const navigate = useNavigate();
+
+  console.log(categoryBlog);
+
+  // Category blog
+  const [blog, setBlog] = useState(categoryBlog?.content || "");
+  const editorRef = useRef(null);
+  const blogChange = () => {
+    if (editorRef.current) {
+      const blogContent = String(editorRef.current.getContent());
+      setBlog(blogContent);
+    }
+  };
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -191,6 +205,37 @@ const EditCategory = () => {
                           minRows: 7,
                           maxRows: 9,
                         }}
+                      />
+                    </Form.Item>
+
+                    <Typography.Title className="input-title">
+                      Blog
+                    </Typography.Title>
+                    <Form.Item>
+                      <Editor
+                        // apiKey="cmlltcvw2ydrtenwdgwdwqqrvsje6foe8t5xtyaq6lo2ufki"
+                        apiKey="jbmjv3n0hzwml063re0ackyls29g62lc76t23ptagoco48ip"
+                        language="vi"
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                        initialValue={blog}
+                        init={{
+                          height: 500,
+                          menubar:
+                            "file edit view insert format tools table tc help",
+                          plugins: [
+                            "advlist autolink lists link image charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table paste code help wordcount",
+                          ],
+                          toolbar:
+                            "undo redo | formatselect | " +
+                            "bold italic backcolor | alignleft aligncenter " +
+                            "alignright alignjustify | bullist numlist outdent indent | " +
+                            "removeformat | help",
+                          content_style:
+                            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                        }}
+                        onChange={blogChange}
                       />
                     </Form.Item>
                   </div>

@@ -1,6 +1,6 @@
 import Product from "../models/Product.js";
 import ProductVariation from "../models/ProductVariation.js";
-import ProductBlog from "../models/ProductBlog.js";
+import ItemBlog from "../models/ItemBlog.js";
 import Review from "../models/Review.js";
 import slugify from "slugify";
 import { NotFoundError } from "../errors/customErrors.js";
@@ -40,7 +40,7 @@ export const createProduct = async (req, res) => {
     data.category = data.category.split(",");
 
     const newProduct = await Product.create(data);
-    await ProductBlog.create({ productId: newProduct._id, content: blog });
+    await ItemBlog.create({ productId: newProduct._id, content: blog });
 
     if (variations) {
       variations = variations.map((item) => {
@@ -146,7 +146,7 @@ export const getProduct = async (req, res) => {
 
     let variation = await ProductVariation.find({ productId: id });
 
-    const productBlog = await ProductBlog.findOne({ productId: id });
+    const productBlog = await ItemBlog.findOne({ productId: id });
     // if (variation) {
     //   variation = variation.reduce((groups, item) => {
     //     const { variationName } = item;
@@ -197,7 +197,7 @@ export const updateProduct = async (req, res) => {
     const updatedProduct = await Product.findByIdAndUpdate(id, data);
     if (!updatedProduct) throw new NotFoundError(`Product Not Found`);
 
-    await ProductBlog.findOneAndUpdate(
+    await ItemBlog.findOneAndUpdate(
       { productId: updatedProduct._id },
       { content: blog }
     );
