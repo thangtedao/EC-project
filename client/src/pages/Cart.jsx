@@ -128,7 +128,7 @@ const Cart = () => {
               <div className="bottom-bar">
                 <div className="price-temp">
                   <p>Total Price</p>
-                  {totalPrice}₫
+                  {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
                 </div>
 
                 <button className="btn" onClick={() => submitPayment()}>

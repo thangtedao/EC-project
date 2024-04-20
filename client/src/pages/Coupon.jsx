@@ -13,7 +13,7 @@ import { FileCopyOutlined } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { Input } from "antd";
 const Wrapper = styled.div`
-  width: 80%;
+  width: 1100px;
   .title {
     text-align: left;
     font-size: 1.5rem;

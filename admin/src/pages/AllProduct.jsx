@@ -60,27 +60,23 @@ export const loader = async ({ request }) => {
     ]);
 
     const products = await customFetch
-      .get(`/product/?populate=category,brand`)
+      .get(`/product/?populate=category`)
       .then(({ data }) => data);
 
     const categories = await customFetch
       .get("/category/all-categories")
       .then(({ data }) => data);
 
-    const brands = await customFetch
-      .get("/brand/all-brands")
-      .then(({ data }) => data);
-
     const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
-    return { products, categories, brands, orders };
+    return { products, categories, orders };
   } catch (error) {
     return error;
   }
 };
 
 const AllProduct = () => {
-  const { products, categories, brands, orders } = useLoaderData();
+  const { products, categories, orders } = useLoaderData();
   const navigate = useNavigate();
 
   products.forEach((product) => {
@@ -157,20 +153,6 @@ const AllProduct = () => {
       }),
       onFilter: (value, record) =>
         record?.category?.some((cat) => cat?._id === value),
-    },
-    {
-      title: "Brand",
-      dataIndex: "brand",
-      key: "brand",
-      width: 150,
-      render: (brand) => brand?.name,
-      filters: brands?.map((brand) => {
-        return {
-          text: brand?.name,
-          value: brand?._id,
-        };
-      }),
-      onFilter: (value, record) => record?.brand?._id === value,
     },
     {
       title: "Price",

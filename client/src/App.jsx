@@ -59,11 +59,6 @@ const router = createBrowserRouter([
         element: <Coupon />,
       },
       {
-        path: "coupon",
-        element: <Coupon />,
-        action: registerAction,
-      },
-      {
         path: "register",
         element: <Register />,
         action: registerAction,

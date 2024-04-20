@@ -38,10 +38,6 @@ const productSchema = mongoose.Schema({
       ref: "Category",
     },
   ],
-  brand: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Brand",
-  },
   status: {
     type: String,
     enum: Object.values(PRODUCT_STATUS),

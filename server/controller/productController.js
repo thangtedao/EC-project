@@ -42,7 +42,7 @@ export const createProduct = async (req, res) => {
     const newProduct = await Product.create(data);
     await ItemBlog.create({ productId: newProduct._id, content: blog });
 
-    if (variations) {
+    if (variations && Array.isArray(variations)) {
       variations = variations.map((item) => {
         return {
           productId: newProduct._id,

@@ -17,6 +17,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import DiscountIcon from "@mui/icons-material/Discount";
 import { emptyCart } from "../../state/cartSlice";
 
 const Wrapper = styled.div`
@@ -164,6 +165,12 @@ const LogoutContainer = () => {
             <FavoriteIcon fontSize="small" />
           </ListItemIcon>
           Wishlist
+        </MenuItem>
+        <MenuItem onClick={() => navigate("/coupon")}>
+          <ListItemIcon>
+            <DiscountIcon fontSize="small" />
+          </ListItemIcon>
+          Coupon
         </MenuItem>
         <MenuItem onClick={logoutUser}>
           <ListItemIcon>

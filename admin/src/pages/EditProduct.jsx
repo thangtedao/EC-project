@@ -31,10 +31,6 @@ export const loader = async ({ params }) => {
       .get(`/product/${id}`)
       .then(({ data }) => data);
 
-    const brands = await customFetch
-      .get("/brand/all-brands")
-      .then(({ data }) => data);
-
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
@@ -45,7 +41,6 @@ export const loader = async ({ params }) => {
 
     return {
       product,
-      brands,
       categories,
       categoryChild,
       variation,
@@ -102,7 +97,7 @@ const Wrapper = styled.div`
   }
 `;
 const EditProduct = () => {
-  const { product, brands, categories, categoryChild, variation, productBlog } =
+  const { product, categories, categoryChild, variation, productBlog } =
     useLoaderData();
   const navigate = useNavigate();
 
@@ -263,7 +258,6 @@ const EditProduct = () => {
             specifications: product?.specifications,
             price: product?.price,
             salePrice: product?.salePrice,
-            brand: product?.brand,
             status: product?.status,
             variations: variation,
           }}
@@ -523,25 +517,6 @@ const EditProduct = () => {
 
               {/* ORGANIZATION FIELD */}
               <Card className="col-2-item" size="large" title={`Category`}>
-                <Typography.Title className="input-title">
-                  Brand
-                </Typography.Title>
-                <Form.Item
-                  name="brand"
-                  rules={[{ required: true, message: "Please select a brand" }]}
-                >
-                  <Select
-                    size="large"
-                    placeholder="Select Brand"
-                    options={brands?.map((brand) => {
-                      return {
-                        value: brand._id,
-                        label: brand.name,
-                      };
-                    })}
-                  />
-                </Form.Item>
-
                 <Typography.Title className="input-title">
                   Category
                 </Typography.Title>

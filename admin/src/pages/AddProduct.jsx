@@ -23,10 +23,6 @@ import {
 
 export const loader = async () => {
   try {
-    const brands = await customFetch
-      .get("/brand/all-brands")
-      .then(({ data }) => data);
-
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
@@ -35,7 +31,7 @@ export const loader = async () => {
       .get("/category/get/child")
       .then(({ data }) => data);
 
-    return { brands, categories, categoryChild };
+    return { categories, categoryChild };
   } catch (error) {
     return error;
   }
@@ -88,7 +84,7 @@ const Wrapper = styled.div`
 `;
 
 const AddProduct = () => {
-  const { brands, categories, categoryChild } = useLoaderData();
+  const { categories, categoryChild } = useLoaderData();
   const navigate = useNavigate();
 
   // Product blog
@@ -485,25 +481,6 @@ const AddProduct = () => {
 
               {/* ORGANIZATION FIELD */}
               <Card className="col-2-item" size="large" title={`Category`}>
-                <Typography.Title className="input-title">
-                  Brand
-                </Typography.Title>
-                <Form.Item
-                  name="brand"
-                  rules={[{ required: true, message: "Please select a brand" }]}
-                >
-                  <Select
-                    size="large"
-                    placeholder="Select Brand"
-                    options={brands?.map((brand) => {
-                      return {
-                        value: brand._id,
-                        label: brand.name,
-                      };
-                    })}
-                  />
-                </Form.Item>
-
                 <Typography.Title className="input-title">
                   Category
                 </Typography.Title>

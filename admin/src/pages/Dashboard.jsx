@@ -64,13 +64,14 @@ export const loader = async ({ request }) => {
     const { monthlyApplications } = response.data;
 
     const products = await customFetch
-      .get(`/product/?populate=category,brand`)
+      .get(`/product/?populate=category`)
       .then(({ data }) => data);
 
     const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
     return { products, orders, monthlyApplications };
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
