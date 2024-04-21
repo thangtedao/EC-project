@@ -53,7 +53,9 @@ const ProductSpecifications = ({ product }) => {
   return (
     <Wrapper>
       <div className="product-specifications-container">
-        Thông số kỹ thuật
+        <span style={{ fontWeight: "700", fontSize: "1rem" }}>
+          Thông số kỹ thuật
+        </span>
         <ul className="technical-content">
           {productSpecifications?.map((item, index) => {
             return (

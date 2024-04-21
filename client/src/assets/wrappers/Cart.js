@@ -67,12 +67,13 @@ const Wrapper = styled.div`
     cursor: pointer;
   }
   .product-variant {
+    font-size: 0.95rem;
     display: flex;
     gap: 1rem;
   }
   .product-price {
-    font-size: 1.05rem;
-    font-weight: 500;
+    color: #d70018;
+    font-weight: 400;
     display: flex;
     gap: 1.5rem;
     align-items: center;
@@ -85,6 +86,7 @@ const Wrapper = styled.div`
     }
   }
   .product-quantity {
+    color: black;
     position: absolute;
     bottom: 20px;
     right: 10px;
@@ -115,12 +117,11 @@ const Wrapper = styled.div`
     border-radius: 10px;
     background-color: white;
     .btn {
-      border-radius: 5px;
+      border-radius: 8px;
       border: none;
       background: #d70018;
-      font-weight: bold;
+      font-weight: 700;
       color: white;
-      text-transform: uppercase;
       cursor: pointer;
     }
   }
@@ -128,9 +129,12 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     gap: 0.5rem;
-    font-weight: bold;
+
+    .price {
+      color: #d70018;
+      font-weight: 700;
+    }
   }
 `;
 

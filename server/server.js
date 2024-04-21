@@ -14,6 +14,7 @@ import couponRouter from "../server/routes/couponRoute.js";
 import orderRouter from "../server/routes/orderRoute.js";
 import brandRouter from "../server/routes/brandRoute.js";
 import cartRoute from "../server/routes/cartRoute.js";
+import reviewRoute from "../server/routes/reviewRoute.js";
 import chatRoute from "../server/routes/chatRoute.js";
 
 // public
@@ -66,6 +67,7 @@ app.use("/api/blog", blogRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/cart", cartRoute);
+app.use("/api/review", reviewRoute);
 app.use("/api/chat", chatRoute);
 
 // app.get("/*", (req, res) => {

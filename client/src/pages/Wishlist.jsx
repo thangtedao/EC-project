@@ -19,17 +19,15 @@ import NovaIcon from "../assets/logo/LogoNova.svg";
 
 export const loader = async () => {
   try {
-    let { user } = JSON.parse(localStorage.getItem("persist:user"));
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
 
-    if (user !== "null") {
-      user = JSON.parse(user);
-      const wishlist = customFetch
-        .get("/user/wishlist")
-        .then(({ data }) => data.wishlist.wishlist);
-      return wishlist;
-    }
-    return redirect("/login");
+    const wishlist = customFetch.get("/user/wishlist").then(({ data }) => data);
+    return wishlist;
   } catch (error) {
+    if (error?.response?.status === 401) return redirect("/login");
+    console.log(error);
     return error;
   }
 };

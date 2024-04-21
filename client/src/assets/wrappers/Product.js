@@ -129,6 +129,7 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .bot-container-column-2 {
+    font-size: 0.95rem;
   }
 
   /* MEDIA QUERIES */

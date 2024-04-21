@@ -18,6 +18,7 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .filter-button {
+    font-size: 0.9rem;
     height: 35px;
     display: flex;
     justify-content: center;

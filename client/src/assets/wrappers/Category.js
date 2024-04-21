@@ -80,6 +80,7 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
   .btn-filter {
+    font-size: 0.9rem;
     height: 35px;
     display: flex;
     justify-content: center;

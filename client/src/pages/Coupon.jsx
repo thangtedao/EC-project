@@ -12,6 +12,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { FileCopyOutlined } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { Input } from "antd";
+
 const Wrapper = styled.div`
   width: 1100px;
   .title {
@@ -53,6 +54,7 @@ const Wrapper = styled.div`
     margin-right: 10px;
   }
 `;
+
 const Coupon = () => {
   const { Search } = Input;
   const onSearch = (value, _e, info) => console.log(info?.source, value);

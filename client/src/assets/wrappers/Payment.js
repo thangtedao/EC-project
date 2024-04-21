@@ -21,13 +21,13 @@ const Wrapper = styled.div`
   .list-item {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .product-item-outer {
     position: relative;
     background-color: white;
-    border: 1px solid lightgray;
+    border: 1px solid rgba(145, 158, 171, 0.239);
     display: flex;
     gap: 1rem;
     border-radius: 10px;
@@ -49,11 +49,13 @@ const Wrapper = styled.div`
     gap: 0.75rem;
   }
   .product-variant {
+    font-size: 0.95rem;
     display: flex;
     gap: 1rem;
   }
   .product-price {
-    font-size: 1.05rem;
+    color: #d70018;
+    font-weight: 400;
     display: flex;
     gap: 1.5rem;
     align-items: center;

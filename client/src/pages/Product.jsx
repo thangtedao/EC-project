@@ -50,6 +50,10 @@ export const loader = async ({ params }) => {
       }, {});
     }
 
+    const productReviews = await customFetch
+      .get(`/review/get-reviews/${id}`)
+      .then(({ data }) => data);
+
     let relatedProducts = await customFetch
       .get(`/product/?category=${product.category[0]}&limit=10`)
       .then(({ data }) => data);
@@ -57,7 +61,7 @@ export const loader = async ({ params }) => {
     relatedProducts = relatedProducts.filter((i) => i._id !== id);
 
     window.scrollTo(0, 0);
-    return { product, variation, productBlog, relatedProducts };
+    return { product, variation, productBlog, productReviews, relatedProducts };
   } catch (error) {
     console.log(error);
     return error;
@@ -67,8 +71,8 @@ export const loader = async ({ params }) => {
 const Product = () => {
   const navigate = useNavigate();
 
-  const { product, variation, productBlog, relatedProducts } = useLoaderData();
-  const user = useSelector((state) => state.user.user);
+  const { product, variation, productBlog, productReviews, relatedProducts } =
+    useLoaderData();
 
   const addToCart = debounce(async (product, variant, user) => {
     if (Object.keys(variant).length !== 0) variant = Object.values(variant);
@@ -97,6 +101,23 @@ const Product = () => {
       ...selectedVariants,
       [key]: value,
     });
+  };
+
+  const [reviews, setReviews] = useState(productReviews);
+  const submitReview = async (star, content) => {
+    try {
+      await customFetch.post("/review/create-review", {
+        rating: star,
+        productId: product._id,
+        content: content,
+      });
+      const fetchReview = await customFetch
+        .get(`/review/get-reviews/${product._id}`)
+        .then(({ data }) => data);
+      setReviews(fetchReview);
+    } catch (error) {
+      return toast.error(error?.response?.data?.msg);
+    }
   };
 
   return (
@@ -222,7 +243,11 @@ const Product = () => {
         <div className="bot-container">
           <div className="bot-container-column-1">
             <ProductBlog productBlog={productBlog} />
-            {/* <ProductReview product={product} /> */}
+            <ProductReview
+              product={product}
+              reviews={reviews}
+              submitReview={submitReview}
+            />
           </div>
           <div className="bot-container-column-2">
             <ProductSpecifications product={product} />

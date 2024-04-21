@@ -83,7 +83,7 @@ export const updateCategory = async (req, res) => {
     });
 
     await ItemBlog.findOneAndUpdate(
-      { categoryId: updatedProduct._id },
+      { categoryId: updatedCategory._id },
       { content: blog }
     );
 

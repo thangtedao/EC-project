@@ -2,11 +2,10 @@ import styled from "@emotion/styled";
 import React, { useState } from "react";
 import Rating from "@mui/material/Rating";
 import { FaStar } from "react-icons/fa";
-import { Form } from "react-router-dom";
 import { FaRegStar } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import customFetch from "../../utils/customFetch";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -143,21 +142,27 @@ const Wrapper = styled.div`
   }
 `;
 
-const ProductReview = ({ product }) => {
-  const user = useSelector((state) => state.user.user);
+const ProductReview = ({ product, reviews, submitReview }) => {
   const [isRating, setIsRating] = useState(false);
-  const [value, setValue] = useState(5);
+  const [star, setStar] = useState(5);
+  const [content, setContent] = useState();
 
-  const handleRating = () => {
-    if (!user) {
-      toast.warning("Vui lòng đăng nhập để đánh giá", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-      });
-      return;
+  const totalStar =
+    reviews.reduce((acc, item) => acc + item.rating, 0) / reviews.length;
+
+  const handleRating = async () => {
+    try {
+      await customFetch.get("/user/current-user").then(({ data }) => data.user);
+
+      setIsRating(!isRating);
+    } catch (error) {
+      if (error?.response?.status === 401)
+        return toast.warning("Vui lòng đăng nhập để đánh giá", {
+          position: "top-center",
+          autoClose: 1000,
+          pauseOnHover: false,
+        });
     }
-    setIsRating(!isRating);
   };
 
   return (
@@ -168,99 +173,100 @@ const ProductReview = ({ product }) => {
         </div>
         <div className="box-review">
           <div className="box-review-score">
-            <p>{product?.totalRating}/5</p>
+            <span>{totalStar}/5</span>
             <Rating
-              value={product?.totalRating || 5}
+              value={99 || 5}
               icon={<FaStar />}
               emptyIcon={<FaRegStar />}
               readOnly
             />
             <div className="number-of-review">
-              {product?.ratings.length + " đánh giá"}
+              {reviews.length + " đánh giá"}
             </div>
           </div>
+
           <div className="box-review-star">
             <div className="rating-level">
-              <p>5</p>
+              <span>5</span>
               <FaStar className="gold" />
               <progress
-                max={product.ratings?.length}
-                value={product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 5) return acc + 1;
+                max={reviews.length}
+                value={reviews.reduce((acc, item) => {
+                  if (item.rating === 5) return acc + 1;
                   else return acc;
                 }, 0)}
               ></progress>
               <span>
-                {product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 5) return acc + 1;
+                {reviews.reduce((acc, item) => {
+                  if (item.rating === 5) return acc + 1;
                   else return acc;
                 }, 0) + " đánh giá"}
               </span>
             </div>
             <div className="rating-level">
-              <p>4</p>
+              <span>4</span>
               <FaStar className="gold" />
               <progress
-                max={product.ratings?.length}
-                value={product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 4) return acc + 1;
+                max={reviews.length}
+                value={reviews.reduce((acc, item) => {
+                  if (item.rating === 4) return acc + 1;
                   else return acc;
                 }, 0)}
               ></progress>
               <span>
-                {product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 4) return acc + 1;
+                {reviews.reduce((acc, item) => {
+                  if (item.rating === 4) return acc + 1;
                   else return acc;
                 }, 0) + " đánh giá"}
               </span>
             </div>
             <div className="rating-level">
-              <p>3</p>
+              <span>3</span>
               <FaStar className="gold" />
               <progress
-                max={product.ratings?.length}
-                value={product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 3) return acc + 1;
+                max={reviews.length}
+                value={reviews.reduce((acc, item) => {
+                  if (item.rating === 3) return acc + 1;
                   else return acc;
                 }, 0)}
               ></progress>
               <span>
-                {product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 3) return acc + 1;
+                {reviews.reduce((acc, item) => {
+                  if (item.rating === 3) return acc + 1;
                   else return acc;
                 }, 0) + " đánh giá"}
               </span>
             </div>
             <div className="rating-level">
-              <p>2</p>
+              <span>2</span>
               <FaStar className="gold" />
               <progress
-                max={product.ratings?.length}
-                value={product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 2) return acc + 1;
+                max={reviews.length}
+                value={reviews.reduce((acc, item) => {
+                  if (item.rating === 2) return acc + 1;
                   else return acc;
                 }, 0)}
               ></progress>
               <span>
-                {product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 2) return acc + 1;
+                {reviews.reduce((acc, item) => {
+                  if (item.rating === 2) return acc + 1;
                   else return acc;
                 }, 0) + " đánh giá"}
               </span>
             </div>
             <div className="rating-level">
-              <p>1</p>
+              <span>1</span>
               <FaStar className="gold" />
               <progress
-                max={product.ratings?.length}
-                value={product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 1) return acc + 1;
+                max={reviews.length}
+                value={reviews.reduce((acc, item) => {
+                  if (item.rating === 1) return acc + 1;
                   else return acc;
                 }, 0)}
               ></progress>
               <span>
-                {product.ratings?.reduce((acc, item) => {
-                  if (item?.star === 1) return acc + 1;
+                {reviews.reduce((acc, item) => {
+                  if (item.rating === 1) return acc + 1;
                   else return acc;
                 }, 0) + " đánh giá"}
               </span>
@@ -269,7 +275,7 @@ const ProductReview = ({ product }) => {
         </div>
 
         <div className="btn-review-container">
-          <p>Bạn đánh giá sao về sản phẩm này?</p>
+          <span>Bạn đánh giá sao về sản phẩm này?</span>
           <button
             className="btn-review"
             type="button"
@@ -280,35 +286,41 @@ const ProductReview = ({ product }) => {
         </div>
 
         {isRating && (
-          <Form method="post" className="form-rating">
-            <p>Đánh giá</p>
+          <div className="form-rating">
+            <span>Đánh giá</span>
             <Rating
               name="star"
-              value={value}
+              value={star}
               onChange={(event, newValue) => {
-                setValue(newValue);
+                setStar(newValue);
               }}
               icon={<FaStar />}
               emptyIcon={<FaRegStar />}
             />
             <div className="is-flex">
-              <input name="productId" defaultValue={product?._id} hidden />
-              <textarea name="comment" defaultValue=""></textarea>
-              <button type="submit" className="btn">
+              <textarea
+                required
+                onChange={(event) => setContent(event.target.value)}
+                value={content}
+              />
+              <button
+                onClick={() => submitReview(star, content)}
+                className="btn"
+              >
                 Gửi
               </button>
             </div>
-          </Form>
+          </div>
         )}
 
         <div className="box-review-filter"></div>
         <div className="box-review-comment">
-          {product?.ratings.length <= 0 ? (
+          {reviews.length <= 0 ? (
             <div className="btn-review-container">
-              <p>Không có đánh giá nào</p>
+              <span>Không có đánh giá nào</span>
             </div>
           ) : (
-            product?.ratings.map((item) => {
+            reviews.map((item) => {
               return (
                 <div key={item._id} className="box-review-comment-item">
                   <div className="box-review-comment-item-title">
@@ -317,28 +329,28 @@ const ProductReview = ({ product }) => {
                         width: 31,
                         height: 31,
                       }}
-                      src={item?.postedby.avatar && item?.postedby.avatar}
+                      src={item.user.avatar}
                     >
-                      {!item?.postedby.avatar &&
-                        item?.postedby.fullName.charAt(0).toUpperCase()}
+                      {!item.user.avatar &&
+                        item.user.fullName.charAt(0).toUpperCase()}
                     </Avatar>
-                    <p className="name">{item?.postedby.fullName}</p>
-                    <p>
-                      {item?.createdAt.split("T")[0] +
+                    <span className="name">{item.user.fullName}</span>
+                    <span>
+                      {item?.updatedAt.split("T")[0] +
                         " " +
-                        item?.createdAt.split("T")[1].split(".")[0]}
-                    </p>
+                        item.updatedAt.split("T")[1].split(".")[0]}
+                    </span>
                   </div>
                   <div className="box-review-comment-item-content">
                     <Rating
                       name="read-only"
                       icon={<FaStar />}
                       emptyIcon={<FaRegStar />}
-                      value={item?.star}
+                      value={item.rating}
                       size="small"
                       readOnly
                     />
-                    <p>{item?.comment}</p>
+                    <span>{item.content}</span>
                   </div>
                 </div>
               );

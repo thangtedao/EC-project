@@ -35,12 +35,14 @@ const Wrapper = styled.div`
     }
   }
   .product-card-name {
+    line-height: 1.5;
     height: 3rem;
     font-size: 0.95rem;
     font-weight: 700;
     color: #444;
   }
   .product-card-price {
+    margin-top: 15px;
     font-size: 1rem;
     color: #d70018;
     display: flex;

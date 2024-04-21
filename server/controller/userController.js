@@ -139,7 +139,7 @@ export const addToWishlist = async (req, res) => {
       (id) => id.toString() === productId
     );
     if (alreadyAdded) {
-      let user = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
         userId,
         {
           $pull: { wishlist: productId },
@@ -150,7 +150,7 @@ export const addToWishlist = async (req, res) => {
       );
       res.status(StatusCodes.OK).json({ msg: "Removed" });
     } else {
-      let user = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
         userId,
         {
           $push: { wishlist: productId },
@@ -170,7 +170,7 @@ export const addToWishlist = async (req, res) => {
 export const getWishlist = async (req, res) => {
   try {
     const { userId } = req.user;
-    const wishlist = await User.findById(userId).populate({
+    const { wishlist } = await User.findById(userId).populate({
       path: "wishlist",
       select: [
         "name",
@@ -183,7 +183,7 @@ export const getWishlist = async (req, res) => {
         "status",
       ],
     });
-    res.status(StatusCodes.OK).json({ wishlist });
+    res.status(StatusCodes.OK).json(wishlist);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }

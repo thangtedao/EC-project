@@ -1,7 +1,6 @@
 import Product from "../models/Product.js";
 import ProductVariation from "../models/ProductVariation.js";
 import ItemBlog from "../models/ItemBlog.js";
-import Review from "../models/Review.js";
 import slugify from "slugify";
 import { NotFoundError } from "../errors/customErrors.js";
 import { formatImage } from "../middleware/uploadImages.js";
@@ -304,72 +303,6 @@ export const searchProduct = async (req, res) => {
       res.status(StatusCodes.OK).json(products);
     }
   } catch (error) {
-    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
-  }
-};
-
-export const rating = async (req, res) => {
-  try {
-    const { userId } = req.user;
-    const { rating, productId, content } = req.body;
-
-    const review = await Review.create({
-      productId,
-      userId,
-      rating,
-      content,
-    });
-
-    // const product = await Product.findById(productId);
-    // let alreadyRated = product.ratings.find(
-    //   (item) => item.postedby.toString() === userId.toString()
-    // );
-    // if (alreadyRated) {
-    //   await Product.updateOne(
-    //     {
-    //       ratings: { $elemMatch: alreadyRated },
-    //     },
-    //     {
-    //       $set: {
-    //         "ratings.$.star": star,
-    //         "ratings.$.comment": comment,
-    //         "ratings.$.createdAt": timeStamp(),
-    //       },
-    //     },
-    //     { new: true }
-    //   );
-    // } else {
-    //   await Product.findByIdAndUpdate(
-    //     productId,
-    //     {
-    //       $push: {
-    //         ratings: {
-    //           star: star,
-    //           comment: comment,
-    //           postedby: userId,
-    //         },
-    //       },
-    //     },
-    //     { new: true }
-    //   );
-    // }
-    // const getAllRatings = await Product.findById(productId);
-    // let totalRating = getAllRatings.ratings.length;
-    // let ratingSum = getAllRatings.ratings
-    //   .map((item) => item.star)
-    //   .reduce((prev, curr) => prev + curr, 0);
-    // let actualRating = Math.round(ratingSum / totalRating);
-    // let finalProduct = await Product.findByIdAndUpdate(
-    //   productId,
-    //   {
-    //     totalRating: actualRating,
-    //   },
-    //   { new: true }
-    // );
-
-    res.status(StatusCodes.OK).json(review);
-  } catch (error) {
-    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

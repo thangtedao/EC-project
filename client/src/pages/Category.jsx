@@ -190,10 +190,11 @@ const Category = () => {
 
         {/* --------- ALL PRODUCTS -------- */}
         <div className="block-filter-sort">
-          {/* <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
+          <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
           <div className="filter-sort-list-filter">
             <div className="btn-filter">Beta</div>
-          </div> */}
+          </div>
+
           <div className="block-filter-sort-title">Sắp xếp theo</div>
           <div className="filter-sort-list-filter">
             <div className="btn-filter" onClick={() => filterHighToLow()}>
