@@ -35,6 +35,8 @@ import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as profileLoader } from "./pages/Profile";
 import SearchPage from "./pages/Search";
+import AllBlog from "./pages/AllBlog";
+import Blog from "./pages/Blog";
 
 const router = createBrowserRouter([
   {
@@ -106,6 +108,14 @@ const router = createBrowserRouter([
         element: <Profile />,
         loader: profileLoader,
         action: profileAction,
+      },
+      {
+        path: "all-blogs",
+        element: <AllBlog />,
+      },
+      {
+        path: "blog/:id",
+        element: <Blog />,
       },
     ],
   },

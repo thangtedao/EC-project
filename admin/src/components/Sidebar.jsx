@@ -10,6 +10,7 @@ import {
   ProfileOutlined,
   DollarOutlined,
   WechatOutlined,
+  FileWordOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
 
@@ -61,6 +62,11 @@ const items = [
   getItem("Order", "11", <ShoppingCartOutlined />, null, "/all-order"),
   getItem("Customer", "12", <UserOutlined />, null, "/all-user"),
   getItem("Chat", "13", <WechatOutlined />, null, "/chat"),
+  getItem("Blog", "sub4", <FileWordOutlined/>,
+  [
+    getItem("All blog", "14", null, null, "/all-blogs"),
+    getItem("Add blog", "15", null, null, "/add-blog"),
+  ], "/blog")
 
 ];
 

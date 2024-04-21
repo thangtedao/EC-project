@@ -39,6 +39,9 @@ import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
 import Event from "./pages/Event";
 import Chat from "./pages/Chat";
+import AllBlogs from "./pages/AllBlogs";
+import AddBlog from "./pages/AddBlog";
+import EditBlog from "./pages/EditBlog";
 
 const router = createBrowserRouter([
   {
@@ -124,7 +127,18 @@ const router = createBrowserRouter([
       {
         path: "chat",
         element: <Chat />,
-        // loader: editOrderLoader,
+      },
+      {
+        path: "all-blogs",
+        element: <AllBlogs />,
+      },
+      {
+        path: "add-blog",
+        element: <AddBlog />,
+      },
+      {
+        path: "edit-blog/:id",
+        element: <EditBlog />,
       },
     ],
   },

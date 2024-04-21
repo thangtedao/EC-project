@@ -24,6 +24,7 @@ const BlogSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+    imageTitle: String,
     description: {
       type: String,
       require: true,

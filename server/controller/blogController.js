@@ -77,15 +77,17 @@ export const deleteBlog = async (req, res) => {
 export const getBlog = async (req, res) => {
   try {
     const blog = await Blog.findById({_id: req.params.id})
-    res.status(200).send(blog)
+    res.status(200).json({blog:blog})
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }
 };
 export const getAllBlog = async (req, res) => {
   try {
-    const blogs = await Blog.find({})
-    res.status(200).json(blogs)
+    let blogs = await Blog.find({});
+    blogs = blogs.sort((a, b) => b.updatedAt - a.updatedAt);
+
+    res.status(200).json(blogs);
   } catch (error) {
     res.status(409).json({ msg: error.message });
   }
