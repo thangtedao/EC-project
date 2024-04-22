@@ -189,10 +189,10 @@ const Payment = () => {
               user?.address &&
               `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
             }
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", background: "white" }}
           />
 
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Checkbox
                 checked={isCheck}
@@ -212,10 +212,11 @@ const Payment = () => {
                 label="Home Number"
               />
             </div>
-          )}
+          )} */}
         </div>
 
         {/* COUPON FIELD */}
+        <div style={{ marginTop: "1rem" }}>COUPON</div>
         <div className="coupon-field">
           <TextField
             size="small"
@@ -246,15 +247,22 @@ const Payment = () => {
           <div className="price-item">
             <span>Subtotal:</span>
             <span>
-              {totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
+              {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
             </span>
           </div>
-          <div className="price-item">
-            <span>Discount Amount:</span>
-            <span>
-              {totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
-            </span>
-          </div>
+          {coupon && (
+            <div className="price-item">
+              <span>Discount Amount:</span>
+              <span>
+                -
+                {(totalPrice - totalAmount)
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                ₫
+              </span>
+            </div>
+          )}
+
           <div className="price-item">
             <span>Total Amount:</span>
             <span>

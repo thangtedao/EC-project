@@ -1,5 +1,6 @@
 import React from "react";
 import customFetch from "../../utils/customFetch";
+import vnpay from "../../assets/logo/vnpay.png";
 
 const VnPayButton = ({ totalPrice }) => {
   const handleCheckoutVnPay = async (totalPrice) => {
@@ -20,11 +21,12 @@ const VnPayButton = ({ totalPrice }) => {
   };
 
   return (
-    <div>
-      <button className="btn" onClick={() => handleCheckoutVnPay(totalPrice)}>
-        VNPAY
-      </button>
-    </div>
+    <button
+      className="vnpay-btn"
+      onClick={() => handleCheckoutVnPay(totalPrice)}
+    >
+      <img src={vnpay} />
+    </button>
   );
 };
 

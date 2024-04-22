@@ -76,9 +76,8 @@ const OrderItem = ({ order, cancelOrder }) => {
               <div className="product-price">
                 <span>
                   {(
-                    (item.variant?.reduce((a, i) => a + i.price, 0) +
-                      item.product.price) *
-                    item.quantity
+                    item.variant?.reduce((a, i) => a + i.price, 0) +
+                    item.product.price
                   )
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}

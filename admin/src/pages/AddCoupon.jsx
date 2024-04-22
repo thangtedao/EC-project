@@ -85,6 +85,16 @@ const Wrapper = styled.div`
     flex-grow: 3;
     box-sizing: border-box;
   }
+  .customer {
+    display: flex;
+    gap: 10px;
+  }
+  .customer-item-1 {
+    box-sizing: border-box;
+  }
+  .customer-item-2 {
+    box-sizing: border-box;
+  }
 `;
 
 const AddCoupon = () => {
@@ -168,43 +178,59 @@ const AddCoupon = () => {
                       />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
-                      Customer
-                    </Typography.Title>
-                    <Form.Item
-                      name="targetCustomers"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please select target customer",
-                        },
-                      ]}
-                    >
-                      <Select
-                        size="large"
-                        placeholder="Target Customer"
-                        value={discountType}
-                        onChange={(value) => setDiscountType(value)}
-                        options={[
-                          {
-                            value: "member",
-                            label: "Member",
-                          },
-                          {
-                            value: "silver",
-                            label: "Silver",
-                          },
-                          {
-                            value: "gold",
-                            label: "Gold",
-                          },
-                          {
-                            value: "diamond",
-                            label: "Diamond",
-                          },
-                        ]}
-                      />
-                    </Form.Item>
+                    <div className="customer">
+                      <div className="customer-item-1">
+                        <Typography.Title className="input-title">
+                          Customer
+                        </Typography.Title>
+                        <Form.Item
+                          name="targetCustomers"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select target customer",
+                            },
+                          ]}
+                        >
+                          <Select
+                            size="large"
+                            placeholder="Target Customer"
+                            value={discountType}
+                            onChange={(value) => setDiscountType(value)}
+                            options={[
+                              {
+                                value: "member",
+                                label: "Member",
+                              },
+                              {
+                                value: "silver",
+                                label: "Silver",
+                              },
+                              {
+                                value: "gold",
+                                label: "Gold",
+                              },
+                              {
+                                value: "diamond",
+                                label: "Diamond",
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="customer-item-2">
+                        <Typography.Title className="input-title">
+                          Number of usage
+                        </Typography.Title>
+                        <Form.Item name="numberOfUses">
+                          <InputNumber
+                            required
+                            size="large"
+                            placeholder="Enter Number"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
 
                     <div className="discount">
                       <div className="discount-item-1">

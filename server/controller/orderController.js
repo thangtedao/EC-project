@@ -10,6 +10,7 @@ import day from "dayjs";
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";
+import Coupon from "../models/Coupon.js";
 
 export const paypalPayment = async (req, res) => {
   try {
@@ -95,6 +96,12 @@ export const createOrder = async (req, res) => {
     });
 
     const order = await newOrder.save();
+
+    if (coupon) {
+      await Coupon.findByIdAndUpdate(coupon._id, {
+        $inc: { numberOfUses: -1 },
+      });
+    }
     // await Cart.findOneAndRemove({ user: userId });
 
     // sendMail(user, order);
