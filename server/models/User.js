@@ -40,9 +40,8 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  wishlist: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Product", default: [] },
-  ],
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  coupon: [{ type: mongoose.Schema.Types.ObjectId, ref: "Coupon" }],
   rank: {
     type: String,
     enum: ["member", "silver", "gold", "diamond"],

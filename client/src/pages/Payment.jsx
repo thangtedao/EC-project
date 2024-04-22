@@ -101,22 +101,27 @@ const Payment = () => {
 
   // Apply coupon
   const applyCoupon = async (code) => {
-    const couponData = await customFetch
-      .post("/coupon/apply", { code })
-      .then(({ data }) => data);
+    try {
+      const couponData = await customFetch
+        .post("/coupon/apply", { code })
+        .then(({ data }) => data);
 
-    if (couponData) {
-      if (couponData.discountType === "percentage")
-        setTotalAmount(
-          (totalPrice - (totalPrice * couponData.discountValue) / 100).toFixed(
-            0
-          )
-        );
-      else if (couponData.discountType === "fixed")
-        setTotalAmount(totalPrice - couponData.discountValue);
-      setCoupon(couponData);
+      if (couponData) {
+        if (couponData.discountType === "percentage")
+          setTotalAmount(
+            (
+              totalPrice -
+              (totalPrice * couponData.discountValue) / 100
+            ).toFixed(0)
+          );
+        else if (couponData.discountType === "fixed")
+          setTotalAmount(totalPrice - couponData.discountValue);
+        setCoupon(couponData);
+      }
+      setPaypalButtonKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      return toast.error(error?.response?.data?.msg);
     }
-    setPaypalButtonKey((prevKey) => prevKey + 1);
   };
 
   return (

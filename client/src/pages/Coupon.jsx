@@ -6,62 +6,63 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import styled from "styled-components";
+import Wrapper from "../assets/wrappers/Coupon";
 import Logo from "../assets/logo/NovaCoupon.svg";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { FileCopyOutlined } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { Input } from "antd";
+import { redirect, useLoaderData } from "react-router-dom";
+import customFetch from "../utils/customFetch";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { TextField } from "@mui/material";
 
-const Wrapper = styled.div`
-  width: 1100px;
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
+export const loader = async () => {
+  try {
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+
+    const { coupon } = await customFetch
+      .get("/user/coupon")
+      .then(({ data }) => data);
+
+    window.scrollTo(0, 0);
+    return { coupon };
+  } catch (error) {
+    if (error?.response?.status === 401) return redirect("/login");
+    return error;
   }
-  .input-title {
-    font-size: 5rem;
-    font-weight: 1000;
-  }
-  /* .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  } */
-  .list-coupon {
-    width: 90%;
-    margin: 0 auto;
-  }
-  .copy-button-container {
-    position: absolute;
-    top: 50%; /* Đẩy nút lên trên 50% của phần tử cha */
-    transform: translateY(-50%); /* Dịch chuyển nút lên trên để căn giữa */
-    right: 0;
-    margin-right: 10px;
-  }
-`;
+};
 
 const Coupon = () => {
+  const { coupon } = useLoaderData();
+
+  const [coupons, setCoupon] = useState(coupon);
+  const [code, setCode] = useState();
+
   const { Search } = Input;
   const onSearch = (value, _e, info) => console.log(info?.source, value);
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard!");
   };
+
+  const saveCoupon = async () => {
+    try {
+      await customFetch.patch("/user/coupon", { code });
+
+      const fetchCoupon = await customFetch
+        .get("/user/coupon")
+        .then(({ data }) => data.coupon);
+
+      setCoupon(fetchCoupon);
+    } catch (error) {
+      return toast.error(error?.response?.data?.msg);
+    }
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -79,13 +80,22 @@ const Coupon = () => {
           }}
         >
           <Search
-            placeholder="Search coupon"
+            placeholder="Nhập mã giảm giá"
             allowClear
-            enterButton="Search"
+            enterButton="Lưu"
             size="large"
-            onSearch={onSearch}
           />
+          <div>
+            <TextField
+              size="small"
+              label="Coupon"
+              placeholder="Enter coupon"
+              onChange={(event) => setCode(event.target.value)}
+            />
+            <button onClick={() => saveCoupon()}>Lưu</button>
+          </div>
         </div>
+
         <div style={{ width: "100%" }}>
           <div className="list-coupon">
             <List sx={{ width: "100%", bgcolor: "background.paper" }}>
@@ -171,6 +181,53 @@ const Coupon = () => {
                 </div>
               </ListItem>
               <Divider variant="inset" component="li" />
+
+              {coupons?.map((item, idx) => {
+                return (
+                  <ListItem key={idx} alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={Logo}
+                        sx={{
+                          borderRadius: 0,
+                          width: "70px",
+                          height: "70px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={item.code}
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            sx={{ display: "block" }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {item.name}
+                          </Typography>
+
+                          {item.startDate?.split("T")[0] +
+                            " - " +
+                            item.endDate?.split("T")[0]}
+                        </React.Fragment>
+                      }
+                    />
+                    <div className="copy-button-container">
+                      <Button
+                        onClick={() => handleCopy(item.code)}
+                        startIcon={<FileCopyOutlined />}
+                        variant="text"
+                      >
+                        Copy
+                      </Button>
+                    </div>
+                  </ListItem>
+                );
+              })}
             </List>
           </div>
         </div>

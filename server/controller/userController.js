@@ -7,6 +7,8 @@ import {
 } from "../utils/cloudinary.js";
 import uniqid from "uniqid";
 import fs from "fs";
+import Coupon from "../models/Coupon.js";
+import { NotFoundError } from "../errors/customErrors.js";
 
 export const getUsers = async (req, res) => {
   try {
@@ -184,6 +186,56 @@ export const getWishlist = async (req, res) => {
       ],
     });
     res.status(StatusCodes.OK).json(wishlist);
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const addCoupon = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    let { code } = req.body;
+
+    let user = await User.findById(userId);
+    if (code) code = code.toString().toUpperCase();
+    const validCoupon = await Coupon.findOne({ code: code });
+    if (user.rank !== validCoupon.targetCustomers)
+      return res.status(StatusCodes.CONFLICT).json({ msg: "Not For You" });
+
+    const alreadyHave = user.coupon?.find(
+      (item) => item.toString() === validCoupon._id.toString()
+    );
+
+    if (alreadyHave) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "You have saved this coupon" });
+    }
+
+    user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: { coupon: validCoupon._id },
+      },
+      { new: true }
+    );
+
+    res.status(StatusCodes.OK).json({ msg: "Add successfully" });
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const getCoupons = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await User.findById(userId).populate({
+      path: "coupon",
+      select: ["-numberOfUses", "-promotionId"],
+    });
+
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }

@@ -33,6 +33,7 @@ import { loader as cartLoader } from "./pages/Cart";
 import { loader as paymentLoader } from "./pages/Payment";
 import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
+import { loader as couponLoader } from "./pages/Coupon";
 import { loader as profileLoader } from "./pages/Profile";
 import SearchPage from "./pages/Search";
 
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
       {
         path: "coupon",
         element: <Coupon />,
+        loader: couponLoader,
       },
       {
         path: "register",

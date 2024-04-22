@@ -10,6 +10,8 @@ import {
   unblockUser,
   getWishlist,
   addToWishlist,
+  addCoupon,
+  getCoupons,
 } from "../controller/userController.js";
 import {
   authenticateUser,
@@ -29,6 +31,9 @@ router.patch(
 
 router.patch("/wishlist", authenticateUser, addToWishlist);
 router.get("/wishlist", authenticateUser, getWishlist);
+
+router.patch("/coupon", authenticateUser, addCoupon);
+router.get("/coupon", authenticateUser, getCoupons);
 
 // router.post("/cart", authenticateUser, setUserCart);
 // router.get("/cart", authenticateUser, getUserCart);

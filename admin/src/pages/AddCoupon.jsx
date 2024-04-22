@@ -168,6 +168,44 @@ const AddCoupon = () => {
                       />
                     </Form.Item>
 
+                    <Typography.Title className="input-title">
+                      Customer
+                    </Typography.Title>
+                    <Form.Item
+                      name="targetCustomers"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select target customer",
+                        },
+                      ]}
+                    >
+                      <Select
+                        size="large"
+                        placeholder="Target Customer"
+                        value={discountType}
+                        onChange={(value) => setDiscountType(value)}
+                        options={[
+                          {
+                            value: "member",
+                            label: "Member",
+                          },
+                          {
+                            value: "silver",
+                            label: "Silver",
+                          },
+                          {
+                            value: "gold",
+                            label: "Gold",
+                          },
+                          {
+                            value: "diamond",
+                            label: "Diamond",
+                          },
+                        ]}
+                      />
+                    </Form.Item>
+
                     <div className="discount">
                       <div className="discount-item-1">
                         <Typography.Title className="input-title">
@@ -197,7 +235,7 @@ const AddCoupon = () => {
                         >
                           <Select
                             size="large"
-                            placeholder="Select option"
+                            placeholder="Discount Type"
                             value={discountType}
                             onChange={(value) => setDiscountType(value)}
                             options={[
