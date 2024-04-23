@@ -1,23 +1,43 @@
 import React from "react";
-import { Link, Form, redirect, useNavigation } from "react-router-dom";
-import Wrapper from "../assets/wrappers/Register.js";
-import { FormRow } from "../components";
+import Wrapper from "../assets/wrappers/Login.js";
 import customFetch from "../utils/customFetch.js";
+import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { store } from "../state/store.js";
+import { login } from "../state/userSlice.js";
 import { TextField } from "@mui/material";
 import NovaIcon from "../assets/logo/LogoNova.svg";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
-/* ACTION */
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.post("/auth/register", data);
-    toast.success("Register successful");
-    return redirect("/login");
+    const token = await customFetch
+      .post("/auth/login", data)
+      .then(({ data }) => data.token);
+
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
+
+    if (user.isBlocked) {
+      toast.success("You are blocked");
+      await customFetch.get("/auth/logout");
+      return redirect("/login");
+    }
+
+    if (token) {
+      store.dispatch(
+        login({
+          user: { fullName: user.fullName, avatar: user.avatar, _id: user._id },
+          token: token,
+        })
+      );
+    }
+
+    toast.success("Login successful");
+    return redirect("/");
   } catch (error) {
     toast.error(error?.response?.data?.msg, {
       position: "top-center",
@@ -29,7 +49,7 @@ export const action = async ({ request }) => {
   }
 };
 
-const Register = () => {
+const Login = () => {
   window.scrollTo(0, 0);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -39,29 +59,15 @@ const Register = () => {
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Register</title>
+          <title>Login</title>
           <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
-        <Form method="post" className="form-register">
-          <h3>Register</h3>
+        <Form method="post" className="form-login">
+          <h3>Login</h3>
           <TextField
             required
-            size="large"
-            name="fullName"
-            label="Full Name"
-            sx={{ width: "100%" }}
-          />
-          <TextField
-            required
-            size="large"
-            name="phone"
-            label="Phone Number"
-            sx={{ width: "100%" }}
-          />
-          <TextField
-            required
-            size="large"
+            size="small"
             name="email"
             label="Email"
             sx={{ width: "100%" }}
@@ -69,23 +75,18 @@ const Register = () => {
           <TextField
             required
             type="password"
-            size="large"
+            size="small"
             name="password"
             label="Password"
             sx={{ width: "100%" }}
           />
-          <button
-            type="submit"
-            size="large"
-            className="btn btn-block"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Register..." : "Register"}
+          <button type="submit" className="btn-block" disabled={isSubmitting}>
+            {isSubmitting ? "..." : "Login"}
           </button>
           <p>
-            Already have account?
-            <Link to="/login" className="member-btn">
-              Login Now
+            Don't have account?
+            <Link to="/register" className="member-btn">
+              Register Now
             </Link>
           </p>
         </Form>
@@ -94,4 +95,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
