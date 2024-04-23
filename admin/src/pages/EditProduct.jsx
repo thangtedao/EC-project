@@ -19,6 +19,7 @@ import {
   Card,
   Breadcrumb,
   Space,
+  Checkbox,
 } from "antd";
 
 export const loader = async ({ params }) => {
@@ -27,7 +28,7 @@ export const loader = async ({ params }) => {
     if (!id) {
       return redirect("/all-product");
     }
-    const { product, variation, productBlog } = await customFetch
+    const { product, attribute, variation, productBlog } = await customFetch
       .get(`/product/${id}`)
       .then(({ data }) => data);
 
@@ -43,6 +44,7 @@ export const loader = async ({ params }) => {
       product,
       categories,
       categoryChild,
+      attribute,
       variation,
       productBlog,
     };
@@ -97,8 +99,14 @@ const Wrapper = styled.div`
   }
 `;
 const EditProduct = () => {
-  const { product, categories, categoryChild, variation, productBlog } =
-    useLoaderData();
+  const {
+    product,
+    attribute,
+    categories,
+    categoryChild,
+    variation,
+    productBlog,
+  } = useLoaderData();
   const navigate = useNavigate();
 
   // Product blog
@@ -174,11 +182,18 @@ const EditProduct = () => {
 
   const onFinish = async (values) => {
     values["blog"] = blog;
-    console.log("Success:", values);
     const formData = new FormData();
     if (values.categoryC) {
       values.category = [values.category, ...values.categoryC];
       delete values.categoryC;
+    }
+    if (values.attributes && Array.isArray(values.attributes)) {
+      values.attributes.forEach((attribute, index) => {
+        Object.entries(attribute).forEach(([key, value]) => {
+          formData.append(`attributes[${index}][${key}]`, value);
+        });
+      });
+      delete values.attributes;
     }
     if (values.variations && Array.isArray(values.variations)) {
       values.variations.forEach((variation, index) => {
@@ -251,6 +266,7 @@ const EditProduct = () => {
           name="basic"
           initialValues={{
             name: product?.name,
+            model: product?.model,
             description: product?.description,
             category: product?.category[0],
             categoryC: product?.category?.slice(1),
@@ -260,6 +276,7 @@ const EditProduct = () => {
             salePrice: product?.salePrice,
             status: product?.status,
             variations: variation,
+            attributes: attribute,
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -320,7 +337,7 @@ const EditProduct = () => {
                       />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
+                    {/* <Typography.Title className="input-title">
                       Specifications
                     </Typography.Title>
                     <Form.Item name="specifications">
@@ -333,6 +350,13 @@ const EditProduct = () => {
                           maxRows: 5,
                         }}
                       />
+                    </Form.Item> */}
+
+                    <Typography.Title className="input-title">
+                      Model
+                    </Typography.Title>
+                    <Form.Item name="model">
+                      <Input required size="large" placeholder="Enter Value" />
                     </Form.Item>
                   </div>
                 </div>
@@ -388,6 +412,81 @@ const EditProduct = () => {
                 </div>
               </Card>
 
+              {/* ATTRIBUTE FIELD */}
+              <Card className="col-1-item" size="large" title={`Attribute`}>
+                <Typography.Title className="input-title">
+                  Attribute
+                </Typography.Title>
+                <Form.List name="attributes">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Space
+                          key={key}
+                          align="baseline"
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "3fr 5fr 1fr 0",
+                          }}
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, "attributeName"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing",
+                              },
+                            ]}
+                          >
+                            <Input
+                              required
+                              size="large"
+                              placeholder="Enter Value"
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "attributeValue"]}
+                            {...restField}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing Value",
+                              },
+                            ]}
+                          >
+                            <Input
+                              required
+                              size="large"
+                              placeholder="Enter Value"
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "mainAttribute"]}
+                            {...restField}
+                            valuePropName="checked"
+                            initialValue={restField.value?.mainAttribute}
+                          >
+                            <Checkbox />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          New Attribute
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Card>
+
               {/* VARIATIONS FIELDS*/}
               <Card className="col-1-item" size="large" title={`Variants`}>
                 <Typography.Title className="input-title">
@@ -409,6 +508,12 @@ const EditProduct = () => {
                           <Form.Item
                             {...restField}
                             name={[name, "variationName"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing",
+                              },
+                            ]}
                           >
                             {/* <Select
                               size="large"
@@ -447,7 +552,7 @@ const EditProduct = () => {
                             />
                           </Form.Item>
                           <Form.Item
-                            name={[name, "priceModifier"]}
+                            name={[name, "price"]}
                             {...restField}
                             rules={[
                               {

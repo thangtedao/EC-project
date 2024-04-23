@@ -7,6 +7,8 @@ import {
   getProducts,
   getProduct,
   searchProduct,
+  getRelateModelProduct,
+  filterProduct,
 } from "../controller/productController.js";
 import {
   authenticateUser,
@@ -38,6 +40,8 @@ router.delete(
 
 router.get("/", getProducts);
 router.get("/search", searchProduct);
+router.get("/filter", filterProduct);
+router.get("/get-relate/:model", getRelateModelProduct);
 router.get("/:id", getProduct);
 
 export default router;

@@ -65,26 +65,23 @@ const OrderItem = ({ order, cancelOrder }) => {
             <div className="product-info">
               <NavLink to={`/product/${item?.product?.id}`}>
                 {item?.product?.name}
+                <span>{item.variant && " - " + item.variant.value}</span>
               </NavLink>
-
-              <div className="product-variant">
-                {item.variant?.map((i, index) => {
-                  return <div key={index}>{i.value}</div>;
-                })}
-              </div>
 
               <div className="product-price">
                 <span>
-                  {(
-                    item.variant?.reduce((a, i) => a + i.price, 0) +
-                    item.product.price
+                  {(item.variant
+                    ? item.variant?.price + item.product.price
+                    : item.product.price
                   )
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                  ₫
+                  <span style={{ fontSize: 15 }}>₫</span>
                 </span>
-
-                {/* <span className="strike">{item.product?.price}₫</span> */}
+                <span className="strike">
+                  {item.product.price}
+                  <span style={{ fontSize: 12 }}>₫</span>
+                </span>
               </div>
             </div>
 

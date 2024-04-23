@@ -42,8 +42,7 @@ const Cart = () => {
     cartItem?.reduce(
       (acc, item) =>
         acc +
-        (item.variant?.reduce((a, i) => a + i.priceModifier, 0) +
-          item.product.price) *
+        ((item.variant ? item.variant.price : 0) + item.product.salePrice) *
           item.quantity,
       0
     ) || 0;

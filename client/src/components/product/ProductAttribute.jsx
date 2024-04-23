@@ -47,9 +47,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const ProductSpecifications = ({ product }) => {
-  const productSpecifications = product?.specifications?.split("\r\n");
-
+const ProductAttribute = ({ attribute }) => {
   return (
     <Wrapper>
       <div className="product-specifications-container">
@@ -57,18 +55,18 @@ const ProductSpecifications = ({ product }) => {
           Thông số kỹ thuật
         </span>
         <ul className="technical-content">
-          {productSpecifications?.map((item, index) => {
+          {attribute.map((item, idx) => {
             return (
               <li
-                key={index}
+                key={idx}
                 className={
-                  index % 2 !== 0
+                  idx % 2 !== 0
                     ? "technical-content-item"
                     : "technical-content-item gray-background"
                 }
               >
-                <p>{item.split("=")[0]}</p>
-                <p>{item.split("=")[1]}</p>
+                <span>{item.attributeName}</span>
+                <span>{item.attributeValue}</span>
               </li>
             );
           })}
@@ -82,4 +80,4 @@ const ProductSpecifications = ({ product }) => {
   );
 };
 
-export default ProductSpecifications;
+export default ProductAttribute;

@@ -3,7 +3,7 @@ import Wrapper from "../assets/wrappers/Category.js";
 import { categoryData } from "../assets/data/categoryData.js";
 import { ProductBlog, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
-import { Form, NavLink, useLoaderData } from "react-router-dom";
+import { NavLink, useLoaderData } from "react-router-dom";
 import { debounce } from "lodash";
 import { FaEye } from "react-icons/fa";
 import { FaSortAmountDown } from "react-icons/fa";
@@ -12,18 +12,9 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/logo/LogoNova.svg";
 import { Skeleton, Grid, Box } from "@mui/material";
 
-export const loader = async ({ params, request }) => {
+export const loader = async ({ params }) => {
   try {
     const { id } = params;
-    params = Object.fromEntries([
-      ...new URL(request.url).searchParams.entries(),
-    ]);
-    console.log(params);
-    params.category = id;
-    const products = await customFetch
-      .get("/product/filter", { params })
-      .then(({ data }) => data);
-    console.log(products);
 
     const productData = await customFetch
       .get(`/product?category=${id}&page=1&limit=10&status=Available`)
@@ -37,24 +28,15 @@ export const loader = async ({ params, request }) => {
       .get(`/category/${id}`)
       .then(({ data }) => data);
 
-    return {
-      productData,
-      id,
-      productsMostView,
-      categoryBlog,
-      searchParams: { ...params },
-    };
+    window.scrollTo(0, 0);
+    return { productData, id, productsMostView, categoryBlog };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { productData, id, productsMostView, categoryBlog, searchParams } =
-    useLoaderData();
-
-  const { sort, ram, ["ổ cứng"]: oCung } = searchParams;
-
+  const { productData, id, productsMostView, categoryBlog } = useLoaderData();
   const [products, setProducts] = useState(productData);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
@@ -208,47 +190,26 @@ const Category = () => {
 
         {/* --------- ALL PRODUCTS -------- */}
         <div className="block-filter-sort">
-          <Form>
-            <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
-            <div className="filter-sort-list-filter">
-              <div className="btn-filter">Beta</div>
-              <select name="sort" defaultValue={sort}>
-                <option value="-salePrice">Giá Cao - Thấp</option>
-                <option value="salePrice">Giá Thấp - Cao</option>
-                <option value="-viewed">Xem nhiều</option>
-              </select>
+          <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
+          <div className="filter-sort-list-filter">
+            <div className="btn-filter">Beta</div>
+          </div>
 
-              <select name="ram" defaultValue={ram}>
-                <option value="8gb">8GB</option>
-                <option value="16gb">16GB</option>
-              </select>
-
-              <select name="ổ cứng" defaultValue={oCung}>
-                <option value="256gb">256GB</option>
-                <option value="512gb">512GB</option>
-              </select>
-
-              <button type="submit" className="btn">
-                Apply
-              </button>
+          <div className="block-filter-sort-title">Sắp xếp theo</div>
+          <div className="filter-sort-list-filter">
+            <div className="btn-filter" onClick={() => filterHighToLow()}>
+              <FaSortAmountDown />
+              Giá Cao - Thấp
             </div>
-
-            <div className="block-filter-sort-title">Sắp xếp theo</div>
-            <div className="filter-sort-list-filter">
-              <div className="btn-filter" onClick={() => filterHighToLow()}>
-                <FaSortAmountDown />
-                Giá Cao - Thấp
-              </div>
-              <div className="btn-filter" onClick={() => filterLowToHigh()}>
-                <FaSortAmountUp />
-                Giá Thấp - Cao
-              </div>
-              <div className="btn-filter" onClick={() => filterMostViewed()}>
-                <FaEye />
-                <span>Xem nhiều</span>
-              </div>
+            <div className="btn-filter" onClick={() => filterLowToHigh()}>
+              <FaSortAmountUp />
+              Giá Thấp - Cao
             </div>
-          </Form>
+            <div className="btn-filter" onClick={() => filterMostViewed()}>
+              <FaEye />
+              <span>Xem nhiều</span>
+            </div>
+          </div>
 
           {isLoading ? (
             <div style={{ display: "flex", justifyContent: "space-between" }}>

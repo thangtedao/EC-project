@@ -45,12 +45,7 @@ const Wrapper = styled.div`
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
-  }
-  .product-variant {
-    font-size: 0.95rem;
-    display: flex;
+    padding-top: 0.75rem;
     gap: 1rem;
   }
   .product-price {

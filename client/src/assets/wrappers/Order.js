@@ -63,8 +63,8 @@ const Wrapper = styled.div`
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
+    padding-top: 0.75rem;
+    gap: 1rem;
   }
   .product-variant {
     font-size: 0.95rem;

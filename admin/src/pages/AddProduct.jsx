@@ -19,6 +19,7 @@ import {
   Card,
   Breadcrumb,
   Space,
+  Checkbox,
 } from "antd";
 
 export const loader = async () => {
@@ -167,6 +168,14 @@ const AddProduct = () => {
       values.category = [values.category, ...values.categoryC];
       delete values.categoryC;
     }
+    if (values.attributes && Array.isArray(values.attributes)) {
+      values.attributes.forEach((attribute, index) => {
+        Object.entries(attribute).forEach(([key, value]) => {
+          formData.append(`attributes[${index}][${key}]`, value);
+        });
+      });
+      delete values.attributes;
+    }
     if (values.variations && Array.isArray(values.variations)) {
       values.variations.forEach((variation, index) => {
         Object.entries(variation).forEach(([key, value]) => {
@@ -280,7 +289,7 @@ const AddProduct = () => {
                       />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
+                    {/* <Typography.Title className="input-title">
                       Specifications
                     </Typography.Title>
                     <Form.Item name="specifications">
@@ -292,6 +301,13 @@ const AddProduct = () => {
                           maxRows: 5,
                         }}
                       />
+                    </Form.Item> */}
+
+                    <Typography.Title className="input-title">
+                      Model
+                    </Typography.Title>
+                    <Form.Item name="model">
+                      <Input required size="large" placeholder="Enter Value" />
                     </Form.Item>
                   </div>
                 </div>
@@ -344,6 +360,74 @@ const AddProduct = () => {
                     </Modal>
                   </Form.Item>
                 </div>
+              </Card>
+
+              {/* ATTRIBUTE FIELD */}
+              <Card className="col-1-item" size="large" title={`Attribute`}>
+                <Typography.Title className="input-title">
+                  Attribute
+                </Typography.Title>
+                <Form.List name="attributes">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Space
+                          key={key}
+                          align="baseline"
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "3fr 5fr 1fr 0",
+                            marginBottom: 8,
+                          }}
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, "attributeName"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing",
+                              },
+                            ]}
+                          >
+                            <Input required size="large" placeholder="Name" />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "attributeValue"]}
+                            {...restField}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing Value",
+                              },
+                            ]}
+                          >
+                            <Input required size="large" placeholder="Value" />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "mainAttribute"]}
+                            {...restField}
+                            valuePropName="checked"
+                            initialValue={false}
+                          >
+                            <Checkbox />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          New Attribute
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Card>
 
               {/* VARIATIONS FIELDS*/}
@@ -411,7 +495,7 @@ const AddProduct = () => {
                             />
                           </Form.Item>
                           <Form.Item
-                            name={[name, "priceModifier"]}
+                            name={[name, "price"]}
                             {...restField}
                             rules={[
                               {

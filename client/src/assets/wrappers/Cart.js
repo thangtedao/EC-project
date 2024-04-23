@@ -57,8 +57,8 @@ const Wrapper = styled.div`
     height: 100px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
+    padding-top: 0.75rem;
+    gap: 1rem;
   }
   .remove-btn {
     position: absolute;
@@ -66,11 +66,7 @@ const Wrapper = styled.div`
     top: 15px;
     cursor: pointer;
   }
-  .product-variant {
-    font-size: 0.95rem;
-    display: flex;
-    gap: 1rem;
-  }
+
   .product-price {
     color: #d70018;
     font-weight: 400;

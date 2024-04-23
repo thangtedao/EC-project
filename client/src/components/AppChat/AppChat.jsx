@@ -36,7 +36,8 @@ const AppChat = (props) => {
     // disconnect ||cleanup the effect
     // return () => socket.disconnect();
     // eslint-disable-next-line
-  }, [messages]);
+  }, []);
+  // }, [messages]);
 
   useEffect(() => {
     const scrollMessage = () => {

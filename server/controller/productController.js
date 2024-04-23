@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 import ProductVariation from "../models/ProductVariation.js";
+import ProductAttribute from "../models/ProductAttribute.js";
 import ItemBlog from "../models/ItemBlog.js";
 import slugify from "slugify";
 import { NotFoundError } from "../errors/customErrors.js";
@@ -9,8 +10,74 @@ import {
   cloudinaryDeleteImage,
   cloudinaryUploadImage,
 } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 export const createProduct = async (req, res) => {
+  try {
+    const data = { ...req.body };
+
+    let images = [];
+    let publicIdImages = [];
+    if (data.merelink) {
+      images = data.merelink?.split(",");
+      delete data.merelink;
+    } else delete data.merelink;
+
+    req.file?.images?.map(async (image) => {
+      const fileFormat = formatImage(image);
+      const response = await cloudinaryUploadImage(fileFormat);
+
+      images.push(response.secure_url);
+      publicIdImages.push(response.public_id);
+    });
+
+    let variations = data.variations;
+    let attributes = data.attributes;
+    const blog = data.blog;
+    delete data.blog;
+    delete data.variations;
+    delete data.attributes;
+    data.images = images;
+    data.publicIdImages = publicIdImages;
+    data.slug = slugify(data.name);
+    data.category = data.category.split(",");
+
+    const newProduct = await Product.create(data);
+    await ItemBlog.create({ productId: newProduct._id, content: blog });
+
+    if (variations && Array.isArray(variations)) {
+      variations = variations.map((item) => {
+        return {
+          productId: newProduct._id,
+          variationName: item.variationName,
+          variationValue: item.variationValue,
+          price: item.price && item.price,
+          price: item.salePrice && item.salePrice,
+        };
+      });
+      await ProductVariation.insertMany(variations);
+    }
+
+    if (attributes && Array.isArray(attributes)) {
+      attributes = attributes.map((item) => {
+        return {
+          productId: newProduct._id,
+          attributeName: item.attributeName,
+          attributeValue: item.attributeValue,
+          mainAttribute: item.mainAttribute,
+        };
+      });
+      await ProductAttribute.insertMany(attributes);
+    }
+
+    res.status(StatusCodes.CREATED).json(newProduct);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const createProduct2 = async (req, res) => {
   try {
     const data = { ...req.body };
 
@@ -144,6 +211,7 @@ export const getProduct = async (req, res) => {
     const product = await query;
 
     let variation = await ProductVariation.find({ productId: id });
+    let attribute = await ProductAttribute.find({ productId: id });
 
     const productBlog = await ItemBlog.findOne({ productId: id });
     // if (variation) {
@@ -157,7 +225,130 @@ export const getProduct = async (req, res) => {
     //   }, {});
     // }
 
-    res.status(StatusCodes.OK).json({ product, variation, productBlog });
+    res
+      .status(StatusCodes.OK)
+      .json({ product, attribute, variation, productBlog });
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const filterProduct = async (req, res) => {
+  try {
+    const category = req.query.category;
+
+    const queryObj = { ...req.query };
+
+    const excludeFields = ["page", "sort", "limit", "category", "populate"];
+    excludeFields.forEach((el) => delete queryObj[el]);
+
+    // const filterAttributes = [
+    //   { attributeName: new RegExp("ram", "i"), attributeValue: "8gb" },
+    //   {
+    //     attributeName: new RegExp("ổ cứng", "i"),
+    //     attributeValue: "256GB",
+    //   },
+    // ];
+
+    const filterAttributes = [];
+    for (const key in queryObj) {
+      filterAttributes.push({
+        attributeName: new RegExp(key.replace(" ", "."), "i"),
+        attributeValue: new RegExp(queryObj[key].replace(" ", "."), "i"),
+      });
+    }
+
+    const aggregationStages = [];
+
+    // Match category
+    aggregationStages.push({
+      $match: {
+        category: {
+          $elemMatch: {
+            $eq: new mongoose.Types.ObjectId(category),
+          },
+        },
+      },
+    });
+
+    // Lookup attributes
+    aggregationStages.push({
+      $lookup: {
+        from: "productattributes",
+        localField: "_id",
+        foreignField: "productId",
+        as: "attributes",
+      },
+    });
+
+    // Match products based on attributes
+    aggregationStages.push({
+      $match: {
+        attributes: {
+          $all: filterAttributes.map((attr) => ({
+            $elemMatch: attr,
+          })),
+        },
+      },
+    });
+
+    // Select fields
+    aggregationStages.push({
+      $project: {
+        _id: 1,
+        name: 1,
+        price: 1,
+        salePrice: 1,
+        images: 1,
+      },
+    });
+
+    const page = 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    let products;
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      products = await Product.aggregate(aggregationStages)
+        .skip(skip)
+        .limit(limit)
+        .sort(sortBy);
+    } else {
+      products = await Product.aggregate(aggregationStages)
+        .skip(skip)
+        .limit(limit)
+        .sort("-createdAt");
+    }
+
+    res.status(StatusCodes.OK).json(products);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const getRelateModelProduct = async (req, res) => {
+  try {
+    const { model } = req.params;
+
+    const relateModel = await Product.aggregate([
+      {
+        $match: {
+          model: model,
+        },
+      },
+      {
+        $lookup: {
+          from: "productattributes",
+          localField: "_id",
+          foreignField: "productId",
+          as: "attribute",
+        },
+      },
+    ]);
+
+    res.status(StatusCodes.OK).json(relateModel);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
@@ -183,9 +374,11 @@ export const updateProduct = async (req, res) => {
     });
 
     let variations = data.variations;
+    let attributes = data.attributes;
     const blog = data.blog;
     delete data.blog;
     delete data.variations;
+    delete data.attributes;
     data.images = images;
     data.publicIdImages = publicIdImages;
     data.slug = slugify(data.name);
@@ -201,7 +394,7 @@ export const updateProduct = async (req, res) => {
       { content: blog }
     );
 
-    if (variations) {
+    if (variations && Array.isArray(variations)) {
       variations = variations.map((item) => {
         return {
           productId: updatedProduct._id,
@@ -213,6 +406,19 @@ export const updateProduct = async (req, res) => {
       await ProductVariation.deleteMany({ productId: updatedProduct._id });
       await ProductVariation.insertMany(variations);
     } else await ProductVariation.deleteMany({ productId: updatedProduct._id });
+
+    if (attributes && Array.isArray(attributes)) {
+      attributes = attributes.map((item) => {
+        return {
+          productId: updatedProduct._id,
+          attributeName: item.attributeName,
+          attributeValue: item.attributeValue,
+          mainAttribute: item.mainAttribute,
+        };
+      });
+      await ProductAttribute.deleteMany({ productId: updatedProduct._id });
+      await ProductAttribute.insertMany(attributes);
+    } else await ProductAttribute.deleteMany({ productId: updatedProduct._id });
 
     if (req.files && updatedProduct.publicIdImages.length > 0) {
       await Promise.all(

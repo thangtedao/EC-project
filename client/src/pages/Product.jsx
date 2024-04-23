@@ -5,18 +5,16 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import SlideGallery from "../components/SlideGallery";
 import customFetch from "../utils/customFetch";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { debounce } from "lodash";
 import {
   ProductBlog,
   ProductReview,
-  ProductSpecifications,
+  ProductAttribute,
   SlideProduct,
 } from "../components";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/logo/LogoNova.svg";
-import { Radio } from "antd";
 
 export const action = async ({ request }) => {
   try {
@@ -35,7 +33,7 @@ export const action = async ({ request }) => {
 export const loader = async ({ params }) => {
   try {
     const { id } = params;
-    let { product, variation, productBlog } = await customFetch
+    let { product, attribute, variation, productBlog } = await customFetch
       .get(`/product/${id}`)
       .then(({ data }) => data);
 
@@ -54,6 +52,10 @@ export const loader = async ({ params }) => {
       .get(`/review/get-reviews/${id}`)
       .then(({ data }) => data);
 
+    const relateModel = await customFetch
+      .get(`/product/get-relate/${product.model}`)
+      .then(({ data }) => data);
+
     let relatedProducts = await customFetch
       .get(`/product/?category=${product.category[0]}&limit=10`)
       .then(({ data }) => data);
@@ -61,7 +63,15 @@ export const loader = async ({ params }) => {
     relatedProducts = relatedProducts.filter((i) => i._id !== id);
 
     window.scrollTo(0, 0);
-    return { product, variation, productBlog, productReviews, relatedProducts };
+    return {
+      product,
+      relateModel,
+      attribute,
+      variation,
+      productBlog,
+      productReviews,
+      relatedProducts,
+    };
   } catch (error) {
     console.log(error);
     return error;
@@ -71,12 +81,18 @@ export const loader = async ({ params }) => {
 const Product = () => {
   const navigate = useNavigate();
 
-  const { product, variation, productBlog, productReviews, relatedProducts } =
-    useLoaderData();
+  const {
+    product,
+    relateModel,
+    attribute,
+    variation,
+    productBlog,
+    productReviews,
+    relatedProducts,
+  } = useLoaderData();
 
-  const addToCart = debounce(async (product, variant, user) => {
-    if (Object.keys(variant).length !== 0) variant = Object.values(variant);
-    else variant = [];
+  const addToCart = debounce(async (product, variant) => {
+    // if (Object.keys(variant).length !== 0) variant = Object.values(variant);
     const cart = await customFetch
       .patch("/cart/add-to-cart", {
         product,
@@ -89,9 +105,13 @@ const Product = () => {
   // Khởi tạo state để lưu trữ giá trị đầu tiên cho mỗi loại biến thể
   const [selectedVariants, setselectedVariants] = useState(() => {
     const initialValues = {};
-    Object.entries(variation).forEach(([key, items]) => {
-      initialValues[key] = items[0]._id;
-    });
+    if (Object.keys(variation).length > 0) {
+      Object.entries(variation).forEach(([key, items]) => {
+        initialValues[key] = items[0]._id;
+      });
+    } else {
+      return null;
+    }
     return initialValues;
   });
 
@@ -153,43 +173,35 @@ const Product = () => {
             </div>
           ) : (
             <div className="top-container-column-2">
-              {/* VARIANTS */}
-              <div className="box-product-variants">
-                {Object.entries(variation)?.map(([key, items]) => (
-                  <div key={key}>
-                    <p style={{ margin: "10px 0" }}>{key}</p>
-                    <Radio.Group
-                      value={selectedVariants[key]}
-                      onChange={(e) => handleChange(key, e.target.value)}
+              {/* VARIANT */}
+              <div style={{ display: "flex", gap: 20 }}>
+                {relateModel?.map((item) => {
+                  return (
+                    <div
+                      style={{
+                        width: 100,
+                        height: 50,
+                        border: "1px solid black",
+                        display: "flex",
+                        flexDirection: "column",
+                        cursor: "pointer",
+                      }}
+                      key={item._id}
+                      onClick={() => navigate(`/product/${item._id}`)}
                     >
-                      {items.map((item) => (
-                        <Radio.Button
-                          value={item._id}
-                          key={item._id}
-                          style={{
-                            width: 130,
-                            height: "auto",
-                            fontSize: 12,
-                            textAlign: "center",
-                            color: "#444444",
-                            padding: "3px 0",
-                            border:
-                              selectedVariants[key] === item._id
-                                ? "1.5px solid #fd2424"
-                                : "1.5px solid lightgray",
-
-                            borderRadius: 8,
-                          }}
-                        >
-                          <div style={{ fontWeight: "500", height: 20 }}>
-                            {item.variationValue}
-                          </div>
-                          <div>+{item.priceModifier}đ</div>
-                        </Radio.Button>
-                      ))}
-                    </Radio.Group>
-                  </div>
-                ))}
+                      <div>
+                        {item.attribute.map((i) => {
+                          return (
+                            <span key={i._id}>
+                              {i.mainAttribute && i.attributeValue}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <span>{item.salePrice}</span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="box-product-price">
@@ -212,7 +224,7 @@ const Product = () => {
                 <button
                   className="btn-buynow"
                   onClick={() => [
-                    addToCart(product, variant, user),
+                    addToCart(product, variant),
                     navigate("/cart"),
                   ]}
                 >
@@ -221,7 +233,7 @@ const Product = () => {
 
                 <button
                   className="btn-addtocart"
-                  onClick={() => addToCart(product, selectedVariants, user)}
+                  onClick={() => addToCart(product, selectedVariants)}
                 >
                   <AddShoppingCartIcon />
                   <p>Thêm vào giỏ</p>
@@ -250,7 +262,7 @@ const Product = () => {
             />
           </div>
           <div className="bot-container-column-2">
-            <ProductSpecifications product={product} />
+            <ProductAttribute attribute={attribute} />
           </div>
         </div>
       </Wrapper>

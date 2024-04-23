@@ -1,6 +1,6 @@
 export { default as Navbar } from "./navbar/Navbar";
 export { default as CategorySideBar } from "./navbar/CategorySideBar";
-export { default as ProductSpecifications } from "./product/ProductSpecifications";
+export { default as ProductAttribute } from "./product/ProductAttribute";
 export { default as ProductReview } from "./product/ProductReview";
 export { default as ProductBlog } from "./product/ProductBlog";
 export { default as PayPalButton } from "./payment/PayPalButton";
