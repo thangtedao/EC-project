@@ -1,14 +1,12 @@
 import React from "react";
 import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import Wrapper from "../assets/wrappers/Register.js";
-import { FormRow } from "../components";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { TextField } from "@mui/material";
 import NovaIcon from "../assets/logo/LogoNova.svg";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
 /* ACTION */
 export const action = async ({ request }) => {

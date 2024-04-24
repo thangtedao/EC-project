@@ -48,16 +48,12 @@ import styled from "styled-components";
 // `;
 
 const Wrapper = styled.div`
+  height: fit-content;
+  padding: 5rem 0;
+
   .member-btn {
     margin-left: 0.5rem;
     color: #e0052b;
-  }
-  .login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    /* background: #ffffff; */
   }
 
   .login-box {

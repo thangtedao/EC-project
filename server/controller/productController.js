@@ -185,11 +185,15 @@ export const getProduct = async (req, res) => {
 
 export const filterProduct = async (req, res) => {
   try {
-    const category = req.query.category;
-
     let queryObj = { ...req.query };
-
-    const excludeFields = ["page", "sort", "limit", "category", "populate"];
+    const excludeFields = [
+      "page",
+      "sort",
+      "limit",
+      "category",
+      "minPrice",
+      "maxPrice",
+    ];
     excludeFields.forEach((el) => delete queryObj[el]);
 
     queryObj = Object.fromEntries(
@@ -215,11 +219,25 @@ export const filterProduct = async (req, res) => {
       $match: {
         category: {
           $elemMatch: {
-            $eq: new mongoose.Types.ObjectId(category),
+            $eq: new mongoose.Types.ObjectId(req.query.category),
           },
         },
       },
     });
+
+    // Match price
+    if (req.query.minPrice && req.query.maxPrice) {
+      const minPrice = parseInt(req.query.minPrice);
+      const maxPrice = parseInt(req.query.maxPrice);
+      aggregationStages.push({
+        $match: {
+          salePrice: {
+            $gte: minPrice,
+            $lte: maxPrice,
+          },
+        },
+      });
+    }
 
     if (!isEmpty) {
       // Lookup attributes

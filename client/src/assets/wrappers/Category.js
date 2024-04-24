@@ -79,6 +79,11 @@ const Wrapper = styled.div`
     display: flex;
     gap: 1rem;
   }
+
+  .slider {
+    width: 300px;
+  }
+
   .btn-filter {
     font-size: 0.9rem;
     height: 35px;
