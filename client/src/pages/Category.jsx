@@ -3,7 +3,7 @@ import Wrapper from "../assets/wrappers/Category.js";
 import { categoryData } from "../assets/data/categoryData.js";
 import { ProductBlog, ProductList, SlideProduct } from "../components";
 import customFetch from "../utils/customFetch";
-import { Form, NavLink, useLoaderData } from "react-router-dom";
+import { Form, NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import { debounce } from "lodash";
 import { FaEye } from "react-icons/fa";
 import { FaSortAmountDown } from "react-icons/fa";
@@ -18,12 +18,10 @@ export const loader = async ({ params, request }) => {
     params = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
     ]);
-    console.log(params);
     params.category = id;
-    const products = await customFetch
+    const productFilter = await customFetch
       .get("/product/filter", { params })
       .then(({ data }) => data);
-    console.log(products);
 
     const productData = await customFetch
       .get(`/product?category=${id}&page=1&limit=10&status=Available`)
@@ -39,6 +37,7 @@ export const loader = async ({ params, request }) => {
 
     return {
       productData,
+      productFilter,
       id,
       productsMostView,
       categoryBlog,
@@ -50,129 +49,16 @@ export const loader = async ({ params, request }) => {
 };
 
 const Category = () => {
-  const { productData, id, productsMostView, categoryBlog, searchParams } =
+  const navigate = useNavigate();
+  const { productFilter, id, productsMostView, categoryBlog, searchParams } =
     useLoaderData();
 
-  const { sort, ram, ["ổ cứng"]: oCung } = searchParams;
+  const { sort, ram, ["ổ cứng"]: rom, cpu } = searchParams;
 
-  const [products, setProducts] = useState(productData);
+  const [products, setProducts] = useState(productFilter);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
   const [isShow, setIsShow] = useState(true);
-
-  let firstUrl = `/product/?category=${id}&page=${page}&limit=10&status=Available`;
-
-  const [url, setUrl] = useState(firstUrl);
-  const [filterType, setFilterType] = useState();
-
-  const loadMore = debounce(async () => {
-    try {
-      setIsLoading(true);
-      const fetchData = await customFetch.get(url).then(({ data }) => data);
-      setProducts([...products, ...fetchData]);
-    } catch (error) {
-      if (error?.response?.status === 404) setIsShow(false);
-      else console.log(error);
-    } finally {
-      setIsLoading(false);
-      setPage(page + 1);
-      console.log(page);
-    }
-  }, 200);
-
-  const filterLowToHigh = debounce(async () => {
-    try {
-      setIsLoading(true);
-      setFilterType("lth");
-      setUrl(
-        `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=salePrice`
-      );
-
-      let endpoint = `/product/?category=${id}&page=1&limit=10&status=Available&sort=salePrice`;
-      const fetchData = await customFetch
-        .get(endpoint)
-        .then(({ data }) => data);
-      setProducts(fetchData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsShow(true);
-      setPage(2);
-    }
-  }, 300);
-
-  const filterHighToLow = debounce(async () => {
-    try {
-      setIsLoading(true);
-      setFilterType("htl");
-      setUrl(
-        `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-salePrice`
-      );
-
-      let endpoint = `/product/?category=${id}&page=1&limit=10&status=Available&sort=-salePrice`;
-      const fetchData = await customFetch
-        .get(endpoint)
-        .then(({ data }) => data);
-      setProducts(fetchData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsShow(true);
-      setPage(2);
-    }
-  }, 300);
-
-  const filterMostViewed = debounce(async () => {
-    try {
-      setIsLoading(true);
-      setFilterType("mv");
-      setUrl(
-        `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-viewed`
-      );
-
-      let endpoint = `/product/?category=${id}&page=1&limit=10&status=Available&sort=-viewed`;
-      const fetchData = await customFetch
-        .get(endpoint)
-        .then(({ data }) => data);
-      setProducts(fetchData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsShow(true);
-      setPage(2);
-    }
-  }, 300);
-
-  useEffect(() => {
-    switch (filterType) {
-      case "htl":
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-salePrice`
-        );
-        break;
-
-      case "lth":
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=salePrice`
-        );
-        break;
-
-      case "mv":
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-viewed`
-        );
-        break;
-
-      default:
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available`
-        );
-        break;
-    }
-  }, [page]);
 
   return (
     <HelmetProvider>
@@ -211,44 +97,57 @@ const Category = () => {
           <Form>
             <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
             <div className="filter-sort-list-filter">
-              <div className="btn-filter">Beta</div>
               <select name="sort" defaultValue={sort}>
+                <option value="">Sort</option>
                 <option value="-salePrice">Giá Cao - Thấp</option>
                 <option value="salePrice">Giá Thấp - Cao</option>
                 <option value="-viewed">Xem nhiều</option>
               </select>
 
               <select name="ram" defaultValue={ram}>
+                <option value="">RAM</option>
+                <option value="4gb">4GB</option>
                 <option value="8gb">8GB</option>
+                <option value="12gb">12GB</option>
                 <option value="16gb">16GB</option>
+                <option value="18gb">18GB</option>
+                <option value="24gb">24GB</option>
+                <option value="32gb">32GB</option>
+                <option value="36gb">36GB</option>
+                <option value="64gb">64GB</option>
               </select>
 
-              <select name="ổ cứng" defaultValue={oCung}>
+              <select name="ổ cứng" defaultValue={rom}>
+                <option value="">Ổ cứng</option>
                 <option value="256gb">256GB</option>
                 <option value="512gb">512GB</option>
+              </select>
+
+              <select name="cpu" defaultValue={cpu}>
+                <option value="">CPU</option>
+                <option value="intel core i9">Intel Core i9</option>
+                <option value="intel core i7">Intel Core i7</option>
+                <option value="intel core i5">Intel Core i5</option>
+                <option value="amd ryzen 7">AMD Ryzen 7</option>
+                <option value="amd ryzen 5">AMD Ryzen 5</option>
+                <option value="amd ryzen 3">AMD Ryzen 3</option>
+                <option value="apple m1">Apple M1</option>
+                <option value="apple m2">Apple M2</option>
+                <option value="apple m3">Apple M3</option>
+                <option value="apple m1 pro">Apple M1 Pro</option>
+                <option value="apple m2 pro">Apple M2 Pro</option>
+                <option value="apple m3 pro">Apple M3 Pro</option>
               </select>
 
               <button type="submit" className="btn">
                 Apply
               </button>
             </div>
-
-            <div className="block-filter-sort-title">Sắp xếp theo</div>
-            <div className="filter-sort-list-filter">
-              <div className="btn-filter" onClick={() => filterHighToLow()}>
-                <FaSortAmountDown />
-                Giá Cao - Thấp
-              </div>
-              <div className="btn-filter" onClick={() => filterLowToHigh()}>
-                <FaSortAmountUp />
-                Giá Thấp - Cao
-              </div>
-              <div className="btn-filter" onClick={() => filterMostViewed()}>
-                <FaEye />
-                <span>Xem nhiều</span>
-              </div>
-            </div>
           </Form>
+
+          <button className="btn" onClick={() => navigate(`/category/${id}`)}>
+            Reset
+          </button>
 
           {isLoading ? (
             <div style={{ display: "flex", justifyContent: "space-between" }}>

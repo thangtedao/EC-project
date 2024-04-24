@@ -465,7 +465,9 @@ const EditProduct = () => {
                             name={[name, "mainAttribute"]}
                             {...restField}
                             valuePropName="checked"
-                            initialValue={restField.value?.mainAttribute}
+                            initialValue={
+                              restField.value?.mainAttribute || false
+                            }
                           >
                             <Checkbox />
                           </Form.Item>

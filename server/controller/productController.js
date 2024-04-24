@@ -77,56 +77,6 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const createProduct2 = async (req, res) => {
-  try {
-    const data = { ...req.body };
-
-    let images = [];
-    let publicIdImages = [];
-    if (data.merelink) {
-      images = data.merelink?.split(",");
-      delete data.merelink;
-    } else delete data.merelink;
-
-    req.file?.images?.map(async (image) => {
-      const fileFormat = formatImage(image);
-      const response = await cloudinaryUploadImage(fileFormat);
-
-      images.push(response.secure_url);
-      publicIdImages.push(response.public_id);
-    });
-
-    let variations = data.variations;
-    const blog = data.blog;
-    delete data.blog;
-    delete data.variations;
-    data.images = images;
-    data.publicIdImages = publicIdImages;
-    data.slug = slugify(data.name);
-    data.category = data.category.split(",");
-
-    const newProduct = await Product.create(data);
-    await ItemBlog.create({ productId: newProduct._id, content: blog });
-
-    if (variations && Array.isArray(variations)) {
-      variations = variations.map((item) => {
-        return {
-          productId: newProduct._id,
-          variationName: item.variationName,
-          variationValue: item.variationValue,
-          priceModifier: item.priceModifier,
-        };
-      });
-      await ProductVariation.insertMany(variations);
-    }
-
-    res.status(StatusCodes.CREATED).json(newProduct);
-  } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
-  }
-};
-
 export const getProducts = async (req, res) => {
   try {
     const queryObj = { ...req.query };
@@ -237,25 +187,25 @@ export const filterProduct = async (req, res) => {
   try {
     const category = req.query.category;
 
-    const queryObj = { ...req.query };
+    let queryObj = { ...req.query };
 
     const excludeFields = ["page", "sort", "limit", "category", "populate"];
     excludeFields.forEach((el) => delete queryObj[el]);
 
-    // const filterAttributes = [
-    //   { attributeName: new RegExp("ram", "i"), attributeValue: "8gb" },
-    //   {
-    //     attributeName: new RegExp("ổ cứng", "i"),
-    //     attributeValue: "256GB",
-    //   },
-    // ];
+    queryObj = Object.fromEntries(
+      Object.entries(queryObj).filter(([key, value]) => value !== "")
+    );
+    const isEmpty = Object.keys(queryObj).length === 0;
 
     const filterAttributes = [];
-    for (const key in queryObj) {
-      filterAttributes.push({
-        attributeName: new RegExp(key.replace(" ", "."), "i"),
-        attributeValue: new RegExp(queryObj[key].replace(" ", "."), "i"),
-      });
+
+    if (!isEmpty) {
+      for (const key in queryObj) {
+        filterAttributes.push({
+          // attributeName: new RegExp(key.replace(" ", "."), "i"),
+          attributeValue: new RegExp(queryObj[key].replace(" ", "."), "i"),
+        });
+      }
     }
 
     const aggregationStages = [];
@@ -271,26 +221,28 @@ export const filterProduct = async (req, res) => {
       },
     });
 
-    // Lookup attributes
-    aggregationStages.push({
-      $lookup: {
-        from: "productattributes",
-        localField: "_id",
-        foreignField: "productId",
-        as: "attributes",
-      },
-    });
-
-    // Match products based on attributes
-    aggregationStages.push({
-      $match: {
-        attributes: {
-          $all: filterAttributes.map((attr) => ({
-            $elemMatch: attr,
-          })),
+    if (!isEmpty) {
+      // Lookup attributes
+      aggregationStages.push({
+        $lookup: {
+          from: "productattributes",
+          localField: "_id",
+          foreignField: "productId",
+          as: "attributes",
         },
-      },
-    });
+      });
+
+      // Match products based on attributes
+      aggregationStages.push({
+        $match: {
+          attributes: {
+            $all: filterAttributes.map((attr) => ({
+              $elemMatch: attr,
+            })),
+          },
+        },
+      });
+    }
 
     // Select fields
     aggregationStages.push({
@@ -391,7 +343,8 @@ export const updateProduct = async (req, res) => {
 
     await ItemBlog.findOneAndUpdate(
       { productId: updatedProduct._id },
-      { content: blog }
+      { content: blog },
+      { upsert: true }
     );
 
     if (variations && Array.isArray(variations)) {
