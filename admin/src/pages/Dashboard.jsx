@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, redirect } from "react-router-dom";
 import ChartPie from "../components/Dashboard/ChartPie.jsx";
 import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
@@ -71,7 +71,7 @@ export const loader = async ({ request }) => {
 
     return { products, orders, monthlyApplications };
   } catch (error) {
-    console.log(error);
+    if (error?.response?.status === 403) return redirect("/login");
     return error;
   }
 };
@@ -101,7 +101,6 @@ const Dashboard = () => {
       setMinDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
       date.setMonth(11);
       date.setDate(31);
-      console.log(date);
       setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
       setStartDate(dateString);
     }
@@ -112,14 +111,17 @@ const Dashboard = () => {
   };
 
   const applyDateChange = async () => {
-    console.log(startDate + " || " + endDate);
-    if (startDate && endDate) {
-      const response = await customFetch.post("/order/stats", {
-        startDate,
-        endDate,
-      });
-      setMonthlyStats(response.data.monthlyApplications);
-    } else setShowWarningMessage(true);
+    try {
+      if (startDate && endDate) {
+        const response = await customFetch.post("/order/stats", {
+          startDate,
+          endDate,
+        });
+        setMonthlyStats(response.data.monthlyApplications);
+      } else setShowWarningMessage(true);
+    } catch (error) {
+      return;
+    }
   };
 
   return (

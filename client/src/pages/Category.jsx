@@ -4,6 +4,7 @@ import { categoryData } from "../assets/data/categoryData.js";
 import {
   FilterLaptop,
   FilterPhone,
+  PriceSlider,
   ProductBlog,
   ProductList,
   SlideProduct,
@@ -12,7 +13,6 @@ import customFetch from "../utils/customFetch";
 import { Form, NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/logo/LogoNova.svg";
-import Slider from "@mui/material/Slider";
 
 export const loader = async ({ params, request }) => {
   try {
@@ -66,6 +66,10 @@ const Category = () => {
     maxPrice = 500000;
   }
 
+  const onChangeSlider = (event, newValue) => {
+    setMinPrice(newValue[0]);
+  };
+
   const [mainCategory, setMainCategory] = useState(category);
 
   useEffect(() => {
@@ -89,7 +93,6 @@ const Category = () => {
   const [products, setProducts] = useState(productFilter);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
-  const [isShow, setIsShow] = useState(true);
   const [MinPrice, setMinPrice] = useState(0);
 
   return (
@@ -125,43 +128,43 @@ const Category = () => {
         </div>
 
         {/* --------- ALL PRODUCTS -------- */}
-        {/* <div className="block-filter-sort">
+        <div className="block-filter-sort">
           <Form className="filter-form">
-            <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
-
             {(() => {
               switch (mainCategory.slug) {
                 case "laptop":
-                  return <FilterLaptop ram={ram} rom={ram} cpu={cpu} />;
+                  return <FilterLaptop ram={ram} rom={rom} cpu={cpu} />;
                 case "phone":
-                  return <FilterPhone ram={ram} rom={ram} chip={chip} />;
+                  return <FilterPhone ram={ram} rom={rom} chip={chip} />;
                 default:
                   return null;
               }
             })()}
 
             <div className="slider">
-              <div>Price</div>
-              <Slider
+              <div className="filter-title">Giá</div>
+              <PriceSlider
                 name="maxPrice"
                 defaultValue={[minPrice, maxPrice]}
-                max={500000}
-                step={10000}
-                valueLabelDisplay="auto"
-                onChange={(_, newValue) => [setMinPrice(newValue[0])]}
+                onChange={onChangeSlider}
               />
             </div>
 
-            <select name="sort" defaultValue={sort}>
-              <option value="">Sắp xếp theo</option>
-              <option value="-salePrice">Giá Cao - Thấp</option>
-              <option value="salePrice">Giá Thấp - Cao</option>
-              <option value="-viewed">Xem nhiều</option>
-            </select>
+            <div>
+              <div className="filter-title">Sắp xếp theo</div>
+              <div className="filter-select">
+                <select name="sort" defaultValue={sort}>
+                  <option value="">Sắp xếp theo</option>
+                  <option value="-salePrice">Giá Cao - Thấp</option>
+                  <option value="salePrice">Giá Thấp - Cao</option>
+                  <option value="-viewed">Xem nhiều</option>
+                </select>
+              </div>
+            </div>
 
             <input name="minPrice" readOnly value={MinPrice} hidden />
 
-            <div>
+            <div className="buttons">
               <button type="submit" className="btn">
                 Apply
               </button>
@@ -176,8 +179,12 @@ const Category = () => {
             </div>
           </Form>
 
-          <ProductList products={products} />
-        </div> */}
+          {productFilter?.length > 0 ? (
+            <ProductList products={productFilter} />
+          ) : (
+            <div>Không có sản phẩm hợp tiêu chí</div>
+          )}
+        </div>
 
         {/* BOT */}
         <div className="bot-container">

@@ -120,11 +120,14 @@ const AddCoupon = () => {
   };
 
   const onFinish = async (values) => {
-    values.startDate = values.startDate.toISOString();
-    values.endDate = values.endDate.toISOString();
-    console.log(values);
-    const response = await customFetch.post("/coupon/create", values);
-    if (response) navigate("/all-coupon");
+    try {
+      values.startDate = values.endDate.format(dateFormat);
+      values.endDate = values.endDate.format(dateFormat);
+      const response = await customFetch.post("/coupon/create", values);
+      if (response) navigate("/all-coupon");
+    } catch (error) {
+      return;
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -326,7 +329,7 @@ const AddCoupon = () => {
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
-                    needConfirm
+                    // needConfirm
                   />
                 </Form.Item>
 
@@ -339,7 +342,7 @@ const AddCoupon = () => {
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
-                    needConfirm
+                    // needConfirm
                   />
                 </Form.Item>
               </Card>

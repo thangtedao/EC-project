@@ -68,20 +68,42 @@ const Wrapper = styled.div`
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     width: 100%;
   }
-  .block-filter-sort-title {
+  .filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .filter-title {
     font-size: 1.2rem;
     font-weight: bold;
   }
-  .filter-sort-list-filter {
+  .filter-select {
     display: flex;
     gap: 1rem;
+    margin: 0.5rem 0;
+  }
+  select {
+    border-radius: 5px;
+    padding: 8px 5px;
+    font-size: 0.9rem;
   }
 
   .slider {
-    width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    width: 500px;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  .btn {
+    padding: 10px 20px;
   }
 
   .btn-filter {

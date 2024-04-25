@@ -114,8 +114,6 @@ const EditCoupon = () => {
   dayjs.extend(customParseFormat);
   const dateFormat = "YYYY-MM-DD";
 
-  console.log(coupon);
-
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -136,14 +134,17 @@ const EditCoupon = () => {
   };
 
   const onFinish = async (values) => {
-    values.startDate = values.startDate.toISOString();
-    values.endDate = values.endDate.toISOString();
-    console.log(values);
-    const response = await customFetch.patch(
-      `/coupon/update/${coupon._id}`,
-      values
-    );
-    if (response) navigate("/all-coupon");
+    try {
+      values.startDate = values.endDate.format(dateFormat);
+      values.endDate = values.endDate.format(dateFormat);
+      const response = await customFetch.patch(
+        `/coupon/update/${coupon._id}`,
+        values
+      );
+      if (response) navigate("/all-coupon");
+    } catch (error) {
+      return;
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -362,7 +363,7 @@ const EditCoupon = () => {
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
-                    needConfirm
+                    // needConfirm
                   />
                 </Form.Item>
 
@@ -375,7 +376,7 @@ const EditCoupon = () => {
                     size="large"
                     style={{ width: "100%" }}
                     onChange={onChange}
-                    needConfirm
+                    // needConfirm
                   />
                 </Form.Item>
               </Card>

@@ -1,29 +1,58 @@
 import Promotion from "../models/Promotion.js";
+import Product from "../models/Product.js";
 import ProductPromotion from "../models/ProductPromotion.js";
 import { StatusCodes } from "http-status-codes";
 
 export const createPromotion = async (req, res) => {
   try {
-    const newPromotion = await Promotion.create(req.body);
+    // const newPromotion = await Promotion.create(req.body);
+    const newPromotion = await Promotion.findById("662a15cd15b0003e897749d6");
 
-    const newProductPromotion = req.body.products.map((item) => {
-      let salePrice = item.price;
+    if (newPromotion) {
+      if (newPromotion.discountType === "percentage") {
+        const discountValue = newPromotion.discountValue / 100;
 
-      if (newPromotion.discountType === "percentage")
-        salePrice =
-          item.price - (item.price * newPromotion.discountValue) / 100;
-      else if (newPromotion.discountType === "fixed")
-        salePrice = item.price - newPromotion.discountValue;
+        await Product.updateMany({ _id: { $in: newPromotion.products } }, [
+          {
+            $set: {
+              salePrice: {
+                $subtract: ["$price", { $multiply: ["$price", discountValue] }],
+              },
+            },
+          },
+        ]);
+      } else {
+        await Product.updateMany({ _id: { $in: newPromotion.products } }, [
+          {
+            $set: {
+              salePrice: {
+                $subtract: ["$price", newPromotion.discountValue],
+              },
+            },
+          },
+        ]);
+      }
+    }
 
-      return {
-        productId: item._id,
-        promotionId: newPromotion._id,
-        salePrice: salePrice,
-      };
-    });
-    await ProductPromotion.insertMany(newProductPromotion);
+    // const newProductPromotion = req.body.products.map((item) => {
+    //   let salePrice = item.price;
+
+    //   if (newPromotion.discountType === "percentage")
+    //     salePrice =
+    //       item.price - (item.price * newPromotion.discountValue) / 100;
+    //   else if (newPromotion.discountType === "fixed")
+    //     salePrice = item.price - newPromotion.discountValue;
+
+    //   return {
+    //     productId: item._id,
+    //     promotionId: newPromotion._id,
+    //     salePrice: salePrice,
+    //   };
+    // });
+    // await ProductPromotion.insertMany(newProductPromotion);
     res.status(StatusCodes.CREATED).json(newPromotion);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
@@ -40,9 +69,8 @@ export const getPromotions = async (req, res) => {
 export const getPromotion = async (req, res) => {
   try {
     const { id } = req.params;
-    const promotion = await Promotion.findById(id);
-    const productPromotion = await ProductPromotion.find({ promotionId: id });
-    res.status(StatusCodes.OK).json(promotion, productPromotion);
+    const promotion = await Promotion.findById(id).populate("products");
+    res.status(StatusCodes.OK).json(promotion);
   } catch (error) {
     console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

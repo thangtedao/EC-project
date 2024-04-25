@@ -32,12 +32,15 @@ const Wrapper = styled.section`
 `;
 
 export const loader = async () => {
-  const user = await customFetch
-    .get("/user/current-user")
-    .then(({ data }) => data.user)
-    .catch(() => redirect("/login"));
+  try {
+    const user = await customFetch
+      .get("/user/current-user")
+      .then(({ data }) => data.user);
 
-  return user;
+    return user;
+  } catch (error) {
+    if (error?.response?.status === 403) return redirect("/login");
+  }
 };
 
 const DashboardContext = createContext();
