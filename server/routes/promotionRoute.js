@@ -16,6 +16,6 @@ router.post(
   authorizePermissions("admin"),
   createPromotion
 );
-router.get("/:id", getPromotion);
+router.get("/", getPromotion);
 
 export default router;

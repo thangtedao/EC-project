@@ -79,3 +79,24 @@ export const categoryData = [
       "https://res.cloudinary.com/dykffemq6/image/upload/v1701880332/Logo-tivi/kfo2aou9tjhiq36fx827.svg",
   },
 ];
+
+// const productsArray = categories.map((cat) => {
+//   return products.filter((product) => {
+//     return product.category.includes(cat._id.toString());
+//   });
+// });
+
+// const productsArray = [];
+// for (let i = 0; i < categories.length; i++) {
+//   const cat = categories[i];
+//   const categoryProducts = [];
+//   for (let j = 0; j < products.length; j++) {
+//     const product = products[j];
+//     if (product.category.includes(cat._id.toString())) {
+//       categoryProducts.push(product);
+//     }
+//   }
+//   if (categoryProducts.length > 0) {
+//     productsArray.push(categoryProducts);
+//   }
+// }

@@ -18,7 +18,11 @@ const productSchema = mongoose.Schema({
   },
   salePrice: {
     type: Number,
-    required: true,
+    default: null,
+  },
+  pmtPrice: {
+    type: Number,
+    default: null,
   },
   model: {
     type: String,

@@ -8,8 +8,8 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
   height: 3,
   padding: "13px 0",
   "& .MuiSlider-thumb": {
-    height: 27,
-    width: 27,
+    height: 25,
+    width: 25,
     backgroundColor: "#fff",
     border: "1px solid currentColor",
     "&:hover": {
@@ -38,9 +38,7 @@ function AirbnbThumbComponent(props) {
   return (
     <SliderThumb {...other}>
       {children}
-      <span className="airbnb-bar" />
-      <span className="airbnb-bar" />
-      <span className="airbnb-bar" />
+      <span>$</span>
     </SliderThumb>
   );
 }

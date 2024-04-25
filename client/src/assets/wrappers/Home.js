@@ -72,6 +72,7 @@ const Wrapper = styled.div`
     font-size: 2rem;
     font-weight: 700;
     color: white;
+    text-transform: uppercase;
   }
   .box-countdown {
     color: white;

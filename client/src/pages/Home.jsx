@@ -11,6 +11,7 @@ import NovaIcon from "../assets/logo/LogoNova.svg";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import AppChat from "../components/AppChat/AppChat";
 import { useSelector } from "react-redux";
+import { Statistic, ConfigProvider } from "antd";
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
@@ -34,7 +35,11 @@ export const loader = async () => {
       })
     );
 
-    return { productsArray };
+    const flashsale = await customFetch
+      .get("/promotion/?id=662a15cd15b0003e897749d6")
+      .then(({ data }) => data);
+
+    return { productsArray, flashsale };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -48,28 +53,15 @@ const Home = () => {
 
   window.scrollTo(0, 0);
   const { categories } = useMainLayoutContext();
-  const { productsArray } = useLoaderData();
+  const { productsArray, flashsale } = useLoaderData();
 
-  // const productsArray = categories.map((cat) => {
-  //   return products.filter((product) => {
-  //     return product.category.includes(cat._id.toString());
-  //   });
-  // });
+  const { Countdown } = Statistic;
 
-  // const productsArray = [];
-  // for (let i = 0; i < categories.length; i++) {
-  //   const cat = categories[i];
-  //   const categoryProducts = [];
-  //   for (let j = 0; j < products.length; j++) {
-  //     const product = products[j];
-  //     if (product.category.includes(cat._id.toString())) {
-  //       categoryProducts.push(product);
-  //     }
-  //   }
-  //   if (categoryProducts.length > 0) {
-  //     productsArray.push(categoryProducts);
-  //   }
-  // }
+  const deadline = new Date(flashsale.endDate);
+
+  const onFinish = () => {
+    console.log("finished!");
+  };
 
   return (
     <HelmetProvider>
@@ -109,13 +101,40 @@ const Home = () => {
           </div>
 
           {/* FLASH SALE */}
-          <div className="block-hot-sale">
+          {/* <div className="block-hot-sale">
             <div className="block-title">
               <div className="sale-title">FLASH SALE</div>
               <div className="box-countdown">00:11:22:33</div>
             </div>
             {productsArray[0]?.length > 0 && (
               <SlideProduct products={productsArray[0]} />
+            )}
+          </div> */}
+
+          <div className="block-hot-sale">
+            <div className="block-title">
+              <div className="sale-title">{flashsale.name}</div>
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Statistic: {
+                      contentFontSize: 18,
+                    },
+                  },
+                  token: {
+                    colorText: "#fff",
+                  },
+                }}
+              >
+                <Countdown
+                  value={deadline}
+                  format="DD : HH : mm : ss"
+                  onFinish={onFinish}
+                />
+              </ConfigProvider>
+            </div>
+            {flashsale.products?.length > 0 && (
+              <SlideProduct products={flashsale.products} />
             )}
           </div>
 
