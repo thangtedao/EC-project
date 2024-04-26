@@ -73,6 +73,7 @@ const Wrapper = styled.div`
 
 const BlogCard = (blog) => {
   const blogPost =blog.blog
+  const isInNotification = blog.isInNotification
 const navigate = useNavigate()
 
   const handleEdit =() =>{
@@ -100,16 +101,18 @@ const navigate = useNavigate()
         </div>
         <div className="blog-card-header-right">
             <div className="blog-card-title">{blogPost.title}</div>
-            <div className="blog-card-lastupdated"> Last updated: {moment(blogPost.updatedAt).format('HH:mm, DD/MM/YYYY')}</div>
+            <div className="blog-card-lastupdated"> Ngày đăng: {moment(blogPost.createdAt).format('HH:mm, DD/MM/YYYY')}</div>
         </div>
-        <div className='blog-card-end'>
+        {!isInNotification?(<div className='blog-card-end'>
             <div className='blog-card-edit' onClick={handleEdit}>
                 <EditOutlined />
             </div>
             <div className='blog-card-delete' onClick={handleDelete}>
                 <DeleteOutlined />
             </div>
-        </div>
+        </div>)
+        :(null)}
+        
           
       </div>
 

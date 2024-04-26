@@ -52,7 +52,7 @@ const EditBlog = () => {
 
     try {
       const response = await customFetch.patch(`/blog/update/${id}`, data);
-      console.log(response);
+      // console.log(response);
       navigate("/all-blogs")
     } catch (error) {
       console.error('Error creating blog:', error);

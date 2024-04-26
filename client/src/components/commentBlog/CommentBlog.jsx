@@ -15,7 +15,7 @@ function CommentBlog(props) {
   // const allComment = blog.comments
   // const {userInfo} = useSelector(state => state.userSignin)
   const user = useSelector((state) => state.user.user);
-  // console.log(blog)
+  blog.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   
   const Comment = async () => {
@@ -44,7 +44,7 @@ function CommentBlog(props) {
       <div className='comment'>
         <Col span={18} align='start' style={{ alignItems:'center'}} xs={24} sm={24} md={18}>
           <div className="comment-area" style={{display: 'flex', alignItems:'center'}}>
-            <textarea placeholder='Hãy còn mọi người thảo luận về bài viết này nhé.' rows={10} cols={3} value={value} onChange={(e) => setValue(e.target.value)}></textarea>
+            <textarea placeholder='Hãy cùng mọi người thảo luận về bài viết này nhé.' rows={10} cols={3} value={value} onChange={(e) => setValue(e.target.value)}></textarea>
           </div>
           <div className="comment-send">
             <button onClick={() => Comment()}>Gửi</button>

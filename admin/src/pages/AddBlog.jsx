@@ -20,7 +20,7 @@ const AddBlog = () => {
     // console.log(data)
     try {
         const response = await customFetch.post(`/blog/create`, data)
-        console.log(response)
+        // console.log(response)
         form.resetFields();
     } catch (error) {
         console.log(error)

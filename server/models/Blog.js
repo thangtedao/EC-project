@@ -8,6 +8,9 @@ const replyCommentBlog = new mongoose.Schema({
   avatar: {type: String},
   content: {type:String},
   byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+},
+{
+  timestamps: true,
 })
 const CommentBlog = mongoose.Schema({
   author: {type: String},
@@ -17,6 +20,9 @@ const CommentBlog = mongoose.Schema({
   content: {type:String},
   byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   replies: [replyCommentBlog]
+},
+{
+  timestamps: true,
 })
 const BlogSchema = mongoose.Schema(
   {
@@ -33,7 +39,7 @@ const BlogSchema = mongoose.Schema(
     comments:[CommentBlog],
     hasNewComment: {
       type:Boolean,
-      default:true
+      default:false
     }
   },
   {

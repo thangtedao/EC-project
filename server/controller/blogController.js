@@ -93,10 +93,21 @@ export const getAllBlog = async (req, res) => {
   }
 };
 
+export const getBlogsWithNewComent = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ hasNewComment: true }).sort({ updatedAt: -1 });
+
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(409).json({ msg: error.message });
+  }
+};
+
 export const CommentBlog = expressAsyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id)
   if(blog){
     blog.comments.push(req.body)
+    blog.hasNewComment = true
       const updateCommentBlog = await blog.save()
       res.send(updateCommentBlog)
   }else{
@@ -120,7 +131,7 @@ export const RepCommentBlog = expressAsyncHandler(async (req, res) => {
   if(blog){
       const indexComment = blog.comments.findIndex(item => item._id == req.body.idComment)
       blog.comments[indexComment].replies.push(req.body)
-
+      blog.hasNewComment = true
       await blog.save()
       res.send(blog)
   }else{

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Col } from "antd";
 import { WechatOutlined, DeleteOutlined  } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
+import moment from 'moment';
+
 // import {
 //   pinCommentProduct,
 //   repCommentProduct,
@@ -86,10 +88,10 @@ function AllComment(props) {
                     {comment.author} <span>QTV</span>
                   </strong>
                 ) : (
-                  <strong>{comment.author}</strong>
+                  <strong className='user-name'>{comment.author}</strong>
                 )}
+                <div className="comment-time">{moment(comment.createdAt).format('HH:mm, DD/MM/YYYY')}</div>
               </div>
-
               {user.role=='admin' && (
                 <div className="comment-status">
                   <div

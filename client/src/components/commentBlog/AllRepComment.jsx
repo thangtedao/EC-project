@@ -2,6 +2,7 @@ import React from 'react';
 import { WechatOutlined } from '@ant-design/icons';
 import { getFirstCharacterUser } from '../../utils/blog';
 import {  DeleteOutlined  } from "@ant-design/icons";
+import moment from 'moment';
 
 import './Detail.css';
 
@@ -54,6 +55,8 @@ function AllRepComment(props) {
             {
               repComment.role=='admin' ? (<strong>{repComment.author} <span>QTV</span></strong>): (<strong>{repComment.author}</strong>)
             }
+            <div className="comment-time">{moment(repComment.createdAt).format('HH:mm, DD/MM/YYYY')}</div>
+
             {user.role=='admin' && (
               <div className="comment-status">
                 <div

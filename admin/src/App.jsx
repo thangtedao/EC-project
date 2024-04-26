@@ -42,6 +42,9 @@ import Chat from "./pages/Chat";
 import AllBlogs from "./pages/AllBlogs";
 import AddBlog from "./pages/AddBlog";
 import EditBlog from "./pages/EditBlog";
+import CommentBlogMng from "./pages/CommentBlogMng";
+import CommentProductMng from "./pages/CommentProductMng";
+
 
 const router = createBrowserRouter([
   {
@@ -139,6 +142,14 @@ const router = createBrowserRouter([
       {
         path: "edit-blog/:id",
         element: <EditBlog />,
+      },
+      {
+        path: "commentblogmng",
+        element: <CommentBlogMng/>,
+      },
+      {
+        path: "commentproductmng",
+        element: <CommentProductMng />,
       },
     ],
   },

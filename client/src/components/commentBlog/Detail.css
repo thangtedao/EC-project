@@ -61,6 +61,9 @@
     height: 25px;
     background: #ddd;
     margin-right: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     color: #777;
     text-transform: uppercase;
@@ -71,6 +74,12 @@
 
 .all-comment-info-name.admin{
     background: none;
+}
+.all-comment-info .user-name{
+    margin-top:4px ;
+}
+.comment-time{
+    margin: .3rem 0 0 .3rem;
 }
 .all-comment-info-name.admin img{
     width: 100%;
