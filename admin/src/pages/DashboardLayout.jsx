@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/dashboard/DashboardLayout";
 import customFetch from "../utils/customFetch";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -10,26 +10,6 @@ import {
   useLoaderData,
   useNavigation,
 } from "react-router-dom";
-
-const Wrapper = styled.section`
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  position: relative;
-
-  .dashboard {
-    position: absolute;
-    left: 255px;
-    width: calc(100% - 255px);
-    display: flex;
-    flex-direction: column;
-  }
-  .dashboard-page {
-    background-color: #ffffff;
-    width: 100%;
-    padding: 2rem;
-  }
-`;
 
 export const loader = async () => {
   try {

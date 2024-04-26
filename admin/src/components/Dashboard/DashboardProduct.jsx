@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 `;
 
 const DashboardProduct = () => {
-  const { products, orders } = useDashboardContext();
+  const { products, orders, startDate, endDate } = useDashboardContext();
   const navigate = useNavigate();
 
   // products.map((product) => {

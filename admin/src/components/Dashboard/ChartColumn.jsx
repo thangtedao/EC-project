@@ -8,7 +8,7 @@ const Wrapper = styled.div`
 `;
 
 const ChartColumn = () => {
-  const { monthlyStats } = useDashboardContext();
+  const { monthlyStats, startDate, endDate } = useDashboardContext();
 
   const month = [
     "January",

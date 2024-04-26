@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const DashboardOrder = () => {
-  const { orders } = useDashboardContext();
+  const { orders, startDate, endDate } = useDashboardContext();
   const navigate = useNavigate();
 
   const handleEditOrder = (id) => {

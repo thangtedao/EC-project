@@ -54,7 +54,7 @@ const items = [
     [
       getItem("All Coupon", "8", null, null, "/all-coupon"),
       getItem("Add Coupon", "9", null, null, "/add-coupon"),
-      getItem("All Event", "10", null, null, "/add-event"),
+      getItem("Add Event", "10", null, null, "/add-event"),
     ],
     null
   ),

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/dashboard/Dashboard.js";
 import { useLoaderData, redirect } from "react-router-dom";
 import ChartPie from "../components/Dashboard/ChartPie.jsx";
 import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
@@ -11,40 +11,10 @@ import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
 import { Breadcrumb, Card, Segmented, DatePicker, Button, message } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+
 dayjs.extend(customParseFormat);
 const dateFormat = "YYYY-MM-DD";
-
-const Wrapper = styled.div`
-  width: 100%;
-
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-  .input-title {
-    font-size: 0.95rem;
-    font-weight: 400;
-  }
-  .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-`;
+const { RangePicker } = DatePicker;
 
 export const loader = async ({ request }) => {
   try {
@@ -89,33 +59,23 @@ const Dashboard = () => {
     }
   }, [showWarningMessage]);
 
-  const [minDate, setMinDate] = useState(null);
-  const [maxDate, setMaxDate] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [monthlyStats, setMonthlyStats] = useState(monthlyApplications);
 
-  const startDateChange = (dates, dateString) => {
+  const handleDateRangeChange = (dates) => {
     if (dates) {
-      const date = new Date(dateString);
-      setMinDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-      date.setMonth(11);
-      date.setDate(31);
-      setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-      setStartDate(dateString);
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
     }
-  };
-
-  const endDateChange = (date, dateString) => {
-    setEndDate(dateString);
   };
 
   const applyDateChange = async () => {
     try {
       if (startDate && endDate) {
         const response = await customFetch.post("/order/stats", {
-          startDate,
-          endDate,
+          startDate: startDate.format(dateFormat),
+          endDate: endDate.format(dateFormat),
         });
         setMonthlyStats(response.data.monthlyApplications);
       } else setShowWarningMessage(true);
@@ -125,7 +85,9 @@ const Dashboard = () => {
   };
 
   return (
-    <DashboardContext.Provider value={{ products, orders, monthlyStats }}>
+    <DashboardContext.Provider
+      value={{ products, orders, monthlyStats, startDate, endDate }}
+    >
       <HelmetProvider>
         <Wrapper>
           <Helmet>
@@ -153,17 +115,9 @@ const Dashboard = () => {
                 title={"Revenue"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
-                    <DatePicker
-                      defaultValue={startDate}
-                      onChange={startDateChange}
-                      size="middle"
-                    />
-                    <DatePicker
-                      defaultValue={endDate}
-                      onChange={endDateChange}
-                      minDate={minDate}
-                      maxDate={maxDate}
-                      size="middle"
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
                     />
                     <Button onClick={() => applyDateChange()}>Apply</Button>
                   </div>
@@ -178,8 +132,11 @@ const Dashboard = () => {
                 title={"Revenue"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
-                    <DatePicker size="middle" />
-                    <DatePicker size="middle" />
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
                   </div>
                 }
               >
@@ -190,20 +147,15 @@ const Dashboard = () => {
                 className="col-1-item"
                 size="large"
                 title={"Order"}
-                // extra={
-                //   <Segmented
-                //     options={[
-                //       "Daily",
-                //       "Weekly",
-                //       "Monthly",
-                //       "Quarterly",
-                //       "Yearly",
-                //     ]}
-                //     onChange={(value) => {
-                //       console.log(value); // string
-                //     }}
-                //   />
-                // }
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
               >
                 <DashboardOrder />
               </Card>
@@ -216,7 +168,20 @@ const Dashboard = () => {
               <Card className="col-2-item" size="large" title={"Order Status"}>
                 <ChartPie />
               </Card>
-              <Card className="col-2-item" size="large" title={"Product"}>
+              <Card
+                className="col-2-item"
+                size="large"
+                title={"Product"}
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
+              >
                 <DashboardProduct />
               </Card>
             </div>
