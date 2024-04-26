@@ -54,14 +54,13 @@ const items = [
     [
       getItem("All Coupon", "8", null, null, "/all-coupon"),
       getItem("Add Coupon", "9", null, null, "/add-coupon"),
-      getItem("All Event", "10", null, null, "/event"),
+      getItem("All Event", "10", null, null, "/add-event"),
     ],
     null
   ),
   getItem("Order", "11", <ShoppingCartOutlined />, null, "/all-order"),
   getItem("Customer", "12", <UserOutlined />, null, "/all-user"),
   getItem("Chat", "13", <WechatOutlined />, null, "/chat"),
-
 ];
 
 const getLevelKeys = (items1) => {

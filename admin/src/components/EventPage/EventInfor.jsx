@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
-import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 import {
-  Form,
   Card,
   Typography,
   Input,
@@ -50,7 +48,16 @@ const Wrapper = styled.div`
 //Rangepicker
 const { RangePicker } = DatePicker;
 
-const EventInfor = () => {
+const EventInfor = ({
+  name,
+  setName,
+  setDescription,
+  description,
+  discount,
+  setDiscount,
+  dates,
+  handleDateRangeChange,
+}) => {
   // UPload IMG
 
   /* Upload Image and Preview */
@@ -103,123 +110,112 @@ const EventInfor = () => {
   );
 
   return (
-    <HelmetProvider>
-      <Wrapper>
-        <Form name="basic">
-          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
-            <div
-              className="col-1"
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
-              <Card
-                className="col-1-item"
+    <Wrapper>
+      <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
+        <div
+          className="col-1"
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          <Card className="col-1-item" size="large" title={`Event information`}>
+            <div>
+              <Typography.Title className="input-title">Name</Typography.Title>
+              <Input
+                required
+                value={name}
                 size="large"
-                title={`Event information`}
+                placeholder="Hè hè con cak"
+                onChange={(event) => setName(event.target.value)}
+              />
+
+              <Typography.Title className="input-title">
+                Description
+              </Typography.Title>
+              <Input.TextArea
+                size="large"
+                placeholder="phê!!! con cak"
+                autoSize={{
+                  minRows: 3,
+                  maxRows: 5,
+                }}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+              />
+            </div>
+          </Card>
+          <Card className="col-1-item" size="large" title={`Event Image`}>
+            <div>
+              <Typography.Title className="input-title">
+                Image link
+              </Typography.Title>
+              <Input.TextArea
+                size="large"
+                placeholder="Enter link image"
+                autoSize={{
+                  minRows: 3,
+                  maxRows: 5,
+                }}
+              />
+              <Upload
+                listType="picture-card"
+                fileList={fileList}
+                onPreview={handlePreview}
+                onChange={handleChange}
+                beforeUpload={() => false}
+                maxCount={5}
+                multiple
               >
-                <div>
-                  <Typography.Title className="input-title">
-                    Name
-                  </Typography.Title>
-                  <Form.Item name="name">
-                    <Input
-                      size="large"
-                      placeholder="Hè hè hè laptop rẻ vãi chè"
-                    />
-                  </Form.Item>
+                {fileList.length >= 5 ? null : uploadButton}
+              </Upload>
 
-                  <Typography.Title className="input-title">
-                    Description
-                  </Typography.Title>
-                  <Form.Item name="description">
-                    <Input.TextArea
-                      size="large"
-                      placeholder="Tết đến xuân về xuân lại đi. Hè tới giá giảm nhìn cực phê!!!"
-                      autoSize={{
-                        minRows: 3,
-                        maxRows: 5,
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              </Card>
-              <Card className="col-1-item" size="large" title={`Event Image`}>
-                <div>
-                  <Typography.Title className="input-title">
-                    Image link
-                  </Typography.Title>
-                  <Form.Item name="merelink">
-                    <Input.TextArea
-                      size="large"
-                      placeholder="Enter link image"
-                      autoSize={{
-                        minRows: 3,
-                        maxRows: 5,
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item name="images" label="Images">
-                    <Upload
-                      listType="picture-card"
-                      fileList={fileList}
-                      onPreview={handlePreview}
-                      onChange={handleChange}
-                      beforeUpload={() => false}
-                      maxCount={5}
-                      multiple
-                    >
-                      {fileList.length >= 5 ? null : uploadButton}
-                    </Upload>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <Modal
-                      open={previewOpen}
-                      title={previewTitle}
-                      footer={null}
-                      onCancel={handleCancel}
-                    >
-                      <img
-                        alt="image"
-                        style={{
-                          width: "100%",
-                        }}
-                        src={previewImage}
-                      />
-                    </Modal>
-                  </Form.Item>
-                </div>
-              </Card>
+              <Modal
+                open={previewOpen}
+                title={previewTitle}
+                footer={null}
+                onCancel={handleCancel}
+              >
+                <img
+                  alt="image"
+                  style={{
+                    width: "100%",
+                  }}
+                  src={previewImage}
+                />
+              </Modal>
             </div>
-            <div
-              className="col-2"
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
-              <Card className="col-2-item" size="large" title={`Day`}>
-                <Typography.Title className="input-title">
-                  RangePicker
-                </Typography.Title>
-                <Form.Item name="startDate">
-                  <RangePicker showTime size="large" />
-                </Form.Item>
-              </Card>
-              <Card className="col-2-item" size="large" title={`Discount`}>
-                <Typography.Title className="input-title">
-                  Percentage
-                </Typography.Title>
-                <Form.Item name="price">
-                  <InputNumber
-                    suffix="%"
-                    style={{ width: "100%" }}
-                    size="large"
-                    placeholder="eg. 10%"
-                  />
-                </Form.Item>
-              </Card>
-            </div>
-          </div>
-        </Form>
-      </Wrapper>
-    </HelmetProvider>
+          </Card>
+        </div>
+        <div
+          className="col-2"
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          <Card className="col-2-item" size="large" title={`Day`}>
+            <Typography.Title className="input-title">
+              RangePicker
+            </Typography.Title>
+            <RangePicker
+              required
+              value={dates}
+              size="large"
+              onChange={handleDateRangeChange}
+            />
+          </Card>
+          <Card className="col-2-item" size="large" title={`Discount`}>
+            <Typography.Title className="input-title">
+              Percentage
+            </Typography.Title>
+            <InputNumber
+              required
+              value={discount}
+              onChange={(value) => setDiscount(value)}
+              suffix="%"
+              style={{ width: "100%" }}
+              size="large"
+              placeholder="eg. 10%"
+            />
+          </Card>
+        </div>
+      </div>
+    </Wrapper>
   );
 };
 

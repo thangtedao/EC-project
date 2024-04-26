@@ -14,3 +14,4 @@ export { default as EditOrder } from "./EditOrder";
 export { default as EditProduct } from "./EditProduct";
 export { default as Error } from "./Error";
 export { default as DashboardLayout } from "./DashboardLayout";
+export { default as AddEvent } from "./AddEvent";

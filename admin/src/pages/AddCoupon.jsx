@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import styled from "styled-components";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   Modal,
   Button,
@@ -14,6 +16,7 @@ import {
   DatePicker,
   InputNumber,
 } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -99,6 +102,22 @@ const Wrapper = styled.div`
 
 const AddCoupon = () => {
   const [discountType, setDiscountType] = useState("percentage");
+  const navigate = useNavigate();
+
+  dayjs.extend(customParseFormat);
+  const dateFormat = "YYYY-MM-DD";
+
+  const { RangePicker } = DatePicker;
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const handleDateRangeChange = (dates) => {
+    if (dates) {
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
+    }
+  };
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -121,8 +140,8 @@ const AddCoupon = () => {
 
   const onFinish = async (values) => {
     try {
-      values.startDate = values.endDate.format(dateFormat);
-      values.endDate = values.endDate.format(dateFormat);
+      values.startDate = startDate.format(dateFormat);
+      values.endDate = endDate.format(dateFormat);
       const response = await customFetch.post("/coupon/create", values);
       if (response) navigate("/all-coupon");
     } catch (error) {
@@ -321,6 +340,16 @@ const AddCoupon = () => {
             >
               <Card className="col-2-item" size="large" title={`Day`}>
                 <Typography.Title className="input-title">
+                  Date
+                </Typography.Title>
+                <RangePicker
+                  required
+                  value={[startDate, endDate]}
+                  size="large"
+                  onChange={handleDateRangeChange}
+                />
+
+                {/* <Typography.Title className="input-title">
                   Day Start
                 </Typography.Title>
                 <Form.Item name="startDate">
@@ -344,7 +373,7 @@ const AddCoupon = () => {
                     onChange={onChange}
                     // needConfirm
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Card>
             </div>
           </div>

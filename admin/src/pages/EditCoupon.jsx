@@ -114,6 +114,22 @@ const EditCoupon = () => {
   dayjs.extend(customParseFormat);
   const dateFormat = "YYYY-MM-DD";
 
+  const { RangePicker } = DatePicker;
+
+  const [startDate, setStartDate] = useState(
+    dayjs(coupon.startDate?.split("T")[0], dateFormat)
+  );
+  const [endDate, setEndDate] = useState(
+    dayjs(coupon.endDate?.split("T")[0], dateFormat)
+  );
+
+  const handleDateRangeChange = (dates) => {
+    if (dates) {
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
+    }
+  };
+
   //Modal
   const [open, setModalOpen] = useState(false);
   //Mở Modal (Confirm box)
@@ -135,8 +151,8 @@ const EditCoupon = () => {
 
   const onFinish = async (values) => {
     try {
-      values.startDate = values.endDate.format(dateFormat);
-      values.endDate = values.endDate.format(dateFormat);
+      values.startDate = startDate.format(dateFormat);
+      values.endDate = endDate.format(dateFormat);
       const response = await customFetch.patch(
         `/coupon/update/${coupon._id}`,
         values
@@ -184,8 +200,6 @@ const EditCoupon = () => {
             targetCustomers: coupon?.targetCustomers,
             numberOfUses: coupon?.numberOfUses,
             description: coupon?.description,
-            startDate: dayjs(coupon.startDate?.split("T")[0], dateFormat),
-            endDate: dayjs(coupon.endDate?.split("T")[0], dateFormat),
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -355,6 +369,16 @@ const EditCoupon = () => {
             >
               <Card className="col-2-item" size="large" title={`Day`}>
                 <Typography.Title className="input-title">
+                  Date
+                </Typography.Title>
+                <RangePicker
+                  required
+                  value={[startDate, endDate]}
+                  size="large"
+                  onChange={handleDateRangeChange}
+                />
+
+                {/* <Typography.Title className="input-title">
                   Day Start
                 </Typography.Title>
                 <Form.Item name="startDate">
@@ -378,7 +402,7 @@ const EditCoupon = () => {
                     onChange={onChange}
                     // needConfirm
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Card>
             </div>
           </div>

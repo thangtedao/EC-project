@@ -40,6 +40,8 @@ export const loader = async () => {
     return user;
   } catch (error) {
     if (error?.response?.status === 403) return redirect("/login");
+    else if (error?.response?.status === 401) return redirect("/login");
+    return error;
   }
 };
 

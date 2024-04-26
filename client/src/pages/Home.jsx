@@ -36,7 +36,7 @@ export const loader = async () => {
     );
 
     const flashsale = await customFetch
-      .get("/promotion/?id=662a15cd15b0003e897749d6")
+      .get("/promotion/662a15cd15b0003e897749d6")
       .then(({ data }) => data);
 
     return { productsArray, flashsale };

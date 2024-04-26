@@ -18,6 +18,7 @@ import { loader as allUserLoader } from "./pages/AllUser";
 import { loader as editUserLoader } from "./pages/EditUser";
 import { loader as allOrderLoader } from "./pages/AllOrder";
 import { loader as editOrderLoader } from "./pages/EditOrder";
+import { loader as addEventLoader } from "./pages/AddEvent";
 
 /* PAGE */
 import AllProduct from "./pages/AllProduct";
@@ -37,8 +38,8 @@ import Login from "./pages/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
-import Event from "./pages/Event";
 import Chat from "./pages/Chat";
+import AddEvent from "./pages/AddEvent";
 
 const router = createBrowserRouter([
   {
@@ -53,8 +54,9 @@ const router = createBrowserRouter([
         loader: dashboardLoader,
       },
       {
-        path: "event",
-        element: <Event />,
+        path: "add-event",
+        element: <AddEvent />,
+        loader: addEventLoader,
       },
       {
         path: "all-product",
