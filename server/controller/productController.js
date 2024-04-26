@@ -10,7 +10,6 @@ import {
   cloudinaryDeleteImage,
   cloudinaryUploadImage,
 } from "../utils/cloudinary.js";
-
 export const createProduct = async (req, res) => {
   try {
     const data = { ...req.body };

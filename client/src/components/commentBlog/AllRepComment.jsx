@@ -1,6 +1,7 @@
 import React from 'react';
 import { WechatOutlined } from '@ant-design/icons';
 import { getFirstCharacterUser } from '../../utils/blog';
+import './Detail.css';
 
 function AllRepComment(props) {
     const {allrepcomment, showRepComment, id} = props;

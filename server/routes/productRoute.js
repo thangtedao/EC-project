@@ -42,6 +42,8 @@ router.get("/", getProducts);
 router.get("/search", searchProduct);
 router.get("/searchproducts", searchPageProduct);
 router.patch("/rating", authenticateUser, rating);
+// router.get("/predict/:username", getPredictProduct)
+
 router.get("/:id", getProduct);
 
 export default router;
