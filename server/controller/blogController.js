@@ -85,7 +85,7 @@ export const getBlog = async (req, res) => {
 export const getAllBlog = async (req, res) => {
   try {
     let blogs = await Blog.find({});
-    blogs = blogs.sort((a, b) => b.updatedAt - a.updatedAt);
+    blogs = blogs.sort((a, b) => b.createdAt - a.createdAt);
 
     res.status(200).json(blogs);
   } catch (error) {
@@ -104,6 +104,17 @@ export const CommentBlog = expressAsyncHandler(async (req, res) => {
   }
 })
 
+export const deleteComment = expressAsyncHandler(async (req, res) => {
+  const {commentNumber,id}= req.body
+  const blog = await Blog.findById(id)
+  if(blog){
+    blog.comments.splice(commentNumber,1)
+    await blog.save()
+    res.status(200).send(blog)
+  }else{
+      res.status(400).send({message: 'Blog not found'})
+  }
+})
 export const RepCommentBlog = expressAsyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id)
   if(blog){
@@ -115,7 +126,18 @@ export const RepCommentBlog = expressAsyncHandler(async (req, res) => {
   }else{
       res.status(400).send({message: 'Blog not found'})
   }
-
+})
+export const deleteRepComment = expressAsyncHandler(async (req, res) => {
+  const {repCommentNumber,idComment}= req.body
+  const blog = await Blog.findById(req.params.id)
+  if(blog){
+    const indexComment = blog.comments.findIndex(item => item._id == idComment)
+    blog.comments[indexComment].replies.splice(repCommentNumber,1)
+    await blog.save()
+    res.status(200).send(blog)
+  }else{
+      res.status(400).send({message: 'Blog not found'})
+  }
 })
 export const likeBlog = async (req, res) => {
   try {

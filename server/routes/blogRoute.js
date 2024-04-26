@@ -10,6 +10,8 @@ import {
   getAllBlog,
   CommentBlog,
   RepCommentBlog,
+  deleteComment,
+  deleteRepComment,
 } from "../controller/blogController.js";
 import { blogImgResize, uploadPhoto } from "../middleware/uploadImages.js";
 
@@ -28,7 +30,9 @@ router.delete("/:id", deleteBlog);
 router.patch("/likes", likeBlog);
 router.patch("/dislikes", dislikeBlog);
 router.post("/comment/:id", CommentBlog);
+router.delete("/comment/:d",deleteComment)
 router.post("/rep/comment/:id", RepCommentBlog);
+router.delete("/rep/comment/:id", deleteRepComment)
 router.get("/:id", getBlog);
 // ProductRouter.post("/pin/comment/:id", PinCommentProduct);
 

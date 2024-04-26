@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const replyCommentBlog = new mongoose.Schema({
   author: {type: String},
   status: String,
-  isAdmin: Boolean,
+  role:String,
   avatar: {type: String},
   content: {type:String},
   byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
@@ -12,7 +12,7 @@ const replyCommentBlog = new mongoose.Schema({
 const CommentBlog = mongoose.Schema({
   author: {type: String},
   status: String,
-  isAdmin: Boolean,
+  role:String,
   avatar: {type: String},
   content: {type:String},
   byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
@@ -30,8 +30,11 @@ const BlogSchema = mongoose.Schema(
       require: true,
     },
     content: String,
-    comments:[CommentBlog]
-
+    comments:[CommentBlog],
+    hasNewComment: {
+      type:Boolean,
+      default:true
+    }
   },
   {
     timestamps: true,

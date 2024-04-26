@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Col } from "antd";
-import { WechatOutlined, PushpinOutlined, LockOutlined  } from "@ant-design/icons";
+import { WechatOutlined, DeleteOutlined  } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 // import {
 //   pinCommentProduct,
@@ -11,6 +11,7 @@ import AllRepComment from "./AllRepComment";
 
 import customFetch from "../../utils/customFetch";
 import { getFirstCharacterUser } from "../../utils/blog";
+import axios from "axios";
 
 function AllComment(props) {
   const { id } = useParams();
@@ -37,10 +38,32 @@ function AllComment(props) {
     } else alert("Đăng nhập đi bạn eiii");
   };
 
-  // const PinComment = (comment) => {
-  //   const UpdateComment = { ...comment, status: "pin" };
-  //   dispatch(pinCommentProduct(id, UpdateComment));
-  // };
+  const handleDeleteComment = async (comment) => {
+    const currentIndex = allComment.findIndex((c) => c._id === comment._id);
+    try {
+      const confirmDelete = window.confirm('Có chắc muốn xóa không man');
+      if (confirmDelete) {
+        try {
+          await fetch(`http://localhost:3001/api/blog/comment/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              commentNumber: currentIndex,
+              id:id
+            })
+          });
+          window.location.reload();
+        } catch (error) {
+          console.error('Error deleting blog comment:', error);
+        }
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+  
 
   return (
     <div className="all-comment">
@@ -51,14 +74,14 @@ function AllComment(props) {
               <div style={{ display: "flex" }}>
                 {comment.role=='admin' ? (
                   <div className="all-comment-info-name admin">
-                    <img src="https://cellphones.com.vn/skin/frontend/default/cpsdesktop/images/media/logo.png"></img>
+                    <img src="https://cdn.vectorstock.com/i/1000x1000/82/53/white-letter-a-logo-on-red-background-vector-26888253.webp"></img>
                   </div>
                 ) : (
                   <div className="all-comment-info-name">
                     {getFirstCharacterUser(comment.author)}
                   </div>
                 )}
-                {comment.isAdmin ? (
+                {comment.role=='admin' ? (
                   <strong>
                     {comment.author} <span>QTV</span>
                   </strong>
@@ -67,25 +90,13 @@ function AllComment(props) {
                 )}
               </div>
 
-              {user.role=='admin' ? (
+              {user.role=='admin' && (
                 <div className="comment-status">
                   <div
                     className="comment-status-pin"
-                    // onClick={() => PinComment(comment)}
+                     onClick={() => handleDeleteComment(comment)}
                   >
-                    {
-                      comment.status === 'pin' ? (<LockOutlined></LockOutlined>) : (<PushpinOutlined></PushpinOutlined>) 
-                    }
-                  </div>
-                </div>
-              ) : (
-                <div className="comment-status">
-                  <div
-                    className="comment-status-pin"
-                  >
-                    {
-                      comment.status === 'pin' ? (<PushpinOutlined></PushpinOutlined>) : ''
-                    }
+                    <DeleteOutlined />
                   </div>
                 </div>
               )}
@@ -103,7 +114,9 @@ function AllComment(props) {
               <AllRepComment
                 allrepcomment={comment.replies}
                 showRepComment={showRepComment}
-                id={comment._id}
+                idComment={comment._id}
+                user = {user}
+                idBlog = {id}
               ></AllRepComment>
             ) : (
               ""

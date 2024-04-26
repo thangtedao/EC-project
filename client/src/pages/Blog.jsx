@@ -41,7 +41,7 @@ const Blog = () => {
               <div className="blog-header-right">
                 <div className="blog-title">{blog.title}</div>
                 <div className="blog-lastupdated">
-                  Last updated: {moment(blog.updatedAt).format("HH:mm, DD/MM/YYYY")}
+                  Ngày đăng: {moment(blog.createdAt).format("HH:mm, DD/MM/YYYY")}
                 </div>
               </div>
             </div>

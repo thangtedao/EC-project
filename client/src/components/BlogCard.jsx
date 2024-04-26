@@ -19,7 +19,7 @@ const BlogCard = (blog) => {
         </div>
         <div className="blog-card-header-right">
             <div className="blog-card-title">{blogPost.title}</div>
-            <div className="blog-card-lastupdated"> Last updated: {moment(blogPost.updatedAt).format('HH:mm, DD/MM/YYYY')}</div>
+            <div className="blog-card-lastupdated"> Ngày đăng: {moment(blogPost.createdAt).format('HH:mm, DD/MM/YYYY')}</div>
         </div>
           
       </NavLink>

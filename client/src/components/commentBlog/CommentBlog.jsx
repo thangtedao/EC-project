@@ -19,6 +19,9 @@ function CommentBlog(props) {
 
   
   const Comment = async () => {
+    if(!value){
+      return
+    }
     if(user){
       const comment = {
         author: user.fullName,
