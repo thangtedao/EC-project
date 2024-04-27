@@ -77,7 +77,7 @@ export const updateCategory = async (req, res) => {
     const blog = data.blog;
     delete data.blog;
 
-    if (!req.body.parent) req.body.parent = null;
+    if (!data.parent) data.parent = null;
     const updatedCategory = await Category.findByIdAndUpdate(id, data, {
       new: true,
     });

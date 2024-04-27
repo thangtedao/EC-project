@@ -58,7 +58,7 @@ const OrderItem = ({ order, cancelOrder }) => {
           <div key={idx} className="product-item-outer">
             <img
               className="product-image"
-              src={item.product?.images[0]}
+              src={item.product?.image}
               alt="Image"
             />
 

@@ -25,21 +25,22 @@ export const loader = async ({ params }) => {
     const { category, categoryBlog } = await customFetch
       .get(`/category/${id}`)
       .then(({ data }) => data);
+    const isHaveChild = await customFetch
+      .get(`/category/all-categories/?parent=${category._id}`)
+      .then(({ data }) => data?.length > 0);
     let categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
     if (categories) categories = categories?.filter((item) => item._id !== id);
-    return { category, categories, categoryBlog };
+    return { category, categories, categoryBlog, isHaveChild };
   } catch (error) {
     return error;
   }
 };
 
 const EditCategory = () => {
-  const { category, categories, categoryBlog } = useLoaderData();
+  const { category, categories, categoryBlog, isHaveChild } = useLoaderData();
   const navigate = useNavigate();
-
-  console.log(categoryBlog);
 
   // Category blog
   const [blog, setBlog] = useState(categoryBlog?.content || "");
@@ -68,7 +69,6 @@ const EditCategory = () => {
   };
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
     if (!values.parent) delete values.parent;
     const response = await customFetch.patch(
       `/category/update/${category._id}`,
@@ -205,12 +205,15 @@ const EditCategory = () => {
               {/* Parent */}
               <Card className="col-2-item" size="large" title={`Parent`}>
                 <Typography.Title className="input-title">
-                  Category parent
+                  {isHaveChild
+                    ? "Please remove all children"
+                    : "Category parent"}
                 </Typography.Title>
                 <Form.Item name="parent">
                   <Select
                     allowClear
                     size="large"
+                    disabled={isHaveChild}
                     placeholder="Select Parent"
                     options={categories?.map((item) => {
                       return {

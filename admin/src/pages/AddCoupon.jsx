@@ -176,6 +176,7 @@ const AddCoupon = () => {
                         <Form.Item name="numberOfUses">
                           <InputNumber
                             required
+                            style={{ width: "100%" }}
                             size="large"
                             placeholder="Enter Number"
                           />
@@ -275,6 +276,7 @@ const AddCoupon = () => {
                   required
                   value={[startDate, endDate]}
                   size="large"
+                  style={{ width: "100%" }}
                   onChange={handleDateRangeChange}
                 />
               </Card>

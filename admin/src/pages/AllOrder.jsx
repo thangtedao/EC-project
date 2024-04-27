@@ -193,7 +193,7 @@ const AllOrder = () => {
     },
     {
       title: "Customer",
-      width: 150,
+      width: 200,
       dataIndex: "user",
       key: "user",
       fixed: "left",
@@ -207,17 +207,21 @@ const AllOrder = () => {
       width: 150,
       render: (totalAmount) =>
         totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.totalAmount - b.totalAmount,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 150,
       render: (createdAt) => createdAt.split("T")[0],
     },
     {
       title: "Time",
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 150,
       render: (createdAt) => createdAt.split("T")[1].split(".")[0],
     },
     {

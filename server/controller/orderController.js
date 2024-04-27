@@ -77,7 +77,7 @@ export const createOrder = async (req, res) => {
     const user = await User.findById(userId);
 
     const newOrder = new Order({
-      user: { id: user._id, fullName: user.fullName },
+      user: user._id,
       orderItem: orderItem,
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
@@ -121,9 +121,9 @@ export const getOrders = async (req, res) => {
     );
 
     let query;
-    if (req.user.role === "admin" && req.query.admin)
+    if (req.user.role === "admin" && req.query.admin) {
       query = Order.find(JSON.parse(queryStr));
-    else {
+    } else {
       query = Order.find({ user: req.user.userId });
       if (queryStr !== "{}") {
         query.find(JSON.parse(queryStr));
@@ -151,6 +151,8 @@ export const getOrders = async (req, res) => {
       query = query.populate(item);
     }
 
+    query.populate({ path: "user", select: ["fullName"] });
+
     if (req.query.page) {
       const page = req.query.page;
       const limit = req.query.limit;
@@ -173,7 +175,7 @@ export const getOrders = async (req, res) => {
 export const getOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).populate("user");
     res.status(StatusCodes.OK).json(order);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -371,6 +373,19 @@ export const showStats = async (req, res) => {
             $gte: startDate,
             $lte: endDate,
           },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          user: { $arrayElemAt: ["$userData", 0] },
         },
       },
       {

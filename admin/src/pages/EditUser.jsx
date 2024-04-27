@@ -43,7 +43,7 @@ const EditUser = () => {
   const { user, orders } = useLoaderData();
   const navigate = useNavigate();
 
-  const userOrders = orders.filter((order) => order.user.id === user._id);
+  const userOrders = orders.filter((order) => order.user._id === user._id);
   user.totalSpent = userOrders.reduce(
     (total, order) => total + order.totalAmount,
     0

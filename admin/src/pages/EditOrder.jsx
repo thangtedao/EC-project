@@ -51,8 +51,6 @@ const EditOrder = () => {
   const order = useLoaderData();
   const navigate = useNavigate();
 
-  console.log(order);
-
   const onFinish = async (values) => {
     console.log(values);
     const updatedOrder = await customFetch.patch(
@@ -293,30 +291,47 @@ const EditOrder = () => {
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Delivery Address: </Typography.Text>
-                  <Typography.Text>{order.user?.address}</Typography.Text>
+                  <Typography.Text>{order.shippingAddress}</Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
-                  <Typography.Text strong>
-                    Status: {order.status}
-                  </Typography.Text>
-                  <Tag color="red" size="large">
-                    Cancelled
-                  </Tag>
-                  <Tag color="green" size="large">
-                    Delivered
-                  </Tag>
-                  <Tag color="orange" size="large">
-                    Processing
-                  </Tag>
-                  <Tag color="gold" size="large">
-                    Pending
-                  </Tag>
-                  <Tag color="blue" size="large">
-                    Shipped
-                  </Tag>
+                  <Typography.Text strong>Status:</Typography.Text>
+                  {(() => {
+                    switch (order.status) {
+                      case "Pending":
+                        return (
+                          <Tag color="gold" size="large">
+                            Pending
+                          </Tag>
+                        );
+                      case "Processing":
+                        return (
+                          <Tag color="orange" size="large">
+                            Processing
+                          </Tag>
+                        );
+                      case "Delivering":
+                        return (
+                          <Tag color="blue" size="large">
+                            Delivering
+                          </Tag>
+                        );
+                      case "Delivered":
+                        return (
+                          <Tag color="green" size="large">
+                            Delivered
+                          </Tag>
+                        );
+                      default:
+                        return (
+                          <Tag color="red" size="large">
+                            Cancelled
+                          </Tag>
+                        );
+                    }
+                  })()}
                 </Space>
               </Card>
               <Card className="col-2-item" size="large" title={`Change Status`}>

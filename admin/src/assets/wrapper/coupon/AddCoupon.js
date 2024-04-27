@@ -64,9 +64,11 @@ const Wrapper = styled.div`
     gap: 10px;
   }
   .customer-item-1 {
+    width: 30%;
     box-sizing: border-box;
   }
   .customer-item-2 {
+    width: 30%;
     box-sizing: border-box;
   }
 `;

@@ -3,10 +3,7 @@ import { ORDER_STATUS } from "../utils/constants.js";
 import { timeStamp } from "../utils/timezone.js";
 
 const orderSchema = mongoose.Schema({
-  user: {
-    id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    fullName: String,
-  },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   orderItem: [
     {
       product: {

@@ -41,11 +41,16 @@ export const loader = async ({ request }) => {
       products,
     } = response.data;
 
+    const ordersData = await customFetch
+      .get(`/order/?admin=true`)
+      .then(({ data }) => data);
+
     return {
       start,
       end,
       products,
       orders,
+      ordersData,
       monthlyApplications,
       dailyApplications,
       totalRevenue,
@@ -66,6 +71,7 @@ const Dashboard = () => {
     end,
     products,
     orders,
+    ordersData,
     monthlyApplications,
     dailyApplications,
     totalRevenue,
@@ -121,6 +127,7 @@ const Dashboard = () => {
         dailyStats,
         startDate,
         endDate,
+        ordersData,
       }}
     >
       <HelmetProvider>
@@ -201,7 +208,7 @@ const Dashboard = () => {
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
               <Card className="col-2-item" size="large" title={"Order Status"}>
-                {/* <ChartPie /> */}
+                <ChartPie />
               </Card>
               <Card
                 className="col-2-item"

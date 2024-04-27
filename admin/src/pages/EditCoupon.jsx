@@ -205,6 +205,7 @@ const EditCoupon = () => {
                         <Form.Item name="numberOfUses">
                           <InputNumber
                             required
+                            style={{ width: "100%" }}
                             size="large"
                             placeholder="Enter Number"
                           />
@@ -302,36 +303,11 @@ const EditCoupon = () => {
                 </Typography.Title>
                 <RangePicker
                   required
+                  style={{ width: "100%" }}
                   value={[startDate, endDate]}
                   size="large"
                   onChange={handleDateRangeChange}
                 />
-
-                {/* <Typography.Title className="input-title">
-                  Day Start
-                </Typography.Title>
-                <Form.Item name="startDate">
-                  <DatePicker
-                    required
-                    size="large"
-                    style={{ width: "100%" }}
-                    onChange={onChange}
-                    // needConfirm
-                  />
-                </Form.Item>
-
-                <Typography.Title className="input-title">
-                  Day End
-                </Typography.Title>
-                <Form.Item name="endDate">
-                  <DatePicker
-                    required
-                    size="large"
-                    style={{ width: "100%" }}
-                    onChange={onChange}
-                    // needConfirm
-                  />
-                </Form.Item> */}
               </Card>
             </div>
           </div>
