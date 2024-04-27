@@ -129,7 +129,7 @@ const EditOrder = () => {
                             <Image
                               width={70}
                               src={
-                                item.product?.images[0] ||
+                                item.product?.image ||
                                 "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                               }
                             />

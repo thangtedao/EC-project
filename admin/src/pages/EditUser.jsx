@@ -30,7 +30,7 @@ export const loader = async ({ params }) => {
       .then(({ data }) => data);
 
     const orders = await customFetch
-      .get(`/order/?user=${user._id}`)
+      .get(`/order/?user.id=${user._id}&admin=true`)
       .then(({ data }) => data);
 
     return { user, orders };
@@ -43,7 +43,7 @@ const EditUser = () => {
   const { user, orders } = useLoaderData();
   const navigate = useNavigate();
 
-  const userOrders = orders.filter((order) => order.user._id === user._id);
+  const userOrders = orders.filter((order) => order.user.id === user._id);
   user.totalSpent = userOrders.reduce(
     (total, order) => total + order.totalAmount,
     0
@@ -264,7 +264,7 @@ const EditUser = () => {
                 title={`Orders`}
                 extra={`Total spent ${user.totalSpent
                   .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}vnđ on ${
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ on ${
                   orders.length
                 } orders`}
               >

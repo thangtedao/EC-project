@@ -13,7 +13,9 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+    const orders = await customFetch
+      .get(`/order/?admin=true`)
+      .then(({ data }) => data);
 
     const users = await customFetch
       .get("/user/admin/all-users")
@@ -21,6 +23,7 @@ export const loader = async ({ request }) => {
 
     return { users, orders };
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -63,7 +66,7 @@ const AllUser = () => {
   // });
 
   users.forEach((user) => {
-    const userOrders = orders.filter((order) => order.user._id === user._id);
+    const userOrders = orders.filter((order) => order.user.id === user._id);
     user.numOfOrder = userOrders.length;
     user.totalSpent = userOrders.reduce(
       (total, order) => total + order.totalAmount,
@@ -176,7 +179,7 @@ const AllUser = () => {
           }}
         >
           <EditOutlined />
-          Edit
+          View
         </Dropdown.Button>
       ),
     },

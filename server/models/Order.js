@@ -4,8 +4,8 @@ import { timeStamp } from "../utils/timezone.js";
 
 const orderSchema = mongoose.Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    fullName: String,
   },
   orderItem: [
     {
@@ -13,7 +13,7 @@ const orderSchema = mongoose.Schema({
         id: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
         name: String,
         price: Number,
-        images: Array,
+        image: String,
       },
       variant: {
         id: { type: mongoose.Schema.Types.ObjectId, ref: "ProductVariation" },

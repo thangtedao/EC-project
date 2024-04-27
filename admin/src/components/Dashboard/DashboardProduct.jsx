@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 `;
 
 const DashboardProduct = () => {
-  const { products, orders, startDate, endDate } = useDashboardContext();
+  const { monthlyProducts } = useDashboardContext();
   const navigate = useNavigate();
 
   // products.map((product) => {
@@ -34,20 +34,19 @@ const DashboardProduct = () => {
   //   product.sold = sold;
   // });
 
-  products.forEach((product) => {
-    product.sold = orders.reduce((total, order) => {
-      return (
-        total +
-        order.orderItem.filter((item) => product._id === item.product.id).length
-      );
-    }, 0);
-  });
+  // products.forEach((product) => {
+  //   product.sold = orders.reduce((total, order) => {
+  //     return (
+  //       total +
+  //       order.orderItem.filter((item) => product._id === item.product.id).length
+  //     );
+  //   }, 0);
+  // });
 
   const handleEditProduct = (id) => {
     navigate(`/edit-product/${id}`);
   };
 
-  //Select row
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -78,11 +77,11 @@ const DashboardProduct = () => {
   const columns = [
     {
       title: "Image",
-      dataIndex: "images",
+      dataIndex: "image",
       width: 80,
-      key: "images",
+      key: "image",
       fixed: "left",
-      render: (images) => <Image width={50} height={50} src={images[0]} />,
+      render: (image) => <Image width={50} height={50} src={image} />,
     },
     {
       title: "Name",
@@ -94,11 +93,11 @@ const DashboardProduct = () => {
     },
     {
       title: "Sold",
-      dataIndex: "sold",
-      key: "sold",
+      dataIndex: "totalSold",
+      key: "totalSold",
       width: 70,
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.sold - b.sold,
+      sorter: (a, b) => a.totalSold - b.totalSold,
     },
     {
       title: "Status",
@@ -114,7 +113,7 @@ const DashboardProduct = () => {
         } else if (status === "Discontinued") {
           color = "red";
         }
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+        return <Tag color={color}>{status?.toUpperCase()}</Tag>;
       },
       filters: Object.keys(PRODUCT_STATUS).map((key) => {
         return {
@@ -167,7 +166,7 @@ const DashboardProduct = () => {
           }}
           pagination={paginationConfig}
           columns={columns}
-          dataSource={products?.map((product) => ({
+          dataSource={monthlyProducts?.map((product) => ({
             ...product,
             key: product._id,
           }))}

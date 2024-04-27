@@ -62,7 +62,7 @@ export const createOrder = async (req, res) => {
           id: item.product._id,
           name: item.product.name,
           price: item.product.salePrice,
-          images: item.product.images,
+          image: item.product.images[0],
         },
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
@@ -77,7 +77,7 @@ export const createOrder = async (req, res) => {
     const user = await User.findById(userId);
 
     const newOrder = new Order({
-      user: userId,
+      user: { id: user._id, fullName: user.fullName },
       orderItem: orderItem,
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
@@ -105,7 +105,14 @@ export const createOrder = async (req, res) => {
 export const getOrders = async (req, res) => {
   try {
     const queryObj = { ...req.query };
-    const excludeFields = ["page", "sort", "limit", "fields", "populate"];
+    const excludeFields = [
+      "page",
+      "sort",
+      "limit",
+      "fields",
+      "populate",
+      "admin",
+    ];
     excludeFields.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(
@@ -114,8 +121,9 @@ export const getOrders = async (req, res) => {
     );
 
     let query;
-    if (req.user.role === "admin") query = Order.find(JSON.parse(queryStr));
-    else if (req.user.role === "user") {
+    if (req.user.role === "admin" && req.query.admin)
+      query = Order.find(JSON.parse(queryStr));
+    else {
       query = Order.find({ user: req.user.userId });
       if (queryStr !== "{}") {
         query.find(JSON.parse(queryStr));
@@ -143,13 +151,6 @@ export const getOrders = async (req, res) => {
       query = query.populate(item);
     }
 
-    query.populate([
-      {
-        path: "user",
-        select: ["fullName"],
-      },
-    ]);
-
     if (req.query.page) {
       const page = req.query.page;
       const limit = req.query.limit;
@@ -164,6 +165,7 @@ export const getOrders = async (req, res) => {
     const orders = await query;
     res.status(StatusCodes.OK).json(orders);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
@@ -171,7 +173,7 @@ export const getOrders = async (req, res) => {
 export const getOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id).populate("user");
+    const order = await Order.findById(id);
     res.status(StatusCodes.OK).json(order);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -362,7 +364,42 @@ export const showStats = async (req, res) => {
     endDate.setDate(endDate.getDate() + 1);
 
     /* CALCULATE THE STATS */
-    const result = await Order.aggregate([
+    const orders = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $addFields: {
+          totalProduct: { $sum: "$orderItem.quantity" },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          orders: {
+            $addToSet: {
+              _id: "$_id",
+              user: "$user",
+              totalAmount: "$totalAmount",
+              status: "$status",
+              createdAt: "$createdAt",
+              totalProduct: "$totalProduct",
+            },
+          },
+        },
+      },
+    ]);
+
+    const products = await Order.aggregate([
       {
         $match: {
           createdAt: {
@@ -376,37 +413,54 @@ export const showStats = async (req, res) => {
       },
       {
         $group: {
-          _id: {
-            orderId: "$_id",
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
-            day: { $dayOfMonth: "$createdAt" },
-          },
-          products: {
-            $addToSet: {
-              name: "$orderItem.product.name",
-              quantity: "$orderItem.quantity",
-              variant: "$orderItem.variant._id",
-            },
-          },
-          totalAmount: { $first: "$totalAmount" },
-          totalProduct: { $sum: "$orderItem.quantity" },
+          _id: "$orderItem.product.id",
+          name: { $first: "$orderItem.product.name" },
+          price: { $first: "$orderItem.product.price" },
+          image: { $first: "$orderItem.product.image" },
+          totalSold: { $sum: 1 },
         },
       },
     ]);
 
-    let totalCount = result.length || 0;
+    let totalOrder = 0;
     let totalRevenue = 0;
     let totalProduct = 0;
-    if (result.length > 0) {
-      result.map((item) => {
-        totalRevenue += item.totalAmount;
-        totalProduct += item.totalProduct;
+    if (orders.length > 0) {
+      orders.forEach((item) => {
+        item.orders.forEach((order) => {
+          totalRevenue += order.totalAmount;
+          totalProduct += order.totalProduct;
+          totalOrder++;
+        });
       });
     }
 
     /* FORMAT DATA TO SHOW IN GRAPH */
     let monthlyApplications = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1 },
+      },
+      { $limit: 12 },
+    ]);
+
+    let dailyApplications = await Order.aggregate([
       {
         $match: {
           createdAt: {
@@ -428,27 +482,17 @@ export const showStats = async (req, res) => {
       {
         $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
       },
-      { $limit: 12 },
+      { $limit: 20 },
     ]);
-
-    monthlyApplications = monthlyApplications
-      .map((item) => {
-        const {
-          _id: { month },
-          totalRevenue,
-        } = item;
-        const date = day()
-          .month(month - 1)
-          .format("MMMM");
-        return { date, totalRevenue };
-      })
-      .reverse();
 
     res.json({
       monthlyApplications,
+      dailyApplications,
       totalRevenue,
-      totalCount,
+      totalOrder,
       totalProduct,
+      orders,
+      products,
     });
   } catch (error) {
     console.log(error);

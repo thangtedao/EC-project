@@ -22,24 +22,36 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    const endDate = dayjs().startOf("day").format(dateFormat);
-    const startDate = dayjs()
-      .subtract(12, "month")
+    const end = dayjs().startOf("day").format(dateFormat);
+    const start = dayjs()
+      .subtract(1, "month")
       .startOf("day")
-      .format("YYYY-MM-DD");
+      .format(dateFormat);
     const response = await customFetch.post("/order/stats", {
-      startDate,
-      endDate,
+      startDate: start,
+      endDate: end,
     });
-    const { monthlyApplications } = response.data;
+    const {
+      monthlyApplications,
+      dailyApplications,
+      totalRevenue,
+      totalOrder,
+      totalProduct,
+      orders,
+      products,
+    } = response.data;
 
-    const products = await customFetch
-      .get(`/product/?populate=category`)
-      .then(({ data }) => data);
-
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
-
-    return { products, orders, monthlyApplications };
+    return {
+      start,
+      end,
+      products,
+      orders,
+      monthlyApplications,
+      dailyApplications,
+      totalRevenue,
+      totalOrder,
+      totalProduct,
+    };
   } catch (error) {
     if (error?.response?.status === 403) return redirect("/login");
     return error;
@@ -49,7 +61,17 @@ export const loader = async ({ request }) => {
 const DashboardContext = createContext();
 
 const Dashboard = () => {
-  const { products, orders, monthlyApplications } = useLoaderData();
+  const {
+    start,
+    end,
+    products,
+    orders,
+    monthlyApplications,
+    dailyApplications,
+    totalRevenue,
+    totalOrder,
+    totalProduct,
+  } = useLoaderData();
 
   const [showWarningMessage, setShowWarningMessage] = useState(false);
   useEffect(() => {
@@ -59,9 +81,12 @@ const Dashboard = () => {
     }
   }, [showWarningMessage]);
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(dayjs(start));
+  const [endDate, setEndDate] = useState(dayjs(end));
   const [monthlyStats, setMonthlyStats] = useState(monthlyApplications);
+  const [dailyStats, setDailyStats] = useState(dailyApplications);
+  const [monthlyOrders, setmonthlyOrders] = useState(orders);
+  const [monthlyProducts, setMonthlyProducts] = useState(products);
 
   const handleDateRangeChange = (dates) => {
     if (dates) {
@@ -78,6 +103,9 @@ const Dashboard = () => {
           endDate: endDate.format(dateFormat),
         });
         setMonthlyStats(response.data.monthlyApplications);
+        setDailyStats(response.data.dailyApplications);
+        setmonthlyOrders(response.data.orders);
+        setMonthlyProducts(response.data.products);
       } else setShowWarningMessage(true);
     } catch (error) {
       return;
@@ -86,7 +114,14 @@ const Dashboard = () => {
 
   return (
     <DashboardContext.Provider
-      value={{ products, orders, monthlyStats, startDate, endDate }}
+      value={{
+        monthlyProducts,
+        monthlyOrders,
+        monthlyStats,
+        dailyStats,
+        startDate,
+        endDate,
+      }}
     >
       <HelmetProvider>
         <Wrapper>
@@ -166,7 +201,7 @@ const Dashboard = () => {
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
               <Card className="col-2-item" size="large" title={"Order Status"}>
-                <ChartPie />
+                {/* <ChartPie /> */}
               </Card>
               <Card
                 className="col-2-item"

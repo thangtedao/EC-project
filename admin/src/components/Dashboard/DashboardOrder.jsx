@@ -19,8 +19,13 @@ const Wrapper = styled.div`
 `;
 
 const DashboardOrder = () => {
-  const { orders, startDate, endDate } = useDashboardContext();
+  const { monthlyOrders } = useDashboardContext();
   const navigate = useNavigate();
+
+  let orders = [];
+  monthlyOrders.forEach((item) => {
+    item.orders.forEach((order) => orders.push(order));
+  });
 
   const handleEditOrder = (id) => {
     navigate(`/edit-order/${id}`);
@@ -33,7 +38,7 @@ const DashboardOrder = () => {
       dataIndex: "_id",
       key: "_id",
       // fixed: "left",
-      render: (_id) => "#" + _id.slice(18),
+      render: (_id) => "#" + _id?.slice(18),
     },
     {
       title: "Customer",
@@ -48,14 +53,22 @@ const DashboardOrder = () => {
       width: 110,
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (createdAt) => createdAt.split("T")[0],
+      render: (createdAt) => createdAt?.split("T")[0],
     },
     {
       title: "Time",
       width: 110,
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (createdAt) => createdAt.split("T")[1].split(".")[0],
+      render: (createdAt) => createdAt?.split("T")[1].split(".")[0],
+    },
+    {
+      title: "Total",
+      width: 120,
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (totalAmount) =>
+        totalAmount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
       title: "Status",
@@ -75,7 +88,7 @@ const DashboardOrder = () => {
         } else if (status === "Delivering") {
           color = "blue";
         }
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+        return <Tag color={color}>{status?.toUpperCase()}</Tag>;
       },
     },
     {
@@ -130,7 +143,7 @@ const DashboardOrder = () => {
             key: order._id,
           }))}
           onChange={onChange}
-          scroll={{ x: 710 }}
+          scroll={{ x: 830 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

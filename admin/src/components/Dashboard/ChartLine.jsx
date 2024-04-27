@@ -8,37 +8,66 @@ const Wrapper = styled.div`
 `;
 
 const ChartLine = () => {
-  const { monthlyStats, startDate, endDate } = useDashboardContext();
+  const { monthlyStats, dailyStats, startDate, endDate } =
+    useDashboardContext();
 
-  const month = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const numOfDays = endDate.diff(startDate, "day");
 
-  const data = month.map((item) => {
-    let totalRevenue = 0;
-    let found = false;
-    monthlyStats.forEach((element) => {
-      if (element.date === item && !found) {
-        totalRevenue += element.totalRevenue;
-        found = true;
-      }
-    });
-    return {
-      date: item,
-      revenue: totalRevenue,
-    };
-  });
+  let data = [];
+  if (numOfDays <= 10 || dailyStats.length <= 9) {
+    data = dailyStats
+      .map((item) => {
+        return {
+          date:
+            item._id.day +
+            "/" +
+            item._id.month +
+            "/" +
+            item._id.year.toString().slice(2, 4),
+          revenue: item.totalRevenue,
+        };
+      })
+      .reverse();
+  } else {
+    data = monthlyStats
+      .map((item) => {
+        return {
+          date: item._id.month + "/" + item._id.year,
+          revenue: item.totalRevenue,
+        };
+      })
+      .reverse();
+  }
+
+  // const month = [
+  //   "January",
+  //   "February",
+  //   "March",
+  //   "April",
+  //   "May",
+  //   "June",
+  //   "July",
+  //   "August",
+  //   "September",
+  //   "October",
+  //   "November",
+  //   "December",
+  // ];
+
+  // const data = month.map((item) => {
+  //   let totalRevenue = 0;
+  //   let found = false;
+  //   monthlyStats.forEach((element) => {
+  //     if (element.date === item && !found) {
+  //       totalRevenue += element.totalRevenue;
+  //       found = true;
+  //     }
+  //   });
+  //   return {
+  //     date: item,
+  //     revenue: totalRevenue,
+  //   };
+  // });
 
   const config = {
     data,
