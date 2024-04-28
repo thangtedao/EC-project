@@ -200,7 +200,10 @@ const AllCoupon = () => {
         record.discountType === "percentage" ? (
           <p>{discountValue + "%"}</p>
         ) : (
-          <p>{discountValue + "₫"}</p>
+          <p>
+            {discountValue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+              "₫"}
+          </p>
         ),
       filters: [
         {

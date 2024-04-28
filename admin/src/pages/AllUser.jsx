@@ -261,7 +261,7 @@ const AllUser = () => {
     },
     {
       title: "Rank",
-      width: 80,
+      width: 110,
       dataIndex: "rank",
       key: "rank",
       render: (rank) => rank?.toUpperCase(),
@@ -286,16 +286,11 @@ const AllUser = () => {
       onFilter: (value, record) => record?.rank === value,
     },
     {
-      title: "Last Activity",
-      dataIndex: "activity",
-      key: "activity",
-      width: 150,
-    },
-    {
       title: "Status",
       dataIndex: "isBlocked",
       key: "isBlocked",
       width: 100,
+      render: (isBlocked) => (isBlocked ? "Disabled" : "Active"),
     },
     {
       title: "Action",

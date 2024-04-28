@@ -34,6 +34,28 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 1rem;
   }
+
+  .model {
+    width: 150px;
+    height: 50px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .active {
+    border: 1px solid #f52f32;
+  }
+  .model-info {
+    display: flex;
+    gap: 5px;
+  }
+
   .sliding-product-image {
     width: 100%;
     box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);

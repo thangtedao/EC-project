@@ -11,7 +11,6 @@ import Logo from "../assets/logo/NovaCoupon.svg";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { FileCopyOutlined } from "@mui/icons-material";
 import Button from "@mui/material/Button";
-import { Input } from "antd";
 import { redirect, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { useState } from "react";
@@ -42,8 +41,6 @@ const Coupon = () => {
   const [coupons, setCoupon] = useState(coupon);
   const [code, setCode] = useState();
 
-  const { Search } = Input;
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard!");
@@ -51,13 +48,15 @@ const Coupon = () => {
 
   const saveCoupon = async () => {
     try {
-      await customFetch.patch("/user/coupon", { code });
+      if (code) {
+        await customFetch.patch("/user/coupon", { code });
 
-      const fetchCoupon = await customFetch
-        .get("/user/coupon")
-        .then(({ data }) => data.coupon);
+        const fetchCoupon = await customFetch
+          .get("/user/coupon")
+          .then(({ data }) => data.coupon);
 
-      setCoupon(fetchCoupon);
+        setCoupon(fetchCoupon);
+      } else toast.warning("Chưa nhập gì kìa");
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }
@@ -74,26 +73,19 @@ const Coupon = () => {
         <div
           style={{
             width: "30%",
-            margin: "0 auto",
             marginBottom: "20px",
             marginTop: "30px",
+            display: "flex",
           }}
         >
-          <Search
-            placeholder="Nhập mã giảm giá"
-            allowClear
-            enterButton="Lưu"
-            size="large"
+          <TextField
+            required
+            size="small"
+            label="Coupon"
+            placeholder="Enter coupon"
+            onChange={(event) => setCode(event.target.value)}
           />
-          <div>
-            <TextField
-              size="small"
-              label="Coupon"
-              placeholder="Enter coupon"
-              onChange={(event) => setCode(event.target.value)}
-            />
-            <button onClick={() => saveCoupon()}>Lưu</button>
-          </div>
+          <button onClick={() => saveCoupon()}>Lưu</button>
         </div>
 
         <div style={{ width: "100%" }}>

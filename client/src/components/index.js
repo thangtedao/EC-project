@@ -9,6 +9,7 @@ export { default as PriceSlider } from "./category/PriceSlider";
 export { default as PayPalButton } from "./payment/PayPalButton";
 export { default as VnPayButton } from "./payment/VnPayButton";
 export { default as ListItem } from "./payment/ListItem";
+export { default as WishlistItem } from "./wishlist/WishlistItem";
 export { default as Header } from "./Header";
 export { default as Footer } from "./Footer";
 export { default as ProductCard } from "./ProductCard";

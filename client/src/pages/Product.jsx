@@ -175,33 +175,35 @@ const Product = () => {
             <div className="top-container-column-2">
               {/* VARIANT */}
               <div style={{ display: "flex", gap: 20 }}>
-                {relateModel?.map((item) => {
-                  return (
-                    <div
-                      style={{
-                        width: 100,
-                        height: 50,
-                        border: "1px solid black",
-                        display: "flex",
-                        flexDirection: "column",
-                        cursor: "pointer",
-                      }}
-                      key={item._id}
-                      onClick={() => navigate(`/product/${item._id}`)}
-                    >
-                      <div>
-                        {item.attribute.map((i) => {
-                          return (
-                            <span key={i._id}>
-                              {i.mainAttribute && i.attributeValue}
-                            </span>
-                          );
-                        })}
+                {relateModel?.length > 1 &&
+                  relateModel?.map((item) => {
+                    return (
+                      <div
+                        className={
+                          item._id === product._id ? "model active" : "model"
+                        }
+                        key={item._id}
+                        onClick={() => navigate(`/product/${item._id}`)}
+                      >
+                        <div className="model-info">
+                          {item.attribute.map((i) => {
+                            if (i.mainAttribute)
+                              return (
+                                <span style={{ fontWeight: "700" }} key={i._id}>
+                                  {i.attributeValue}
+                                </span>
+                              );
+                          })}
+                        </div>
+                        <span>
+                          {item.salePrice
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                          đ
+                        </span>
                       </div>
-                      <span>{item.salePrice}</span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
 
               <div className="box-product-price">
@@ -224,7 +226,7 @@ const Product = () => {
                 <button
                   className="btn-buynow"
                   onClick={() => [
-                    addToCart(product, variant),
+                    addToCart(product, selectedVariants),
                     navigate("/cart"),
                   ]}
                 >

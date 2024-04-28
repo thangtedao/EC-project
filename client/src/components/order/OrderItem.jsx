@@ -25,7 +25,7 @@ const OrderItem = ({ order, cancelOrder }) => {
               Discount Amount:{" "}
               <span className="normal-text">
                 {order.discountAmount
-                  .toString()
+                  ?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                 ₫
               </span>
@@ -79,7 +79,9 @@ const OrderItem = ({ order, cancelOrder }) => {
                   <span style={{ fontSize: 15 }}>₫</span>
                 </span>
                 <span className="strike">
-                  {item.product.price}
+                  {item.product.price
+                    ?.toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                   <span style={{ fontSize: 12 }}>₫</span>
                 </span>
               </div>

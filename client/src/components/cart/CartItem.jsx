@@ -1,11 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useCartContext } from "../../pages/Cart";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const CartItem = ({ item }) => {
-  const user = useSelector((state) => state.user.user);
   const { increaseQuantity, descreaseQuantity, removeFromCart } =
     useCartContext();
 
@@ -30,12 +28,14 @@ const CartItem = ({ item }) => {
               ? item.variant?.price + item.product.salePrice
               : item.product.salePrice
             )
-              .toString()
+              ?.toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             <span style={{ fontSize: 15 }}>₫</span>
           </span>
           <span className="strike">
-            {item.product.price}
+            {item.product.price
+              ?.toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             <span style={{ fontSize: 12 }}>₫</span>
           </span>
 

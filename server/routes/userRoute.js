@@ -7,11 +7,11 @@ import {
   deleteUser,
   updateUser,
   blockUser,
-  unblockUser,
-  getWishlist,
   addToWishlist,
   addCoupon,
   getCoupons,
+  removeFromWishlist,
+  getWishlist,
 } from "../controller/userController.js";
 import {
   authenticateUser,
@@ -29,16 +29,12 @@ router.patch(
   updateUser
 );
 
-router.patch("/wishlist", authenticateUser, addToWishlist);
+router.patch("/wishlist/add", authenticateUser, addToWishlist);
+router.patch("/wishlist/remove", authenticateUser, removeFromWishlist);
 router.get("/wishlist", authenticateUser, getWishlist);
 
 router.patch("/coupon", authenticateUser, addCoupon);
 router.get("/coupon", authenticateUser, getCoupons);
-
-// router.post("/cart", authenticateUser, setUserCart);
-// router.get("/cart", authenticateUser, getUserCart);
-// router.delete("/empty-cart", authenticateUser, emptyCart);
-// router.post("/cart/apply-coupon", applyCoupon);
 
 /* ADMIN */
 router.get(
@@ -64,11 +60,6 @@ router.patch(
   authenticateUser,
   authorizePermissions("admin"),
   blockUser
-);
-router.patch(
-  "/admin/unblock-user/:id",
-  authorizePermissions("admin"),
-  unblockUser
 );
 
 export default router;

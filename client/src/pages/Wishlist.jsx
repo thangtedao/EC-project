@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Wrapper from "../assets/wrappers/Wishlist.js";
 import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
@@ -12,10 +12,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { addToCart } from "../state/cartSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { debounce } from "lodash";
 import NovaIcon from "../assets/logo/LogoNova.svg";
+import { WishlistItem } from "../components";
 
 export const loader = async () => {
   try {
@@ -23,8 +21,12 @@ export const loader = async () => {
       .get("/user/current-user")
       .then(({ data }) => data.user);
 
-    const wishlist = customFetch.get("/user/wishlist").then(({ data }) => data);
-    return wishlist;
+    const wishlist = await customFetch
+      .get("/user/wishlist")
+      .then(({ data }) => data);
+
+    window.scrollTo(0, 0);
+    return { user, wishlist };
   } catch (error) {
     if (error?.response?.status === 401) return redirect("/login");
     console.log(error);
@@ -33,32 +35,13 @@ export const loader = async () => {
 };
 
 const Wishlist = () => {
-  window.scrollTo(0, 0);
+  const { wishlist } = useLoaderData();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const user = useSelector((state) => state.user.user);
-
-  const addToCartBtn = debounce((product, user) => {
-    dispatch(addToCart({ product: { ...product, count: 1 }, user }));
-    toast.success("Thêm vào giỏ thành công", {
-      position: "top-center",
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-  }, 100);
 
   const removeFromWishlist = async (id) => {
     try {
-      await customFetch.patch("/user/wishlist", {
+      await customFetch.patch("/user/wishlist/remove", {
         productId: id,
-      });
-      toast.success("Đã xóa sản phẩm ghét", {
-        position: "top-center",
-        autoClose: 1000,
-        pauseOnHover: false,
-        theme: "colored",
       });
       navigate("/wishlist");
     } catch (error) {
@@ -67,7 +50,6 @@ const Wishlist = () => {
     }
   };
 
-  const wishlist = useLoaderData();
   return (
     <HelmetProvider>
       <Wrapper>
@@ -78,6 +60,17 @@ const Wishlist = () => {
         </Helmet>
 
         <div className="title">Danh sách yêu thích</div>
+        <div className="list-item">
+          {wishlist.map((item, idx) => {
+            return (
+              <WishlistItem
+                key={idx}
+                item={item}
+                removeFromWishlist={removeFromWishlist}
+              />
+            );
+          })}
+        </div>
         {wishlist.length > 0 ? (
           <div>
             <table>

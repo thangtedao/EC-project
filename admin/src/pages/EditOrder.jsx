@@ -157,7 +157,9 @@ const EditOrder = () => {
 
                       <div style={{ textAlign: "center" }}>
                         <Typography.Text strong>
-                          {item.priceAtOrder + "đ"}
+                          {item.priceAtOrder
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
                         </Typography.Text>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -167,7 +169,9 @@ const EditOrder = () => {
                       </div>
                       <div style={{ textAlign: "right" }}>
                         <Typography.Text strong>
-                          {item.subtotal + "đ"}
+                          {item.subtotal
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
                         </Typography.Text>
                       </div>
                     </List.Item>

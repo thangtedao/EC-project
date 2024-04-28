@@ -2,6 +2,10 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   .title {
     text-align: left;
     font-size: 1.5rem;

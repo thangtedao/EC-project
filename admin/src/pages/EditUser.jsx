@@ -17,6 +17,7 @@ import {
   Dropdown,
   Table,
 } from "antd";
+import { ORDER_STATUS } from "../utils/constants.js";
 
 export const loader = async ({ params }) => {
   try {
@@ -30,7 +31,7 @@ export const loader = async ({ params }) => {
       .then(({ data }) => data);
 
     const orders = await customFetch
-      .get(`/order/?user.id=${user._id}&admin=true`)
+      .get(`/order/?user=${user._id}&admin=true`)
       .then(({ data }) => data);
 
     return { user, orders };
@@ -60,13 +61,15 @@ const EditUser = () => {
       dataIndex: "_id",
       key: "_id",
       fixed: "left",
-      render: (_id) => "#" + _id.slice(18),
+      render: (_id) => "#" + _id?.slice(18),
     },
     {
       title: "Items",
       width: 70,
       key: "items",
-      render: (_, record) => record.orderItem.length,
+      render: (_, record) => record.orderItem?.length,
+      sorter: (a, b) => a.orderItem?.length - b.orderItem?.length,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "TotalAmount",
@@ -75,20 +78,22 @@ const EditUser = () => {
       width: 150,
       render: (totalAmount) =>
         totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.totalAmount - b.totalAmount,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Date",
       width: 120,
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (createdAt) => createdAt.split("T")[0],
+      render: (createdAt) => createdAt?.split("T")[0],
     },
     {
       title: "Time",
       width: 120,
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (createdAt) => createdAt.split("T")[1].split(".")[0],
+      render: (createdAt) => createdAt?.split("T")[1].split(".")[0],
     },
     {
       title: "Status",
@@ -108,8 +113,15 @@ const EditUser = () => {
         } else if (status === "Delivering") {
           color = "blue";
         }
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+        return <Tag color={color}>{status?.toUpperCase()}</Tag>;
       },
+      filters: Object.keys(ORDER_STATUS).map((key) => {
+        return {
+          text: ORDER_STATUS[key],
+          value: ORDER_STATUS[key],
+        };
+      }),
+      onFilter: (value, record) => record?.status === value,
     },
     {
       title: "Action",
@@ -139,6 +151,21 @@ const EditUser = () => {
     },
   ];
 
+  const onFinish = async (values) => {
+    try {
+      const response = await customFetch.patch(
+        `/user/admin/block-user/${user._id}`,
+        values
+      );
+      if (response) navigate(`/edit-user/${user._id}`);
+    } catch (error) {
+      return;
+    }
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -166,9 +193,9 @@ const EditUser = () => {
 
         <Form
           name="basic"
-          initialValues={{ remember: true }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+          initialValues={{ isBlocked: user?.isBlocked }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
@@ -208,18 +235,17 @@ const EditUser = () => {
                 </Space>
 
                 <Divider />
-
                 <Space wrap size={16}>
-                  <Typography.Text strong>Last Activity </Typography.Text>
-                  <Typography.Text size="large">
-                    {"Bố thằng nào biết được =)))"}
-                  </Typography.Text>
+                  <Typography.Text strong>Phone Number: </Typography.Text>
+                  <Typography.Text size="large">{user?.phone}</Typography.Text>
                 </Space>
 
                 <Divider />
                 <Space wrap size={16}>
-                  <Typography.Text strong>Last Order </Typography.Text>
-                  <Typography.Text size="large">6 days ago</Typography.Text>
+                  <Typography.Text strong>Last Order: </Typography.Text>
+                  <Typography.Text size="large">
+                    #{userOrders[0]?._id.slice(18)}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
@@ -241,12 +267,15 @@ const EditUser = () => {
                 <Form.Item name="isBlocked">
                   <Select
                     size="large"
-                    allowClear
                     placeholder="Select Status"
                     options={[
                       {
-                        value: "OK",
-                        label: "OK",
+                        value: true,
+                        label: "Disabled",
+                      },
+                      {
+                        value: false,
+                        label: "Active",
                       },
                     ]}
                   />

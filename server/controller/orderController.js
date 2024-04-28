@@ -151,7 +151,7 @@ export const getOrders = async (req, res) => {
       query = query.populate(item);
     }
 
-    query.populate({ path: "user", select: ["fullName"] });
+    query.populate({ path: "user", select: ["_id", "fullName"] });
 
     if (req.query.page) {
       const page = req.query.page;
@@ -209,153 +209,6 @@ export const cancelOrder = async (req, res) => {
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
-};
-
-export const showStatss = async (req, res) => {
-  /* SHOW STATS BY DATE */
-  let startDate = new Date(req.query.start);
-  let endDate = new Date(req.query.end);
-
-  if (!req.query.start && !req.query.end) {
-    endDate = new Date();
-    startDate = new Date(endDate);
-    startDate.setMonth(startDate.getMonth() - 10);
-  }
-
-  /* CALCULATE THE STATS */
-  const result = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $unwind: "$products",
-    },
-    {
-      $group: {
-        _id: {
-          orderId: "$_id",
-          year: { $year: "$createdAt" },
-          month: { $month: "$createdAt" },
-          day: { $dayOfMonth: "$createdAt" },
-        },
-        totalRevenue: { $first: "$totalPrice" },
-        totalProduct: { $sum: "$products.count" },
-      },
-    },
-  ]);
-
-  let totalCount = result.length || 0;
-  let totalRevenue = 0;
-  let totalProduct = 0;
-  if (result.length > 0) {
-    result.map((item) => {
-      totalRevenue += item.totalRevenue;
-      totalProduct += item.totalProduct;
-    });
-  }
-
-  /* PRODUCT MOST SOLD */
-  const productMostSold = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $unwind: "$products",
-    },
-    {
-      $group: {
-        _id: "$products.product",
-        totalQuantity: { $sum: "$products.count" },
-      },
-    },
-    {
-      $sort: { totalQuantity: -1 },
-    },
-    {
-      $limit: 5,
-    },
-    {
-      $lookup: {
-        from: "products",
-        localField: "_id",
-        foreignField: "_id",
-        as: "product",
-      },
-    },
-    {
-      $unwind: "$product",
-    },
-    {
-      $project: {
-        _id: "$product._id",
-        name: "$product.name",
-        slug: "$product.slug",
-        status: "$product.status",
-        sold: "$product.sold",
-        stockQuantity: "$product.stockQuantity",
-        price: "$product.price",
-        salePrice: "$product.salePrice",
-        images: "$product.images",
-        totalQuantity: 1,
-      },
-    },
-  ]);
-
-  /* FORMAT DATA TO SHOW IN GRAPH */
-  let monthlyApplications = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: {
-          year: { $year: "$createdAt" },
-          month: { $month: "$createdAt" },
-        },
-        totalRevenue: { $sum: "$totalPrice" },
-      },
-    },
-    {
-      $sort: { "_id.year": -1, "_id.month": -1 },
-    },
-    { $limit: 12 },
-  ]);
-
-  monthlyApplications = monthlyApplications
-    .map((item) => {
-      const {
-        _id: { month },
-        totalRevenue,
-      } = item;
-      const date = day()
-        .month(month - 1)
-        .format("MMMM");
-      return { date, totalRevenue };
-    })
-    .reverse();
-
-  res.json({
-    monthlyApplications,
-    totalRevenue,
-    totalCount,
-    totalProduct,
-    productMostSold,
-  });
 };
 
 export const showStats = async (req, res) => {
@@ -461,6 +314,13 @@ export const showStats = async (req, res) => {
         },
       },
       {
+        $match: {
+          status: {
+            $eq: "Delivered",
+          },
+        },
+      },
+      {
         $group: {
           _id: {
             year: { $year: "$createdAt" },
@@ -481,6 +341,13 @@ export const showStats = async (req, res) => {
           createdAt: {
             $gte: startDate,
             $lte: endDate,
+          },
+        },
+      },
+      {
+        $match: {
+          status: {
+            $eq: "Delivered",
           },
         },
       },

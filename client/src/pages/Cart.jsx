@@ -1,13 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 import Wrapper from "../assets/wrappers/Cart.js";
-import { useSelector } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { CartItem } from "../components";
 import { redirect, useNavigate, useLoaderData } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/logo/LogoNova.svg";
 import customFetch from "../utils/customFetch";
-import { debounce } from "lodash";
 
 export const loader = async () => {
   try {
@@ -36,7 +34,6 @@ const Cart = () => {
   const navigate = useNavigate();
   const { cart } = useLoaderData();
   const [cartItem, setCartItem] = useState(cart);
-  const user = useSelector((state) => state.user.user);
 
   const totalPrice =
     cartItem?.reduce(
@@ -50,12 +47,7 @@ const Cart = () => {
   const totalItem =
     cartItem?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
-  const submitPayment = () => {
-    if (!user) navigate("/login");
-    else navigate("/payment");
-  };
-
-  const increaseQuantity = async (item, user) => {
+  const increaseQuantity = async (item) => {
     const cart = await customFetch
       .patch("/cart/inc-qty", {
         cartItem: item,
@@ -64,7 +56,7 @@ const Cart = () => {
     cart && setCartItem(cart.cartItem);
   };
 
-  const descreaseQuantity = async (item, user) => {
+  const descreaseQuantity = async (item) => {
     const cart = await customFetch
       .patch("/cart/des-qty", {
         cartItem: item,
@@ -73,7 +65,7 @@ const Cart = () => {
     cart && setCartItem(cart.cartItem);
   };
 
-  const removeFromCart = async (item, user) => {
+  const removeFromCart = async (item) => {
     const cart = await customFetch
       .patch("/cart/remove-from-cart", {
         cartItem: item,
@@ -106,27 +98,18 @@ const Cart = () => {
           </div>
           {cartItem?.length <= 0 ? (
             <div className="cart-empty">
-              <p>Your cart is empty.</p>
-              <p>Hãy chọn thêm sản phẩm để mua sắm nhé</p>
+              <span>Giỏ hàng đang trống.</span>
+              <span>Hãy chọn thêm sản phẩm để mua sắm nhé</span>
             </div>
           ) : (
             <div className="cart-container">
-              {/* <div className="header-action">
-            <Checkbox
-              className="checkbox-btn"
-              icon={<CircleOutlinedIcon />}
-              checkedIcon={<CheckCircleIcon />}
-            />
-            Chọn tất cả
-          </div> */}
-
               {cartItem?.map((item, index) => {
                 return <CartItem key={index} item={item} />;
               })}
 
               <div className="bottom-bar">
                 <div className="price-temp">
-                  <span>Total Price</span>
+                  <span>Tổng tiền</span>
                   <span className="price">
                     {totalPrice
                       .toString()
@@ -135,8 +118,8 @@ const Cart = () => {
                   </span>
                 </div>
 
-                <button className="btn" onClick={() => submitPayment()}>
-                  Buy Now {`(${totalItem})`}
+                <button className="btn" onClick={() => navigate("/payment")}>
+                  Mua ngay {`(${totalItem})`}
                 </button>
               </div>
             </div>

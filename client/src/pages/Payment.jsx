@@ -137,7 +137,7 @@ const Payment = () => {
           <a onClick={() => navigate("/cart")}>
             <ArrowBackIcon />
           </a>
-          Payment Information
+          Thông tin thanh toán
         </div>
 
         <div className="list-item">
@@ -147,7 +147,7 @@ const Payment = () => {
         </div>
 
         <div className="form-info">
-          <p>Customer Information</p>
+          <p>Thông tin khách hàng</p>
           <div className="form-info-input">
             <div style={{ display: "flex", gap: "1.5rem" }}>
               <TextField
@@ -178,7 +178,7 @@ const Payment = () => {
         </div>
 
         <div className="form-info">
-          <p>Shipping Address</p>
+          <p>Địa chỉ giao hàng</p>
 
           <TextField
             size="small"
@@ -216,7 +216,7 @@ const Payment = () => {
         </div>
 
         {/* COUPON FIELD */}
-        <div style={{ marginTop: "1rem" }}>COUPON</div>
+        <div style={{ marginTop: "1rem" }}>MÃ GIẢM GIÁ</div>
         <div className="coupon-field">
           <TextField
             size="small"
@@ -225,7 +225,7 @@ const Payment = () => {
             onChange={(event) => setCode(event.target.value)}
           />
           <button className="btn-apply" onClick={() => applyCoupon(code)}>
-            Apply
+            Áp dụng
           </button>
         </div>
 
@@ -245,14 +245,14 @@ const Payment = () => {
 
         <div className="price">
           <div className="price-item">
-            <span>Subtotal:</span>
+            <span>Tạm tính:</span>
             <span>
               {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
             </span>
           </div>
           {coupon && (
             <div className="price-item">
-              <span>Discount Amount:</span>
+              <span>Mã giảm:</span>
               <span>
                 -
                 {(totalPrice - totalAmount)
@@ -264,7 +264,7 @@ const Payment = () => {
           )}
 
           <div className="price-item">
-            <span>Total Amount:</span>
+            <span>Tổng tiền:</span>
             <span>
               {totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}₫
             </span>
