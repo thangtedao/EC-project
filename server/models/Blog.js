@@ -1,20 +1,28 @@
 import mongoose from "mongoose";
 
 
-const replieCommentBlog = new mongoose.Schema({
-  content: {type: String},
-  isAdmin: Boolean,
-  nameUser: {type: String},
+const replyCommentBlog = new mongoose.Schema({
+  author: {type: String},
+  status: String,
+  role:String,
+  avatar: {type: String},
+  content: {type:String},
   byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+},
+{
+  timestamps: true,
 })
 const CommentBlog = mongoose.Schema({
   author: {type: String},
   status: String,
-  isAdmin: Boolean,
+  role:String,
   avatar: {type: String},
   content: {type:String},
   byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-  replies: [replieCommentBlog]
+  replies: [replyCommentBlog]
+},
+{
+  timestamps: true,
 })
 const BlogSchema = mongoose.Schema(
   {
@@ -22,13 +30,17 @@ const BlogSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+    imageTitle: String,
     description: {
       type: String,
       require: true,
     },
     content: String,
-    comment:[CommentBlog]
-
+    comments:[CommentBlog],
+    hasNewComment: {
+      type:Boolean,
+      default:false
+    }
   },
   {
     timestamps: true,

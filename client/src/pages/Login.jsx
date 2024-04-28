@@ -43,7 +43,7 @@ export const action = async ({ request }) => {
     if (token) {
       store.dispatch(
         login({
-          user: { fullName: user.fullName, avatar: user.avatar, _id: user._id },
+          user: { fullName: user.fullName, avatar: user.avatar, _id: user._id, role:user.role },
           token: token,
         })
       );

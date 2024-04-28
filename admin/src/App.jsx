@@ -40,6 +40,11 @@ import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import AddEvent from "./pages/AddEvent";
+import AllBlogs from "./pages/AllBlogs";
+import AddBlog from "./pages/AddBlog";
+import EditBlog from "./pages/EditBlog";
+import CommentBlogMng from "./pages/CommentBlogMng";
+import CommentProductMng from "./pages/CommentProductMng";
 
 const router = createBrowserRouter([
   {
@@ -126,7 +131,26 @@ const router = createBrowserRouter([
       {
         path: "chat",
         element: <Chat />,
-        // loader: editOrderLoader,
+      },
+      {
+        path: "all-blogs",
+        element: <AllBlogs />,
+      },
+      {
+        path: "add-blog",
+        element: <AddBlog />,
+      },
+      {
+        path: "edit-blog/:id",
+        element: <EditBlog />,
+      },
+      {
+        path: "commentblogmng",
+        element: <CommentBlogMng />,
+      },
+      {
+        path: "commentproductmng",
+        element: <CommentProductMng />,
       },
     ],
   },

@@ -36,6 +36,8 @@ import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as couponLoader } from "./pages/Coupon";
 import { loader as profileLoader } from "./pages/Profile";
 import SearchPage from "./pages/Search";
+import AllBlog from "./pages/AllBlog";
+import Blog from "./pages/Blog";
 
 import Event from "./pages/Event";
 import Coupon from "./pages/Coupon";
@@ -118,6 +120,14 @@ const router = createBrowserRouter([
         element: <Profile />,
         loader: profileLoader,
         action: profileAction,
+      },
+      {
+        path: "all-blogs",
+        element: <AllBlog />,
+      },
+      {
+        path: "blog/:id",
+        element: <Blog />,
       },
     ],
   },
