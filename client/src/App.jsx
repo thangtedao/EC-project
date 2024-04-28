@@ -15,6 +15,11 @@ import {
   Wishlist,
   Profile,
   Error,
+  Search,
+  AllBlog,
+  Blog,
+  Event,
+  Coupon,
   VnPay_return,
 } from "./pages";
 
@@ -35,12 +40,7 @@ import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as couponLoader } from "./pages/Coupon";
 import { loader as profileLoader } from "./pages/Profile";
-import SearchPage from "./pages/Search";
-import AllBlog from "./pages/AllBlog";
-import Blog from "./pages/Blog";
 
-import Event from "./pages/Event";
-import Coupon from "./pages/Coupon";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -80,7 +80,7 @@ const router = createBrowserRouter([
       },
       {
         path: "search/:keyword",
-        element: <SearchPage />,
+        element: <Search />,
       },
       {
         path: "cart",
