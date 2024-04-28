@@ -1,24 +1,16 @@
 import React, { useState } from "react";
 import { Col } from "antd";
-import { WechatOutlined, DeleteOutlined  } from "@ant-design/icons";
+import { WechatOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import moment from 'moment';
-
-// import {
-//   pinCommentProduct,
-//   repCommentProduct,
-// } from "../../actions/ProductAction";
+import moment from "moment";
 import { useParams } from "react-router-dom";
 import AllRepComment from "./AllRepComment";
-
 import customFetch from "../../utils/customFetch";
 import { getFirstCharacterUser } from "../../utils/blog";
-import axios from "axios";
 
 function AllComment(props) {
   const { id } = useParams();
   const { allComment } = props;
-  // const dispatch = useDispatch();
   const [repCmt, setRepCmt] = useState({ key: "", status: false });
   const user = useSelector((state) => state.user.user);
   const [repValue, setRepValue] = useState("");
@@ -33,8 +25,11 @@ function AllComment(props) {
         content: repValue,
         author: user.fullName,
       };
-      const response = await customFetch.post(`/blog/rep/comment/${id}`, comment)
-      console.log(response.comment)
+      const response = await customFetch.post(
+        `/blog/rep/comment/${id}`,
+        comment
+      );
+      console.log(response.comment);
       setRepValue("");
       setRepCmt({ key: "", status: false });
     } else alert("Đăng nhập đi bạn eiii");
@@ -43,38 +38,38 @@ function AllComment(props) {
   const handleDeleteComment = async (comment) => {
     const currentIndex = allComment.findIndex((c) => c._id === comment._id);
     try {
-      const confirmDelete = window.confirm('Có chắc muốn xóa không man');
+      const confirmDelete = window.confirm("Có chắc muốn xóa không man");
       if (confirmDelete) {
         try {
-          await fetch(`http://localhost:3001/api/blog/comment/${id}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              commentNumber: currentIndex,
-              id:id
-            })
+          await customFetch.delete(`/blog/comment/${id}`, {
+            commentNumber: currentIndex,
+            id: id,
           });
           window.location.reload();
         } catch (error) {
-          console.error('Error deleting blog comment:', error);
+          console.error("Error deleting blog comment:", error);
         }
       }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
-  }
-  
+  };
 
   return (
     <div className="all-comment">
       {allComment.map((comment) => (
         <div key={comment._id}>
-          <Col span={18} style={{ marginTop: "1rem" }} xs={24} sm={24} md={18} className="comment-section">
+          <Col
+            span={18}
+            style={{ marginTop: "1rem" }}
+            xs={24}
+            sm={24}
+            md={18}
+            className="comment-section"
+          >
             <div className="all-comment-info">
               <div style={{ display: "flex" }}>
-                {comment.role=='admin' ? (
+                {comment.role == "admin" ? (
                   <div className="all-comment-info-name admin">
                     <img src="https://cdn.vectorstock.com/i/1000x1000/82/53/white-letter-a-logo-on-red-background-vector-26888253.webp"></img>
                   </div>
@@ -83,20 +78,22 @@ function AllComment(props) {
                     {getFirstCharacterUser(comment.author)}
                   </div>
                 )}
-                {comment.role=='admin' ? (
+                {comment.role == "admin" ? (
                   <strong>
                     {comment.author} <span>QTV</span>
                   </strong>
                 ) : (
-                  <strong className='user-name'>{comment.author}</strong>
+                  <strong className="user-name">{comment.author}</strong>
                 )}
-                <div className="comment-time">{moment(comment.createdAt).format('HH:mm, DD/MM/YYYY')}</div>
+                <div className="comment-time">
+                  {moment(comment.createdAt).format("HH:mm, DD/MM/YYYY")}
+                </div>
               </div>
-              {user.role=='admin' && (
+              {user?.role === "admin" && (
                 <div className="comment-status">
                   <div
                     className="comment-status-pin"
-                     onClick={() => handleDeleteComment(comment)}
+                    onClick={() => handleDeleteComment(comment)}
                   >
                     <DeleteOutlined />
                   </div>
@@ -117,8 +114,8 @@ function AllComment(props) {
                 allrepcomment={comment.replies}
                 showRepComment={showRepComment}
                 idComment={comment._id}
-                user = {user}
-                idBlog = {id}
+                user={user}
+                idBlog={id}
               ></AllRepComment>
             ) : (
               ""

@@ -1,29 +1,34 @@
 import mongoose from "mongoose";
 
+const replyCommentBlog = new mongoose.Schema(
+  {
+    author: String,
+    status: String,
+    role: String,
+    avatar: String,
+    content: String,
+    byUser: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const replyCommentBlog = new mongoose.Schema({
-  author: {type: String},
-  status: String,
-  role:String,
-  avatar: {type: String},
-  content: {type:String},
-  byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
-},
-{
-  timestamps: true,
-})
-const CommentBlog = mongoose.Schema({
-  author: {type: String},
-  status: String,
-  role:String,
-  avatar: {type: String},
-  content: {type:String},
-  byUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-  replies: [replyCommentBlog]
-},
-{
-  timestamps: true,
-})
+const CommentBlog = mongoose.Schema(
+  {
+    author: String,
+    status: String,
+    role: String,
+    avatar: String,
+    content: String,
+    byUser: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    replies: [replyCommentBlog],
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const BlogSchema = mongoose.Schema(
   {
     title: {
@@ -36,11 +41,11 @@ const BlogSchema = mongoose.Schema(
       require: true,
     },
     content: String,
-    comments:[CommentBlog],
+    comments: [CommentBlog],
     hasNewComment: {
-      type:Boolean,
-      default:false
-    }
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -151,19 +151,13 @@ export const getProduct = async (req, res) => {
       query = query.select(fields);
     }
 
-    // if (req.query.populate && req.query.populate === "ratings.postedby") {
-    //   query = query.populate({
-    //     path: "ratings.postedby",
-    //     select: ["fullName", "avatar"],
-    //   });
-    // }
-
     const product = await query;
 
     let variation = await ProductVariation.find({ productId: id });
     let attribute = await ProductAttribute.find({ productId: id });
 
     const productBlog = await ItemBlog.findOne({ productId: id });
+
     // if (variation) {
     //   variation = variation.reduce((groups, item) => {
     //     const { variationName } = item;

@@ -16,7 +16,7 @@ import {
   Profile,
   Error,
   Search,
-  AllBlog,
+  Blogs,
   Blog,
   Event,
   Coupon,
@@ -40,6 +40,8 @@ import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
 import { loader as couponLoader } from "./pages/Coupon";
 import { loader as profileLoader } from "./pages/Profile";
+import { loader as blogsLoader } from "./pages/Blogs";
+import { loader as blogLoader } from "./pages/Blog";
 
 const router = createBrowserRouter([
   {
@@ -122,12 +124,14 @@ const router = createBrowserRouter([
         action: profileAction,
       },
       {
-        path: "all-blogs",
-        element: <AllBlog />,
+        path: "blogs",
+        element: <Blogs />,
+        loader: blogsLoader,
       },
       {
         path: "blog/:id",
         element: <Blog />,
+        loader: blogLoader,
       },
     ],
   },

@@ -2,7 +2,7 @@ export { default as MainLayout } from "../pages/MainLayout";
 export { default as Error } from "../pages/Error";
 export { default as Login } from "../pages/Login";
 export { default as Search } from "../pages/Search";
-export { default as AllBlog } from "../pages/AllBlog";
+export { default as Blogs } from "../pages/Blogs";
 export { default as Blog } from "../pages/Blog";
 export { default as Event } from "../pages/Event";
 export { default as Coupon } from "../pages/Coupon";
