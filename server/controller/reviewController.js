@@ -52,6 +52,10 @@ export const replyReview = async (req, res) => {
     const { content } = req.body;
     const { userId } = req.user;
 
+    const user = await User.findById(userId);
+    if (user?.role !== "admin")
+      return res.status(StatusCodes.UNAUTHORIZED).json({ msg: "Admin đâu" });
+
     const review = await Review.findById(id);
     review.replies.push({
       content: content,
@@ -99,7 +103,10 @@ export const getReviews = async (req, res) => {
         path: "user",
         select: ["fullName", "avatar", "rank"],
       },
-      { path: "replies.byUser", select: ["fullName", "avatar", "rank"] },
+      {
+        path: "replies.byUser",
+        select: ["fullName", "avatar", "rank", "role"],
+      },
     ]);
 
     res.status(StatusCodes.OK).json(reviews);

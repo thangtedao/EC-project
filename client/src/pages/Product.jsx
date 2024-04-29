@@ -126,15 +126,17 @@ const Product = () => {
   const [reviews, setReviews] = useState(productReviews);
   const submitReview = async (star, content) => {
     try {
-      await customFetch.post("/review/create-review", {
-        rating: star,
-        productId: product._id,
-        content: content,
-      });
-      const fetchReview = await customFetch
-        .get(`/review/get-reviews/${product._id}`)
-        .then(({ data }) => data);
-      setReviews(fetchReview);
+      if (star && content) {
+        await customFetch.post("/review/create-review", {
+          rating: star,
+          productId: product._id,
+          content: content,
+        });
+        const fetchReview = await customFetch
+          .get(`/review/get-reviews/${product._id}`)
+          .then(({ data }) => data);
+        setReviews(fetchReview);
+      } else toast.warning("Chưa nhập gì kìa");
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }
@@ -142,13 +144,15 @@ const Product = () => {
 
   const replyReview = async (content, reviewId) => {
     try {
-      await customFetch.patch(`/review/reply-review/${reviewId}`, {
-        content,
-      });
-      const fetchReview = await customFetch
-        .get(`/review/get-reviews/${product._id}`)
-        .then(({ data }) => data);
-      setReviews(fetchReview);
+      if (content && reviewId) {
+        await customFetch.patch(`/review/reply-review/${reviewId}`, {
+          content,
+        });
+        const fetchReview = await customFetch
+          .get(`/review/get-reviews/${product._id}`)
+          .then(({ data }) => data);
+        setReviews(fetchReview);
+      }
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }
@@ -156,13 +160,15 @@ const Product = () => {
 
   const deleteReplyReview = async (reviewId, replyId) => {
     try {
-      await customFetch.delete(`/review/reply-review/${reviewId}`, {
-        replyId,
-      });
-      const fetchReview = await customFetch
-        .get(`/review/get-reviews/${product._id}`)
-        .then(({ data }) => data);
-      setReviews(fetchReview);
+      if (reviewId && replyId) {
+        await customFetch.delete(`/review/reply-review/${reviewId}`, {
+          replyId,
+        });
+        const fetchReview = await customFetch
+          .get(`/review/get-reviews/${product._id}`)
+          .then(({ data }) => data);
+        setReviews(fetchReview);
+      }
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }

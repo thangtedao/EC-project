@@ -79,7 +79,6 @@ const Coupon = () => {
           }}
         >
           <TextField
-            required
             size="small"
             label="Coupon"
             placeholder="Enter coupon"
@@ -176,48 +175,51 @@ const Coupon = () => {
 
               {coupons?.map((item, idx) => {
                 return (
-                  <ListItem key={idx} alignItems="flex-start">
-                    <ListItemAvatar>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src={Logo}
-                        sx={{
-                          borderRadius: 0,
-                          width: "70px",
-                          height: "70px",
-                          marginRight: "5px",
-                        }}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={item.code}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            sx={{ display: "block" }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                          >
-                            {item.name}
-                          </Typography>
+                  <div key={idx}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="Remy Sharp"
+                          src={Logo}
+                          sx={{
+                            borderRadius: 0,
+                            width: "70px",
+                            height: "70px",
+                            marginRight: "5px",
+                          }}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={item.code}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                              sx={{ display: "block" }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              {item.name}
+                            </Typography>
 
-                          {item.startDate?.split("T")[0] +
-                            " - " +
-                            item.endDate?.split("T")[0]}
-                        </React.Fragment>
-                      }
-                    />
-                    <div className="copy-button-container">
-                      <Button
-                        onClick={() => handleCopy(item.code)}
-                        startIcon={<FileCopyOutlined />}
-                        variant="text"
-                      >
-                        Copy
-                      </Button>
-                    </div>
-                  </ListItem>
+                            {item.startDate?.split("T")[0] +
+                              " - " +
+                              item.endDate?.split("T")[0]}
+                          </React.Fragment>
+                        }
+                      />
+                      <div className="copy-button-container">
+                        <Button
+                          onClick={() => handleCopy(item.code)}
+                          startIcon={<FileCopyOutlined />}
+                          variant="text"
+                        >
+                          Copy
+                        </Button>
+                      </div>
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </div>
                 );
               })}
             </List>
