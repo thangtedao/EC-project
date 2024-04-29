@@ -1,6 +1,7 @@
 import Review from "../models/Review.js";
 import Order from "../models/Order.js";
 import { StatusCodes } from "http-status-codes";
+import User from "../models/User.js";
 
 export const createReview = async (req, res) => {
   try {
@@ -45,14 +46,61 @@ export const createReview = async (req, res) => {
   }
 };
 
+export const replyReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    const { userId } = req.user;
+
+    const review = await Review.findById(id);
+    review.replies.push({
+      content: content,
+      byUser: userId,
+    });
+
+    await review.save();
+
+    res.status(StatusCodes.OK).json({ msg: "Successful" });
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const deleteReplyReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { replyId } = req.body;
+    const { userId } = req.user;
+
+    const user = await User.findById(userId);
+    if (user.role === "admin") {
+      const review = await Review.findById(id);
+      review.replies.pull({
+        _id: replyId,
+      });
+
+      await review.save();
+      return res.status(StatusCodes.OK).json({ msg: "Deleted" });
+    }
+    return res.status(StatusCodes.CONFLICT).json({ msg: "Not admin" });
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
 export const getReviews = async (req, res) => {
   try {
     const { productId } = req.params;
 
-    const reviews = await Review.find({ product: productId }).populate({
-      path: "user",
-      select: ["fullName", "avatar", "rank"],
-    });
+    const reviews = await Review.find({ product: productId }).populate([
+      {
+        path: "user",
+        select: ["fullName", "avatar", "rank"],
+      },
+      { path: "replies.byUser", select: ["fullName", "avatar", "rank"] },
+    ]);
 
     res.status(StatusCodes.OK).json(reviews);
   } catch (error) {

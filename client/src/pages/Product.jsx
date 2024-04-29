@@ -140,6 +140,34 @@ const Product = () => {
     }
   };
 
+  const replyReview = async (content, reviewId) => {
+    try {
+      await customFetch.patch(`/review/reply-review/${reviewId}`, {
+        content,
+      });
+      const fetchReview = await customFetch
+        .get(`/review/get-reviews/${product._id}`)
+        .then(({ data }) => data);
+      setReviews(fetchReview);
+    } catch (error) {
+      return toast.error(error?.response?.data?.msg);
+    }
+  };
+
+  const deleteReplyReview = async (reviewId, replyId) => {
+    try {
+      await customFetch.delete(`/review/reply-review/${reviewId}`, {
+        replyId,
+      });
+      const fetchReview = await customFetch
+        .get(`/review/get-reviews/${product._id}`)
+        .then(({ data }) => data);
+      setReviews(fetchReview);
+    } catch (error) {
+      return toast.error(error?.response?.data?.msg);
+    }
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -185,6 +213,9 @@ const Product = () => {
                         key={item._id}
                         onClick={() => navigate(`/product/${item._id}`)}
                       >
+                        {item._id === product._id && (
+                          <span className="active-icon">✓</span>
+                        )}
                         <div className="model-info">
                           {item.attribute.map((i) => {
                             if (i.mainAttribute)
@@ -261,6 +292,8 @@ const Product = () => {
               product={product}
               reviews={reviews}
               submitReview={submitReview}
+              replyReview={replyReview}
+              deleteReplyReview={deleteReplyReview}
             />
           </div>
           <div className="bot-container-column-2">

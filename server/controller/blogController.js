@@ -94,55 +94,75 @@ export const getBlogsWithNewComent = async (req, res) => {
 };
 
 export const CommentBlog = expressAsyncHandler(async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
-  if (blog) {
-    blog.comments.push(req.body);
-    blog.hasNewComment = true;
-    const updateCommentBlog = await blog.save();
-    res.status(StatusCodes.OK).send(updateCommentBlog);
-  } else {
-    res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (blog) {
+      blog.comments.push(req.body);
+      blog.hasNewComment = true;
+      const updateCommentBlog = await blog.save();
+      res.status(StatusCodes.OK).send(updateCommentBlog);
+    } else {
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 });
 
 export const deleteComment = expressAsyncHandler(async (req, res) => {
-  const { commentNumber, id } = req.body;
-  const blog = await Blog.findById(id);
-  if (blog) {
-    blog.comments.splice(commentNumber, 1);
-    blog = await blog.save();
-    res.status(StatusCodes.OK).send(blog);
-  } else {
-    res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+  try {
+    const { commentNumber, id } = req.body;
+    let blog = await Blog.findById(id);
+    if (blog) {
+      blog.comments.splice(commentNumber, 1);
+      blog = await blog.save();
+      res.status(StatusCodes.OK).send(blog);
+    } else {
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 });
 
 export const RepCommentBlog = expressAsyncHandler(async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
-  if (blog) {
-    const indexComment = blog.comments.findIndex(
-      (item) => item._id == req.body.idComment
-    );
-    blog.comments[indexComment].replies.push(req.body);
-    blog.hasNewComment = true;
-    blog = await blog.save();
-    res.status(StatusCodes.OK).send(blog);
-  } else {
-    res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+  try {
+    let blog = await Blog.findById(req.params.id);
+    if (blog) {
+      const indexComment = blog.comments.findIndex(
+        (item) => item._id == req.body.idComment
+      );
+      blog.comments[indexComment].replies.push(req.body);
+      blog.hasNewComment = true;
+      blog = await blog.save();
+      res.status(StatusCodes.OK).send(blog);
+    } else {
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 });
 
 export const deleteRepComment = expressAsyncHandler(async (req, res) => {
-  const { repCommentNumber, idComment } = req.body;
-  const blog = await Blog.findById(req.params.id);
-  if (blog) {
-    const indexComment = blog.comments.findIndex(
-      (item) => item._id == idComment
-    );
-    blog.comments[indexComment].replies.splice(repCommentNumber, 1);
-    blog = await blog.save();
-    res.status(StatusCodes.OK).send(blog);
-  } else {
-    res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+  try {
+    const { repCommentNumber, idComment } = req.body;
+    let blog = await Blog.findById(req.params.id);
+    if (blog) {
+      const indexComment = blog.comments.findIndex(
+        (item) => item._id == idComment
+      );
+      blog.comments[indexComment].replies.splice(repCommentNumber, 1);
+      blog = await blog.save();
+      res.status(StatusCodes.OK).send(blog);
+    } else {
+      res.status(StatusCodes.BAD_REQUEST).send({ message: "Blog not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 });

@@ -2,9 +2,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { useLoaderData } from "react-router-dom";
 import moment from "moment";
 import Wrapper from "../assets/wrappers/Blog";
-import CommentBlog from "../components/commentBlog/CommentBlog";
+import CommentBlog from "../components/blog/CommentBlog";
 import customFetch from "../utils/customFetch";
-import { toast } from "react-toastify";
 
 export const loader = async ({ params }) => {
   try {
@@ -19,29 +18,6 @@ export const loader = async ({ params }) => {
 
 const Blog = () => {
   const { blog } = useLoaderData();
-
-  const submitComment = async (content) => {
-    try {
-      const user = await customFetch
-        .get("/user/current-user")
-        .then(({ data }) => data.user);
-
-      await customFetch.post(`/blog/comment/${id}`, {
-        author: user.fullName,
-        role: user.role,
-        content: content,
-        byUser: user._id,
-      });
-    } catch (error) {
-      if (error?.response?.status === 401)
-        return toast.warning("Vui lòng đăng nhập để bình luận", {
-          position: "top-center",
-          autoClose: 1000,
-          pauseOnHover: false,
-        });
-      return toast.error(error?.response?.data?.msg);
-    }
-  };
 
   return (
     <HelmetProvider>

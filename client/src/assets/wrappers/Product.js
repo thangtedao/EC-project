@@ -36,20 +36,35 @@ const Wrapper = styled.div`
   }
 
   .model {
+    position: relative;
     width: 150px;
     height: 50px;
     border: 1px solid #d1d5db;
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 8px;
     font-size: 0.9rem;
+    overflow: hidden;
     cursor: pointer;
   }
   .active {
     border: 1px solid #f52f32;
+  }
+  .active-icon {
+    background-color: #d70018;
+    border-radius: 0 0 10px 0;
+    color: #fff;
+    font-size: 10px;
+    height: 13px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 18px;
+    display: grid;
+    place-items: center;
   }
   .model-info {
     display: flex;

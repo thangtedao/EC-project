@@ -5,6 +5,7 @@ import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
 import { toast } from "react-toastify";
+import moment from "moment";
 import customFetch from "../../utils/customFetch";
 
 const Wrapper = styled.div`
@@ -142,10 +143,20 @@ const Wrapper = styled.div`
   }
 `;
 
-const ProductReview = ({ product, reviews, submitReview }) => {
+const ProductReview = ({
+  product,
+  reviews,
+  submitReview,
+  replyReview,
+  deleteReplyReview,
+}) => {
   const [isRating, setIsRating] = useState(false);
+  const [isReply, setIsReply] = useState(false);
   const [star, setStar] = useState(5);
   const [content, setContent] = useState();
+  const [replyContent, setReplyContent] = useState();
+
+  console.log(reviews);
 
   const totalStar =
     reviews.reduce((acc, item) => acc + item.rating, 0) / reviews.length;
@@ -157,7 +168,22 @@ const ProductReview = ({ product, reviews, submitReview }) => {
       setIsRating(!isRating);
     } catch (error) {
       if (error?.response?.status === 401)
-        return toast.warning("Vui lòng đăng nhập để đánh giá", {
+        return toast.warning("Đăng nhập để đánh giá", {
+          position: "top-center",
+          autoClose: 1000,
+          pauseOnHover: false,
+        });
+    }
+  };
+
+  const handleReply = async () => {
+    try {
+      await customFetch.get("/user/current-user").then(({ data }) => data.user);
+
+      setIsReply(!isReply);
+    } catch (error) {
+      if (error?.response?.status === 401)
+        return toast.warning("Đăng nhập để đánh giá", {
           position: "top-center",
           autoClose: 1000,
           pauseOnHover: false,
@@ -322,36 +348,101 @@ const ProductReview = ({ product, reviews, submitReview }) => {
           ) : (
             reviews.map((item) => {
               return (
-                <div key={item._id} className="box-review-comment-item">
-                  <div className="box-review-comment-item-title">
-                    <Avatar
-                      sx={{
-                        width: 31,
-                        height: 31,
-                      }}
-                      src={item.user.avatar}
-                    >
-                      {!item.user.avatar &&
-                        item.user.fullName.charAt(0).toUpperCase()}
-                    </Avatar>
-                    <span className="name">{item.user.fullName}</span>
-                    <span>
-                      {item?.updatedAt.split("T")[0] +
-                        " " +
-                        item.updatedAt.split("T")[1].split(".")[0]}
-                    </span>
+                <div>
+                  <div key={item._id} className="box-review-comment-item">
+                    <div className="box-review-comment-item-title">
+                      <Avatar
+                        sx={{
+                          width: 31,
+                          height: 31,
+                        }}
+                        src={item.user.avatar}
+                      >
+                        {!item.user.avatar &&
+                          item.user.fullName.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <span className="name">{item.user.fullName}</span>
+                      <span>
+                        {moment(item.createdAt).format("HH:mm, DD/MM/YYYY")}
+                      </span>
+                    </div>
+                    <div className="box-review-comment-item-content">
+                      <Rating
+                        name="read-only"
+                        icon={<FaStar />}
+                        emptyIcon={<FaRegStar />}
+                        value={item.rating}
+                        size="small"
+                        readOnly
+                      />
+                      <span>{item.content}</span>
+
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleReply()}
+                      >
+                        Trả lời
+                      </div>
+                    </div>
                   </div>
-                  <div className="box-review-comment-item-content">
-                    <Rating
-                      name="read-only"
-                      icon={<FaStar />}
-                      emptyIcon={<FaRegStar />}
-                      value={item.rating}
-                      size="small"
-                      readOnly
-                    />
-                    <span>{item.content}</span>
+
+                  <div>
+                    {isReply && (
+                      <div className="form-rating">
+                        <span>Phản hồi</span>
+                        <div className="is-flex">
+                          <textarea
+                            required
+                            onChange={(event) =>
+                              setReplyContent(event.target.value)
+                            }
+                            value={replyContent}
+                          />
+                          <button
+                            onClick={() => replyReview(replyContent, item._id)}
+                            className="btn"
+                          >
+                            Gửi
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
+
+                  {item.replies?.length > 0 &&
+                    item.replies.map((reply) => {
+                      return (
+                        <div
+                          key={reply._id}
+                          className="box-review-comment-item"
+                          style={{ marginLeft: "1rem" }}
+                        >
+                          <div className="box-review-comment-item-title">
+                            <Avatar
+                              sx={{
+                                width: 31,
+                                height: 31,
+                              }}
+                              src={reply.byUser.avatar}
+                            >
+                              {!reply.byUser.avatar &&
+                                reply.byUser.fullName?.charAt(0).toUpperCase()}
+                            </Avatar>
+                            <span className="name">
+                              {reply.byUser.fullName}
+                            </span>
+                            <span>
+                              {moment(reply.createdAt).format(
+                                "HH:mm, DD/MM/YYYY"
+                              )}
+                            </span>
+                          </div>
+                          <div className="box-review-comment-item-content">
+                            <span>{reply.content}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
               );
             })

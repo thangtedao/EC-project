@@ -1,9 +1,9 @@
 import React from "react";
 import { WechatOutlined } from "@ant-design/icons";
-import { getFirstCharacterUser } from "../../utils/blog";
 import { DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import "./Detail.css";
+import { toast } from "react-toastify";
 import customFetch from "../../utils/customFetch";
 
 const AllRepComment = (props) => {
@@ -13,22 +13,23 @@ const AllRepComment = (props) => {
     const currentIndex = allrepcomment.findIndex(
       (c) => c._id === repComment._id
     );
-    console.log(currentIndex);
     try {
       const confirmDelete = window.confirm("Có chắc muốn xóa không man");
       if (confirmDelete) {
-        try {
-          await customFetch.delete(`/blog/rep/comment/${idBlog}`, {
-            repCommentNumber: currentIndex,
-            idComment: idComment,
-          });
-          window.location.reload();
-        } catch (error) {
-          console.error("Error deleting blog comment:", error);
-        }
+        await customFetch.delete(`/blog/rep/comment/${idBlog}`, {
+          repCommentNumber: currentIndex,
+          idComment: idComment,
+        });
+        window.location.reload();
       }
     } catch (error) {
-      console.log(error.message);
+      if (error?.response?.status === 401)
+        return toast.warning("Đăng nhập để bình luận", {
+          position: "top-center",
+          autoClose: 1000,
+          pauseOnHover: false,
+        });
+      return toast.error(error?.response?.data?.msg);
     }
   };
 
@@ -44,7 +45,7 @@ const AllRepComment = (props) => {
               </div>
             ) : (
               <div className="all-comment-info-name">
-                {getFirstCharacterUser(repComment.author)}
+                {repComment.author.split("")[0]}
                 {"T"}
               </div>
             )}
