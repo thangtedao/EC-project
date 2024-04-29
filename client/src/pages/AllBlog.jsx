@@ -17,7 +17,6 @@ const AllBlog = () => {
 
     fetchData();
   }, []);
-
   return (
     <div>
       {blogs.map((blog) => (
