@@ -1,42 +1,22 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
-import { useNavigate, useLoaderData, Link } from "react-router-dom";
+import Wrapper from "../assets/wrapper/user/AllUser.js";
+import { useNavigate, useLoaderData } from "react-router-dom";
+import {
+  EditOutlined,
+  AudioOutlined,
+  FormOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Breadcrumb, Table, Image, Button, Input, Dropdown, Space } from "antd";
+import Highlighter from "react-highlight-words";
 
-import { EditOutlined, AudioOutlined, FormOutlined } from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Input, Dropdown } from "antd";
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    width: 100%;
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-
-  .table {
-    width: 100%;
-  }
-  .ant-table {
-    border: 1px solid lightgray;
-    border-radius: 2px;
-  }
-`;
-
-export const loader = async ({ request }) => {
+export const loader = async () => {
   try {
-    const params = Object.fromEntries([
-      ...new URL(request.url).searchParams.entries(),
-    ]);
-
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+    const orders = await customFetch
+      .get(`/order/?admin=true`)
+      .then(({ data }) => data);
 
     const users = await customFetch
       .get("/user/admin/all-users")
@@ -44,6 +24,7 @@ export const loader = async ({ request }) => {
 
     return { users, orders };
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -72,19 +53,6 @@ const AllUser = () => {
   const { users, orders } = useLoaderData();
   const navigate = useNavigate();
 
-  // users.map((user) => {
-  //   let numOfOrder = 0;
-  //   let totalSpent = 0;
-  //   orders.map((order) => {
-  //     if (order.user._id === user._id) {
-  //       numOfOrder++;
-  //       totalSpent += order.totalAmount;
-  //     }
-  //   });
-  //   user.numOfOrder = numOfOrder;
-  //   user.totalSpent = totalSpent;
-  // });
-
   users.forEach((user) => {
     const userOrders = orders.filter((order) => order.user._id === user._id);
     user.numOfOrder = userOrders.length;
@@ -99,12 +67,128 @@ const AllUser = () => {
 
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
+    // console.log("params", pagination, filters, sorter, extra);
   };
 
   const handleEditUser = (id) => {
     navigate(`/edit-user/${id}`);
   };
+
+  // Search
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const columns = [
     {
@@ -134,30 +218,36 @@ const AllUser = () => {
       fixed: "left",
       dataIndex: "fullName",
       key: "fullName",
+      ...getColumnSearchProps("fullName"),
     },
     {
       title: "Email",
       width: 150,
       dataIndex: "email",
       key: "email",
+      ...getColumnSearchProps("email"),
     },
     {
       title: "Phone",
       width: 150,
       dataIndex: "phone",
       key: "phone",
+      ...getColumnSearchProps("phone"),
     },
     {
       title: "Address",
       width: 150,
       dataIndex: "address",
       key: "address",
+      ...getColumnSearchProps("address"),
     },
     {
       title: "Order",
       width: 80,
       dataIndex: "numOfOrder",
       key: "order",
+      sorter: (a, b) => a.numOfOrder - b.numOfOrder,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Total spent",
@@ -166,25 +256,41 @@ const AllUser = () => {
       key: "spent",
       render: (totalSpent) =>
         totalSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.totalSpent - b.totalSpent,
+      sortDirections: ["descend", "ascend"],
     },
     {
-      title: "Role",
-      width: 80,
-      dataIndex: "role",
-      key: "role",
-    },
-
-    {
-      title: "Last Activity",
-      dataIndex: "activity",
-      key: "activity",
-      width: 150,
+      title: "Rank",
+      width: 110,
+      dataIndex: "rank",
+      key: "rank",
+      render: (rank) => rank?.toUpperCase(),
+      filters: [
+        {
+          text: "Member",
+          value: "member",
+        },
+        {
+          text: "Silver",
+          value: "silver",
+        },
+        {
+          text: "Gold",
+          value: "gold",
+        },
+        {
+          text: "Diamond",
+          value: "diamond",
+        },
+      ],
+      onFilter: (value, record) => record?.rank === value,
     },
     {
       title: "Status",
       dataIndex: "isBlocked",
       key: "isBlocked",
       width: 100,
+      render: (isBlocked) => (isBlocked ? "Disabled" : "Active"),
     },
     {
       title: "Action",
@@ -199,7 +305,7 @@ const AllUser = () => {
           }}
         >
           <EditOutlined />
-          Edit
+          View
         </Dropdown.Button>
       ),
     },

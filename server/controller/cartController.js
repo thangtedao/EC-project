@@ -17,14 +17,13 @@ export const addToCart = async (req, res) => {
     let isAlreadyInCart = false;
 
     // check if product in cart
-    if (variant && variant.length > 0) {
-      const variantIds = variant?.map((item) => item);
+    if (variant) {
       cart = await Cart.findOne({
         user: userId,
         cartItem: {
           $elemMatch: {
             product: product._id,
-            variant: { $all: variantIds },
+            variant: variant,
           },
         },
       });
@@ -40,15 +39,14 @@ export const addToCart = async (req, res) => {
     // inc qty or add product
     if (isAlreadyInCart) {
       // inc qty
-      if (variant && variant.length > 0) {
-        const variantIds = variant.map((item) => item);
+      if (variant) {
         cart = await Cart.findOneAndUpdate(
           {
             user: userId,
             cartItem: {
               $elemMatch: {
                 product: product._id,
-                variant: { $all: variantIds },
+                variant: variant,
               },
             },
           },
@@ -93,14 +91,14 @@ export const increaseQuantity = async (req, res) => {
     const { userId } = req.user;
 
     let cart;
-    if (cartItem.variant.length > 0) {
+    if (cartItem.variant) {
       cart = await Cart.findOneAndUpdate(
         {
           user: userId,
           cartItem: {
             $elemMatch: {
               product: cartItem.product._id,
-              variant: { $all: cartItem.variant },
+              variant: variant,
             },
           },
         },
@@ -135,14 +133,14 @@ export const descreaseQuantity = async (req, res) => {
     const { userId } = req.user;
 
     let cart;
-    if (cartItem.variant.length > 0) {
+    if (cartItem.variant) {
       cart = await Cart.findOneAndUpdate(
         {
           user: userId,
           cartItem: {
             $elemMatch: {
               product: cartItem.product._id,
-              variant: { $all: cartItem.variant },
+              variant: variant,
               quantity: { $gt: 1 },
             },
           },
@@ -183,14 +181,14 @@ export const removeFromCart = async (req, res) => {
     const { userId } = req.user;
 
     let cart;
-    if (cartItem.variant.length > 0) {
+    if (cartItem.variant) {
       cart = await Cart.findOneAndUpdate(
         { user: userId },
         {
           $pull: {
             cartItem: {
               product: cartItem.product._id,
-              variant: { $all: cartItem.variant },
+              variant: variant,
             },
           },
         },

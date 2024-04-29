@@ -25,7 +25,7 @@ const OrderItem = ({ order, cancelOrder }) => {
               Discount Amount:{" "}
               <span className="normal-text">
                 {order.discountAmount
-                  .toString()
+                  ?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                 ₫
               </span>
@@ -58,34 +58,32 @@ const OrderItem = ({ order, cancelOrder }) => {
           <div key={idx} className="product-item-outer">
             <img
               className="product-image"
-              src={item.product?.images[0]}
+              src={item.product?.image}
               alt="Image"
             />
 
             <div className="product-info">
               <NavLink to={`/product/${item?.product?.id}`}>
                 {item?.product?.name}
+                <span>{item.variant && " - " + item.variant.value}</span>
               </NavLink>
-
-              <div className="product-variant">
-                {item.variant?.map((i, index) => {
-                  return <div key={index}>{i.value}</div>;
-                })}
-              </div>
 
               <div className="product-price">
                 <span>
-                  {(
-                    (item.variant?.reduce((a, i) => a + i.price, 0) +
-                      item.product.price) *
-                    item.quantity
+                  {(item.variant
+                    ? item.variant?.price + item.product.price
+                    : item.product.price
                   )
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                  ₫
+                  <span style={{ fontSize: 15 }}>₫</span>
                 </span>
-
-                {/* <span className="strike">{item.product?.price}₫</span> */}
+                <span className="strike">
+                  {item.product.price
+                    ?.toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  <span style={{ fontSize: 12 }}>₫</span>
+                </span>
               </div>
             </div>
 

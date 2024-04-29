@@ -10,6 +10,7 @@ import day from "dayjs";
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";
+import Coupon from "../models/Coupon.js";
 
 export const paypalPayment = async (req, res) => {
   try {
@@ -41,9 +42,8 @@ export const createOrder = async (req, res) => {
     let discountAmount = 0;
 
     const orderItem = cartItem.map((item) => {
-      const priceOfVariant =
-        item.variant.reduce((acc, item) => acc + item.priceModifier, 0) || 0;
-      let salePrice = item.product.price + priceOfVariant;
+      let variantPrice = item.variant ? item.variant.price : 0;
+      let salePrice = item.product.salePrice + variantPrice;
 
       if (coupon)
         if (coupon.discountType === "percentage") {
@@ -57,26 +57,17 @@ export const createOrder = async (req, res) => {
           salePrice = salePrice - coupon.discountValue;
         }
 
-      const variant = item.variant.map((i) => {
-        return {
-          id: i._id,
-          name: i.variationName,
-          value: i.variationValue,
-          price: i.priceModifier,
-        };
-      });
-
       return {
         product: {
           id: item.product._id,
           name: item.product.name,
-          price: item.product.price,
-          images: item.product.images,
+          price: item.product.salePrice,
+          image: item.product.images[0],
         },
-        variant: variant,
+        variant: item.variant && item.variant._id,
         quantity: item.quantity,
-        priceAtOrder: item.product.price + priceOfVariant,
-        subtotal: (item.product.price + priceOfVariant) * item.quantity,
+        priceAtOrder: item.product.salePrice + variantPrice,
+        subtotal: (item.product.salePrice + variantPrice) * item.quantity,
       };
     });
 
@@ -86,7 +77,7 @@ export const createOrder = async (req, res) => {
     const user = await User.findById(userId);
 
     const newOrder = new Order({
-      user: userId,
+      user: user._id,
       orderItem: orderItem,
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
@@ -95,6 +86,12 @@ export const createOrder = async (req, res) => {
     });
 
     const order = await newOrder.save();
+
+    if (coupon) {
+      await Coupon.findByIdAndUpdate(coupon._id, {
+        $inc: { numberOfUses: -1 },
+      });
+    }
     // await Cart.findOneAndRemove({ user: userId });
 
     // sendMail(user, order);
@@ -108,7 +105,14 @@ export const createOrder = async (req, res) => {
 export const getOrders = async (req, res) => {
   try {
     const queryObj = { ...req.query };
-    const excludeFields = ["page", "sort", "limit", "fields", "populate"];
+    const excludeFields = [
+      "page",
+      "sort",
+      "limit",
+      "fields",
+      "populate",
+      "admin",
+    ];
     excludeFields.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(
@@ -117,8 +121,9 @@ export const getOrders = async (req, res) => {
     );
 
     let query;
-    if (req.user.role === "admin") query = Order.find(JSON.parse(queryStr));
-    else if (req.user.role === "user") {
+    if (req.user.role === "admin" && req.query.admin) {
+      query = Order.find(JSON.parse(queryStr));
+    } else {
       query = Order.find({ user: req.user.userId });
       if (queryStr !== "{}") {
         query.find(JSON.parse(queryStr));
@@ -146,12 +151,7 @@ export const getOrders = async (req, res) => {
       query = query.populate(item);
     }
 
-    query.populate([
-      {
-        path: "user",
-        select: ["fullName"],
-      },
-    ]);
+    query.populate({ path: "user", select: ["_id", "fullName"] });
 
     if (req.query.page) {
       const page = req.query.page;
@@ -167,6 +167,7 @@ export const getOrders = async (req, res) => {
     const orders = await query;
     res.status(StatusCodes.OK).json(orders);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
@@ -210,153 +211,6 @@ export const cancelOrder = async (req, res) => {
   }
 };
 
-export const showStatss = async (req, res) => {
-  /* SHOW STATS BY DATE */
-  let startDate = new Date(req.query.start);
-  let endDate = new Date(req.query.end);
-
-  if (!req.query.start && !req.query.end) {
-    endDate = new Date();
-    startDate = new Date(endDate);
-    startDate.setMonth(startDate.getMonth() - 10);
-  }
-
-  /* CALCULATE THE STATS */
-  const result = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $unwind: "$products",
-    },
-    {
-      $group: {
-        _id: {
-          orderId: "$_id",
-          year: { $year: "$createdAt" },
-          month: { $month: "$createdAt" },
-          day: { $dayOfMonth: "$createdAt" },
-        },
-        totalRevenue: { $first: "$totalPrice" },
-        totalProduct: { $sum: "$products.count" },
-      },
-    },
-  ]);
-
-  let totalCount = result.length || 0;
-  let totalRevenue = 0;
-  let totalProduct = 0;
-  if (result.length > 0) {
-    result.map((item) => {
-      totalRevenue += item.totalRevenue;
-      totalProduct += item.totalProduct;
-    });
-  }
-
-  /* PRODUCT MOST SOLD */
-  const productMostSold = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $unwind: "$products",
-    },
-    {
-      $group: {
-        _id: "$products.product",
-        totalQuantity: { $sum: "$products.count" },
-      },
-    },
-    {
-      $sort: { totalQuantity: -1 },
-    },
-    {
-      $limit: 5,
-    },
-    {
-      $lookup: {
-        from: "products",
-        localField: "_id",
-        foreignField: "_id",
-        as: "product",
-      },
-    },
-    {
-      $unwind: "$product",
-    },
-    {
-      $project: {
-        _id: "$product._id",
-        name: "$product.name",
-        slug: "$product.slug",
-        status: "$product.status",
-        sold: "$product.sold",
-        stockQuantity: "$product.stockQuantity",
-        price: "$product.price",
-        salePrice: "$product.salePrice",
-        images: "$product.images",
-        totalQuantity: 1,
-      },
-    },
-  ]);
-
-  /* FORMAT DATA TO SHOW IN GRAPH */
-  let monthlyApplications = await Order.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: {
-          year: { $year: "$createdAt" },
-          month: { $month: "$createdAt" },
-        },
-        totalRevenue: { $sum: "$totalPrice" },
-      },
-    },
-    {
-      $sort: { "_id.year": -1, "_id.month": -1 },
-    },
-    { $limit: 12 },
-  ]);
-
-  monthlyApplications = monthlyApplications
-    .map((item) => {
-      const {
-        _id: { month },
-        totalRevenue,
-      } = item;
-      const date = day()
-        .month(month - 1)
-        .format("MMMM");
-      return { date, totalRevenue };
-    })
-    .reverse();
-
-  res.json({
-    monthlyApplications,
-    totalRevenue,
-    totalCount,
-    totalProduct,
-    productMostSold,
-  });
-};
-
 export const showStats = async (req, res) => {
   try {
     let { startDate, endDate } = req.body;
@@ -365,7 +219,55 @@ export const showStats = async (req, res) => {
     endDate.setDate(endDate.getDate() + 1);
 
     /* CALCULATE THE STATS */
-    const result = await Order.aggregate([
+    const orders = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          user: { $arrayElemAt: ["$userData", 0] },
+        },
+      },
+      {
+        $addFields: {
+          totalProduct: { $sum: "$orderItem.quantity" },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          orders: {
+            $addToSet: {
+              _id: "$_id",
+              user: "$user",
+              totalAmount: "$totalAmount",
+              status: "$status",
+              createdAt: "$createdAt",
+              totalProduct: "$totalProduct",
+            },
+          },
+        },
+      },
+    ]);
+
+    const products = await Order.aggregate([
       {
         $match: {
           createdAt: {
@@ -379,32 +281,25 @@ export const showStats = async (req, res) => {
       },
       {
         $group: {
-          _id: {
-            orderId: "$_id",
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
-            day: { $dayOfMonth: "$createdAt" },
-          },
-          products: {
-            $addToSet: {
-              name: "$orderItem.product.name",
-              quantity: "$orderItem.quantity",
-              variant: "$orderItem.variant._id",
-            },
-          },
-          totalAmount: { $first: "$totalAmount" },
-          totalProduct: { $sum: "$orderItem.quantity" },
+          _id: "$orderItem.product.id",
+          name: { $first: "$orderItem.product.name" },
+          price: { $first: "$orderItem.product.price" },
+          image: { $first: "$orderItem.product.image" },
+          totalSold: { $sum: 1 },
         },
       },
     ]);
 
-    let totalCount = result.length || 0;
+    let totalOrder = 0;
     let totalRevenue = 0;
     let totalProduct = 0;
-    if (result.length > 0) {
-      result.map((item) => {
-        totalRevenue += item.totalAmount;
-        totalProduct += item.totalProduct;
+    if (orders.length > 0) {
+      orders.forEach((item) => {
+        item.orders.forEach((order) => {
+          totalRevenue += order.totalAmount;
+          totalProduct += order.totalProduct;
+          totalOrder++;
+        });
       });
     }
 
@@ -415,6 +310,44 @@ export const showStats = async (req, res) => {
           createdAt: {
             $gte: startDate,
             $lte: endDate,
+          },
+        },
+      },
+      {
+        $match: {
+          status: {
+            $eq: "Delivered",
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1 },
+      },
+      { $limit: 12 },
+    ]);
+
+    let dailyApplications = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $match: {
+          status: {
+            $eq: "Delivered",
           },
         },
       },
@@ -431,27 +364,17 @@ export const showStats = async (req, res) => {
       {
         $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
       },
-      { $limit: 12 },
+      { $limit: 20 },
     ]);
-
-    monthlyApplications = monthlyApplications
-      .map((item) => {
-        const {
-          _id: { month },
-          totalRevenue,
-        } = item;
-        const date = day()
-          .month(month - 1)
-          .format("MMMM");
-        return { date, totalRevenue };
-      })
-      .reverse();
 
     res.json({
       monthlyApplications,
+      dailyApplications,
       totalRevenue,
-      totalCount,
+      totalOrder,
       totalProduct,
+      orders,
+      products,
     });
   } catch (error) {
     console.log(error);

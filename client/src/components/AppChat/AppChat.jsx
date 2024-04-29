@@ -27,8 +27,6 @@ const AppChat = (props) => {
 
   useEffect(() => {
     socket = io(ENDPOINT);
-    // console.log(user)
-    socket.emit('join_conversation', user._id);
     socket.emit("join_conversation", user._id);
     //setup response
     socket.on("newMessage", (message) => {
@@ -38,7 +36,8 @@ const AppChat = (props) => {
     // disconnect ||cleanup the effect
     // return () => socket.disconnect();
     // eslint-disable-next-line
-  }, [messages]);
+  }, []);
+  // }, [messages]);
 
   useEffect(() => {
     const scrollMessage = () => {

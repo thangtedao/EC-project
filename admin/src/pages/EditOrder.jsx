@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ORDER_STATUS } from "../utils/constants.js";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/order/EditOrder.js";
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import {
@@ -20,54 +20,6 @@ import {
   List,
 } from "antd";
 
-const Wrapper = styled.div`
-  width: 100%;
-
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-  .input-title {
-    font-size: 0.95rem;
-    font-weight: 400;
-  }
-  .col-1 {
-    width: 65%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 35%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-    background-color: #f3f3f3;
-    padding: 1 rem;
-    height: 60px;
-    width: 350px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .ant-typography {
-    size: "large";
-  }
-`;
 export const action = async ({ request, params }) => {
   const { id } = params;
   const formData = await request.formData();
@@ -98,8 +50,6 @@ export const loader = async ({ params }) => {
 const EditOrder = () => {
   const order = useLoaderData();
   const navigate = useNavigate();
-
-  console.log(order);
 
   const onFinish = async (values) => {
     console.log(values);
@@ -177,7 +127,7 @@ const EditOrder = () => {
                             <Image
                               width={70}
                               src={
-                                item.product?.images[0] ||
+                                item.product?.image ||
                                 "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                               }
                             />
@@ -207,7 +157,9 @@ const EditOrder = () => {
 
                       <div style={{ textAlign: "center" }}>
                         <Typography.Text strong>
-                          {item.priceAtOrder + "đ"}
+                          {item.priceAtOrder
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
                         </Typography.Text>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -217,7 +169,9 @@ const EditOrder = () => {
                       </div>
                       <div style={{ textAlign: "right" }}>
                         <Typography.Text strong>
-                          {item.subtotal + "đ"}
+                          {item.subtotal
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
                         </Typography.Text>
                       </div>
                     </List.Item>
@@ -341,30 +295,47 @@ const EditOrder = () => {
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Delivery Address: </Typography.Text>
-                  <Typography.Text>{order.user?.address}</Typography.Text>
+                  <Typography.Text>{order.shippingAddress}</Typography.Text>
                 </Space>
 
                 <Divider />
 
                 <Space wrap size={16}>
-                  <Typography.Text strong>
-                    Status: {order.status}
-                  </Typography.Text>
-                  <Tag color="red" size="large">
-                    Cancelled
-                  </Tag>
-                  <Tag color="green" size="large">
-                    Delivered
-                  </Tag>
-                  <Tag color="orange" size="large">
-                    Processing
-                  </Tag>
-                  <Tag color="gold" size="large">
-                    Pending
-                  </Tag>
-                  <Tag color="blue" size="large">
-                    Shipped
-                  </Tag>
+                  <Typography.Text strong>Status:</Typography.Text>
+                  {(() => {
+                    switch (order.status) {
+                      case "Pending":
+                        return (
+                          <Tag color="gold" size="large">
+                            Pending
+                          </Tag>
+                        );
+                      case "Processing":
+                        return (
+                          <Tag color="orange" size="large">
+                            Processing
+                          </Tag>
+                        );
+                      case "Delivering":
+                        return (
+                          <Tag color="blue" size="large">
+                            Delivering
+                          </Tag>
+                        );
+                      case "Delivered":
+                        return (
+                          <Tag color="green" size="large">
+                            Delivered
+                          </Tag>
+                        );
+                      default:
+                        return (
+                          <Tag color="red" size="large">
+                            Cancelled
+                          </Tag>
+                        );
+                    }
+                  })()}
                 </Space>
               </Card>
               <Card className="col-2-item" size="large" title={`Change Status`}>

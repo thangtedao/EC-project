@@ -1,40 +1,27 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/product/AllProduct.js";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { PRODUCT_STATUS } from "../utils/constants.js";
-
 import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
   FormOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Button, Input, Dropdown, Tag } from "antd";
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    width: 100%;
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-
-  .table {
-    width: 100%;
-  }
-  .ant-table {
-    border: 1px solid lightgray;
-    border-radius: 2px;
-  }
-`;
+import {
+  Breadcrumb,
+  Table,
+  Image,
+  Button,
+  Input,
+  Dropdown,
+  Tag,
+  Space,
+} from "antd";
+import Highlighter from "react-highlight-words";
 
 //Select row
 // rowSelection object indicates the need for row selection
@@ -53,35 +40,48 @@ const rowSelection = {
   }),
 };
 
-export const loader = async ({ request }) => {
+export const loader = async () => {
   try {
-    const params = Object.fromEntries([
-      ...new URL(request.url).searchParams.entries(),
-    ]);
-
     const products = await customFetch
-      .get(`/product/?populate=category,brand`)
+      .get(`/product/?populate=category`)
       .then(({ data }) => data);
 
     const categories = await customFetch
       .get("/category/all-categories")
       .then(({ data }) => data);
 
-    const brands = await customFetch
-      .get("/brand/all-brands")
+    const categoriesC = await customFetch
+      .get(`/category/get/child`)
       .then(({ data }) => data);
 
     const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
-    return { products, categories, brands, orders };
+    return { products, categories, categoriesC, orders };
   } catch (error) {
     return error;
   }
 };
 
 const AllProduct = () => {
-  const { products, categories, brands, orders } = useLoaderData();
+  let { products, categories, categoriesC, orders } = useLoaderData();
   const navigate = useNavigate();
+
+  categories = categories?.map((category) => {
+    category.key = category._id;
+    if (!category.parent) {
+      category.children = categoriesC
+        ?.filter((itemC) => itemC.parent === category._id)
+        .map((itemC) => {
+          itemC.key = itemC._id;
+          return itemC;
+        });
+
+      return category;
+    }
+    return null;
+  });
+
+  categories = categories?.filter((item) => item !== null);
 
   products.forEach((product) => {
     product.sold = orders.reduce((total, order) => {
@@ -123,6 +123,122 @@ const AllProduct = () => {
     },
   ];
 
+  // Search
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
   //Danh sách các cột
   const columns = [
     {
@@ -140,6 +256,7 @@ const AllProduct = () => {
       key: "name",
       fixed: "left",
       render: (text) => <a>{text}</a>,
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Category",
@@ -153,24 +270,14 @@ const AllProduct = () => {
         return {
           text: category?.name,
           value: category?._id,
+          children: category?.children.map((item) => {
+            return { text: item?.name, value: item?._id };
+          }),
         };
       }),
+      filterMode: "tree",
       onFilter: (value, record) =>
         record?.category?.some((cat) => cat?._id === value),
-    },
-    {
-      title: "Brand",
-      dataIndex: "brand",
-      key: "brand",
-      width: 150,
-      render: (brand) => brand?.name,
-      filters: brands?.map((brand) => {
-        return {
-          text: brand?.name,
-          value: brand?._id,
-        };
-      }),
-      onFilter: (value, record) => record?.brand?._id === value,
     },
     {
       title: "Price",
@@ -179,6 +286,8 @@ const AllProduct = () => {
       width: 150,
       render: (value) =>
         value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.price - b.price,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Sale Price",
@@ -187,6 +296,8 @@ const AllProduct = () => {
       width: 150,
       render: (value) =>
         value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.salePrice - b.salePrice,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Status",
@@ -241,12 +352,12 @@ const AllProduct = () => {
 
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
+    // console.log("params", pagination, filters, sorter, extra);
   };
 
   // Số lượng sản phẩm trên mỗi trang
   const paginationConfig = {
-    pageSize: 5,
+    pageSize: 10,
   };
 
   //Search

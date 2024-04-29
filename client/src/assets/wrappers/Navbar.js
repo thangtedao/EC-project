@@ -20,6 +20,7 @@ const Wrapper = styled.div`
     gap: 1.2rem;
   }
   .nav-link {
+    font-size: 0.95rem;
     color: white;
     cursor: pointer;
     display: flex;

@@ -67,6 +67,15 @@ export const applyCoupon = async (req, res) => {
     if (user.rank !== validCoupon.targetCustomers)
       return res.status(StatusCodes.CONFLICT).json({ msg: "Not For You" });
 
+    const now = new Date();
+    if (validCoupon.endDate < now || validCoupon.startDate > now)
+      return res.status(StatusCodes.CONFLICT).json({ msg: "Code has expired" });
+
+    if (validCoupon.numberOfUses <= 0)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Coupon has been fully redeemed" });
+
     res.status(StatusCodes.OK).json(validCoupon);
   } catch (error) {
     console.log(error);

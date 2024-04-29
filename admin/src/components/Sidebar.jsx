@@ -11,7 +11,7 @@ import {
   DollarOutlined,
   WechatOutlined,
   FileWordOutlined,
-  BellOutlined
+  BellOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 
@@ -56,23 +56,33 @@ const items = [
     [
       getItem("All Coupon", "8", null, null, "/all-coupon"),
       getItem("Add Coupon", "9", null, null, "/add-coupon"),
-      getItem("All Event", "10", null, null, "/event"),
+      getItem("Add Event", "10", null, null, "/add-event"),
     ],
     null
   ),
   getItem("Order", "11", <ShoppingCartOutlined />, null, "/all-order"),
   getItem("Customer", "12", <UserOutlined />, null, "/all-user"),
   getItem("Chat", "13", <WechatOutlined />, null, "/chat"),
-  getItem("Blog", "sub4", <FileWordOutlined/>,
-  [
-    getItem("All blog", "14", null, null, "/all-blogs"),
-    getItem("Add blog", "15", null, null, "/add-blog"),
-  ], null),
-  getItem("Notification", "sub5", <BellOutlined />,
-  [
-    getItem("Product comment", "16", null, null, "/commentproductmng"),
-    getItem("Blog comment", "17", null, null, "/commentblogmng"),
-  ], null)
+  getItem(
+    "Blog",
+    "sub4",
+    <FileWordOutlined />,
+    [
+      getItem("All blog", "14", null, null, "/all-blogs"),
+      getItem("Add blog", "15", null, null, "/add-blog"),
+    ],
+    null
+  ),
+  getItem(
+    "Notification",
+    "sub5",
+    <BellOutlined />,
+    [
+      getItem("Product comment", "16", null, null, "/commentproductmng"),
+      getItem("Blog comment", "17", null, null, "/commentblogmng"),
+    ],
+    null
+  ),
 ];
 
 const getLevelKeys = (items1) => {

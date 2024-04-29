@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/product/AddProduct.js";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -19,14 +19,11 @@ import {
   Card,
   Breadcrumb,
   Space,
+  Checkbox,
 } from "antd";
 
 export const loader = async () => {
   try {
-    const brands = await customFetch
-      .get("/brand/all-brands")
-      .then(({ data }) => data);
-
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
@@ -35,60 +32,14 @@ export const loader = async () => {
       .get("/category/get/child")
       .then(({ data }) => data);
 
-    return { brands, categories, categoryChild };
+    return { categories, categoryChild };
   } catch (error) {
     return error;
   }
 };
 
-const Wrapper = styled.div`
-  width: 100%;
-
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-  .input-title {
-    font-size: 0.95rem;
-    font-weight: 400;
-  }
-  .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-    background-color: #f3f3f3;
-    padding: 1 rem;
-    height: 60px;
-    width: 350px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-`;
-
 const AddProduct = () => {
-  const { brands, categories, categoryChild } = useLoaderData();
+  const { categories, categoryChild } = useLoaderData();
   const navigate = useNavigate();
 
   // Product blog
@@ -170,6 +121,14 @@ const AddProduct = () => {
     if (values.categoryC) {
       values.category = [values.category, ...values.categoryC];
       delete values.categoryC;
+    }
+    if (values.attributes && Array.isArray(values.attributes)) {
+      values.attributes.forEach((attribute, index) => {
+        Object.entries(attribute).forEach(([key, value]) => {
+          formData.append(`attributes[${index}][${key}]`, value);
+        });
+      });
+      delete values.attributes;
     }
     if (values.variations && Array.isArray(values.variations)) {
       values.variations.forEach((variation, index) => {
@@ -284,7 +243,7 @@ const AddProduct = () => {
                       />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
+                    {/* <Typography.Title className="input-title">
                       Specifications
                     </Typography.Title>
                     <Form.Item name="specifications">
@@ -296,6 +255,13 @@ const AddProduct = () => {
                           maxRows: 5,
                         }}
                       />
+                    </Form.Item> */}
+
+                    <Typography.Title className="input-title">
+                      Model
+                    </Typography.Title>
+                    <Form.Item name="model">
+                      <Input required size="large" placeholder="Enter Value" />
                     </Form.Item>
                   </div>
                 </div>
@@ -348,6 +314,74 @@ const AddProduct = () => {
                     </Modal>
                   </Form.Item>
                 </div>
+              </Card>
+
+              {/* ATTRIBUTE FIELD */}
+              <Card className="col-1-item" size="large" title={`Attribute`}>
+                <Typography.Title className="input-title">
+                  Attribute
+                </Typography.Title>
+                <Form.List name="attributes">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Space
+                          key={key}
+                          align="baseline"
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "3fr 5fr 1fr 0",
+                            marginBottom: 8,
+                          }}
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, "attributeName"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing",
+                              },
+                            ]}
+                          >
+                            <Input required size="large" placeholder="Name" />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "attributeValue"]}
+                            {...restField}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing Value",
+                              },
+                            ]}
+                          >
+                            <Input required size="large" placeholder="Value" />
+                          </Form.Item>
+                          <Form.Item
+                            name={[name, "mainAttribute"]}
+                            {...restField}
+                            valuePropName="checked"
+                            initialValue={false}
+                          >
+                            <Checkbox />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          New Attribute
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Card>
 
               {/* VARIATIONS FIELDS*/}
@@ -415,7 +449,7 @@ const AddProduct = () => {
                             />
                           </Form.Item>
                           <Form.Item
-                            name={[name, "priceModifier"]}
+                            name={[name, "price"]}
                             {...restField}
                             rules={[
                               {
@@ -485,25 +519,6 @@ const AddProduct = () => {
 
               {/* ORGANIZATION FIELD */}
               <Card className="col-2-item" size="large" title={`Category`}>
-                <Typography.Title className="input-title">
-                  Brand
-                </Typography.Title>
-                <Form.Item
-                  name="brand"
-                  rules={[{ required: true, message: "Please select a brand" }]}
-                >
-                  <Select
-                    size="large"
-                    placeholder="Select Brand"
-                    options={brands?.map((brand) => {
-                      return {
-                        value: brand._id,
-                        label: brand.name,
-                      };
-                    })}
-                  />
-                </Form.Item>
-
                 <Typography.Title className="input-title">
                   Category
                 </Typography.Title>

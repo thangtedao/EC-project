@@ -18,7 +18,15 @@ const productSchema = mongoose.Schema({
   },
   salePrice: {
     type: Number,
-    required: true,
+    default: null,
+  },
+  pmtPrice: {
+    type: Number,
+    default: null,
+  },
+  model: {
+    type: String,
+    lowercase: true,
   },
   description: {
     type: String,
@@ -38,10 +46,6 @@ const productSchema = mongoose.Schema({
       ref: "Category",
     },
   ],
-  brand: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Brand",
-  },
   status: {
     type: String,
     enum: Object.values(PRODUCT_STATUS),

@@ -21,13 +21,13 @@ const Wrapper = styled.div`
   .list-item {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .product-item-outer {
     position: relative;
     background-color: white;
-    border: 1px solid lightgray;
+    border: 1px solid rgba(145, 158, 171, 0.239);
     display: flex;
     gap: 1rem;
     border-radius: 10px;
@@ -45,15 +45,12 @@ const Wrapper = styled.div`
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
-  }
-  .product-variant {
-    display: flex;
+    padding-top: 0.75rem;
     gap: 1rem;
   }
   .product-price {
-    font-size: 1.05rem;
+    color: #d70018;
+    font-weight: 400;
     display: flex;
     gap: 1.5rem;
     align-items: center;
@@ -84,7 +81,6 @@ const Wrapper = styled.div`
   }
   .form-info-input {
     background-color: white;
-    border: 1px solid lightgray;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
@@ -96,8 +92,15 @@ const Wrapper = styled.div`
     display: grid;
     grid-template-columns: 3fr 1fr;
     column-gap: 1rem;
+    background: white;
 
     .btn-apply {
+      border-radius: 8px;
+      border: none;
+      background: #d70018;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
     }
   }
   .coupon-card {
@@ -116,6 +119,22 @@ const Wrapper = styled.div`
   .price-item {
     display: flex;
     justify-content: space-between;
+  }
+
+  .vnpay-btn {
+    width: 100%;
+    border: 1px solid rgba(145, 158, 171, 0.239);
+    border-radius: 5px;
+    background-color: white;
+    display: grid;
+    place-items: center;
+    height: 40px;
+    cursor: pointer;
+
+    img {
+      height: 31px;
+      cursor: pointer;
+    }
   }
 `;
 

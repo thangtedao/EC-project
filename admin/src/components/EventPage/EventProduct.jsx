@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Helmet, HelmetProvider } from "react-helmet-async";
-
-import { useNavigate, useLoaderData } from "react-router-dom";
-import { AudioOutlined } from "@ant-design/icons";
-import { Card, Table, Image, Button, Form, Input } from "antd";
+import { useNavigate } from "react-router-dom";
+import { AudioOutlined, EditOutlined, FormOutlined } from "@ant-design/icons";
+import { Card, Table, Image, Input, Dropdown, Tag } from "antd";
+import { PRODUCT_STATUS } from "../../utils/constants";
 
 const Wrapper = styled.div`
   width: 100%;
   .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
+    width: 100%;
     height: fit-content;
   }
   .col-2-item {
@@ -21,6 +16,7 @@ const Wrapper = styled.div`
     border-radius: 10px;
   }
   .col-1-item {
+    width: 100%;
     border: 1px solid lightgray;
     border-radius: 10px;
   }
@@ -36,10 +32,29 @@ const Wrapper = styled.div`
   }
 `;
 
-const EventProduct = ({ products }) => {
+const EventProduct = ({
+  products,
+  categories,
+  selectedProductIds,
+  setSelectedProductIds,
+  setSelectedProducts,
+}) => {
   const navigate = useNavigate();
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [dataSourceB, setDataSourceB] = useState([]);
+
+  const handleEditProduct = (id) => {
+    navigate(`/edit-product/${id}`);
+  };
+
+  //Dropdown
+  const items = [
+    {
+      label: "View",
+      key: "1",
+      icon: <FormOutlined />,
+      onClick: () => console.log("View"),
+    },
+  ];
+
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -50,18 +65,18 @@ const EventProduct = ({ products }) => {
   const [selectionType] = useState("checkbox");
 
   //Danh sách các cột A
-  const columnsA = [
+  const columns = [
     {
       title: "Image",
-      width: 110,
+      width: 100,
       dataIndex: "images",
       key: "images",
       fixed: "left",
-      // render: (images) => <Image width={100} height={100} src={images[0]} />,
+      render: (images) => <Image width={80} height={80} src={images[0]} />,
     },
     {
       title: "Name",
-      width: 150,
+      width: 250,
       dataIndex: "name",
       key: "name",
       fixed: "left",
@@ -71,139 +86,97 @@ const EventProduct = ({ products }) => {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      // filters:
-    },
-    {
-      title: "Brand",
-      dataIndex: "brand",
-      key: "brand",
-      // filters:
+      width: 150,
+      render: (category) => {
+        return category?.map((item) => <div key={item._id}>{item?.name}</div>);
+      },
+      filters: categories?.map((category) => {
+        return {
+          text: category?.name,
+          value: category?._id,
+        };
+      }),
+      onFilter: (value, record) =>
+        record?.category?.some((cat) => cat?._id === value),
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      // sorter: (a, b) => a.sold - b.sold,
+      width: 150,
+      render: (value) =>
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
-      title: "Sold",
-      dataIndex: "sold",
-      key: "sold",
-      // sorter: (a, b) => a.sold - b.sold,
+      title: "Sale Price",
+      dataIndex: "salePrice",
+      key: "salePrice",
+      width: 150,
+      render: (value) =>
+        value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      // filters:
+      width: 150,
+      render: (status) => {
+        let color = "";
+        if (status === "Available") {
+          color = "green";
+        } else if (status === "Out of stock") {
+          color = "orange";
+        } else if (status === "Discontinued") {
+          color = "red";
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
+      filters: Object.keys(PRODUCT_STATUS).map((key) => {
+        return {
+          text: PRODUCT_STATUS[key],
+          value: PRODUCT_STATUS[key],
+        };
+      }),
+      onFilter: (value, record) => record?.status === value,
+    },
+    {
+      title: "Sold",
+      dataIndex: "sold",
+      key: "sold",
+      width: 100,
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.sold - b.sold,
     },
     {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 80,
+      width: 150,
       render: ({ _id }) => (
-        <Button onClick={() => transferSelectedItems()}>Add</Button>
-      ),
-    },
-  ];
-  //Data A
-  const dataSourceA = [
-    {
-      key: "1",
-      category: "1",
-      name: "Mike",
-      price: 32,
-      sold: "10 Downing Street",
-    },
-    {
-      key: "2",
-      category: "2",
-      name: "John",
-      price: 42,
-      sold: "10 Downing Street",
-    },
-  ];
-
-  //Danh sách các cột B
-  const columnsB = [
-    {
-      title: "Image",
-      width: 110,
-      dataIndex: "images",
-      // render: (images) => <Image width={100} height={100} src={images[0]} />,
-    },
-    {
-      title: "Name",
-      width: 130,
-      dataIndex: "name",
-      key: "name",
-      fixed: "left",
-      render: (text) => <a>{text}</a>,
-    },
-
-    {
-      title: "Action",
-      key: "operation",
-      width: 80,
-      fixed: "right",
-
-      render: ({ _id }) => (
-        <Button onClick={() => removeSelectedItems()}>Delete</Button>
+        <Dropdown.Button
+          onClick={() => handleEditProduct(_id)}
+          menu={{
+            items,
+          }}
+        >
+          <EditOutlined />
+          Edit
+        </Dropdown.Button>
       ),
     },
   ];
 
-  // check sp xem đã có ở bảng B thì không thể thêm  sp đó A từ vào B nữa
-  const transferSelectedItems = () => {
-    // Kiểm tra xem các mục đã được chọn có tồn tại trong Bảng B chưa
-    const selectedProductsToAdd = selectedProducts.filter(
-      (product) => !dataSourceB.find((item) => item.key === product.key)
-    );
-
-    // Thêm các mục chưa tồn tại vào Bảng B
-    setDataSourceB((prevDataSource) => [
-      ...prevDataSource,
-      ...selectedProductsToAdd,
-    ]);
-    // Xóa lựa chọn sau khi chuyển
-    setSelectedProducts([]);
-  };
-
-  //Hàm chọn sp bảng A
   const rowSelection = {
+    selectedRowKeys: selectedProductIds,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        // selectedRows
-        setSelectedProducts(selectedRows)
-      );
+      setSelectedProducts(selectedRows);
+      setSelectedProductIds(selectedRowKeys);
     },
     //Ko thể chọn sp out of stock
     getCheckboxProps: (record) => ({
       disabled: record.status === "Out of stock",
       status: record.status,
     }),
-  };
-
-  //Hàm chọn sp bảng B
-  const rowSelectionB = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      // Xử lý sự kiện khi có sự thay đổi trong việc chọn hàng trong Bảng B
-      console.log("Selected row keys:", selectedRowKeys);
-      console.log("Selected rows:", selectedRows);
-      setSelectedProducts(selectedRows);
-    },
-  };
-
-  //Xóa sp ở bảng B - Hiện đang bị lỗi xóa ở B xong không thể thêm lại trong 1 số trường hợp - ib Vy để biết thêm
-  const removeSelectedItems = () => {
-    const updatedDataSourceB = dataSourceB.filter(
-      (item) => !selectedProducts.some((selected) => selected.key === item.key)
-    );
-    setDataSourceB(updatedDataSourceB);
-    setSelectedProducts([]);
   };
 
   //Search Product
@@ -218,64 +191,42 @@ const EventProduct = ({ products }) => {
   );
 
   return (
-    <HelmetProvider>
-      <Wrapper>
-        <div
+    <Wrapper>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 20,
+        }}
+      >
+        <Search
+          size="large"
+          placeholder="Enter search name"
+          allowClear
+          onSearch={onSearch}
           style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 20,
+            width: "30%",
+            minWidth: 300,
           }}
-        >
-          <Search
-            size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
+        />
+      </div>
+      <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
+        <Card className="col-1-item" size="large" title={`All Product`}>
+          <Table
+            className="table"
+            rowSelection={{ type: "checkbox", ...rowSelection }}
+            columns={columns}
+            dataSource={products.map((product) => ({
+              ...product,
+              key: product._id,
+            }))}
+            showSorterTooltip={{ target: "sorter-icon" }}
           />
-        </div>
-        <Form name="basic">
-          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
-            <div
-              className="col-1"
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
-              <Card className="col-1-item" size="large" title={`All Product`}>
-                <Table
-                  className="table"
-                  rowSelection={{ type: "checkbox", ...rowSelection }}
-                  columns={columnsA}
-                  dataSource={dataSourceA}
-                  scroll={{ x: 1000 }}
-                  showSorterTooltip={{ target: "sorter-icon" }}
-                />
-              </Card>
-            </div>
-            <div
-              className="col-2"
-              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-            >
-              <Card className="col-2-item" size="large" title={`Product`}>
-                <Table
-                  className="table"
-                  rowSelection={{ type: "checkbox", ...rowSelectionB }}
-                  columns={columnsB}
-                  dataSource={dataSourceB}
-                  scroll={{ x: 310 }}
-                  showSorterTooltip={{ target: "sorter-icon" }}
-                />
-              </Card>
-            </div>
-          </div>
-        </Form>
-      </Wrapper>
-    </HelmetProvider>
+        </Card>
+      </div>
+    </Wrapper>
   );
 };
 

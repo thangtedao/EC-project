@@ -20,7 +20,7 @@ const couponSchema = mongoose.Schema({
   },
   numberOfUses: {
     type: Number,
-    default: 1,
+    default: 99,
   },
   description: {
     type: String,

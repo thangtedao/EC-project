@@ -1,39 +1,17 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/category/AllCategory.js";
 import { useNavigate, useLoaderData } from "react-router-dom";
-
 import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
   FormOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Button, Input, Tag, Dropdown } from "antd";
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    width: 100%;
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-
-  .table {
-    width: 100%;
-  }
-  .ant-table {
-    border: 1px solid lightgray;
-    border-radius: 2px;
-  }
-`;
+import { Breadcrumb, Table, Button, Input, Dropdown, Tag, Space } from "antd";
+import Highlighter from "react-highlight-words";
 
 export const loader = async () => {
   try {
@@ -56,24 +34,35 @@ const AllCategory = () => {
   let { categories, categoriesC, itemPerCate } = useLoaderData();
   const navigate = useNavigate();
 
-  categories = categories?.map((category) => {
-    const newCategory = { ...category };
-    newCategory.subCate = [];
-    newCategory.itemPerCate = 0;
-    delete newCategory.parent;
-    return newCategory;
+  categoriesC = categoriesC.map((category) => {
+    category.key = category._id;
+    itemPerCate
+      ?.filter((i) => category._id === i._id)
+      .map(({ count }) => {
+        category.itemPerCate = count;
+      });
+    return category;
   });
 
-  categories?.forEach((item) => {
-    item.subCate = categoriesC
-      ?.filter((itemC) => itemC.parent === item._id)
-      .map(({ _id, name }) => ({ _id, name }));
+  categories = categories?.map((category) => {
+    category.key = category._id;
     itemPerCate
-      ?.filter((i) => item._id === i._id)
+      ?.filter((i) => category._id === i._id)
       .map(({ count }) => {
-        item.itemPerCate = count;
+        category.itemPerCate = count;
       });
+
+    if (!category.parent) {
+      category.children = categoriesC
+        ?.filter((itemC) => itemC.parent === category._id)
+        .map((itemC) => itemC);
+
+      return category;
+    }
+    return null;
   });
+
+  categories = categories?.filter((item) => item !== null);
 
   const handleAddCategoryClick = () => {
     navigate("/add-category");
@@ -105,6 +94,122 @@ const AllCategory = () => {
   // Color Tag
   const fixedColor = "geekblue";
 
+  // Search
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
   //Danh sách các cột
   const columns = [
     {
@@ -113,15 +218,16 @@ const AllCategory = () => {
       dataIndex: "name",
       key: "name",
       fixed: "left",
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Sub Category",
-      dataIndex: "subCate",
-      key: "subCate",
+      dataIndex: "children",
+      key: "children",
       width: 200,
-      render: (_, { subCate }) => (
+      render: (_, { children }) => (
         <>
-          {subCate?.map((category) => {
+          {children?.map((category) => {
             return (
               <Tag color={fixedColor} key={category?._id}>
                 {category?.name.toUpperCase()}
@@ -169,7 +275,7 @@ const AllCategory = () => {
 
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
+    // console.log("params", pagination, filters, sorter, extra);
   };
 
   return (
@@ -228,10 +334,7 @@ const AllCategory = () => {
         <Table
           className="table"
           columns={columns}
-          dataSource={categories.map((category) => ({
-            ...category,
-            key: category._id,
-          }))}
+          dataSource={categories}
           onChange={onChange}
           scroll={{ x: 1200 }}
           showSorterTooltip={{

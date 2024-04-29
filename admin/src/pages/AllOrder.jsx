@@ -1,34 +1,17 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/order/AllOrder.js";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { EditOutlined, AudioOutlined, FormOutlined } from "@ant-design/icons";
-import { Breadcrumb, Tag, Table, Input, Dropdown } from "antd";
 import { ORDER_STATUS } from "../utils/constants.js";
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    width: 100%;
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-
-  .table {
-    width: 100%;
-  }
-  .ant-table {
-    border: 1px solid lightgray;
-    border-radius: 2px;
-  }
-`;
+import {
+  EditOutlined,
+  AudioOutlined,
+  FormOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Breadcrumb, Table, Button, Input, Dropdown, Tag, Space } from "antd";
+import Highlighter from "react-highlight-words";
 
 export const loader = async ({ request }) => {
   try {
@@ -36,7 +19,9 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+    const orders = await customFetch
+      .get(`/order/?admin=true`)
+      .then(({ data }) => data);
 
     return { orders };
   } catch (error) {
@@ -72,6 +57,130 @@ const AllOrder = () => {
     },
   ];
 
+  // Search
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      dataIndex === "user"
+        ? record[dataIndex].fullName
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
   //Danh sách các cột
   const columns = [
     {
@@ -83,22 +192,14 @@ const AllOrder = () => {
       render: (_id) => "#" + _id.slice(18),
     },
     {
-      title: "Image",
-      width: 120,
-      dataIndex: "images",
-      key: "images",
-      fixed: "left",
-      // render: (images) => <Image width={100} height={100} src={images[0]} />,
-    },
-    {
       title: "Customer",
-      width: 150,
+      width: 200,
       dataIndex: "user",
       key: "user",
       fixed: "left",
-      render: (user) => user.fullName,
+      ...getColumnSearchProps("user"),
+      render: (user) => <a>{user.fullName}</a>,
     },
-
     {
       title: "TotalAmount",
       dataIndex: "totalAmount",
@@ -106,17 +207,21 @@ const AllOrder = () => {
       width: 150,
       render: (totalAmount) =>
         totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.totalAmount - b.totalAmount,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 150,
       render: (createdAt) => createdAt.split("T")[0],
     },
     {
       title: "Time",
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 150,
       render: (createdAt) => createdAt.split("T")[1].split(".")[0],
     },
     {
@@ -160,7 +265,7 @@ const AllOrder = () => {
           }}
         >
           <EditOutlined />
-          Edit
+          View
         </Dropdown.Button>
       ),
     },
@@ -168,7 +273,7 @@ const AllOrder = () => {
 
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
+    // console.log("params", pagination, filters, sorter, extra);
   };
   // Số lượng sản phẩm trên mỗi trang
   const paginationConfig = {

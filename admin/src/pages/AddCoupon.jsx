@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/coupon/AddCoupon.js";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   Modal,
   Button,
@@ -14,6 +16,7 @@ import {
   DatePicker,
   InputNumber,
 } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -26,69 +29,24 @@ export const action = async ({ request }) => {
   }
 };
 
-const Wrapper = styled.div`
-  width: 100%;
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-  .input-title {
-    font-size: 0.95rem;
-    font-weight: 400;
-  }
-  .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-    background-color: #f3f3f3;
-    padding: 1 rem;
-    height: 60px;
-    width: 350px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .discount {
-    display: flex;
-    gap: 10px;
-  }
-  .discount-item-1 {
-    flex-grow: 5;
-    box-sizing: border-box;
-  }
-  .discount-item-2 {
-    flex-grow: 2;
-    box-sizing: border-box;
-  }
-  .discount-item-3 {
-    flex-grow: 3;
-    box-sizing: border-box;
-  }
-`;
-
 const AddCoupon = () => {
   const [discountType, setDiscountType] = useState("percentage");
+  const navigate = useNavigate();
+
+  dayjs.extend(customParseFormat);
+  const dateFormat = "YYYY-MM-DD";
+
+  const { RangePicker } = DatePicker;
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const handleDateRangeChange = (dates) => {
+    if (dates) {
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
+    }
+  };
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -110,11 +68,14 @@ const AddCoupon = () => {
   };
 
   const onFinish = async (values) => {
-    values.startDate = values.startDate.toISOString();
-    values.endDate = values.endDate.toISOString();
-    console.log(values);
-    const response = await customFetch.post("/coupon/create", values);
-    if (response) navigate("/all-coupon");
+    try {
+      values.startDate = startDate.format(dateFormat);
+      values.endDate = endDate.format(dateFormat);
+      const response = await customFetch.post("/coupon/create", values);
+      if (response) navigate("/all-coupon");
+    } catch (error) {
+      return;
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -168,6 +129,61 @@ const AddCoupon = () => {
                       />
                     </Form.Item>
 
+                    <div className="customer">
+                      <div className="customer-item-1">
+                        <Typography.Title className="input-title">
+                          Customer
+                        </Typography.Title>
+                        <Form.Item
+                          name="targetCustomers"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select target customer",
+                            },
+                          ]}
+                        >
+                          <Select
+                            size="large"
+                            placeholder="Target Customer"
+                            value={discountType}
+                            onChange={(value) => setDiscountType(value)}
+                            options={[
+                              {
+                                value: "member",
+                                label: "Member",
+                              },
+                              {
+                                value: "silver",
+                                label: "Silver",
+                              },
+                              {
+                                value: "gold",
+                                label: "Gold",
+                              },
+                              {
+                                value: "diamond",
+                                label: "Diamond",
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="customer-item-2">
+                        <Typography.Title className="input-title">
+                          Number of usage
+                        </Typography.Title>
+                        <Form.Item name="numberOfUses">
+                          <InputNumber
+                            required
+                            style={{ width: "100%" }}
+                            size="large"
+                            placeholder="Enter Number"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
+
                     <div className="discount">
                       <div className="discount-item-1">
                         <Typography.Title className="input-title">
@@ -197,7 +213,7 @@ const AddCoupon = () => {
                         >
                           <Select
                             size="large"
-                            placeholder="Select option"
+                            placeholder="Discount Type"
                             value={discountType}
                             onChange={(value) => setDiscountType(value)}
                             options={[
@@ -254,30 +270,15 @@ const AddCoupon = () => {
             >
               <Card className="col-2-item" size="large" title={`Day`}>
                 <Typography.Title className="input-title">
-                  Day Start
+                  Date
                 </Typography.Title>
-                <Form.Item name="startDate">
-                  <DatePicker
-                    required
-                    size="large"
-                    style={{ width: "100%" }}
-                    onChange={onChange}
-                    needConfirm
-                  />
-                </Form.Item>
-
-                <Typography.Title className="input-title">
-                  Day End
-                </Typography.Title>
-                <Form.Item name="endDate">
-                  <DatePicker
-                    required
-                    size="large"
-                    style={{ width: "100%" }}
-                    onChange={onChange}
-                    needConfirm
-                  />
-                </Form.Item>
+                <RangePicker
+                  required
+                  value={[startDate, endDate]}
+                  size="large"
+                  style={{ width: "100%" }}
+                  onChange={handleDateRangeChange}
+                />
               </Card>
             </div>
           </div>

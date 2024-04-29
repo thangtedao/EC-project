@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, Form, redirect, useNavigation } from "react-router-dom";
 import Wrapper from "../assets/wrappers/Register.js";
-import { FormRow } from "../components";
 import customFetch from "../utils/customFetch.js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -46,21 +45,21 @@ const Register = () => {
           <h3>Register</h3>
           <TextField
             required
-            size="small"
+            size="large"
             name="fullName"
             label="Full Name"
             sx={{ width: "100%" }}
           />
           <TextField
             required
-            size="small"
+            size="large"
             name="phone"
             label="Phone Number"
             sx={{ width: "100%" }}
           />
           <TextField
             required
-            size="small"
+            size="large"
             name="email"
             label="Email"
             sx={{ width: "100%" }}
@@ -68,13 +67,14 @@ const Register = () => {
           <TextField
             required
             type="password"
-            size="small"
+            size="large"
             name="password"
             label="Password"
             sx={{ width: "100%" }}
           />
           <button
             type="submit"
+            size="large"
             className="btn btn-block"
             disabled={isSubmitting}
           >

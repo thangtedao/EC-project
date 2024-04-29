@@ -7,6 +7,8 @@ import {
 } from "../utils/cloudinary.js";
 import uniqid from "uniqid";
 import fs from "fs";
+import Coupon from "../models/Coupon.js";
+import { NotFoundError } from "../errors/customErrors.js";
 
 export const getUsers = async (req, res) => {
   try {
@@ -104,27 +106,13 @@ export const blockUser = async (req, res) => {
     const { id } = req.params;
     const blockedUser = await User.findByIdAndUpdate(
       id,
-      { isBlocked: true },
+      { isBlocked: req.body.isBlocked || false },
       { new: true }
     );
     if (!blockedUser) throw new NotFoundError(`User does not exist`);
     res.status(StatusCodes.OK).json({ msg: "User's blocked" });
   } catch (error) {
-    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
-  }
-};
-
-export const unblockUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const unblockedUser = await User.findByIdAndUpdate(
-      id,
-      { isBlocked: false },
-      { new: true }
-    );
-    if (!unblockedUser) throw new NotFoundError(`User does not exist`);
-    res.status(StatusCodes.OK).json({ msg: "User's unblocked" });
-  } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
@@ -133,34 +121,26 @@ export const addToWishlist = async (req, res) => {
   try {
     const { userId } = req.user;
     const { productId } = req.body;
-    const user = await User.findById(userId);
 
-    const alreadyAdded = user.wishlist.find(
-      (id) => id.toString() === productId
-    );
-    if (alreadyAdded) {
-      let user = await User.findByIdAndUpdate(
-        userId,
-        {
-          $pull: { wishlist: productId },
-        },
-        {
-          new: true,
-        }
-      );
-      res.status(StatusCodes.OK).json({ msg: "Removed" });
-    } else {
-      let user = await User.findByIdAndUpdate(
-        userId,
-        {
-          $push: { wishlist: productId },
-        },
-        {
-          new: true,
-        }
-      );
-      res.status(StatusCodes.OK).json({ msg: "Added" });
-    }
+    await User.findByIdAndUpdate(userId, {
+      $push: { wishlist: productId },
+    });
+    res.status(StatusCodes.OK).json({ msg: "Added" });
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { productId } = req.body;
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: { wishlist: productId },
+    });
+    res.status(StatusCodes.OK).json({ msg: "Removed" });
   } catch (error) {
     console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -170,7 +150,7 @@ export const addToWishlist = async (req, res) => {
 export const getWishlist = async (req, res) => {
   try {
     const { userId } = req.user;
-    const wishlist = await User.findById(userId).populate({
+    const { wishlist } = await User.findById(userId).populate({
       path: "wishlist",
       select: [
         "name",
@@ -183,7 +163,75 @@ export const getWishlist = async (req, res) => {
         "status",
       ],
     });
-    res.status(StatusCodes.OK).json({ wishlist });
+    res.status(StatusCodes.OK).json(wishlist);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const addCoupon = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    let { code } = req.body;
+
+    let user = await User.findById(userId);
+    if (code) code = code.toString().toUpperCase();
+    const validCoupon = await Coupon.findOne({ code: code });
+    if (user.rank !== validCoupon.targetCustomers)
+      return res.status(StatusCodes.CONFLICT).json({ msg: "Not For You" });
+
+    const alreadyHave = user.coupon?.find(
+      (item) => item.toString() === validCoupon._id.toString()
+    );
+
+    if (alreadyHave) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "You have saved this coupon" });
+    }
+
+    user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: { coupon: validCoupon._id },
+      },
+      { new: true }
+    );
+
+    res.status(StatusCodes.OK).json({ msg: "Add successfully" });
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const getCoupons = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await User.findById(userId).populate({
+      path: "coupon",
+      select: ["-numberOfUses", "-promotionId"],
+    });
+
+    const expiredCoupons = user.coupon.filter(
+      (item) => item.endDate < Date.now()
+    );
+
+    if (expiredCoupons.length > 0) {
+      user = await User.findByIdAndUpdate(
+        userId,
+        {
+          $pull: { coupon: { $in: expiredCoupons } },
+        },
+        { new: true }
+      ).populate({
+        path: "coupon",
+        select: ["-numberOfUses", "-promotionId"],
+      });
+    }
+
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }

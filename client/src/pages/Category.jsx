@@ -1,156 +1,99 @@
 import React, { useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/Category.js";
 import { categoryData } from "../assets/data/categoryData.js";
-import { ProductList, SlideProduct } from "../components";
+import {
+  FilterLaptop,
+  FilterPhone,
+  PriceSlider,
+  ProductBlog,
+  ProductList,
+  SlideProduct,
+} from "../components";
 import customFetch from "../utils/customFetch";
-import { NavLink, useLoaderData } from "react-router-dom";
-import { debounce } from "lodash";
-import { FaEye } from "react-icons/fa";
-import { FaSortAmountDown } from "react-icons/fa";
-import { FaSortAmountUp } from "react-icons/fa";
+import { Form, NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import NovaIcon from "../assets/logo/LogoNova.svg";
-import { Skeleton, Grid, Box } from "@mui/material";
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   try {
     const { id } = params;
-
-    const productData = await customFetch
-      .get(`/product?category=${id}&page=1&limit=10&status=Available`)
+    params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
+    params.category = id;
+    const productFilter = await customFetch
+      .get("/product/filter", { params })
       .then(({ data }) => data);
 
     const productsMostView = await customFetch
       .get(`/product?category=${id}&sort=-viewed&limit=10&status=Available`)
       .then(({ data }) => data);
 
-    window.scrollTo(0, 0);
-    return { productData, id, productsMostView };
+    const { category, categoryBlog } = await customFetch
+      .get(`/category/${id}`)
+      .then(({ data }) => data);
+
+    return {
+      category,
+      productFilter,
+      id,
+      productsMostView,
+      categoryBlog,
+      searchParams: { ...params },
+    };
   } catch (error) {
     return error;
   }
 };
 
 const Category = () => {
-  const { productData, id, productsMostView } = useLoaderData();
-  const [products, setProducts] = useState(productData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(2);
-  const [isShow, setIsShow] = useState(true);
+  const navigate = useNavigate();
+  const {
+    category,
+    productFilter,
+    id,
+    productsMostView,
+    categoryBlog,
+    searchParams,
+  } = useLoaderData();
 
-  let firstUrl = `/product/?category=${id}&page=${page}&limit=10&status=Available`;
+  let { sort, minPrice, maxPrice } = searchParams;
+  if (minPrice && maxPrice) {
+    minPrice = parseInt(minPrice);
+    maxPrice = parseInt(maxPrice);
+  } else {
+    minPrice = 0;
+    maxPrice = 500000;
+  }
 
-  const [url, setUrl] = useState(firstUrl);
-  const [filterType, setFilterType] = useState();
+  const onChangeSlider = (event, newValue) => {
+    setMinPrice(newValue[0]);
+  };
 
-  const loadMore = debounce(async () => {
-    try {
-      setIsLoading(true);
-      const fetchData = await customFetch.get(url).then(({ data }) => data);
-      setProducts([...products, ...fetchData]);
-    } catch (error) {
-      if (error?.response?.status === 404) setIsShow(false);
-      else console.log(error);
-    } finally {
-      setIsLoading(false);
-      setPage(page + 1);
-      console.log(page);
-    }
-  }, 200);
-
-  const filterLowToHigh = debounce(async () => {
-    try {
-      setIsLoading(true);
-      setFilterType("lth");
-      setUrl(
-        `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=salePrice`
-      );
-
-      let endpoint = `/product/?category=${id}&page=1&limit=10&status=Available&sort=salePrice`;
-      const fetchData = await customFetch
-        .get(endpoint)
-        .then(({ data }) => data);
-      setProducts(fetchData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsShow(true);
-      setPage(2);
-    }
-  }, 300);
-
-  const filterHighToLow = debounce(async () => {
-    try {
-      setIsLoading(true);
-      setFilterType("htl");
-      setUrl(
-        `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-salePrice`
-      );
-
-      let endpoint = `/product/?category=${id}&page=1&limit=10&status=Available&sort=-salePrice`;
-      const fetchData = await customFetch
-        .get(endpoint)
-        .then(({ data }) => data);
-      setProducts(fetchData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsShow(true);
-      setPage(2);
-    }
-  }, 300);
-
-  const filterMostViewed = debounce(async () => {
-    try {
-      setIsLoading(true);
-      setFilterType("mv");
-      setUrl(
-        `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-viewed`
-      );
-
-      let endpoint = `/product/?category=${id}&page=1&limit=10&status=Available&sort=-viewed`;
-      const fetchData = await customFetch
-        .get(endpoint)
-        .then(({ data }) => data);
-      setProducts(fetchData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsShow(true);
-      setPage(2);
-    }
-  }, 300);
+  const [mainCategory, setMainCategory] = useState(category);
 
   useEffect(() => {
-    switch (filterType) {
-      case "htl":
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-salePrice`
-        );
-        break;
+    const fetch = async () => {
+      const cat = await customFetch
+        .get(`/category/${category.parent}`)
+        .then(({ data }) => data.category);
+      setMainCategory(cat);
+    };
+    if (category.parent) fetch();
+  }, []);
 
-      case "lth":
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=salePrice`
-        );
-        break;
+  let ram, rom, cpu, chip;
 
-      case "mv":
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available&sort=-viewed`
-        );
-        break;
+  if (mainCategory.slug === "laptop") {
+    ({ ram, ["ổ cứng"]: rom, cpu } = searchParams);
+  } else if (mainCategory.slug === "phone") {
+    ({ ram, rom, chip } = searchParams);
+  }
 
-      default:
-        setUrl(
-          `/product/?category=${id}&page=${page}&limit=10&status=Available`
-        );
-        break;
-    }
-  }, [page]);
+  const [products, setProducts] = useState(productFilter);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(2);
+  const [MinPrice, setMinPrice] = useState(0);
 
   return (
     <HelmetProvider>
@@ -186,52 +129,67 @@ const Category = () => {
 
         {/* --------- ALL PRODUCTS -------- */}
         <div className="block-filter-sort">
-          {/* <div className="block-filter-sort-title">Chọn theo tiêu chí</div>
-          <div className="filter-sort-list-filter">
-            <div className="btn-filter">Beta</div>
-          </div> */}
-          <div className="block-filter-sort-title">Sắp xếp theo</div>
-          <div className="filter-sort-list-filter">
-            <div className="btn-filter" onClick={() => filterHighToLow()}>
-              <FaSortAmountDown />
-              Giá Cao - Thấp
-            </div>
-            <div className="btn-filter" onClick={() => filterLowToHigh()}>
-              <FaSortAmountUp />
-              Giá Thấp - Cao
-            </div>
-            <div className="btn-filter" onClick={() => filterMostViewed()}>
-              <FaEye />
-              <span>Xem nhiều</span>
-            </div>
-          </div>
+          <Form className="filter-form">
+            {(() => {
+              switch (mainCategory.slug) {
+                case "laptop":
+                  return <FilterLaptop ram={ram} rom={rom} cpu={cpu} />;
+                case "phone":
+                  return <FilterPhone ram={ram} rom={rom} chip={chip} />;
+                default:
+                  return null;
+              }
+            })()}
 
-          {isLoading ? (
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Skeleton variant="rectangular" width={200} height={380} />
-              <Skeleton variant="rectangular" width={200} height={380} />
-              <Skeleton variant="rectangular" width={200} height={380} />
-              <Skeleton variant="rectangular" width={200} height={380} />
-              <Skeleton variant="rectangular" width={200} height={380} />
+            <div className="slider">
+              <div className="filter-title">Giá</div>
+              <PriceSlider
+                name="maxPrice"
+                defaultValue={[minPrice, maxPrice]}
+                onChange={onChangeSlider}
+              />
             </div>
+
+            <div>
+              <div className="filter-title">Sắp xếp theo</div>
+              <div className="filter-select">
+                <select name="sort" defaultValue={sort}>
+                  <option value="">Sắp xếp theo</option>
+                  <option value="-salePrice">Giá Cao - Thấp</option>
+                  <option value="salePrice">Giá Thấp - Cao</option>
+                  <option value="-viewed">Xem nhiều</option>
+                </select>
+              </div>
+            </div>
+
+            <input name="minPrice" readOnly value={MinPrice} hidden />
+
+            <div className="buttons">
+              <button type="submit" className="btn">
+                Apply
+              </button>
+
+              <button
+                type="button"
+                className="btn"
+                onClick={() => navigate(`/category/${id}`)}
+              >
+                Reset
+              </button>
+            </div>
+          </Form>
+
+          {productFilter?.length > 0 ? (
+            <ProductList products={productFilter} />
           ) : (
-            <ProductList products={products} />
+            <div>Không có sản phẩm hợp tiêu chí</div>
           )}
         </div>
-
-        {isShow && (
-          <div className="btn-load" onClick={() => loadMore()}>
-            {isLoading ? "Loading" : "Xem thêm"}
-          </div>
-        )}
 
         {/* BOT */}
         <div className="bot-container">
           <div className="bot-container-column-1">
-            <div className="product-description">
-              <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>Mô tả:</p>
-              {/* <p style={{ whiteSpace: "pre-line" }}>{fetchCate?.description}</p> */}
-            </div>
+            {categoryBlog && <ProductBlog productBlog={categoryBlog} />}
           </div>
           <div className="bot-container-column-2"></div>
         </div>

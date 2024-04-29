@@ -18,7 +18,6 @@ const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
     gap: 10px;
-    border: 1px solid gray;
     border-radius: 10px;
     width: 100%;
     height: 35px;
@@ -29,6 +28,7 @@ const Wrapper = styled.div`
     .search-icon {
       display: grid;
       place-items: center;
+      cursor: pointer;
     }
   }
   .search-result {
@@ -44,7 +44,6 @@ const Wrapper = styled.div`
       0 2px 6px 2px rgba(60, 64, 67, 0.15);
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
     padding: 10px 0;
     overflow: auto;
   }
@@ -52,8 +51,8 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
-    height: 50px;
-    padding: 5px;
+    height: 80px;
+    padding: 0 10px;
 
     :hover {
       background: #f0f0f0;
@@ -74,8 +73,9 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 5px;
     .name {
-      font-size: 0.9rem;
-      font-weight: bold;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      font-weight: 700;
       color: #444;
     }
   }
@@ -96,14 +96,16 @@ const Wrapper = styled.div`
 `;
 
 const SearchBar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [products, setProducts] = useState([]);
   const [isShow, setIsShow] = useState(false);
 
   const fetchData = debounce(async (name) => {
     if (name !== "") {
-      const response = await customFetch.get(`/product/search/?name=${name}`);
+      const response = await customFetch.get(
+        `/product/search/?name=${name}&limit=10&status=Available`
+      );
       setProducts(response.data || []);
     } else {
       setProducts([]);
@@ -115,19 +117,19 @@ const SearchBar = () => {
     fetchData(e.target.value);
   };
 
-  const handleSumit = (e)=>{
-    e.preventDefault()
-    const keyword = input.trim()
-    if(!keyword){
-      return
-    } else{
-      navigate(`/search/${keyword}`)
+  const handleSumit = (e) => {
+    e.preventDefault();
+    const keyword = input.trim();
+    if (!keyword) {
+      return;
+    } else {
+      navigate(`/search/${keyword}`);
     }
-  }
+  };
 
   return (
     <Wrapper>
-      <Form className="search-bar" onSubmit={handleSumit} >
+      <Form className="search-bar" onSubmit={handleSumit}>
         <InputBase
           className="search-input"
           placeholder="Tìm kiếm"
@@ -137,8 +139,7 @@ const SearchBar = () => {
           onFocus={() => setTimeout(() => setIsShow(true), 100)}
           onBlur={() => setTimeout(() => setIsShow(false), 100)}
         />
-
-        <div className="search-icon">
+        <div className="search-icon" onClick={(e) => handleSumit(e)}>
           <Search />
         </div>
       </Form>
@@ -149,7 +150,7 @@ const SearchBar = () => {
             return (
               <NavLink
                 key={product._id}
-                to={`/product/${product.slug}`}
+                to={`/product/${product._id}`}
                 className="product-card"
               >
                 <div className="product-card-image">

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
+import Wrapper from "../assets/wrapper/category/EditCategory.js";
 import { redirect, useNavigate, useLoaderData } from "react-router-dom";
 import {
   Modal,
@@ -13,51 +13,8 @@ import {
   Card,
   Breadcrumb,
 } from "antd";
-
-const Wrapper = styled.div`
-  width: 100%;
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-  .input-title {
-    font-size: 0.95rem;
-    font-weight: 400;
-  }
-  .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-    background-color: #f3f3f3;
-    padding: 1 rem;
-    height: 60px;
-    width: 350px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-`;
+import { Editor } from "@tinymce/tinymce-react";
+import { useRef } from "react";
 
 export const loader = async ({ params }) => {
   try {
@@ -65,22 +22,35 @@ export const loader = async ({ params }) => {
     if (!id) {
       return redirect("/all-category");
     }
-    const category = await customFetch
+    const { category, categoryBlog } = await customFetch
       .get(`/category/${id}`)
       .then(({ data }) => data);
+    const isHaveChild = await customFetch
+      .get(`/category/all-categories/?parent=${category._id}`)
+      .then(({ data }) => data?.length > 0);
     let categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);
     if (categories) categories = categories?.filter((item) => item._id !== id);
-    return { category, categories };
+    return { category, categories, categoryBlog, isHaveChild };
   } catch (error) {
     return error;
   }
 };
 
 const EditCategory = () => {
-  const { category, categories } = useLoaderData();
+  const { category, categories, categoryBlog, isHaveChild } = useLoaderData();
   const navigate = useNavigate();
+
+  // Category blog
+  const [blog, setBlog] = useState(categoryBlog?.content || "");
+  const editorRef = useRef(null);
+  const blogChange = () => {
+    if (editorRef.current) {
+      const blogContent = String(editorRef.current.getContent());
+      setBlog(blogContent);
+    }
+  };
 
   //Modal
   const [open, setModalOpen] = useState(false);
@@ -99,7 +69,6 @@ const EditCategory = () => {
   };
 
   const onFinish = async (values) => {
-    console.log("Success:", values);
     if (!values.parent) delete values.parent;
     const response = await customFetch.patch(
       `/category/update/${category._id}`,
@@ -193,6 +162,37 @@ const EditCategory = () => {
                         }}
                       />
                     </Form.Item>
+
+                    <Typography.Title className="input-title">
+                      Blog
+                    </Typography.Title>
+                    <Form.Item>
+                      <Editor
+                        // apiKey="cmlltcvw2ydrtenwdgwdwqqrvsje6foe8t5xtyaq6lo2ufki"
+                        apiKey="jbmjv3n0hzwml063re0ackyls29g62lc76t23ptagoco48ip"
+                        language="vi"
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                        initialValue={blog}
+                        init={{
+                          height: 500,
+                          menubar:
+                            "file edit view insert format tools table tc help",
+                          plugins: [
+                            "advlist autolink lists link image charmap print preview anchor",
+                            "searchreplace visualblocks code fullscreen",
+                            "insertdatetime media table paste code help wordcount",
+                          ],
+                          toolbar:
+                            "undo redo | formatselect | " +
+                            "bold italic backcolor | alignleft aligncenter " +
+                            "alignright alignjustify | bullist numlist outdent indent | " +
+                            "removeformat | help",
+                          content_style:
+                            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                        }}
+                        onChange={blogChange}
+                      />
+                    </Form.Item>
                   </div>
                 </div>
               </Card>
@@ -205,12 +205,15 @@ const EditCategory = () => {
               {/* Parent */}
               <Card className="col-2-item" size="large" title={`Parent`}>
                 <Typography.Title className="input-title">
-                  Category parent
+                  {isHaveChild
+                    ? "Please remove all children"
+                    : "Category parent"}
                 </Typography.Title>
                 <Form.Item name="parent">
                   <Select
                     allowClear
                     size="large"
+                    disabled={isHaveChild}
                     placeholder="Select Parent"
                     options={categories?.map((item) => {
                       return {

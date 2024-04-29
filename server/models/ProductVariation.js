@@ -14,8 +14,13 @@ const productVariationSchema = new mongoose.Schema({
   variationValue: {
     type: String,
   },
-  priceModifier: {
+  price: {
     type: Number,
+    default: 0,
+  },
+  salePrice: {
+    type: Number,
+    default: null,
   },
 });
 

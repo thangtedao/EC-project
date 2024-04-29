@@ -1,9 +1,12 @@
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  padding: 1rem;
-  text-align: center;
-  height: fit-content;
+  width: 650px;
+  height: 100%;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 
   .title {
     width: 100%;
@@ -12,65 +15,68 @@ const Wrapper = styled.div`
     text-align: center;
   }
 
-  table {
-    width: 800px;
-    font-size: 1rem;
-    margin-top: 2rem;
-  }
-  th {
-    height: 30px;
-    border-bottom: 1px solid lightgray;
-  }
-  td {
-    height: 80px;
-    border-bottom: 1px solid lightgray;
-  }
-  th,
-  td {
-    text-align: left;
-    padding: 1rem;
-  }
-  td:first-child {
-    width: 50%;
-  }
-
-  .product-card {
-    display: flex;
-    gap: 1rem;
-    height: 100px;
-  }
-  .product-info {
+  .list-item {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 1rem 0;
-    margin-left: 0.5rem;
-    .product-name {
-      font-size: 1.1rem;
-      font-weight: bold;
-    }
+  }
+
+  .product-item-outer {
+    position: relative;
+    background-color: white;
+    border: 1px solid rgba(145, 158, 171, 0.239);
+    display: flex;
+    gap: 1rem;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    height: 120px;
+  }
+  .product-img {
+    width: 100px;
+    height: 100px;
+    display: grid;
+    place-items: center;
+  }
+  .product-info {
+    width: 70%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.75rem;
+    gap: 1rem;
   }
   .product-price {
-    font-size: 1.1rem;
     color: #d70018;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 1rem;
-    font-weight: bold;
-  }
-  .strike {
-    font-size: 0.9rem;
-    color: #707070;
-    text-decoration: line-through;
-    text-decoration-thickness: 1px;
-  }
-  .image {
-    width: 120px;
-    height: 100px;
-    img {
-      max-width: 300px;
-      height: inherit;
+    font-weight: 400;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+
+    .strike {
+      font-size: 0.95rem;
+      color: #707070;
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
     }
+  }
+  .product-quantity {
+    position: absolute;
+    right: 15px;
+    bottom: 50px;
+    display: grid;
+    place-items: center;
+  }
+  .remove-btn {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    cursor: pointer;
+  }
+  .cart-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 30px;
+    cursor: pointer;
   }
 
   .empty-wishlist {

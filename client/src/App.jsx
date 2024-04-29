@@ -15,6 +15,11 @@ import {
   Wishlist,
   Profile,
   Error,
+  Search,
+  Blogs,
+  Blog,
+  Event,
+  Coupon,
   VnPay_return,
 } from "./pages";
 
@@ -33,10 +38,10 @@ import { loader as cartLoader } from "./pages/Cart";
 import { loader as paymentLoader } from "./pages/Payment";
 import { loader as orderLoader } from "./pages/Order";
 import { loader as wishlistLoader } from "./pages/Wishlist";
+import { loader as couponLoader } from "./pages/Coupon";
 import { loader as profileLoader } from "./pages/Profile";
-import SearchPage from "./pages/Search";
-import AllBlog from "./pages/AllBlog";
-import Blog from "./pages/Blog";
+import { loader as blogsLoader } from "./pages/Blogs";
+import { loader as blogLoader } from "./pages/Blog";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +54,15 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
         loader: homeLoader,
+      },
+      {
+        path: "event",
+        element: <Event />,
+      },
+      {
+        path: "coupon",
+        element: <Coupon />,
+        loader: couponLoader,
       },
       {
         path: "register",
@@ -68,7 +82,7 @@ const router = createBrowserRouter([
       },
       {
         path: "search/:keyword",
-        element: <SearchPage />,
+        element: <Search />,
       },
       {
         path: "cart",
@@ -110,12 +124,14 @@ const router = createBrowserRouter([
         action: profileAction,
       },
       {
-        path: "all-blogs",
-        element: <AllBlog />,
+        path: "blogs",
+        element: <Blogs />,
+        loader: blogsLoader,
       },
       {
         path: "blog/:id",
         element: <Blog />,
+        loader: blogLoader,
       },
     ],
   },

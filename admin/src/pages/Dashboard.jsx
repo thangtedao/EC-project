@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import styled from "styled-components";
-import { useLoaderData } from "react-router-dom";
+import Wrapper from "../assets/wrapper/dashboard/Dashboard.js";
+import { useLoaderData, redirect } from "react-router-dom";
 import ChartPie from "../components/Dashboard/ChartPie.jsx";
 import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
@@ -11,40 +11,10 @@ import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
 import { Breadcrumb, Card, Segmented, DatePicker, Button, message } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+
 dayjs.extend(customParseFormat);
 const dateFormat = "YYYY-MM-DD";
-
-const Wrapper = styled.div`
-  width: 100%;
-
-  .title {
-    text-align: left;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #00193b;
-    margin-bottom: 1rem;
-  }
-  .input-title {
-    font-size: 0.95rem;
-    font-weight: 400;
-  }
-  .col-1 {
-    width: 60%;
-    height: fit-content;
-  }
-  .col-2 {
-    width: 40%;
-    height: fit-content;
-  }
-  .col-2-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-  .col-1-item {
-    border: 1px solid lightgray;
-    border-radius: 10px;
-  }
-`;
+const { RangePicker } = DatePicker;
 
 export const loader = async ({ request }) => {
   try {
@@ -52,25 +22,43 @@ export const loader = async ({ request }) => {
       ...new URL(request.url).searchParams.entries(),
     ]);
 
-    const endDate = dayjs().startOf("day").format(dateFormat);
-    const startDate = dayjs()
-      .subtract(12, "month")
+    const end = dayjs().startOf("day").format(dateFormat);
+    const start = dayjs()
+      .subtract(1, "month")
       .startOf("day")
-      .format("YYYY-MM-DD");
+      .format(dateFormat);
     const response = await customFetch.post("/order/stats", {
-      startDate,
-      endDate,
+      startDate: start,
+      endDate: end,
     });
-    const { monthlyApplications } = response.data;
+    const {
+      monthlyApplications,
+      dailyApplications,
+      totalRevenue,
+      totalOrder,
+      totalProduct,
+      orders,
+      products,
+    } = response.data;
 
-    const products = await customFetch
-      .get(`/product/?populate=category,brand`)
+    const ordersData = await customFetch
+      .get(`/order/?admin=true`)
       .then(({ data }) => data);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
-
-    return { products, orders, monthlyApplications };
+    return {
+      start,
+      end,
+      products,
+      orders,
+      ordersData,
+      monthlyApplications,
+      dailyApplications,
+      totalRevenue,
+      totalOrder,
+      totalProduct,
+    };
   } catch (error) {
+    if (error?.response?.status === 403) return redirect("/login");
     return error;
   }
 };
@@ -78,7 +66,18 @@ export const loader = async ({ request }) => {
 const DashboardContext = createContext();
 
 const Dashboard = () => {
-  const { products, orders, monthlyApplications } = useLoaderData();
+  const {
+    start,
+    end,
+    products,
+    orders,
+    ordersData,
+    monthlyApplications,
+    dailyApplications,
+    totalRevenue,
+    totalOrder,
+    totalProduct,
+  } = useLoaderData();
 
   const [showWarningMessage, setShowWarningMessage] = useState(false);
   useEffect(() => {
@@ -88,41 +87,49 @@ const Dashboard = () => {
     }
   }, [showWarningMessage]);
 
-  const [minDate, setMinDate] = useState(null);
-  const [maxDate, setMaxDate] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(dayjs(start));
+  const [endDate, setEndDate] = useState(dayjs(end));
   const [monthlyStats, setMonthlyStats] = useState(monthlyApplications);
+  const [dailyStats, setDailyStats] = useState(dailyApplications);
+  const [monthlyOrders, setmonthlyOrders] = useState(orders);
+  const [monthlyProducts, setMonthlyProducts] = useState(products);
 
-  const startDateChange = (dates, dateString) => {
+  const handleDateRangeChange = (dates) => {
     if (dates) {
-      const date = new Date(dateString);
-      setMinDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-      date.setMonth(11);
-      date.setDate(31);
-      console.log(date);
-      setMaxDate(dayjs(date.toISOString().slice(0, 10), dateFormat));
-      setStartDate(dateString);
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
     }
   };
 
-  const endDateChange = (date, dateString) => {
-    setEndDate(dateString);
-  };
-
   const applyDateChange = async () => {
-    console.log(startDate + " || " + endDate);
-    if (startDate && endDate) {
-      const response = await customFetch.post("/order/stats", {
-        startDate,
-        endDate,
-      });
-      setMonthlyStats(response.data.monthlyApplications);
-    } else setShowWarningMessage(true);
+    try {
+      if (startDate && endDate) {
+        const response = await customFetch.post("/order/stats", {
+          startDate: startDate.format(dateFormat),
+          endDate: endDate.format(dateFormat),
+        });
+        setMonthlyStats(response.data.monthlyApplications);
+        setDailyStats(response.data.dailyApplications);
+        setmonthlyOrders(response.data.orders);
+        setMonthlyProducts(response.data.products);
+      } else setShowWarningMessage(true);
+    } catch (error) {
+      return;
+    }
   };
 
   return (
-    <DashboardContext.Provider value={{ products, orders, monthlyStats }}>
+    <DashboardContext.Provider
+      value={{
+        monthlyProducts,
+        monthlyOrders,
+        monthlyStats,
+        dailyStats,
+        startDate,
+        endDate,
+        ordersData,
+      }}
+    >
       <HelmetProvider>
         <Wrapper>
           <Helmet>
@@ -150,17 +157,9 @@ const Dashboard = () => {
                 title={"Revenue"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
-                    <DatePicker
-                      defaultValue={startDate}
-                      onChange={startDateChange}
-                      size="middle"
-                    />
-                    <DatePicker
-                      defaultValue={endDate}
-                      onChange={endDateChange}
-                      minDate={minDate}
-                      maxDate={maxDate}
-                      size="middle"
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
                     />
                     <Button onClick={() => applyDateChange()}>Apply</Button>
                   </div>
@@ -175,8 +174,11 @@ const Dashboard = () => {
                 title={"Revenue"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
-                    <DatePicker size="middle" />
-                    <DatePicker size="middle" />
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
                   </div>
                 }
               >
@@ -187,20 +189,15 @@ const Dashboard = () => {
                 className="col-1-item"
                 size="large"
                 title={"Order"}
-                // extra={
-                //   <Segmented
-                //     options={[
-                //       "Daily",
-                //       "Weekly",
-                //       "Monthly",
-                //       "Quarterly",
-                //       "Yearly",
-                //     ]}
-                //     onChange={(value) => {
-                //       console.log(value); // string
-                //     }}
-                //   />
-                // }
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
               >
                 <DashboardOrder />
               </Card>
@@ -213,7 +210,20 @@ const Dashboard = () => {
               <Card className="col-2-item" size="large" title={"Order Status"}>
                 <ChartPie />
               </Card>
-              <Card className="col-2-item" size="large" title={"Product"}>
+              <Card
+                className="col-2-item"
+                size="large"
+                title={"Product"}
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
+              >
                 <DashboardProduct />
               </Card>
             </div>
