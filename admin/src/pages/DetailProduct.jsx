@@ -207,16 +207,16 @@ const DetailProduct = () => {
               title: <a onClick={() => navigate("/all-product")}>Product</a>,
             },
             {
-              title: "Edit Product",
+              title: "Detail Product",
             },
           ]}
         />
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Edit Product</title>
+          <title>Detail Product</title>
         </Helmet>
 
-        <div className="title">Edit Product</div>
+        <div className="title">Detail Product</div>
 
         <Form
           name="basic"

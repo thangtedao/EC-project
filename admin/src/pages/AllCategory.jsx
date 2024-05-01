@@ -7,7 +7,7 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Button, Input, Dropdown, Tag, Space } from "antd";
@@ -70,7 +70,9 @@ const AllCategory = () => {
   const handleEditCategory = (id) => {
     navigate(`/edit-category/${id}`);
   };
-
+  const handleViewCategory = (id) => {
+    navigate(`/detail-category/${id}`);
+  };
   //Search Product
   const { Search } = Input;
   const suffix = (
@@ -87,7 +89,8 @@ const AllCategory = () => {
     {
       label: "View",
       key: "1",
-      icon: <FormOutlined />,
+      icon: <EyeOutlined />,
+      onClick: (_id) => handleViewCategory(_id),
     },
   ];
 
@@ -260,7 +263,10 @@ const AllCategory = () => {
         <Dropdown.Button
           onClick={() => handleEditCategory(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
           <EditOutlined />
