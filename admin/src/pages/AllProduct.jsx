@@ -8,7 +8,7 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import {
@@ -101,6 +101,9 @@ const AllProduct = () => {
   const handleEditProduct = (id) => {
     navigate(`/edit-product/${id}`);
   };
+  const handleViewProduct = (id) => {
+    navigate(`/detail-product/${id}`);
+  };
   const handleReloadClick = () => {
     navigate("/add-product");
   };
@@ -121,8 +124,8 @@ const AllProduct = () => {
     {
       label: "View",
       key: "1",
-      icon: <FormOutlined />,
-      onClick: () => handleAddProduct(),
+      icon: <EyeOutlined />,
+      onClick: (_id) => handleViewProduct(_id),
     },
   ];
 
@@ -353,7 +356,10 @@ const AllProduct = () => {
         <Dropdown.Button
           onClick={() => handleEditProduct(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
           <EditOutlined />

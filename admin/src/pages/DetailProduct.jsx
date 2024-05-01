@@ -2,11 +2,11 @@ import React, { useState, useRef } from "react";
 import { PRODUCT_STATUS } from "../utils/constants.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import Wrapper from "../assets/wrapper/product/EditProduct.js";
-import { redirect, useNavigate, useLoaderData } from "react-router-dom";
+import Wrapper from "../assets/wrapper/product/DetailProduct.js";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
-import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
   Modal,
   Upload,
@@ -53,7 +53,7 @@ export const loader = async ({ params }) => {
   }
 };
 
-const EditProduct = () => {
+const DetailProduct = () => {
   const {
     product,
     attribute,
@@ -220,6 +220,7 @@ const EditProduct = () => {
 
         <Form
           name="basic"
+          disabled
           initialValues={{
             name: product?.name,
             model: product?.model,
@@ -289,7 +290,8 @@ const EditProduct = () => {
                           content_style:
                             "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                         }}
-                        onChange={blogChange}
+                        // onChange={blogChange}
+                        disabled={true}
                       />
                     </Form.Item>
 
@@ -650,37 +652,18 @@ const EditProduct = () => {
               </Card>
             </div>
           </div>
-
-          {/* BUTTON SUBMIT */}
-          <div className="btn">
-            <Button
-              danger
-              size="large"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want to cancel?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
-              Cancel
-            </Button>
-
-            <Button size="large" type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </div>
         </Form>
+        <div className="btn">
+          <Button danger size="large">
+            Cancel
+          </Button>
+          <Button size="large" type="primary">
+            Edit
+          </Button>
+        </div>
       </Wrapper>
     </HelmetProvider>
   );
 };
 
-export default EditProduct;
+export default DetailProduct;

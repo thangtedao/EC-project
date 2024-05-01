@@ -20,6 +20,8 @@ import { loader as allOrderLoader } from "./pages/AllOrder";
 import { loader as editOrderLoader } from "./pages/EditOrder";
 import { loader as addEventLoader } from "./pages/AddEvent";
 
+import { loader as detailProductLoader } from "./pages/DetailProduct";
+
 /* PAGE */
 import AllProduct from "./pages/AllProduct";
 import AddProduct from "./pages/AddProduct";
@@ -46,6 +48,7 @@ import EditBlog from "./pages/EditBlog";
 import CommentBlogMng from "./pages/CommentBlogMng";
 import CommentProductMng from "./pages/CommentProductMng";
 
+import DetailProduct from "./pages/DetailProduct";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -73,6 +76,13 @@ const router = createBrowserRouter([
         element: <AddProduct />,
         loader: addProductLoader,
       },
+      //
+      {
+        path: "detail-product/:id",
+        element: <DetailProduct />,
+        loader: detailProductLoader,
+      },
+      //
       {
         path: "edit-product/:id",
         element: <EditProduct />,

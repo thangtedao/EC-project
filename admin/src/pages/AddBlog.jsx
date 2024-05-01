@@ -1,111 +1,230 @@
-import { Editor } from '@tinymce/tinymce-react'
-import React from 'react'
-import { useRef } from 'react';
-import {Form, Card,Input,Typography, Button} from 'antd'
-import customFetch from '../utils/customFetch';
+import { Editor } from "@tinymce/tinymce-react";
+import React, { useState, useRef } from "react";
+import customFetch from "../utils/customFetch";
+import Wrapper from "../assets/wrapper/blog/AddBlog.js";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { PlusOutlined } from "@ant-design/icons";
+
+import {
+  Form,
+  Card,
+  Input,
+  Typography,
+  Button,
+  Breadcrumb,
+  Upload,
+} from "antd";
 
 const AddBlog = () => {
   const editorRef = useRef(null);
   const [form] = Form.useForm();
+  //
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
 
-  const onFinish = async (values) =>{
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: "none",
+      }}
+      type="button"
+    >
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </button>
+  );
+  //
+
+  const onFinish = async (values) => {
     const blogContent = String(editorRef.current.getContent());
     const data = {
-        title: values.title,
-        imageTitle: values.image,
-        description:  values.description,
-        content: blogContent,
-        comments:[]
-    }
+      title: values.title,
+      imageTitle: values.image,
+      description: values.description,
+      content: blogContent,
+      comments: [],
+    };
     // console.log(data)
     try {
-        const response = await customFetch.post(`/blog/create`, data)
-        // console.log(response)
-        form.resetFields();
+      const response = await customFetch.post(`/blog/create`, data);
+      // console.log(response)
+      form.resetFields();
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
     // console.log(response)
-
-  }
+  };
 
   return (
-    <Form form={form} name="basic" onFinish={onFinish}>
-        <Card
-            className="col-1-item"
-            size="small"
-            title={`ADD BLOG`}
-            style={{ maxWidth: '60vw' }}
-        >   
-            <div>
+    <HelmetProvider>
+      <Wrapper>
+        <Breadcrumb
+          style={{ paddingBottom: "1rem" }}
+          items={[
+            {
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
+            },
+            {
+              title: <a onClick={() => navigate("/all-blog")}>Blog</a>,
+            },
+            {
+              title: "Add Blog",
+            },
+          ]}
+        />
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Add Blog</title>
+        </Helmet>
+        <div className="title">Add Blog</div>
+
+        <Form form={form} name="basic" onFinish={onFinish}>
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
+            <div
+              className="col-1"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card
+                className="col-1-item"
+                size="large"
+                title={`Blog information`}
+              >
                 <Typography.Title className="input-title">
-                    Title
+                  Title
                 </Typography.Title>
                 <Form.Item name="title">
-                    <Input
-                        required
-                        size="large"
-                        placeholder="Enter Blog title"
-                    />    
+                  <Input required size="large" placeholder="Enter Blog title" />
                 </Form.Item>
                 <Typography.Title className="input-title">
-                    Image
-                </Typography.Title>
-                <Form.Item name="image">
-                    <Input
-                        required
-                        size="large"
-                        placeholder="Enter Blog Image"
-                    />    
-                </Form.Item>
-                <Typography.Title className="input-title">
-                    Description
+                  Description
                 </Typography.Title>
                 <Form.Item name="description">
-                    <Input
-                        required
-                        size="large"
-                        placeholder="Enter Blog Description"
-                    />    
+                  <Input.TextArea
+                    required
+                    size="large"
+                    placeholder="Type your description..."
+                    autoSize={{
+                      minRows: 3,
+                      maxRows: 5,
+                    }}
+                  />
                 </Form.Item>
                 <Typography.Title className="input-title">
-                    Blog content
+                  Image link
+                </Typography.Title>
+                <Form.Item name="merelink">
+                  <Input.TextArea
+                    size="large"
+                    placeholder="Enter link image"
+                    autoSize={{
+                      minRows: 3,
+                      maxRows: 5,
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item name="image" label="Images">
+                  <Upload
+                    listType="picture-card"
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    beforeUpload={() => false}
+                    maxCount={5}
+                    multiple
+                  >
+                    {fileList.length >= 5 ? null : uploadButton}
+                  </Upload>
+                </Form.Item>
+              </Card>
+            </div>
+
+            <div
+              className="col-2"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
+              <Card className="col-2-item" size="large" title={`Content`}>
+                <Typography.Title className="input-title">
+                  Blog content
                 </Typography.Title>
                 <Form.Item name="content">
-                    <Editor
+                  <Editor
                     // apiKey="cmlltcvw2ydrtenwdgwdwqqrvsje6foe8t5xtyaq6lo2ufki"
                     apiKey="jbmjv3n0hzwml063re0ackyls29g62lc76t23ptagoco48ip"
                     language="vi"
                     onInit={(evt, editor) => (editorRef.current = editor)}
                     initialValue={""}
                     init={{
-                        height: 1000,
-                        menubar:
+                      height: 500,
+                      menubar:
                         "file edit view insert format tools table tc help",
-                        plugins: [
+                      plugins: [
                         "advlist autolink lists link image charmap print preview anchor",
                         "searchreplace visualblocks code fullscreen",
                         "insertdatetime media table paste code help wordcount",
-                        ],
-                        toolbar:
+                      ],
+                      toolbar:
                         "undo redo | formatselect | " +
                         "bold italic backcolor | alignleft aligncenter " +
                         "alignright alignjustify | bullist numlist outdent indent | " +
                         "removeformat | help",
-                        content_style:
+                      content_style:
                         "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                     }}
                     // onChange={blogChange}
-                    />
+                  />
                 </Form.Item>
+              </Card>
             </div>
-            
-        </Card>
-        <Button size="large" type="primary" htmlType="submit" className='btn'>
-            Submit
-        </Button>
-    </Form>
-  )
-}
 
-export default AddBlog
+            {/* BUTTON SUBMIT */}
+            <div className="btn">
+              <Button danger size="large">
+                Cancel
+              </Button>
+
+              <Button size="large" type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </div>
+          </div>
+        </Form>
+      </Wrapper>
+    </HelmetProvider>
+  );
+};
+
+export default AddBlog;
