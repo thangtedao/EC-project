@@ -42,11 +42,8 @@ export const createOrder = async (req, res) => {
     let discountAmount = 0;
 
     const orderItem = cartItem.map((item) => {
-      let salePrice = item.product.salePrice;
-      if (item.product.pmtPrice) salePrice = item.product.pmtPrice;
-
       let variantPrice = item.variant ? item.variant.price : 0;
-      salePrice = salePrice + variantPrice;
+      let salePrice = salePrice + variantPrice;
 
       if (coupon)
         if (coupon.discountType === "percentage") {

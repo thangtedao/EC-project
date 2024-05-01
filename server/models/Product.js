@@ -20,7 +20,7 @@ const productSchema = mongoose.Schema({
     type: Number,
     default: null,
   },
-  pmtPrice: {
+  oldSalePrice: {
     type: Number,
     default: null,
   },

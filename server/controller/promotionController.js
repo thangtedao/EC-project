@@ -15,11 +15,10 @@ export const createPromotion = async (req, res) => {
     ) {
       if (newPromotion.discountType === "percentage") {
         const discountValue = newPromotion.discountValue / 100;
-
         await Product.updateMany({ _id: { $in: newPromotion.products } }, [
           {
             $set: {
-              pmtPrice: {
+              salePrice: {
                 $subtract: ["$price", { $multiply: ["$price", discountValue] }],
               },
             },
@@ -33,7 +32,7 @@ export const createPromotion = async (req, res) => {
         await Product.updateMany({ _id: { $in: newPromotion.products } }, [
           {
             $set: {
-              pmtPrice: {
+              salePrice: {
                 $subtract: ["$price", newPromotion.discountValue],
               },
             },
@@ -69,52 +68,17 @@ export const getPromotions = async (req, res) => {
       ],
     }).populate({
       path: "products",
-      select: ["_id", "name", "price", "salePrice", "pmtPrice", "images"],
+      select: ["_id", "name", "price", "salePrice", "images"],
     });
 
     // set price promotion temp
     promotions.forEach((item) => {
       item.products.forEach((product) => {
-        product.pmtPrice = (
+        product.salePrice = (
           product.price -
           (product.price * item.discountValue) / 100
         ).toFixed(0);
       });
-    });
-
-    // check and set price (có thể làm 1 hàm riêng và gọi ở trang mainlayout)
-    promotions.forEach(async (promotion) => {
-      if (
-        promotion &&
-        promotion.startDate <= Date.now() &&
-        promotion.endDate >= Date.now() &&
-        !promotion.isActive
-      ) {
-        console.log("aaaaaaaaaaaaaaaaaaaa");
-        const discountValue = promotion.discountValue / 100;
-        await Product.updateMany({ _id: { $in: promotion.products } }, [
-          {
-            $set: {
-              pmtPrice: {
-                $subtract: ["$price", { $multiply: ["$price", discountValue] }],
-              },
-            },
-          },
-        ]);
-
-        await Promotion.findByIdAndUpdate(promotion._id, {
-          $set: { isActive: true },
-        });
-      } else if (promotion && promotion.endDate < Date.now()) {
-        console.log("bbbbbbbbbbbbbbbbbbbbb");
-        await Product.updateMany({ _id: { $in: promotion.products } }, [
-          {
-            $set: {
-              pmtPrice: null,
-            },
-          },
-        ]);
-      }
     });
 
     res.status(StatusCodes.OK).json(promotions);
@@ -129,7 +93,7 @@ export const getPromotion = async (req, res) => {
     const { id } = req.params;
     const promotion = await Promotion.findById(id).populate({
       path: "products",
-      select: ["_id", "name", "price", "salePrice", "pmtPrice", "images"],
+      select: ["_id", "name", "price", "salePrice", "images"],
     });
     res.status(StatusCodes.OK).json(promotion);
   } catch (error) {
@@ -138,49 +102,70 @@ export const getPromotion = async (req, res) => {
   }
 };
 
-export const setPrice = async (req, res) => {
+export const setPromotion = async (req, res) => {
   try {
-    const { id } = req.params;
-    const promotion = await Promotion.findById(id);
+    const promotions = await Promotion.find();
 
-    if (
-      promotion &&
-      promotion.startDate <= Date.now() &&
-      promotion.endDate >= Date.now()
-    ) {
-      if (promotion.discountType === "percentage") {
-        const discountValue = promotion.discountValue / 100;
-
-        await Product.updateMany({ _id: { $in: promotion.products } }, [
-          {
-            $set: {
-              pmtPrice: {
-                $subtract: ["$price", { $multiply: ["$price", discountValue] }],
+    promotions.forEach(async (promotion) => {
+      if (
+        promotion &&
+        promotion.startDate <= Date.now() &&
+        promotion.endDate >= Date.now() &&
+        !promotion.isActive
+      ) {
+        if (promotion.discountType === "percentage") {
+          const discountValue = promotion.discountValue / 100;
+          await Product.updateMany({ _id: { $in: promotion.products } }, [
+            {
+              $set: {
+                salePrice: {
+                  $subtract: [
+                    "$price",
+                    { $multiply: ["$price", discountValue] },
+                  ],
+                },
               },
             },
-          },
-        ]);
-      } else {
+          ]);
+
+          await Promotion.findByIdAndUpdate(promotion._id, {
+            $set: { isActive: true },
+          });
+        } else {
+          await Product.updateMany({ _id: { $in: promotion.products } }, [
+            {
+              $set: {
+                salePrice: {
+                  $subtract: ["$price", promotion.discountValue],
+                },
+              },
+            },
+          ]);
+        }
+
+        await Promotion.findByIdAndUpdate(promotion._id, {
+          $set: { isActive: true },
+        });
+      } else if (
+        promotion &&
+        promotion.endDate < Date.now() &&
+        promotion.isActive
+      ) {
+        await Promotion.findByIdAndUpdate(promotion._id, {
+          $set: { isActive: false },
+        });
+
         await Product.updateMany({ _id: { $in: promotion.products } }, [
           {
             $set: {
-              pmtPrice: {
-                $subtract: ["$price", promotion.discountValue],
-              },
+              salePrice: "$oldSalePrice",
             },
           },
         ]);
       }
-    } else if (promotion && promotion.endDate < Date.now()) {
-      await Product.updateMany({ _id: { $in: promotion.products } }, [
-        {
-          $set: {
-            pmtPrice: null,
-          },
-        },
-      ]);
-    }
-    res.status(StatusCodes.OK).json(promotion);
+    });
+
+    res.status(StatusCodes.OK).json();
   } catch (error) {
     console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -200,7 +185,8 @@ export const updatePromotion = async (req, res) => {
     if (
       updatedPromotion &&
       updatedPromotion.startDate <= Date.now() &&
-      updatedPromotion.endDate >= Date.now()
+      updatedPromotion.endDate >= Date.now() &&
+      !updatedPromotion.isActive
     ) {
       if (updatedPromotion.discountType === "percentage") {
         const discountValue = updatedPromotion.discountValue / 100;
@@ -208,7 +194,7 @@ export const updatePromotion = async (req, res) => {
         await Product.updateMany({ _id: { $in: updatedPromotion.products } }, [
           {
             $set: {
-              pmtPrice: {
+              salePrice: {
                 $subtract: ["$price", { $multiply: ["$price", discountValue] }],
               },
             },
@@ -218,7 +204,7 @@ export const updatePromotion = async (req, res) => {
         await Product.updateMany({ _id: { $in: updatedPromotion.products } }, [
           {
             $set: {
-              pmtPrice: {
+              salePrice: {
                 $subtract: ["$price", updatedPromotion.discountValue],
               },
             },
@@ -233,10 +219,18 @@ export const updatePromotion = async (req, res) => {
         (item) => !updatedPromotion.products.includes(item)
       );
 
+      // await Product.updateMany({ _id: { $in: productIds } }, [
+      //   {
+      //     $set: {
+      //       salePrice: null,
+      //     },
+      //   },
+      // ]);
+
       await Product.updateMany({ _id: { $in: productIds } }, [
         {
           $set: {
-            pmtPrice: null,
+            salePrice: "$oldSalePrice",
           },
         },
       ]);

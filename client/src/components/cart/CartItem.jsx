@@ -8,7 +8,6 @@ const CartItem = ({ item }) => {
     useCartContext();
 
   let salePrice = item.product.salePrice;
-  if (item.product.pmtPrice) salePrice = item.product.pmtPrice;
 
   return (
     <div className="product-item-outer">

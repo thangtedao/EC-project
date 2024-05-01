@@ -22,6 +22,8 @@ import moment from "moment";
 
 export const loader = async () => {
   try {
+    await customFetch.patch("/promotion/set-promotion");
+
     const categories = await customFetch
       .get("/category/get/parent")
       .then(({ data }) => data);

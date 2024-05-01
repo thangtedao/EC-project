@@ -7,7 +7,7 @@ import {
   createPromotion,
   getPromotion,
   getPromotions,
-  setPrice,
+  setPromotion,
   updatePromotion,
 } from "../controller/promotionController.js";
 
@@ -25,7 +25,7 @@ router.patch(
   authorizePermissions("admin"),
   updatePromotion
 );
-router.patch("/set-price/:id", setPrice);
+router.patch("/set-promotion", setPromotion);
 router.get("/", getPromotions);
 router.get("/:id", getPromotion);
 

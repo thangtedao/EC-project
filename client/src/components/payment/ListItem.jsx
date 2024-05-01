@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 
 const CartItem = ({ item }) => {
   let salePrice = item.product.salePrice;
-  if (item.product.pmtPrice) salePrice = item.product.pmtPrice;
 
   return (
     <div className="product-item-outer">

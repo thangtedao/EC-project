@@ -41,6 +41,7 @@ export const createProduct = async (req, res) => {
     data.publicIdImages = publicIdImages;
     data.slug = slugify(data.name);
     data.category = data.category.split(",");
+    data.oldSalePrice = data.salePrice;
 
     const newProduct = await Product.create(data);
     await ItemBlog.create({ productId: newProduct._id, content: blog });
@@ -263,7 +264,6 @@ export const filterProduct = async (req, res) => {
         name: 1,
         price: 1,
         salePrice: 1,
-        pmtPrice: 1,
         images: 1,
       },
     });
@@ -348,6 +348,7 @@ export const updateProduct = async (req, res) => {
     data.publicIdImages = publicIdImages;
     data.slug = slugify(data.name);
     data.category = data.category.split(",");
+    data.oldSalePrice = data.salePrice;
 
     const { id } = req.params;
 

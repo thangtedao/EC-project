@@ -23,7 +23,6 @@ const ProductCard = ({ product }) => {
   };
 
   let salePrice = product.salePrice;
-  if (product.pmtPrice) salePrice = product.pmtPrice;
 
   return (
     <Wrapper>
