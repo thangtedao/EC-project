@@ -48,6 +48,7 @@ export const updateUser = async (req, res) => {
   try {
     const { userId } = req.user;
     const data = { ...req.body };
+
     delete data.password;
     if (data.city && data.district && data.ward && data.home) {
       const address = {

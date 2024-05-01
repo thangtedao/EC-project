@@ -41,15 +41,15 @@ const EditCoupon = () => {
   const [discountType, setDiscountType] = useState(coupon?.discountType);
 
   dayjs.extend(customParseFormat);
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
   const { RangePicker } = DatePicker;
 
   const [startDate, setStartDate] = useState(
-    dayjs(coupon.startDate?.split("T")[0], dateFormat)
+    dayjs(new Date(coupon.startDate).toString())
   );
   const [endDate, setEndDate] = useState(
-    dayjs(coupon.endDate?.split("T")[0], dateFormat)
+    dayjs(new Date(coupon.endDate).toString())
   );
 
   const handleDateRangeChange = (dates) => {
@@ -303,6 +303,7 @@ const EditCoupon = () => {
                 </Typography.Title>
                 <RangePicker
                   required
+                  showTime
                   style={{ width: "100%" }}
                   value={[startDate, endDate]}
                   size="large"

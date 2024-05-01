@@ -92,7 +92,7 @@ export const createOrder = async (req, res) => {
         $inc: { numberOfUses: -1 },
       });
     }
-    // await Cart.findOneAndRemove({ user: userId });
+    await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
     // sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
@@ -376,6 +376,34 @@ export const showStats = async (req, res) => {
       orders,
       products,
     });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const showStats2 = async (req, res) => {
+  try {
+    /* CALCULATE THE STATS */
+    const products = await Order.aggregate([
+      {
+        $match: {
+          status: "Delivered",
+        },
+      },
+      {
+        $unwind: "$orderItem",
+      },
+      {
+        $group: {
+          _id: "$orderItem.product.id",
+          totalRevenue: { $sum: "$orderItem.priceAtOrder" },
+          totalSold: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.json({ products });
   } catch (error) {
     console.log(error);
     return error;

@@ -12,6 +12,8 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Button, Input, Dropdown, Space } from "antd";
 import Highlighter from "react-highlight-words";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export const loader = async () => {
   try {
@@ -27,6 +29,9 @@ export const loader = async () => {
 const AllCoupon = () => {
   const coupons = useLoaderData();
   const navigate = useNavigate();
+
+  dayjs.extend(customParseFormat);
+  const dateFormat = "HH:mm:ss DD-MM-YYYY";
 
   //Search Product
   const { Search } = Input;
@@ -214,12 +219,22 @@ const AllCoupon = () => {
       ],
       onFilter: (value, record) => record?.discountType === value,
     },
+    // {
+    //   title: "Start",
+    //   dataIndex: "startDate",
+    //   key: "startDate",
+    //   render: (startDate) => (
+    //     <span className="md-font">{startDate?.split("T")[0]}</span>
+    //   ),
+    // },
     {
       title: "Start",
       dataIndex: "startDate",
       key: "startDate",
       render: (startDate) => (
-        <span className="md-font">{startDate?.split("T")[0]}</span>
+        <span className="md-font">
+          {dayjs(new Date(startDate).toString()).format(dateFormat)}
+        </span>
       ),
     },
     {
@@ -228,7 +243,9 @@ const AllCoupon = () => {
       key: "endDate",
 
       render: (endDate) => (
-        <span className="md-font">{endDate?.split("T")[0]}</span>
+        <span className="md-font">
+          {dayjs(new Date(endDate).toString()).format(dateFormat)}
+        </span>
       ),
     },
     {
