@@ -6,6 +6,7 @@ import {
 import {
   createPromotion,
   getPromotion,
+  getPromotions,
   setPrice,
   updatePromotion,
 } from "../controller/promotionController.js";
@@ -25,6 +26,7 @@ router.patch(
   updatePromotion
 );
 router.patch("/set-price/:id", setPrice);
+router.get("/", getPromotions);
 router.get("/:id", getPromotion);
 
 export default router;

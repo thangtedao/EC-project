@@ -6,10 +6,12 @@ export const createPromotion = async (req, res) => {
   try {
     const newPromotion = await Promotion.create(req.body);
 
+    // trong gđ evt chưa active thì active
     if (
       newPromotion &&
       newPromotion.startDate <= Date.now() &&
-      newPromotion.endDate >= Date.now()
+      newPromotion.endDate >= Date.now() &&
+      !newPromotion.isActive
     ) {
       if (newPromotion.discountType === "percentage") {
         const discountValue = newPromotion.discountValue / 100;
@@ -23,6 +25,10 @@ export const createPromotion = async (req, res) => {
             },
           },
         ]);
+
+        await Promotion.findByIdAndUpdate(newPromotion._id, {
+          $set: { isActive: true },
+        });
       } else {
         await Product.updateMany({ _id: { $in: newPromotion.products } }, [
           {
@@ -33,6 +39,10 @@ export const createPromotion = async (req, res) => {
             },
           },
         ]);
+
+        await Promotion.findByIdAndUpdate(newPromotion._id, {
+          $set: { isActive: true },
+        });
       }
     }
     res.status(StatusCodes.CREATED).json(newPromotion);
@@ -44,9 +54,38 @@ export const createPromotion = async (req, res) => {
 
 export const getPromotions = async (req, res) => {
   try {
-    const promotions = await Promotion.find();
+    const promotions = await Promotion.find({
+      $or: [
+        {
+          startDate: {
+            $gte: Date.now() + 5 * 24 * 60 * 60 * 1000,
+            $eq: Date.now(),
+          },
+        },
+        {
+          startDate: { $lt: Date.now() },
+          endDate: { $gt: Date.now() },
+        },
+      ],
+    }).populate({
+      path: "products",
+      select: ["_id", "name", "price", "salePrice", "pmtPrice", "images"],
+    });
+
+    // lấy all ra kt xem nó active chưa, chưa thì kt xem đến ngày rồi thì active
+
+    promotions.forEach((item) => {
+      item.products.forEach((product) => {
+        product.pmtPrice = (
+          product.price -
+          (product.price * item.discountValue) / 100
+        ).toFixed(0);
+      });
+    });
+
     res.status(StatusCodes.OK).json(promotions);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

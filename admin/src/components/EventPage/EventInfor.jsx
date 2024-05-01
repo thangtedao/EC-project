@@ -194,6 +194,8 @@ const EventInfor = ({
             </Typography.Title>
             <RangePicker
               required
+              showTime
+              style={{ width: "100%" }}
               value={dates}
               size="large"
               onChange={handleDateRangeChange}

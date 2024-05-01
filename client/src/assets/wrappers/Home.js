@@ -74,9 +74,15 @@ const Wrapper = styled.div`
     color: white;
     text-transform: uppercase;
   }
-  .box-countdown {
-    color: white;
-    font-weight: 500;
+  .tabs {
+    display: flex;
+    gap: 1rem;
+  }
+  .tab {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #fff;
+    cursor: pointer;
   }
 
   /* PRODUCTS SALE  */

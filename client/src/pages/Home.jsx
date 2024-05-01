@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/Home.js";
 import { SlideProduct } from "../components";
 import { NavLink, useLoaderData } from "react-router-dom";
@@ -11,13 +11,14 @@ import NovaIcon from "../assets/logo/LogoNova.svg";
 import { useMainLayoutContext } from "../pages/MainLayout";
 import AppChat from "../components/AppChat/AppChat";
 import { useSelector } from "react-redux";
-import { Statistic, ConfigProvider } from "antd";
+import { Statistic, ConfigProvider, Typography, Flex } from "antd";
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
 import img4 from "../assets/data/image/1.png";
 import img5 from "../assets/data/image/2.png";
 import img6 from "../assets/data/image/3.png";
+import moment from "moment";
 
 export const loader = async () => {
   try {
@@ -35,11 +36,12 @@ export const loader = async () => {
       })
     );
 
-    const flashsale = await customFetch
-      .get("/promotion/662a15cd15b0003e897749d6")
+    const allEvent = await customFetch
+      .get("/promotion/")
       .then(({ data }) => data);
 
-    return { productsArray, flashsale };
+    window.scrollTo(0, 0);
+    return { productsArray, allEvent };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -51,13 +53,27 @@ const HomeContext = createContext();
 const Home = () => {
   const user = useSelector((state) => state.user.user);
 
-  window.scrollTo(0, 0);
   const { categories } = useMainLayoutContext();
-  const { productsArray, flashsale } = useLoaderData();
+  const { productsArray, allEvent } = useLoaderData();
+
+  const [event, setEvent] = useState(allEvent[0]);
 
   const { Countdown } = Statistic;
 
-  const deadline = new Date(flashsale.endDate);
+  const now = new Date();
+  const [startDate, setStartDate] = useState(new Date(event?.startDate));
+  const [endDate, setEndDate] = useState(new Date(event?.endDate));
+  const [deadline, setDeadline] = useState(
+    startDate <= now ? endDate : startDate
+  );
+  const [deadlineText, setDeadlineText] = useState(
+    startDate <= now ? "Đang diễn ra:" : "Sắp diễn ra:"
+  );
+
+  useEffect(() => {
+    setDeadline(startDate <= now ? endDate : startDate);
+    setDeadlineText(startDate <= now ? "Đang diễn ra:" : "Sắp diễn ra:");
+  }, [startDate, endDate]);
 
   const onFinish = () => {
     console.log("finished!");
@@ -101,19 +117,9 @@ const Home = () => {
           </div>
 
           {/* FLASH SALE */}
-          {/* <div className="block-hot-sale">
-            <div className="block-title">
-              <div className="sale-title">FLASH SALE</div>
-              <div className="box-countdown">00:11:22:33</div>
-            </div>
-            {productsArray[0]?.length > 0 && (
-              <SlideProduct products={productsArray[0]} />
-            )}
-          </div> */}
-
           <div className="block-hot-sale">
             <div className="block-title">
-              <div className="sale-title">{flashsale.name}</div>
+              <div className="sale-title">{event?.name}</div>
               <ConfigProvider
                 theme={{
                   components: {
@@ -123,36 +129,66 @@ const Home = () => {
                   },
                   token: {
                     colorText: "#fff",
+                    fontSize: 18,
                   },
                 }}
               >
-                <Countdown
-                  value={deadline}
-                  format="DD : HH : mm : ss"
-                  onFinish={onFinish}
-                />
+                <div
+                  style={{
+                    width: "fit-content",
+                    display: "flex",
+                    gap: "1rem",
+                  }}
+                >
+                  <Typography>{deadlineText}</Typography>
+                  <Countdown
+                    value={deadline}
+                    format="DD : HH : mm : ss"
+                    onFinish={onFinish}
+                  />
+                </div>
               </ConfigProvider>
             </div>
-            {flashsale.products?.length > 0 && (
-              <SlideProduct products={flashsale.products} />
+
+            <div className="tabs">
+              {allEvent.map((item) => {
+                return (
+                  <div
+                    key={item._id}
+                    className="tab"
+                    onClick={() => [
+                      setEvent(item),
+                      setStartDate(new Date(item?.startDate)),
+                      setEndDate(new Date(item?.endDate)),
+                    ]}
+                  >
+                    {item.name}
+                  </div>
+                );
+              })}
+            </div>
+
+            {event?.products?.length > 0 && (
+              <SlideProduct products={event.products} />
             )}
           </div>
 
           {/* PRODUCTS SALE */}
           {categories.map((category, index) => {
-            return (
-              productsArray[index] && (
-                <div key={index} className="product-by-category">
-                  <NavLink
-                    className="product-by-category-title"
-                    to={`/category/${category._id}`}
-                  >
-                    {productsArray[index].length > 0 && category.name}
-                  </NavLink>
-                  <SlideProduct products={productsArray[index] || []} />
-                </div>
-              )
-            );
+            if (productsArray[index].length > 0)
+              return (
+                productsArray[index] && (
+                  <div key={index} className="product-by-category">
+                    <NavLink
+                      className="product-by-category-title"
+                      to={`/category/${category._id}`}
+                    >
+                      {productsArray[index].length > 0 && category.name}
+                    </NavLink>
+                    <SlideProduct products={productsArray[index] || []} />
+                  </div>
+                )
+              );
           })}
 
           {/* {user && <AppChat />} */}

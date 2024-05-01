@@ -8,6 +8,8 @@ import EventCheck from "../components/EventPage/EventCheck.jsx";
 import { Button, message, Steps, Form, Breadcrumb } from "antd";
 import customFetch from "../utils/customFetch.js";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export const loader = async () => {
   try {
@@ -19,17 +21,41 @@ export const loader = async () => {
       .get("/category/all-categories")
       .then(({ data }) => data);
 
+    const categoriesC = await customFetch
+      .get(`/category/get/child`)
+      .then(({ data }) => data);
+
     const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
-    return { products, categories, orders };
+    return { products, categories, categoriesC, orders };
   } catch (error) {
     return error;
   }
 };
 
 const AddEvent = () => {
-  const { products, categories, orders } = useLoaderData();
+  let { products, categories, categoriesC, orders } = useLoaderData();
   const navigate = useNavigate();
+
+  dayjs.extend(customParseFormat);
+  const dateFormat = "YYYY-MM-DD HH:mm:ss";
+
+  categories = categories?.map((category) => {
+    category.key = category._id;
+    if (!category.parent) {
+      category.children = categoriesC
+        ?.filter((itemC) => itemC.parent === category._id)
+        .map((itemC) => {
+          itemC.key = itemC._id;
+          return itemC;
+        });
+
+      return category;
+    }
+    return null;
+  });
+
+  categories = categories?.filter((item) => item !== null);
 
   products.forEach((product) => {
     product.sold = orders.reduce((total, order) => {
@@ -66,9 +92,9 @@ const AddEvent = () => {
         const data = {
           name,
           description,
-          discount,
-          startDate,
-          endDate,
+          discountValue: discount,
+          startDate: startDate.format(dateFormat),
+          endDate: endDate.format(dateFormat),
           products: selectedProductIds,
         };
         const promotion = await customFetch.post("/promotion/create", data);
@@ -117,10 +143,6 @@ const AddEvent = () => {
           setSelectedProducts={setSelectedProducts}
         />
       ),
-    },
-    {
-      title: "Coupon",
-      content: <EventCoupon />,
     },
     {
       title: "Check",

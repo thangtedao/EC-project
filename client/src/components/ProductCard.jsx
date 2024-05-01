@@ -22,6 +22,9 @@ const ProductCard = ({ product }) => {
     }
   };
 
+  let salePrice = product.salePrice;
+  if (product.pmtPrice) salePrice = product.pmtPrice;
+
   return (
     <Wrapper>
       <NavLink
@@ -36,27 +39,25 @@ const ProductCard = ({ product }) => {
 
         <div className="product-card-price">
           <span>
-            {product.salePrice
-              ? product.salePrice
-                  ?.toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+            {salePrice
+              ? salePrice?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
               : product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             <span style={{ fontSize: 15 }}>₫</span>
           </span>
 
           <span className="strike">
-            {product.salePrice &&
+            {salePrice &&
               product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             <span style={{ fontSize: 12 }}>₫</span>
           </span>
 
-          {product.salePrice && (
+          {salePrice && (
             <div>
               <img className="product-price-percent" src={percent} />
               <span className="product-price-percent-value">
                 <span>{"Giảm "}</span>
                 {Math.round(
-                  ((product.price - product.salePrice) / product.price) * 100
+                  ((product.price - salePrice) / product.price) * 100
                 )}
                 %
               </span>
