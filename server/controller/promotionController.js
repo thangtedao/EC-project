@@ -58,8 +58,8 @@ export const getPromotions = async (req, res) => {
       $or: [
         {
           startDate: {
-            $gte: Date.now() + 5 * 24 * 60 * 60 * 1000,
-            $eq: Date.now(),
+            $gte: Date.now(),
+            $lte: Date.now() + 5 * 24 * 60 * 60 * 1000,
           },
         },
         {
@@ -72,8 +72,7 @@ export const getPromotions = async (req, res) => {
       select: ["_id", "name", "price", "salePrice", "pmtPrice", "images"],
     });
 
-    // lấy all ra kt xem nó active chưa, chưa thì kt xem đến ngày rồi thì active
-
+    // set price promotion temp
     promotions.forEach((item) => {
       item.products.forEach((product) => {
         product.pmtPrice = (
@@ -81,6 +80,41 @@ export const getPromotions = async (req, res) => {
           (product.price * item.discountValue) / 100
         ).toFixed(0);
       });
+    });
+
+    // check and set price (có thể làm 1 hàm riêng và gọi ở trang mainlayout)
+    promotions.forEach(async (promotion) => {
+      if (
+        promotion &&
+        promotion.startDate <= Date.now() &&
+        promotion.endDate >= Date.now() &&
+        !promotion.isActive
+      ) {
+        console.log("aaaaaaaaaaaaaaaaaaaa");
+        const discountValue = promotion.discountValue / 100;
+        await Product.updateMany({ _id: { $in: promotion.products } }, [
+          {
+            $set: {
+              pmtPrice: {
+                $subtract: ["$price", { $multiply: ["$price", discountValue] }],
+              },
+            },
+          },
+        ]);
+
+        await Promotion.findByIdAndUpdate(promotion._id, {
+          $set: { isActive: true },
+        });
+      } else if (promotion && promotion.endDate < Date.now()) {
+        console.log("bbbbbbbbbbbbbbbbbbbbb");
+        await Product.updateMany({ _id: { $in: promotion.products } }, [
+          {
+            $set: {
+              pmtPrice: null,
+            },
+          },
+        ]);
+      }
     });
 
     res.status(StatusCodes.OK).json(promotions);

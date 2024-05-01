@@ -91,15 +91,23 @@ const Product = () => {
     relatedProducts,
   } = useLoaderData();
 
+  let salePrice = product.salePrice;
+  if (product.pmtPrice) salePrice = product.pmtPrice;
+
   const addToCart = debounce(async (product, variant) => {
-    // if (Object.keys(variant).length !== 0) variant = Object.values(variant);
-    const cart = await customFetch
-      .patch("/cart/add-to-cart", {
-        product,
-        variant,
-      })
-      .then(({ data }) => data);
-    cart && toast.success("Add to cart successful");
+    try {
+      // if (Object.keys(variant).length !== 0) variant = Object.values(variant);
+      const cart = await customFetch
+        .patch("/cart/add-to-cart", {
+          product,
+          variant,
+        })
+        .then(({ data }) => data);
+      cart && toast.success("Add to cart successful");
+    } catch (error) {
+      if (error?.response?.status === 401)
+        return toast.warning("Đăng nhập để mua hàng dễ dàng hơn");
+    }
   }, 100);
 
   // Khởi tạo state để lưu trữ giá trị đầu tiên cho mỗi loại biến thể
@@ -243,11 +251,10 @@ const Product = () => {
                   })}
               </div>
 
+              {/* PRICE */}
               <div className="box-product-price">
                 <span>
-                  {product?.salePrice
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  {salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                   <span style={{ fontSize: 16 }}>₫</span>
                 </span>
 

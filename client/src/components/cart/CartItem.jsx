@@ -7,6 +7,9 @@ const CartItem = ({ item }) => {
   const { increaseQuantity, descreaseQuantity, removeFromCart } =
     useCartContext();
 
+  let salePrice = item.product.salePrice;
+  if (item.product.pmtPrice) salePrice = item.product.pmtPrice;
+
   return (
     <div className="product-item-outer">
       <img className="product-img" src={item?.product?.images[0]} alt="Image" />
@@ -24,10 +27,7 @@ const CartItem = ({ item }) => {
 
         <div className="product-price">
           <span>
-            {(item.variant
-              ? item.variant?.price + item.product.salePrice
-              : item.product.salePrice
-            )
+            {(item.variant ? item.variant?.price + salePrice : salePrice)
               ?.toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
             <span style={{ fontSize: 15 }}>₫</span>

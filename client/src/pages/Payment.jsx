@@ -72,7 +72,9 @@ export const loader = async () => {
       cartItem?.reduce(
         (acc, item) =>
           acc +
-          ((item.variant ? item.variant.price : 0) + item.product.salePrice) *
+          ((item.variant ? item.variant.price : 0) + item.product.pmtPrice
+            ? item.product.pmtPrice
+            : item.product.salePrice) *
             item.quantity,
         0
       ) || 0;

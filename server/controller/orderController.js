@@ -42,8 +42,11 @@ export const createOrder = async (req, res) => {
     let discountAmount = 0;
 
     const orderItem = cartItem.map((item) => {
+      let salePrice = item.product.salePrice;
+      if (item.product.pmtPrice) salePrice = item.product.pmtPrice;
+
       let variantPrice = item.variant ? item.variant.price : 0;
-      let salePrice = item.product.salePrice + variantPrice;
+      salePrice = salePrice + variantPrice;
 
       if (coupon)
         if (coupon.discountType === "percentage") {
@@ -61,13 +64,13 @@ export const createOrder = async (req, res) => {
         product: {
           id: item.product._id,
           name: item.product.name,
-          price: item.product.salePrice,
+          price: item.product.price,
           image: item.product.images[0],
         },
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
-        priceAtOrder: item.product.salePrice + variantPrice,
-        subtotal: (item.product.salePrice + variantPrice) * item.quantity,
+        priceAtOrder: salePrice + variantPrice,
+        subtotal: (salePrice + variantPrice) * item.quantity,
       };
     });
 

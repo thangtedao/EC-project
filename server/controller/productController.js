@@ -263,6 +263,7 @@ export const filterProduct = async (req, res) => {
         name: 1,
         price: 1,
         salePrice: 1,
+        pmtPrice: 1,
         images: 1,
       },
     });
