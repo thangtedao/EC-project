@@ -43,11 +43,13 @@ export const createOrder = async (req, res) => {
 
     const orderItem = cartItem.map((item) => {
       let variantPrice = item.variant ? item.variant.price : 0;
-      let salePrice = salePrice + variantPrice;
+      let salePrice = item.product.salePrice + variantPrice;
 
       if (coupon)
         if (coupon.discountType === "percentage") {
-          discountAmount += (salePrice * coupon.discountValue) / 100;
+          discountAmount +=
+            (salePrice * item.quantity * coupon.discountValue) / 100;
+
           salePrice = (
             salePrice -
             (salePrice * coupon.discountValue) / 100
@@ -66,8 +68,8 @@ export const createOrder = async (req, res) => {
         },
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
-        priceAtOrder: salePrice + variantPrice,
-        subtotal: (salePrice + variantPrice) * item.quantity,
+        priceAtOrder: item.product.salePrice + variantPrice,
+        subtotal: item.product.salePrice * item.quantity,
       };
     });
 
@@ -81,7 +83,14 @@ export const createOrder = async (req, res) => {
       orderItem: orderItem,
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
-      shippingAddress: user.address,
+      shippingAddress:
+        user.address.city +
+        ", " +
+        user.address.district +
+        ", " +
+        user.address.ward +
+        ", " +
+        user.address.home,
       totalAmount: totalAmount - discountAmount.toFixed(0),
     });
 
@@ -270,6 +279,11 @@ export const showStats = async (req, res) => {
     const products = await Order.aggregate([
       {
         $match: {
+          status: "Delivered",
+        },
+      },
+      {
+        $match: {
           createdAt: {
             $gte: startDate,
             $lte: endDate,
@@ -285,6 +299,7 @@ export const showStats = async (req, res) => {
           name: { $first: "$orderItem.product.name" },
           price: { $first: "$orderItem.product.price" },
           image: { $first: "$orderItem.product.image" },
+          totalRevenue: { $sum: "$orderItem.priceAtOrder" },
           totalSold: { $sum: 1 },
         },
       },
