@@ -302,7 +302,11 @@ export const showStats = async (req, res) => {
           name: { $first: "$orderItem.product.name" },
           price: { $first: "$orderItem.product.price" },
           image: { $first: "$orderItem.product.image" },
-          totalRevenue: { $sum: "$orderItem.priceAtOrder" },
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+            },
+          },
           totalSold: { $sum: "$orderItem.quantity" },
         },
       },
