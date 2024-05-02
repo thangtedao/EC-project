@@ -302,8 +302,12 @@ export const showStats = async (req, res) => {
           name: { $first: "$orderItem.product.name" },
           price: { $first: "$orderItem.product.price" },
           image: { $first: "$orderItem.product.image" },
-          totalRevenue: { $sum: "$orderItem.priceAtOrder" },
-          totalSold: { $sum: 1 },
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+            },
+          },
+          totalSold: { $sum: "$orderItem.quantity" },
         },
       },
     ]);
@@ -415,7 +419,11 @@ export const showStats2 = async (req, res) => {
       {
         $group: {
           _id: "$orderItem.product.id",
-          totalRevenue: { $sum: "$orderItem.priceAtOrder" },
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+            },
+          },
           totalSold: { $sum: "$orderItem.quantity" },
         },
       },
