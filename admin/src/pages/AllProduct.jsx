@@ -400,11 +400,19 @@ const AllProduct = () => {
           style={{
             width: "100%",
             display: "flex",
-            justifyContent: "right",
+            justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 20,
           }}
         >
+          <Button
+            size="large"
+            style={{ marginBottom: 20, width: 100 }}
+            onClick={handleReloadClick}
+          >
+            Reload
+          </Button>
+
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -415,14 +423,6 @@ const AllProduct = () => {
             Add Product
           </Button>
         </div>
-
-        <Button
-          size="large"
-          style={{ marginBottom: 20, width: 100 }}
-          onClick={handleReloadClick}
-        >
-          Reload
-        </Button>
 
         <Table
           className="table"

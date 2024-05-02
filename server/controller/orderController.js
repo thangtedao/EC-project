@@ -48,12 +48,11 @@ export const createOrder = async (req, res) => {
 
     const orderItem = cartItem.map((item) => {
       let variantPrice = item.variant ? item.variant.price : 0;
-      let salePrice = item.product.salePrice + variantPrice;
+      let salePrice = item.product.salePrice * item.quantity + variantPrice;
 
       if (coupon)
         if (coupon.discountType === "percentage") {
-          discountAmount +=
-            (salePrice * item.quantity * coupon.discountValue) / 100;
+          discountAmount += (salePrice * coupon.discountValue) / 100;
 
           salePrice = (
             salePrice -
@@ -74,12 +73,15 @@ export const createOrder = async (req, res) => {
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
         priceAtOrder: item.product.salePrice + variantPrice,
-        subtotal: item.product.salePrice * item.quantity,
+        subtotal: salePrice,
       };
     });
 
     const totalAmount =
-      orderItem.reduce((acc, item) => acc + item.subtotal, 0) || 0;
+      orderItem.reduce(
+        (acc, item) => acc + item.priceAtOrder * item.quantity,
+        0
+      ) || 0;
 
     const user = await User.findById(userId);
 
@@ -262,9 +264,6 @@ export const showStats = async (req, res) => {
         },
       },
       {
-        $sort: { createdAt: 1 },
-      },
-      {
         $lookup: {
           from: "users",
           localField: "user",
@@ -301,19 +300,28 @@ export const showStats = async (req, res) => {
           },
         },
       },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+          "_id.day": -1,
+        },
+      },
     ]);
 
     const products = await Order.aggregate([
       {
         $match: {
-          status: "Delivered",
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         },
       },
       {
         $match: {
-          createdAt: {
-            $gte: startDate,
-            $lte: endDate,
+          status: {
+            $eq: "Delivered",
           },
         },
       },
@@ -327,10 +335,13 @@ export const showStats = async (req, res) => {
           price: { $first: "$orderItem.product.price" },
           image: { $first: "$orderItem.product.image" },
           totalRevenue: {
-            $sum: {
-              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
-            },
+            $sum: "$orderItem.subtotal",
           },
+          // totalRevenue: {
+          //   $sum: {
+          //     $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+          //   },
+          // },
           totalSold: { $sum: "$orderItem.quantity" },
         },
       },

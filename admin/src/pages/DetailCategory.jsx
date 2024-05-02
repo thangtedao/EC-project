@@ -235,7 +235,11 @@ const DetailCategory = () => {
             Cancel
           </Button>
 
-          <Button size="large" type="primary" ghost>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => navigate(`/edit-category/${category._id}`)}
+          >
             Edit
           </Button>
         </div>

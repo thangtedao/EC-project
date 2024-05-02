@@ -448,7 +448,7 @@ const DetailProduct = () => {
               </Card>
 
               {/* VARIATIONS FIELDS*/}
-              <Card className="col-1-item" size="large" title={`Variants`}>
+              {/* <Card className="col-1-item" size="large" title={`Variants`}>
                 <Typography.Title className="input-title">
                   Variant
                 </Typography.Title>
@@ -475,20 +475,6 @@ const DetailProduct = () => {
                               },
                             ]}
                           >
-                            {/* <Select
-                              size="large"
-                              placeholder="Select option"
-                              options={[
-                                {
-                                  value: "Color",
-                                  label: "Color",
-                                },
-                                {
-                                  value: "RAM-ROM",
-                                  label: "RAM-ROM",
-                                },
-                              ]}
-                            /> */}
                             <Input
                               required
                               size="large"
@@ -544,7 +530,7 @@ const DetailProduct = () => {
                     </>
                   )}
                 </Form.List>
-              </Card>
+              </Card> */}
             </div>
 
             {/* PRICE FIELD */}
@@ -657,7 +643,11 @@ const DetailProduct = () => {
           <Button danger size="large">
             Cancel
           </Button>
-          <Button size="large" type="primary">
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => navigate(`/edit-product/${product._id}`)}
+          >
             Edit
           </Button>
         </div>
