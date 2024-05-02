@@ -96,6 +96,25 @@ export const createOrder = async (req, res) => {
 
     const order = await newOrder.save();
 
+    // Update rank user
+    const orders = await Order.find({ user: userId });
+    let totalSpent = 0;
+    orders.forEach((order) => {
+      totalSpent += order.totalAmount;
+    });
+    let rankToUpdate = "member";
+
+    if (totalSpent >= 20000000) {
+      rankToUpdate = "diamond";
+    } else if (totalSpent >= 10000000) {
+      rankToUpdate = "gold";
+    } else if (totalSpent >= 5000000) {
+      rankToUpdate = "silver";
+    }
+
+    await User.findByIdAndUpdate(userId, { $set: { rank: rankToUpdate } });
+
+    // descrease coupon's number of usage
     if (coupon) {
       await Coupon.findByIdAndUpdate(coupon._id, {
         $inc: { numberOfUses: -1 },

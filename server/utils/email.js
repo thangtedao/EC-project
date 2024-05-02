@@ -1,10 +1,10 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "hotmail",
+  service: "gmail",
   auth: {
-    user: "xuanthang369@outlook.com",
-    pass: "thangtedao123",
+    user: "ameriteo1@gmail.com",
+    pass: "thinhteo2104",
   },
 });
 

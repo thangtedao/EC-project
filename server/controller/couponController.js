@@ -62,16 +62,36 @@ export const applyCoupon = async (req, res) => {
     const { userId } = req.user;
     if (code) code = code.toString().toUpperCase();
     const validCoupon = await Coupon.findOne({ code: code });
-    if (!validCoupon) throw new NotFoundError("Invalid Coupon");
+    if (!validCoupon) throw new NotFoundError("Coupon không hợp lệ");
 
-    const user = await User.findById(userId);
-    if (user.rank !== validCoupon.targetCustomers)
-      return res.status(StatusCodes.CONFLICT).json({ msg: "Not For You" });
-
+    // check expired
     const now = new Date();
     if (validCoupon.endDate < now || validCoupon.startDate > now)
-      return res.status(StatusCodes.CONFLICT).json({ msg: "Code has expired" });
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Coupon không hợp lệ" });
 
+    // check rank
+    const user = await User.findById(userId);
+    const requiredRanks = ["member"];
+    // Thêm các hạng khác nếu coupon yêu cầu
+    if (user.rank.includes("silver")) {
+      requiredRanks.push("silver");
+    } else if (user.rank.includes("gold")) {
+      requiredRanks.push("silver");
+      requiredRanks.push("gold");
+    } else if (user.rank.includes("diamond")) {
+      requiredRanks.push("silver");
+      requiredRanks.push("gold");
+      requiredRanks.push("diamond");
+    }
+    if (!requiredRanks.includes(validCoupon.targetCustomers)) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Bạn không đủ điều kiện" });
+    }
+
+    // check is used
     const isUse = await Order.findOne({
       user: userId,
       couponCode: validCoupon.code,
@@ -79,12 +99,13 @@ export const applyCoupon = async (req, res) => {
     if (isUse)
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "Coupon have been used" });
+        .json({ msg: "Coupon đã được sử dụng" });
 
+    // check number of use
     if (validCoupon.numberOfUses <= 0)
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "Coupon has been fully redeemed" });
+        .json({ msg: "Coupon đã hết lượt sử dụng" });
 
     res.status(StatusCodes.OK).json(validCoupon);
   } catch (error) {

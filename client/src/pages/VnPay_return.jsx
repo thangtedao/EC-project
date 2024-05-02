@@ -4,7 +4,6 @@ import customFetch from "../utils/customFetch";
 
 const VnPay_return = () => {
   const [code, setCode] = useState(null);
-  const [orderCreated, setOrderCreated] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,7 +14,7 @@ const VnPay_return = () => {
           .get("/order/vnpay_return?" + vnp_Params.toString())
           .then(({ data }) => data.code);
 
-        if (code === "00" && !orderCreated) {
+        if (code === "00") {
           try {
             console.log("Tạo đơn thành công");
             // await customFetch
@@ -26,7 +25,6 @@ const VnPay_return = () => {
           }
         }
         setCode(code);
-        setOrderCreated(true);
       } catch (error) {
         console.error("Lỗi vnpay-return:", error);
       }
