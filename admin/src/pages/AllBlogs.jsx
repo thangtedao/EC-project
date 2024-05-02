@@ -12,15 +12,14 @@ const AllBlogs = () => {
 
   const navigate = useNavigate();
 
-  const handleEdit = () => {
-    navigate(`/edit-blog/${blogPost._id}`);
+  const handleEdit = (id) => {
+    navigate(`/edit-blog/${id}`);
   };
-  const handleDelete = async () => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Có chắc muốn xóa không man");
     if (confirmDelete) {
       try {
-        await customFetch.delete(`/blog/${blogPost._id}`);
-        // Optionally, you can trigger a reload of blogs here or handle other UI updates
+        await customFetch.delete(`/blog/${id}`);
         navigate("/all-blogs");
       } catch (error) {
         console.error("Error deleting blog:", error);
@@ -40,6 +39,7 @@ const AllBlogs = () => {
 
     fetchData();
   }, []);
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -95,11 +95,21 @@ const AllBlogs = () => {
 
               <div className="main-btn">
                 <div className="btn-item" style={{ textAlign: "center" }}>
-                  <Button icon={<EditOutlined />}>Edit</Button>
+                  <Button
+                    icon={<EditOutlined />}
+                    onClick={() => handleEdit(blog._id)}
+                  >
+                    Edit
+                  </Button>
                 </div>
                 <Divider />
                 <div className="btn-item" style={{ textAlign: "center" }}>
-                  <Button icon={<DeleteOutlined />}>Delete</Button>
+                  <Button
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDelete(blog._id)}
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             </List.Item>

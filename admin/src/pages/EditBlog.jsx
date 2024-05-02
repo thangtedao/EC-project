@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import customFetch from "../utils/customFetch";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate, useLoaderData } from "react-router-dom";
 import Wrapper from "../assets/wrapper/blog/EditBlog.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { PlusOutlined } from "@ant-design/icons";
@@ -15,6 +15,21 @@ import {
   Breadcrumb,
   Upload,
 } from "antd";
+
+export const loader = async ({ params }) => {
+  try {
+    const { id } = params;
+    if (!id) {
+      return redirect("/all-blogs");
+    }
+    const response = await customFetch.get(`/blog/${id}`);
+
+    return { blog: response.data };
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 
 const EditBlog = () => {
   //Lú vậy
@@ -70,8 +85,18 @@ const EditBlog = () => {
   //     }
   //   };
 
+  const navigate = useNavigate();
+  const { blog } = useLoaderData();
+  const [blogContent, setBlogContent] = useState(blog.content || "");
+
+  const blogChange = () => {
+    if (editorRef.current) {
+      const content = String(editorRef.current.getContent());
+      setBlogContent(content);
+    }
+  };
+
   const editorRef = useRef(null);
-  const [form] = Form.useForm();
   //
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -120,24 +145,25 @@ const EditBlog = () => {
   //
 
   const onFinish = async (values) => {
-    const blogContent = String(editorRef.current.getContent());
-    const data = {
-      title: values.title,
-      imageTitle: values.image,
-      description: values.description,
-      content: blogContent,
-      comments: [],
-    };
-    // console.log(data)
     try {
-      const response = await customFetch.post(`/blog/create`, data);
-      // console.log(response)
-      form.resetFields();
+      const data = {
+        title: values.title,
+        imageTitle: values.merelink,
+        description: values.description,
+        content: blogContent,
+        comments: [],
+      };
+
+      const response = await customFetch.patch(
+        `/blog/update/${blog._id}`,
+        data
+      );
+      if (response.data) navigate("/all-blogs");
     } catch (error) {
       console.log(error);
     }
-    // console.log(response)
   };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -161,7 +187,15 @@ const EditBlog = () => {
         </Helmet>
         <div className="title">Edit Blog</div>
 
-        <Form form={form} name="basic" onFinish={onFinish}>
+        <Form
+          name="basic"
+          onFinish={onFinish}
+          initialValues={{
+            title: blog.title,
+            description: blog.description,
+            merelink: blog.imageTitle,
+          }}
+        >
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
@@ -239,7 +273,7 @@ const EditBlog = () => {
                     apiKey="jbmjv3n0hzwml063re0ackyls29g62lc76t23ptagoco48ip"
                     language="vi"
                     onInit={(evt, editor) => (editorRef.current = editor)}
-                    initialValue={""}
+                    initialValue={blogContent}
                     init={{
                       height: 500,
                       menubar:
@@ -257,7 +291,7 @@ const EditBlog = () => {
                       content_style:
                         "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                     }}
-                    // onChange={blogChange}
+                    onChange={blogChange}
                   />
                 </Form.Item>
               </Card>
