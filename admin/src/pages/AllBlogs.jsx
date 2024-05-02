@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { Link, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
-import { useEffect } from "react";
-import { useState } from "react";
-import BlogCard from "../components/BlogCard";
+import moment from "moment";
+import Wrapper from "../assets/wrapper/blog/AllBlog";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { List, Typography, Image, Breadcrumb, Button, Divider } from "antd";
 
 const AllBlogs = () => {
   const [blogs, setBlogs] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleEdit = () => {
+    navigate(`/edit-blog/${blogPost._id}`);
+  };
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("Có chắc muốn xóa không man");
+    if (confirmDelete) {
+      try {
+        await customFetch.delete(`/blog/${blogPost._id}`);
+        // Optionally, you can trigger a reload of blogs here or handle other UI updates
+        navigate("/all-blogs");
+      } catch (error) {
+        console.error("Error deleting blog:", error);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,13 +40,78 @@ const AllBlogs = () => {
 
     fetchData();
   }, []);
-
   return (
-    <div>
-      {blogs.map((blog) => (
-        <BlogCard key={blog._id} blog={blog} />
-      ))}
-    </div>
+    <HelmetProvider>
+      <Wrapper>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>All Blog</title>
+        </Helmet>
+        <Breadcrumb
+          style={{ paddingBottom: "1rem" }}
+          items={[
+            {
+              title: <a onClick={() => navigate("/")}>Dashboard</a>,
+            },
+
+            {
+              title: "Blog",
+            },
+          ]}
+        />
+        <div className="title">Blog</div>
+        {/* List Blog */}
+        <List
+          itemLayout="horizontal"
+          dataSource={blogs}
+          renderItem={(blog) => (
+            <List.Item
+              key={blog._id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "8fr 1fr",
+                // gridGap: "8px",
+                alignItems: "center",
+              }}
+              // onClick={() => navigate(`/edit-blog/${blog._id}`)}
+            >
+              <List.Item.Meta
+                avatar={<Image width={200} src={blog.imageTitle} />}
+                title={<a>{blog.title}</a>}
+                description={
+                  <div>
+                    dể 1 đoạn đầu trong blog hiện ở đây cho bớt trống một này nọ
+                    ta cùng ta vui vui vui vui vuiiiiiiii cmn
+                    ahahahahahahahahahahahaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa....
+                    <br />
+                    <Typography.Text>
+                      Ngày đăng:{" "}
+                      {moment(blog.createdAt).format("HH:mm, DD/MM/YYYY")}
+                    </Typography.Text>
+                  </div>
+                }
+              />
+
+              <div className="main-btn">
+                <div className="btn-item" style={{ textAlign: "center" }}>
+                  <Button icon={<EditOutlined />}>Edit</Button>
+                </div>
+                <Divider />
+                <div className="btn-item" style={{ textAlign: "center" }}>
+                  <Button icon={<DeleteOutlined />}>Delete</Button>
+                </div>
+              </div>
+            </List.Item>
+          )}
+        />
+        {/* <div>
+          {blogs.map((blog) => (
+            <BlogCard key={blog._id} blog={blog} />
+          ))}
+        </div> */}
+      </Wrapper>
+    </HelmetProvider>
   );
 };
 
