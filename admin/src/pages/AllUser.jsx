@@ -6,7 +6,7 @@ import { useNavigate, useLoaderData } from "react-router-dom";
 import {
   EditOutlined,
   AudioOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Image, Button, Input, Dropdown, Space } from "antd";
@@ -28,26 +28,6 @@ export const loader = async () => {
     return error;
   }
 };
-
-//Search Product
-const { Search } = Input;
-const suffix = (
-  <AudioOutlined
-    style={{
-      fontSize: 16,
-      color: "#1677ff",
-    }}
-  />
-);
-
-//Dropdown
-const items = [
-  {
-    label: "View",
-    key: "1",
-    icon: <FormOutlined />,
-  },
-];
 
 const AllUser = () => {
   const { users, orders } = useLoaderData();
@@ -73,7 +53,18 @@ const AllUser = () => {
   const handleEditUser = (id) => {
     navigate(`/edit-user/${id}`);
   };
-
+  const handleViewUser = (id) => {
+    navigate(`/edit-user/${id}`);
+  };
+  //Dropdown
+  const items = [
+    {
+      label: "Edit",
+      key: "1",
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditUser(_id),
+    },
+  ];
   // Search
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -311,12 +302,15 @@ const AllUser = () => {
       width: 150,
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditUser(_id)}
+          onClick={() => handleViewUser(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
-          <EditOutlined />
+          <EyeOutlined />
           View
         </Dropdown.Button>
       ),
@@ -349,22 +343,11 @@ const AllUser = () => {
           style={{
             width: "100%",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "right",
             alignItems: "center",
             marginBottom: 20,
           }}
-        >
-          <Search
-            size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
-          />
-        </div>
+        ></div>
 
         <Table
           className="table"

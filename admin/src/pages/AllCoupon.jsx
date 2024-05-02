@@ -7,7 +7,7 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Button, Input, Dropdown, Space } from "antd";
@@ -36,9 +36,9 @@ const AllCoupon = () => {
   //Dropdown
   const items = [
     {
-      label: "View",
+      label: "Edit",
       key: "1",
-      icon: <FormOutlined />,
+      icon: <EditOutlined />,
     },
   ];
 
@@ -251,13 +251,13 @@ const AllCoupon = () => {
       fixed: "right",
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditCoupon(_id)}
+          onClick={() => handleViewCoupon(_id)}
           menu={{
             items,
           }}
         >
-          <EditOutlined />
-          Edit
+          <EyeOutlined />
+          View
         </Dropdown.Button>
       ),
     },

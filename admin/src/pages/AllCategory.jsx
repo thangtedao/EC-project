@@ -73,24 +73,14 @@ const AllCategory = () => {
   const handleViewCategory = (id) => {
     navigate(`/detail-category/${id}`);
   };
-  //Search Product
-  const { Search } = Input;
-  const suffix = (
-    <AudioOutlined
-      style={{
-        fontSize: 16,
-        color: "#1677ff",
-      }}
-    />
-  );
 
   //Dropdown
   const items = [
     {
-      label: "View",
+      label: "Edit",
       key: "1",
-      icon: <EyeOutlined />,
-      onClick: (_id) => handleViewCategory(_id),
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditCategory(_id),
     },
   ];
 
@@ -261,7 +251,7 @@ const AllCategory = () => {
       width: 120,
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditCategory(_id)}
+          onClick={() => handleViewCategory(_id)}
           menu={{
             items: items.map((item) => ({
               ...item,
@@ -269,8 +259,8 @@ const AllCategory = () => {
             })),
           }}
         >
-          <EditOutlined />
-          Edit
+          <EyeOutlined />
+          View
         </Dropdown.Button>
       ),
     },
@@ -310,22 +300,11 @@ const AllCategory = () => {
           style={{
             width: "100%",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "right",
             alignItems: "center",
             marginBottom: 20,
           }}
         >
-          <Search
-            size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
-          />
-
           <Button
             type="primary"
             icon={<PlusOutlined />}

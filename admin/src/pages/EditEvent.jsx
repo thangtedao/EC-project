@@ -3,7 +3,7 @@ import Wrapper from "../assets/wrapper/promotion/AddEvent.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import EventInfor from "../components/EventPage/EventInfor.jsx";
 import EventProduct from "../components/EventPage/EventProduct.jsx";
-import EventCoupon from "../components/EventPage/EventCoupon.jsx";
+// import EventCoupon from "../components/EventPage/EventCoupon.jsx";
 import EventCheck from "../components/EventPage/EventCheck.jsx";
 import { Button, message, Steps, Form, Breadcrumb } from "antd";
 import customFetch from "../utils/customFetch.js";
@@ -33,7 +33,7 @@ export const loader = async () => {
   }
 };
 
-const AddEvent = () => {
+const EditEvent = () => {
   let { products, categories, categoriesC, orders } = useLoaderData();
   const navigate = useNavigate();
 
@@ -171,7 +171,7 @@ const AddEvent = () => {
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Add Event</title>
+          <title>Edit Event</title>
         </Helmet>
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
@@ -183,12 +183,12 @@ const AddEvent = () => {
               title: <a href="/all-event">Event</a>,
             },
             {
-              title: "Add Event",
+              title: "Edit Event",
             },
           ]}
         />
 
-        <div className="title">Add Event</div>
+        <div className="title">Edit Event</div>
         <Steps current={current} items={items} />
         <div
           style={{ lineHeight: "260px", textAlign: "center", marginTop: 16 }}
@@ -221,4 +221,4 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default EditEvent;

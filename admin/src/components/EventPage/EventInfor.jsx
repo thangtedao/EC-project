@@ -10,6 +10,7 @@ import {
   InputNumber,
   Upload,
   Modal,
+  Form,
 } from "antd";
 
 const Wrapper = styled.div`
@@ -42,6 +43,9 @@ const Wrapper = styled.div`
   }
   .ant-card-head-title {
     text-align: left;
+  }
+  .form-item {
+    margin-bottom: 24px;
   }
 `;
 
@@ -120,6 +124,7 @@ const EventInfor = ({
             <div>
               <Typography.Title className="input-title">Name</Typography.Title>
               <Input
+                className="form-item"
                 required
                 value={name}
                 size="large"
@@ -131,6 +136,7 @@ const EventInfor = ({
                 Description
               </Typography.Title>
               <Input.TextArea
+                className="form-item"
                 size="large"
                 placeholder="Description"
                 autoSize={{
@@ -148,6 +154,7 @@ const EventInfor = ({
                 Image link
               </Typography.Title>
               <Input.TextArea
+                className="form-item"
                 size="large"
                 placeholder="Enter link image"
                 autoSize={{
@@ -156,6 +163,7 @@ const EventInfor = ({
                 }}
               />
               <Upload
+                className="form-item"
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
@@ -193,6 +201,7 @@ const EventInfor = ({
               RangePicker
             </Typography.Title>
             <RangePicker
+              className="form-item"
               required
               showTime
               style={{ width: "100%" }}
@@ -206,6 +215,7 @@ const EventInfor = ({
               Percentage
             </Typography.Title>
             <InputNumber
+              className="form-item"
               required
               value={discount}
               onChange={(value) => setDiscount(value)}

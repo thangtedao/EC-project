@@ -7,7 +7,7 @@ import { ORDER_STATUS } from "../utils/constants.js";
 import {
   EditOutlined,
   AudioOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Button, Input, Dropdown, Tag, Space } from "antd";
@@ -36,24 +36,16 @@ const AllOrder = () => {
   const handleEditOrder = (id) => {
     navigate(`/edit-order/${id}`);
   };
-
-  //Search Product
-  const { Search } = Input;
-  const suffix = (
-    <AudioOutlined
-      style={{
-        fontSize: 16,
-        color: "#1677ff",
-      }}
-    />
-  );
-
+  const handleViewOrder = (id) => {
+    navigate(`/edit-order/${id}`);
+  };
   //Dropdown
   const items = [
     {
-      label: "View",
+      label: "Edit",
       key: "1",
-      icon: <FormOutlined />,
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditOrder(_id),
     },
   ];
 
@@ -261,10 +253,13 @@ const AllOrder = () => {
         <Dropdown.Button
           onClick={() => handleEditOrder(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
-          <EditOutlined />
+          <EyeOutlined />
           View
         </Dropdown.Button>
       ),
@@ -303,27 +298,6 @@ const AllOrder = () => {
         />
 
         <div className="title">Order</div>
-
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 20,
-          }}
-        >
-          <Search
-            size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
-          />
-        </div>
 
         <Table
           className="table"
