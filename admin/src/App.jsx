@@ -51,6 +51,7 @@ import CommentProductMng from "./pages/CommentProductMng";
 
 import DetailProduct from "./pages/DetailProduct";
 import DetailCategory from "./pages/DetailCategory";
+import AllEvent from "./pages/AllEvent";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
         index: true,
         element: <Dashboard />,
         loader: dashboardLoader,
+      },
+      {
+        path: "all-event",
+        element: <AllEvent />,
       },
       {
         path: "add-event",

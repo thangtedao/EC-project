@@ -34,7 +34,6 @@ const items = [
     [
       getItem("All Product", "2", null, null, "/all-product"),
       getItem("Add Product", "3", null, null, "/add-product"),
-      getItem("Detail Product", "4", null, null, null),
     ],
     null
   ),
@@ -43,9 +42,9 @@ const items = [
     "sub2",
     <ProfileOutlined />,
     [
-      getItem("All Category", "5", null, null, "/all-category"),
-      getItem("Add Category", "6", null, null, "/add-category"),
-      getItem("Detail Category ", "7", null, null, null),
+      getItem("All Category", "4", null, null, "/all-category"),
+      getItem("Add Category", "5", null, null, "/add-category"),
+      getItem("Detail Category ", "6", null, null, null),
     ],
     null
   ),
@@ -54,8 +53,9 @@ const items = [
     "sub3",
     <DollarOutlined />,
     [
-      getItem("All Coupon", "8", null, null, "/all-coupon"),
-      getItem("Add Coupon", "9", null, null, "/add-coupon"),
+      getItem("All Coupon", "7", null, null, "/all-coupon"),
+      getItem("Add Coupon", "8", null, null, "/add-coupon"),
+      getItem("All Event", "9", null, null, "/all-event"),
       getItem("Add Event", "10", null, null, "/add-event"),
     ],
     null
