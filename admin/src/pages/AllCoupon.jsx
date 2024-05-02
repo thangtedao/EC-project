@@ -39,6 +39,7 @@ const AllCoupon = () => {
       label: "Edit",
       key: "1",
       icon: <EditOutlined />,
+      onClick: (_id) => handleEditCoupon(_id),
     },
   ];
 
@@ -47,6 +48,9 @@ const AllCoupon = () => {
   };
 
   const handleEditCoupon = (id) => {
+    navigate(`/edit-coupon/${id}`);
+  };
+  const handleViewCoupon = (id) => {
     navigate(`/edit-coupon/${id}`);
   };
 
@@ -253,7 +257,10 @@ const AllCoupon = () => {
         <Dropdown.Button
           onClick={() => handleViewCoupon(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
           <EyeOutlined />
