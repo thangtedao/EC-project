@@ -193,7 +193,7 @@ const Home = () => {
               );
           })}
 
-          {/* {user && <AppChat />} */}
+          {user && <AppChat />}
         </Wrapper>
       </HomeContext.Provider>
     </HelmetProvider>

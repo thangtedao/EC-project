@@ -107,7 +107,7 @@ const DashboardProduct = () => {
       render: (revenue) =>
         revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.revenue - b.revenue,
+      sorter: (a, b) => a.totalRevenue - b.totalRevenue,
     },
     {
       title: "Action",

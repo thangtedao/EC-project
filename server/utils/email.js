@@ -19,16 +19,16 @@ export const sendMail = (user, order) => {
       <p><strong>Order ID:</strong> ${"#" + order._id.toString().slice(18)}</p>
       <p><strong>Products:</strong></p>
       <ul>
-        ${order.products
+        ${order.orderItem
           .map(
             (item) =>
-              `<li>${item.product.name} - ${item.product.salePrice + "₫"} - x${
-                item.count
+              `<li>${item.product.name} - ${item.product.price + "₫"} - x${
+                item.quantity
               }</li>`
           )
           .join("")}
       </ul>
-      <p><strong>Total Amount:</strong> ${order.totalPrice + "₫"}</p>
+      <p><strong>Total Amount:</strong> ${order.totalAmount + "₫"}</p>
       <p>Thank you for shopping with us!</p>
     `,
   };
