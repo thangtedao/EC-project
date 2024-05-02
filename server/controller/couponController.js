@@ -72,7 +72,10 @@ export const applyCoupon = async (req, res) => {
     if (validCoupon.endDate < now || validCoupon.startDate > now)
       return res.status(StatusCodes.CONFLICT).json({ msg: "Code has expired" });
 
-    const isUse = Order.findOne({ user: userId, couponCode: validCoupon.code });
+    const isUse = await Order.findOne({
+      user: userId,
+      couponCode: validCoupon.code,
+    });
     if (isUse)
       return res
         .status(StatusCodes.CONFLICT)

@@ -103,7 +103,7 @@ export const createOrder = async (req, res) => {
     }
     await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
-    // sendMail(user, order);
+    sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);
@@ -236,6 +236,9 @@ export const showStats = async (req, res) => {
             $lte: endDate,
           },
         },
+      },
+      {
+        $sort: { createdAt: 1 },
       },
       {
         $lookup: {
@@ -413,7 +416,7 @@ export const showStats2 = async (req, res) => {
         $group: {
           _id: "$orderItem.product.id",
           totalRevenue: { $sum: "$orderItem.priceAtOrder" },
-          totalSold: { $sum: 1 },
+          totalSold: { $sum: "$orderItem.quantity" },
         },
       },
     ]);
