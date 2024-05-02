@@ -39,6 +39,11 @@ export const createOrder = async (req, res) => {
     const { cartItem, coupon } = req.body;
     const { userId } = req.user;
 
+    if (!cartItem)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Lỗi khi tạo đơn hàng" });
+
     let discountAmount = 0;
 
     const orderItem = cartItem.map((item) => {
@@ -122,7 +127,7 @@ export const createOrder = async (req, res) => {
     }
     await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
-    sendMail(user, order);
+    // sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);
@@ -518,6 +523,12 @@ export const vnpayReturn = (req, res, next) => {
   try {
     let vnp_Params = req.query;
 
+    let vnp_TransactionStatus = vnp_Params["vnp_TransactionStatus"];
+    if (vnp_TransactionStatus === "02")
+      return res.status(StatusCodes.OK).json({ code: "02" });
+    else if (vnp_TransactionStatus === "01")
+      return res.status(StatusCodes.OK).json({ code: "01" });
+
     let secureHash = vnp_Params.vnp_SecureHash;
     delete vnp_Params["vnp_SecureHash"];
     delete vnp_Params["vnp_SecureHashType"];
@@ -530,8 +541,6 @@ export const vnpayReturn = (req, res, next) => {
     let signData = querystring.stringify(vnp_Params, { encode: false });
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
-    console.log("secureHash: ", secureHash);
-    console.log("signed: ", signed);
 
     if (secureHash === signed) {
       res.status(StatusCodes.OK).json({ code: "00" });

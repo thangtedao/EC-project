@@ -68,6 +68,8 @@ export const loader = async () => {
       cartItem = cartData.cartItem;
     }
 
+    if (cartItem?.length <= 0) return redirect("/cart");
+
     const totalPrice =
       cartItem?.reduce(
         (acc, item) =>
@@ -277,7 +279,11 @@ const Payment = () => {
           coupon={coupon}
           totalAmount={totalAmount}
         />
-        <VnPayButton totalPrice={totalAmount} />
+        <VnPayButton
+          totalPrice={totalAmount}
+          cartItem={cartItem}
+          coupon={coupon}
+        />
 
         {/* <div className="form-info">
           <p>Thông tin nhận hàng</p>
