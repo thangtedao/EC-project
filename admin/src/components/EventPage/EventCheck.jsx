@@ -59,7 +59,7 @@ const EventCheck = ({
   selectedProducts,
 }) => {
   dayjs.extend(customParseFormat);
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
   //Danh sách các cột A
   const columns = [
@@ -241,14 +241,14 @@ const EventCheck = ({
             <Divider />
           </React.Fragment>
         </Descriptions>
-        <Typography.Title className="input-title">Coupon:</Typography.Title>
+        {/* <Typography.Title className="input-title">Coupon:</Typography.Title>
         <Table
           className="table"
           columns={columnsCoupon}
           dataSource={dataSourceCoupon}
           scroll={{ x: 1200 }}
           showSorterTooltip={{ target: "sorter-icon" }}
-        />
+        /> */}
         <Typography.Title className="input-title">Product:</Typography.Title>
         <Table
           className="table"

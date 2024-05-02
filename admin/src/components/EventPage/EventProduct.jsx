@@ -1,8 +1,25 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { AudioOutlined, EditOutlined, FormOutlined } from "@ant-design/icons";
-import { Card, Table, Image, Input, Dropdown, Tag } from "antd";
+import {
+  EditOutlined,
+  AudioOutlined,
+  PlusOutlined,
+  FormOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Table,
+  Image,
+  Button,
+  Input,
+  Dropdown,
+  Tag,
+  Space,
+  Card,
+} from "antd";
+import Highlighter from "react-highlight-words";
 import { PRODUCT_STATUS } from "../../utils/constants";
 
 const Wrapper = styled.div`
@@ -64,6 +81,122 @@ const EventProduct = ({
   //CheckBox
   const [selectionType] = useState("checkbox");
 
+  // Search
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
   //Danh sách các cột A
   const columns = [
     {
@@ -81,6 +214,7 @@ const EventProduct = ({
       key: "name",
       fixed: "left",
       render: (text) => <a>{text}</a>,
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Category",
@@ -94,8 +228,12 @@ const EventProduct = ({
         return {
           text: category?.name,
           value: category?._id,
+          children: category?.children.map((item) => {
+            return { text: item?.name, value: item?._id };
+          }),
         };
       }),
+      filterMode: "tree",
       onFilter: (value, record) =>
         record?.category?.some((cat) => cat?._id === value),
     },
@@ -106,6 +244,8 @@ const EventProduct = ({
       width: 150,
       render: (value) =>
         value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.price - b.price,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Sale Price",
@@ -114,6 +254,8 @@ const EventProduct = ({
       width: 150,
       render: (value) =>
         value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.salePrice - b.salePrice,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Status",
@@ -174,7 +316,8 @@ const EventProduct = ({
     },
     //Ko thể chọn sp out of stock
     getCheckboxProps: (record) => ({
-      disabled: record.status === "Out of stock",
+      disabled:
+        record.status === "Out of stock" || record.status === "Discontinued",
       status: record.status,
     }),
   };
@@ -213,7 +356,7 @@ const EventProduct = ({
         />
       </div>
       <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
-        <Card className="col-1-item" size="large" title={`All Product`}>
+        <Card className="col-1-item" size="large" title={`Add Product`}>
           <Table
             className="table"
             rowSelection={{ type: "checkbox", ...rowSelection }}

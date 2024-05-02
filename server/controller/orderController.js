@@ -47,7 +47,9 @@ export const createOrder = async (req, res) => {
 
       if (coupon)
         if (coupon.discountType === "percentage") {
-          discountAmount += (salePrice * coupon.discountValue) / 100;
+          discountAmount +=
+            (salePrice * item.quantity * coupon.discountValue) / 100;
+
           salePrice = (
             salePrice -
             (salePrice * coupon.discountValue) / 100
@@ -61,13 +63,13 @@ export const createOrder = async (req, res) => {
         product: {
           id: item.product._id,
           name: item.product.name,
-          price: item.product.salePrice,
+          price: item.product.price,
           image: item.product.images[0],
         },
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
         priceAtOrder: item.product.salePrice + variantPrice,
-        subtotal: (item.product.salePrice + variantPrice) * item.quantity,
+        subtotal: item.product.salePrice * item.quantity,
       };
     });
 
@@ -81,7 +83,14 @@ export const createOrder = async (req, res) => {
       orderItem: orderItem,
       couponCode: coupon?.code,
       discountAmount: coupon && discountAmount.toFixed(0),
-      shippingAddress: user.address,
+      shippingAddress:
+        user.address.city +
+        ", " +
+        user.address.district +
+        ", " +
+        user.address.ward +
+        ", " +
+        user.address.home,
       totalAmount: totalAmount - discountAmount.toFixed(0),
     });
 
@@ -92,9 +101,9 @@ export const createOrder = async (req, res) => {
         $inc: { numberOfUses: -1 },
       });
     }
-    // await Cart.findOneAndRemove({ user: userId });
+    await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
-    // sendMail(user, order);
+    sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);
@@ -229,6 +238,9 @@ export const showStats = async (req, res) => {
         },
       },
       {
+        $sort: { createdAt: 1 },
+      },
+      {
         $lookup: {
           from: "users",
           localField: "user",
@@ -270,6 +282,11 @@ export const showStats = async (req, res) => {
     const products = await Order.aggregate([
       {
         $match: {
+          status: "Delivered",
+        },
+      },
+      {
+        $match: {
           createdAt: {
             $gte: startDate,
             $lte: endDate,
@@ -285,7 +302,12 @@ export const showStats = async (req, res) => {
           name: { $first: "$orderItem.product.name" },
           price: { $first: "$orderItem.product.price" },
           image: { $first: "$orderItem.product.image" },
-          totalSold: { $sum: 1 },
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+            },
+          },
+          totalSold: { $sum: "$orderItem.quantity" },
         },
       },
     ]);
@@ -376,6 +398,38 @@ export const showStats = async (req, res) => {
       orders,
       products,
     });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const showStats2 = async (req, res) => {
+  try {
+    /* CALCULATE THE STATS */
+    const products = await Order.aggregate([
+      {
+        $match: {
+          status: "Delivered",
+        },
+      },
+      {
+        $unwind: "$orderItem",
+      },
+      {
+        $group: {
+          _id: "$orderItem.product.id",
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+            },
+          },
+          totalSold: { $sum: "$orderItem.quantity" },
+        },
+      },
+    ]);
+
+    res.json({ products });
   } catch (error) {
     console.log(error);
     return error;

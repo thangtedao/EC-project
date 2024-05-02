@@ -22,19 +22,23 @@ export const action = async ({ request }) => {
 
     await customFetch.patch("/user/update-user", formData);
 
-    const token = await customFetch
-      .post("/auth/login", data)
-      .then(({ data }) => data.token);
+    // const token = await customFetch
+    //   .post("/auth/login", data)
+    //   .then(({ data }) => data.token);
 
     const user = await customFetch
       .get("/user/current-user")
       .then(({ data }) => data.user);
 
-    if (token) {
+    if (user) {
       store.dispatch(
         login({
-          user: { fullName: user.fullName, avatar: user.avatar },
-          token: token,
+          user: {
+            fullName: user.fullName,
+            avatar: user.avatar,
+            _id: user._id,
+            role: user.role,
+          },
         })
       );
     }
@@ -42,6 +46,7 @@ export const action = async ({ request }) => {
     toast.success("Update Successful");
     return null;
   } catch (error) {
+    console.log(error);
     if (error?.response?.status === 401) return redirect("/login");
     return error;
   }
@@ -126,7 +131,7 @@ const Profile = () => {
             />
             <TextField
               size="small"
-              name="email"
+              // name="email"
               type="email"
               label="Email"
               defaultValue={user?.email}

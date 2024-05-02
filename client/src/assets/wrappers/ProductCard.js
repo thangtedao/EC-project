@@ -70,7 +70,7 @@ const Wrapper = styled.div`
     position: absolute;
     width: 80px;
     top: 12px;
-    left: 5px;
+    left: 8px;
   }
   .product-card-description {
     width: 100%;

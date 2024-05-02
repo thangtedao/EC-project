@@ -123,7 +123,7 @@ const EventInfor = ({
                 required
                 value={name}
                 size="large"
-                placeholder="Hè hè con cak"
+                placeholder="Name"
                 onChange={(event) => setName(event.target.value)}
               />
 
@@ -132,7 +132,7 @@ const EventInfor = ({
               </Typography.Title>
               <Input.TextArea
                 size="large"
-                placeholder="phê!!! con cak"
+                placeholder="Description"
                 autoSize={{
                   minRows: 3,
                   maxRows: 5,
@@ -194,6 +194,8 @@ const EventInfor = ({
             </Typography.Title>
             <RangePicker
               required
+              showTime
+              style={{ width: "100%" }}
               value={dates}
               size="large"
               onChange={handleDateRangeChange}

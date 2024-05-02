@@ -8,7 +8,7 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import {
@@ -54,17 +54,21 @@ export const loader = async () => {
       .get(`/category/get/child`)
       .then(({ data }) => data);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+    const stats = await customFetch
+      .get(`/order/stats-product`)
+      .then(({ data }) => data.products);
 
-    return { products, categories, categoriesC, orders };
+    return { products, categories, categoriesC, stats };
   } catch (error) {
     return error;
   }
 };
 
 const AllProduct = () => {
-  let { products, categories, categoriesC, orders } = useLoaderData();
+  let { products, categories, categoriesC, stats } = useLoaderData();
   const navigate = useNavigate();
+
+  console.log(stats);
 
   categories = categories?.map((category) => {
     category.key = category._id;
@@ -80,16 +84,17 @@ const AllProduct = () => {
     }
     return null;
   });
-
   categories = categories?.filter((item) => item !== null);
 
   products.forEach((product) => {
-    product.sold = orders.reduce((total, order) => {
-      return (
-        total +
-        order.orderItem.filter((item) => product._id === item.product.id).length
-      );
-    }, 0);
+    const foundItem = stats.find((item) => item._id === product._id);
+    if (foundItem) {
+      product.sold = foundItem.totalSold;
+      product.revenue = foundItem.totalRevenue;
+    } else {
+      product.sold = 0;
+      product.revenue = 0;
+    }
   });
 
   const handleAddProduct = () => {
@@ -97,6 +102,9 @@ const AllProduct = () => {
   };
   const handleEditProduct = (id) => {
     navigate(`/edit-product/${id}`);
+  };
+  const handleViewProduct = (id) => {
+    navigate(`/detail-product/${id}`);
   };
   const handleReloadClick = () => {
     navigate("/add-product");
@@ -118,8 +126,8 @@ const AllProduct = () => {
     {
       label: "View",
       key: "1",
-      icon: <FormOutlined />,
-      onClick: () => handleAddProduct(),
+      icon: <EyeOutlined />,
+      onClick: (_id) => handleViewProduct(_id),
     },
   ];
 
@@ -332,6 +340,16 @@ const AllProduct = () => {
       sorter: (a, b) => a.sold - b.sold,
     },
     {
+      title: "Revenue",
+      dataIndex: "revenue",
+      key: "revenue",
+      width: 150,
+      render: (revenue) =>
+        revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.revenue - b.revenue,
+    },
+    {
       title: "Action",
       key: "operation",
       fixed: "right",
@@ -340,7 +358,10 @@ const AllProduct = () => {
         <Dropdown.Button
           onClick={() => handleEditProduct(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
           <EditOutlined />

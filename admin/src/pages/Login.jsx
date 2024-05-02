@@ -5,6 +5,7 @@ import customFetch from "../utils/customFetch.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Button, Checkbox, Form, Input } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import Logo from "../assets/LogoAdmin2.svg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -36,7 +37,8 @@ const Login = () => {
           <div className="login-box">
             <div className="illustration-wrapper">
               <img
-                src="https://i.pinimg.com/736x/df/c6/21/dfc621af8a3bdadd85bc01b57fab975d.jpg"
+                // src="https://i.pinimg.com/736x/df/c6/21/dfc621af8a3bdadd85bc01b57fab975d.jpg"
+                src={Logo}
                 alt="Login"
               />
             </div>

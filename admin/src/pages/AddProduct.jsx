@@ -385,7 +385,7 @@ const AddProduct = () => {
               </Card>
 
               {/* VARIATIONS FIELDS*/}
-              <Card className="col-1-item" size="large" title={`Variants`}>
+              {/* <Card className="col-1-item" size="large" title={`Variants`}>
                 <Typography.Title className="input-title">
                   Variant
                 </Typography.Title>
@@ -412,20 +412,6 @@ const AddProduct = () => {
                               },
                             ]}
                           >
-                            {/* <Select
-                              size="large"
-                              placeholder="Select option"
-                              options={[
-                                {
-                                  value: "Color",
-                                  label: "Color",
-                                },
-                                {
-                                  value: "RAM-ROM",
-                                  label: "RAM-ROM",
-                                },
-                              ]}
-                            /> */}
                             <Input
                               required
                               size="large"
@@ -481,7 +467,7 @@ const AddProduct = () => {
                     </>
                   )}
                 </Form.List>
-              </Card>
+              </Card> */}
             </div>
 
             <div

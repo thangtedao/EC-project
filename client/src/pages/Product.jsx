@@ -91,15 +91,23 @@ const Product = () => {
     relatedProducts,
   } = useLoaderData();
 
+  let salePrice = product.salePrice;
+  if (product.pmtPrice) salePrice = product.pmtPrice;
+
   const addToCart = debounce(async (product, variant) => {
-    // if (Object.keys(variant).length !== 0) variant = Object.values(variant);
-    const cart = await customFetch
-      .patch("/cart/add-to-cart", {
-        product,
-        variant,
-      })
-      .then(({ data }) => data);
-    cart && toast.success("Add to cart successful");
+    try {
+      // if (Object.keys(variant).length !== 0) variant = Object.values(variant);
+      const cart = await customFetch
+        .patch("/cart/add-to-cart", {
+          product,
+          variant,
+        })
+        .then(({ data }) => data);
+      cart && toast.success("Add to cart successful");
+    } catch (error) {
+      if (error?.response?.status === 401)
+        return toast.warning("Đăng nhập để mua hàng dễ dàng hơn");
+    }
   }, 100);
 
   // Khởi tạo state để lưu trữ giá trị đầu tiên cho mỗi loại biến thể
@@ -126,15 +134,17 @@ const Product = () => {
   const [reviews, setReviews] = useState(productReviews);
   const submitReview = async (star, content) => {
     try {
-      await customFetch.post("/review/create-review", {
-        rating: star,
-        productId: product._id,
-        content: content,
-      });
-      const fetchReview = await customFetch
-        .get(`/review/get-reviews/${product._id}`)
-        .then(({ data }) => data);
-      setReviews(fetchReview);
+      if (star && content) {
+        await customFetch.post("/review/create-review", {
+          rating: star,
+          productId: product._id,
+          content: content,
+        });
+        const fetchReview = await customFetch
+          .get(`/review/get-reviews/${product._id}`)
+          .then(({ data }) => data);
+        setReviews(fetchReview);
+      } else toast.warning("Chưa nhập gì kìa");
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }
@@ -142,13 +152,15 @@ const Product = () => {
 
   const replyReview = async (content, reviewId) => {
     try {
-      await customFetch.patch(`/review/reply-review/${reviewId}`, {
-        content,
-      });
-      const fetchReview = await customFetch
-        .get(`/review/get-reviews/${product._id}`)
-        .then(({ data }) => data);
-      setReviews(fetchReview);
+      if (content && reviewId) {
+        await customFetch.patch(`/review/reply-review/${reviewId}`, {
+          content,
+        });
+        const fetchReview = await customFetch
+          .get(`/review/get-reviews/${product._id}`)
+          .then(({ data }) => data);
+        setReviews(fetchReview);
+      }
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }
@@ -156,13 +168,15 @@ const Product = () => {
 
   const deleteReplyReview = async (reviewId, replyId) => {
     try {
-      await customFetch.delete(`/review/reply-review/${reviewId}`, {
-        replyId,
-      });
-      const fetchReview = await customFetch
-        .get(`/review/get-reviews/${product._id}`)
-        .then(({ data }) => data);
-      setReviews(fetchReview);
+      if (reviewId && replyId) {
+        await customFetch.delete(`/review/reply-review/${reviewId}`, {
+          replyId,
+        });
+        const fetchReview = await customFetch
+          .get(`/review/get-reviews/${product._id}`)
+          .then(({ data }) => data);
+        setReviews(fetchReview);
+      }
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }
@@ -237,11 +251,10 @@ const Product = () => {
                   })}
               </div>
 
+              {/* PRICE */}
               <div className="box-product-price">
                 <span>
-                  {product?.salePrice
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  {salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                   <span style={{ fontSize: 16 }}>₫</span>
                 </span>
 

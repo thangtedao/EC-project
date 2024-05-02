@@ -231,7 +231,15 @@ const EditUser = () => {
 
                 <Space wrap size={16}>
                   <Typography.Text strong>Address: </Typography.Text>
-                  <Typography.Text>{user?.address}</Typography.Text>
+                  <Typography.Text>
+                    {user?.address.city +
+                      ", " +
+                      user?.address.district +
+                      ", " +
+                      user?.address.ward +
+                      ", " +
+                      user?.address.home}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
