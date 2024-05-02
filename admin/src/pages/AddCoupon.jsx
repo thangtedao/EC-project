@@ -34,7 +34,7 @@ const AddCoupon = () => {
   const navigate = useNavigate();
 
   dayjs.extend(customParseFormat);
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
   const { RangePicker } = DatePicker;
 
@@ -274,6 +274,7 @@ const AddCoupon = () => {
                 </Typography.Title>
                 <RangePicker
                   required
+                  showTime
                   value={[startDate, endDate]}
                   size="large"
                   style={{ width: "100%" }}

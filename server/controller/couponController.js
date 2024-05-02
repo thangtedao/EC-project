@@ -1,5 +1,6 @@
 import { NotFoundError } from "../errors/customErrors.js";
 import Coupon from "../models/Coupon.js";
+import Order from "../models/Order.js";
 import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
 
@@ -70,6 +71,12 @@ export const applyCoupon = async (req, res) => {
     const now = new Date();
     if (validCoupon.endDate < now || validCoupon.startDate > now)
       return res.status(StatusCodes.CONFLICT).json({ msg: "Code has expired" });
+
+    const isUse = Order.find({ user: userId, couponCode: validCoupon.code });
+    if (isUse)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Coupon have been used" });
 
     if (validCoupon.numberOfUses <= 0)
       return res

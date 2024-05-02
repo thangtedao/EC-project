@@ -54,16 +54,18 @@ export const loader = async () => {
       .get(`/category/get/child`)
       .then(({ data }) => data);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
+    const stats = await customFetch
+      .get(`/order/stats-product`)
+      .then(({ data }) => data.products);
 
-    return { products, categories, categoriesC, orders };
+    return { products, categories, categoriesC, stats };
   } catch (error) {
     return error;
   }
 };
 
 const AllProduct = () => {
-  let { products, categories, categoriesC, orders } = useLoaderData();
+  let { products, categories, categoriesC, stats } = useLoaderData();
   const navigate = useNavigate();
 
   categories = categories?.map((category) => {
@@ -80,16 +82,17 @@ const AllProduct = () => {
     }
     return null;
   });
-
   categories = categories?.filter((item) => item !== null);
 
   products.forEach((product) => {
-    product.sold = orders.reduce((total, order) => {
-      return (
-        total +
-        order.orderItem.filter((item) => product._id === item.product.id).length
-      );
-    }, 0);
+    const foundItem = stats.find((item) => item._id === product._id);
+    if (foundItem) {
+      product.sold = foundItem.totalSold;
+      product.revenue = foundItem.totalRevenue;
+    } else {
+      product.sold = 0;
+      product.revenue = 0;
+    }
   });
 
   const handleAddProduct = () => {
@@ -333,6 +336,16 @@ const AllProduct = () => {
       width: 100,
       defaultSortOrder: "descend",
       sorter: (a, b) => a.sold - b.sold,
+    },
+    {
+      title: "Revenue",
+      dataIndex: "revenue",
+      key: "revenue",
+      width: 150,
+      render: (revenue) =>
+        revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.revenue - b.revenue,
     },
     {
       title: "Action",

@@ -11,6 +11,7 @@ import {
   createPaymentUrl,
   vnpayReturn,
   vnpayIpn,
+  showStats2,
 } from "../controller/orderController.js";
 import {
   authenticateUser,
@@ -44,6 +45,12 @@ router.post(
   authenticateUser,
   authorizePermissions("admin"),
   showStats
+);
+router.get(
+  "/stats-product",
+  authenticateUser,
+  authorizePermissions("admin"),
+  showStats2
 );
 router.get("/:id", authenticateUser, getOrder);
 

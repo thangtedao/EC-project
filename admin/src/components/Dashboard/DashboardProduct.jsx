@@ -100,30 +100,15 @@ const DashboardProduct = () => {
       sorter: (a, b) => a.totalSold - b.totalSold,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: 130,
-      render: (status) => {
-        let color = "";
-        if (status === "Available") {
-          color = "green";
-        } else if (status === "Out of stock") {
-          color = "orange";
-        } else if (status === "Discontinued") {
-          color = "red";
-        }
-        return <Tag color={color}>{status?.toUpperCase()}</Tag>;
-      },
-      filters: Object.keys(PRODUCT_STATUS).map((key) => {
-        return {
-          text: PRODUCT_STATUS[key],
-          value: PRODUCT_STATUS[key],
-        };
-      }),
-      onFilter: (value, record) => record?.status === value,
+      title: "Revenue",
+      dataIndex: "totalRevenue",
+      key: "totalRevenue",
+      width: 150,
+      render: (revenue) =>
+        revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.revenue - b.revenue,
     },
-
     {
       title: "Action",
       key: "operation",
