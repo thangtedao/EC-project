@@ -1,70 +1,24 @@
 import React, { useRef, useState } from "react";
+import Wrapper from "../assets/wrapper/promotion/AddEvent.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import Wrapper from "../assets/wrapper/user/AllUser.js";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+import { Button, message, Form, Breadcrumb, Table } from "antd";
 import {
   EditOutlined,
   AudioOutlined,
+  PlusOutlined,
   EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Button, Input, Dropdown, Space } from "antd";
-import Highlighter from "react-highlight-words";
-
-export const loader = async () => {
-  try {
-    const orders = await customFetch
-      .get(`/order/?admin=true`)
-      .then(({ data }) => data);
-
-    const users = await customFetch
-      .get("/user/admin/all-users")
-      .then(({ data }) => data);
-
-    return { users, orders };
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
-const AllUser = () => {
-  const { users, orders } = useLoaderData();
+const AllEvent = () => {
   const navigate = useNavigate();
+  dayjs.extend(customParseFormat);
+  const dateFormat = "HH:mm:ss DD-MM-YYYY";
 
-  users.forEach((user) => {
-    const userOrders = orders.filter((order) => order.user._id === user._id);
-    user.numOfOrder = userOrders.length;
-    user.totalSpent = userOrders.reduce(
-      (total, order) => total + order.totalAmount,
-      0
-    );
-  });
-
-  //Search
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-  // onChange của sorter và filter data cột
-  const onChange = (pagination, filters, sorter, extra) => {
-    // console.log("params", pagination, filters, sorter, extra);
-  };
-
-  const handleEditUser = (id) => {
-    navigate(`/edit-user/${id}`);
-  };
-  const handleViewUser = (id) => {
-    navigate(`/edit-user/${id}`);
-  };
-  //Dropdown
-  const items = [
-    {
-      label: "Edit",
-      key: "1",
-      icon: <EditOutlined />,
-      onClick: (_id) => handleEditUser(_id),
-    },
-  ];
   // Search
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -181,128 +135,105 @@ const AllUser = () => {
       ),
   });
 
+  //Dropdown
+  const items = [
+    {
+      label: "Edit",
+      key: "1",
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditEvent(_id),
+    },
+  ];
+
+  const handleAddEvent = () => {
+    navigate("/add-event");
+  };
+
+  const handleEditEvent = (id) => {
+    navigate(`/edit-event/${id}`);
+  };
+
+  //Search
+  const onSearch = (value, _e, info) => console.log(info?.source, value);
+
+  // onChange của sorter và filter data cột
+  const onChange = (pagination, filters, sorter, extra) => {
+    console.log("params", pagination, filters, sorter, extra);
+  };
+
+  //Danh sách các cột
   const columns = [
     {
-      title: "Image",
-      dataIndex: "avatar",
-      key: "avatar",
-      width: 90,
-      fixed: "left",
-      render: (avatar) => (
-        <>
-          {avatar ? (
-            <Image width={45} height={45} src={avatar} />
-          ) : (
-            <Image
-              width={45}
-              height={45}
-              src={
-                "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-              }
-            />
-          )}
-        </>
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      //   ...getColumnSearchProps("name"),
+    },
+
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      //   ...getColumnSearchProps("description"),
+    },
+    {
+      title: "Discount",
+      dataIndex: "discountValue",
+      key: "discountValue",
+      //   render: (discountValue, record) =>
+      //     record.discountType === "percentage" ? (
+      //       <p>{discountValue + "%"}</p>
+      //     ) : (
+      //       <p>
+      //         {discountValue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+      //           "₫"}
+      //       </p>
+      //     ),
+      filters: [
+        {
+          text: "Percentage (%)",
+          value: "percentage",
+        },
+        { text: "Fixed (vnđ)", value: "fixed" },
+      ],
+      onFilter: (value, record) => record?.discountType === value,
+    },
+    {
+      title: "Start",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (startDate) => (
+        <span className="md-font">
+          {dayjs(new Date(startDate).toString()).format(dateFormat)}
+        </span>
       ),
     },
     {
-      title: "Name",
-      width: 150,
-      fixed: "left",
-      dataIndex: "fullName",
-      key: "fullName",
-      ...getColumnSearchProps("fullName"),
+      title: "End",
+      dataIndex: "endDate",
+      key: "endDate",
+
+      render: (endDate) => (
+        <span className="md-font">
+          {dayjs(new Date(endDate).toString()).format(dateFormat)}
+        </span>
+      ),
     },
     {
-      title: "Email",
-      width: 150,
-      dataIndex: "email",
-      key: "email",
-      ...getColumnSearchProps("email"),
-    },
-    {
-      title: "Phone",
-      width: 150,
-      dataIndex: "phone",
-      key: "phone",
-      ...getColumnSearchProps("phone"),
-    },
-    {
-      title: "Address",
-      width: 250,
-      dataIndex: "address",
-      key: "address",
-      render: (address) => {
-        if (address.city && address.district && address.ward && address.home)
-          return (
-            address.city +
-            ", " +
-            address.district +
-            ", " +
-            address.ward +
-            ", " +
-            address.home
-          );
-      },
-    },
-    {
-      title: "Order",
-      width: 80,
-      dataIndex: "numOfOrder",
-      key: "order",
-      sorter: (a, b) => a.numOfOrder - b.numOfOrder,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Total spent",
-      width: 150,
-      dataIndex: "totalSpent",
-      key: "spent",
-      render: (totalSpent) =>
-        totalSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
-      sorter: (a, b) => a.totalSpent - b.totalSpent,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Rank",
-      width: 110,
-      dataIndex: "rank",
-      key: "rank",
-      render: (rank) => rank?.toUpperCase(),
-      filters: [
-        {
-          text: "Member",
-          value: "member",
-        },
-        {
-          text: "Silver",
-          value: "silver",
-        },
-        {
-          text: "Gold",
-          value: "gold",
-        },
-        {
-          text: "Diamond",
-          value: "diamond",
-        },
-      ],
-      onFilter: (value, record) => record?.rank === value,
-    },
-    {
-      title: "Status",
-      dataIndex: "isBlocked",
-      key: "isBlocked",
-      width: 100,
-      render: (isBlocked) => (isBlocked ? "Disabled" : "Active"),
+      title: "Item", //Số lượng sp có trong evnt
+      dataIndex: "item",
+      key: "item",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.sold - b.sold,
     },
     {
       title: "Action",
-      key: "action",
-      fixed: "right",
+      key: "operation",
       width: 150,
+      fixed: "right",
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleViewUser(_id)}
+          onClick={() => handleViewCoupon(_id)}
           menu={{
             items: items.map((item) => ({
               ...item,
@@ -322,22 +253,22 @@ const AllUser = () => {
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>User</title>
+          <title>All Event</title>
         </Helmet>
-
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a onClick={() => navigate("/")}>Dashboard</a>,
+              title: <a href="/">Dashboard</a>,
             },
+
             {
-              title: "Customer",
+              title: "Event",
             },
           ]}
         />
 
-        <div className="title">User</div>
+        <div className="title">Event</div>
 
         <div
           style={{
@@ -347,15 +278,25 @@ const AllUser = () => {
             alignItems: "center",
             marginBottom: 20,
           }}
-        ></div>
+        >
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="large"
+            style={{ width: 150 }}
+            onClick={handleAddEvent}
+          >
+            Add Event
+          </Button>
+        </div>
 
         <Table
           className="table"
-          columns={columns}
-          dataSource={users?.map((user) => ({
-            ...user,
-            key: user._id,
-          }))}
+          //   columns={columns}
+          //   dataSource={event.map((event) => ({
+          //     ...event,
+          //     key: event._id,
+          //   }))}
           onChange={onChange}
           scroll={{ x: 1200 }}
           showSorterTooltip={{
@@ -367,4 +308,4 @@ const AllUser = () => {
   );
 };
 
-export default AllUser;
+export default AllEvent;

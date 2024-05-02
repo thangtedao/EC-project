@@ -7,7 +7,7 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Button, Input, Dropdown, Space } from "antd";
@@ -33,23 +33,13 @@ const AllCoupon = () => {
   dayjs.extend(customParseFormat);
   const dateFormat = "HH:mm:ss DD-MM-YYYY";
 
-  //Search Product
-  const { Search } = Input;
-  const suffix = (
-    <AudioOutlined
-      style={{
-        fontSize: 16,
-        color: "#1677ff",
-      }}
-    />
-  );
-
   //Dropdown
   const items = [
     {
-      label: "View",
+      label: "Edit",
       key: "1",
-      icon: <FormOutlined />,
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditCoupon(_id),
     },
   ];
 
@@ -58,6 +48,9 @@ const AllCoupon = () => {
   };
 
   const handleEditCoupon = (id) => {
+    navigate(`/edit-coupon/${id}`);
+  };
+  const handleViewCoupon = (id) => {
     navigate(`/edit-coupon/${id}`);
   };
 
@@ -262,13 +255,16 @@ const AllCoupon = () => {
       fixed: "right",
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditCoupon(_id)}
+          onClick={() => handleViewCoupon(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
-          <EditOutlined />
-          Edit
+          <EyeOutlined />
+          View
         </Dropdown.Button>
       ),
     },
@@ -308,22 +304,11 @@ const AllCoupon = () => {
           style={{
             width: "100%",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "right",
             alignItems: "center",
             marginBottom: 20,
           }}
         >
-          <Search
-            size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
-          />
-
           <Button
             type="primary"
             icon={<PlusOutlined />}

@@ -7,7 +7,7 @@ import {
   EditOutlined,
   AudioOutlined,
   PlusOutlined,
-  FormOutlined,
+  EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Table, Button, Input, Dropdown, Tag, Space } from "antd";
@@ -70,24 +70,17 @@ const AllCategory = () => {
   const handleEditCategory = (id) => {
     navigate(`/edit-category/${id}`);
   };
-
-  //Search Product
-  const { Search } = Input;
-  const suffix = (
-    <AudioOutlined
-      style={{
-        fontSize: 16,
-        color: "#1677ff",
-      }}
-    />
-  );
+  const handleViewCategory = (id) => {
+    navigate(`/detail-category/${id}`);
+  };
 
   //Dropdown
   const items = [
     {
-      label: "View",
+      label: "Edit",
       key: "1",
-      icon: <FormOutlined />,
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditCategory(_id),
     },
   ];
 
@@ -258,13 +251,16 @@ const AllCategory = () => {
       width: 120,
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditCategory(_id)}
+          onClick={() => handleViewCategory(_id)}
           menu={{
-            items,
+            items: items.map((item) => ({
+              ...item,
+              onClick: () => item.onClick(_id),
+            })),
           }}
         >
-          <EditOutlined />
-          Edit
+          <EyeOutlined />
+          View
         </Dropdown.Button>
       ),
     },
@@ -304,22 +300,11 @@ const AllCategory = () => {
           style={{
             width: "100%",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "right",
             alignItems: "center",
             marginBottom: 20,
           }}
         >
-          <Search
-            size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
-          />
-
           <Button
             type="primary"
             icon={<PlusOutlined />}

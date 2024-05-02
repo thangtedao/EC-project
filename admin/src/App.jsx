@@ -20,7 +20,9 @@ import { loader as allOrderLoader } from "./pages/AllOrder";
 import { loader as editOrderLoader } from "./pages/EditOrder";
 import { loader as addEventLoader } from "./pages/AddEvent";
 
+import { loader as editEventLoader } from "./pages/EditEvent";
 import { loader as detailProductLoader } from "./pages/DetailProduct";
+import { loader as detailCategoryLoader } from "./pages/DetailCategory";
 
 /* PAGE */
 import AllProduct from "./pages/AllProduct";
@@ -49,6 +51,9 @@ import CommentBlogMng from "./pages/CommentBlogMng";
 import CommentProductMng from "./pages/CommentProductMng";
 
 import DetailProduct from "./pages/DetailProduct";
+import DetailCategory from "./pages/DetailCategory";
+import AllEvent from "./pages/AllEvent";
+import EditEvent from "./pages/EditEvent";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -62,9 +67,18 @@ const router = createBrowserRouter([
         loader: dashboardLoader,
       },
       {
+        path: "all-event",
+        element: <AllEvent />,
+      },
+      {
         path: "add-event",
         element: <AddEvent />,
         loader: addEventLoader,
+      },
+      {
+        path: "edit-event/:id",
+        element: <EditEvent />,
+        loader: editEventLoader,
       },
       {
         path: "all-product",
@@ -81,6 +95,11 @@ const router = createBrowserRouter([
         path: "detail-product/:id",
         element: <DetailProduct />,
         loader: detailProductLoader,
+      },
+      {
+        path: "detail-category/:id",
+        element: <DetailCategory />,
+        loader: detailCategoryLoader,
       },
       //
       {
