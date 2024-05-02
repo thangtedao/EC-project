@@ -200,10 +200,11 @@ const AllUser = () => {
       render: (avatar) => (
         <>
           {avatar ? (
-            <Image width={45} src={avatar} />
+            <Image width={45} height={45} src={avatar} />
           ) : (
             <Image
               width={45}
+              height={45}
               src={
                 "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
               }
@@ -236,10 +237,21 @@ const AllUser = () => {
     },
     {
       title: "Address",
-      width: 150,
+      width: 250,
       dataIndex: "address",
       key: "address",
-      ...getColumnSearchProps("address"),
+      render: (address) => {
+        if (address.city && address.district && address.ward && address.home)
+          return (
+            address.city +
+            ", " +
+            address.district +
+            ", " +
+            address.ward +
+            ", " +
+            address.home
+          );
+      },
     },
     {
       title: "Order",
