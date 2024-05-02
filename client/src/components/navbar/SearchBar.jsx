@@ -84,7 +84,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: bold;
     .strike {
       font-size: 0.75rem;
@@ -115,6 +115,12 @@ const SearchBar = () => {
   const handleSearch = (e) => {
     setInput(e.target.value);
     fetchData(e.target.value);
+  };
+
+  const handleClick = (id) => {
+    console.log("hello");
+    console.log(id);
+    navigate(`/product/${id}`);
   };
 
   const handleSumit = (e) => {
@@ -148,9 +154,10 @@ const SearchBar = () => {
         <div className="search-result">
           {products?.map((product) => {
             return (
-              <NavLink
+              <a
                 key={product._id}
-                to={`/product/${product._id}`}
+                // to={`/product/${product._id}`}
+                onClick={() => handleClick(product._id)}
                 className="product-card"
               >
                 <div className="product-card-image">
@@ -170,7 +177,7 @@ const SearchBar = () => {
                     </div>
                   </div>
                 </div>
-              </NavLink>
+              </a>
             );
           })}
         </div>

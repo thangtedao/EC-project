@@ -12,7 +12,7 @@ import percent from "../assets/logo/percent.svg";
 const ProductCard = ({ product }) => {
   const addToWishlist = async () => {
     try {
-      await customFetch.patch("/user/wishlist", {
+      await customFetch.patch("/user/wishlist/add", {
         productId: product._id,
       });
       toast.success("Added to wishlist");
