@@ -184,7 +184,10 @@ a[x-apple-data-detectors] {
                  </tr>
                </table></td>
              </tr>
-             <tr>
+
+
+             ${order.orderItem.map((item) => {
+               return `<tr>
               <td class="esdev-adapt-off" align="left" style="padding:20px;Margin:0">
                <table cellpadding="0" cellspacing="0" class="esdev-mso-table" role="none" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:560px">
                  <tr>
@@ -245,7 +248,10 @@ a[x-apple-data-detectors] {
                    </table></td>
                  </tr>
                </table></td>
-             </tr>
+             </tr>`;
+             })}
+
+
              <tr>
               <td align="left" style="padding:0;Margin:0;padding-left:20px;padding-right:20px">
                <table cellpadding="0" cellspacing="0" width="100%" role="none" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">

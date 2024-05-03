@@ -168,7 +168,23 @@ const EditOrder = () => {
                           {"x" + item.quantity}
                         </Typography.Text>
                       </div>
-                      <div style={{ textAlign: "right" }}>
+                      <div
+                        style={{
+                          textAlign: "right",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        {order.discountAmount > 0 && (
+                          <Typography.Text
+                            strong
+                            style={{ textDecoration: "line-through" }}
+                          >
+                            {(item.priceAtOrder * item.quantity)
+                              ?.toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
+                          </Typography.Text>
+                        )}
                         <Typography.Text strong>
                           {item.subtotal
                             ?.toString()
@@ -191,8 +207,7 @@ const EditOrder = () => {
                   </div>
                   <div style={{ marginLeft: "auto" }}>
                     <Typography.Text size="large">
-                      {order.orderItem
-                        ?.reduce((a, i) => a + i.subtotal, 0)
+                      {(order.discountAmount + order.totalAmount)
                         .toString()
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                       ₫
@@ -201,7 +216,7 @@ const EditOrder = () => {
                 </div>
 
                 {/* TOTAL PRICE 2 */}
-                {order.discountAmount && (
+                {order.discountAmount > 0 && (
                   <div
                     style={{
                       width: "40%",

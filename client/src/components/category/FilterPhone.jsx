@@ -15,18 +15,19 @@ const FilterLaptop = (props) => {
           <option value="16gb">16GB</option>
         </select>
 
-        <select name="rom" defaultValue={rom}>
+        <select name="bộ nhớ" defaultValue={rom}>
           <option value="">Bộ nhớ trong</option>
-          <option value="256gb">64GB</option>
-          <option value="256gb">128GB</option>
+          <option value="64gb">64GB</option>
+          <option value="128gb">128GB</option>
           <option value="256gb">256GB</option>
           <option value="512gb">512GB</option>
+          <option value="1tb">1TB</option>
         </select>
 
         <select name="chip" defaultValue={chip}>
           <option value="">Chipset</option>
           <option value="snapdragon">Snapdragon</option>
-          <option value="snapdragon">Apple</option>
+          <option value="apple">Apple</option>
           <option value="mediatek dimensity">Mediatek Dimensity</option>
           <option value="mediatek helio">Mediatek Helio</option>
         </select>
