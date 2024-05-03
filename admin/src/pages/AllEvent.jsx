@@ -5,17 +5,40 @@ import customFetch from "../utils/customFetch.js";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-
-import { Button, message, Form, Breadcrumb, Table } from "antd";
 import {
   EditOutlined,
-  AudioOutlined,
   PlusOutlined,
   EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Table,
+  Image,
+  Button,
+  Input,
+  Dropdown,
+  Space,
+  Tag,
+} from "antd";
+import Highlighter from "react-highlight-words";
+
+export const loader = async () => {
+  try {
+    const promotions = await customFetch
+      .get(`/promotion/?admin=true`)
+      .then(({ data }) => data);
+    return { promotions };
+  } catch (error) {
+    return error;
+  }
+};
+
 const AllEvent = () => {
   const navigate = useNavigate();
+  const { promotions } = useLoaderData();
+  console.log(promotions);
+
   dayjs.extend(customParseFormat);
   const dateFormat = "HH:mm:ss DD-MM-YYYY";
 
@@ -153,12 +176,16 @@ const AllEvent = () => {
     navigate(`/edit-event/${id}`);
   };
 
+  const handleViewEvent = (id) => {
+    console.log("view");
+  };
+
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
 
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
+    // console.log("params", pagination, filters, sorter, extra);
   };
 
   //Danh sách các cột
@@ -167,28 +194,30 @@ const AllEvent = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      //   ...getColumnSearchProps("name"),
+      width: 200,
+      ...getColumnSearchProps("name"),
     },
-
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      //   ...getColumnSearchProps("description"),
+      width: 300,
+      ...getColumnSearchProps("description"),
     },
     {
       title: "Discount",
       dataIndex: "discountValue",
       key: "discountValue",
-      //   render: (discountValue, record) =>
-      //     record.discountType === "percentage" ? (
-      //       <p>{discountValue + "%"}</p>
-      //     ) : (
-      //       <p>
-      //         {discountValue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
-      //           "₫"}
-      //       </p>
-      //     ),
+      width: 100,
+      render: (discountValue, record) =>
+        record.discountType === "percentage" ? (
+          <p>{discountValue + "%"}</p>
+        ) : (
+          <p>
+            {discountValue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+              "₫"}
+          </p>
+        ),
       filters: [
         {
           text: "Percentage (%)",
@@ -202,6 +231,7 @@ const AllEvent = () => {
       title: "Start",
       dataIndex: "startDate",
       key: "startDate",
+      width: 200,
       render: (startDate) => (
         <span className="md-font">
           {dayjs(new Date(startDate).toString()).format(dateFormat)}
@@ -212,7 +242,7 @@ const AllEvent = () => {
       title: "End",
       dataIndex: "endDate",
       key: "endDate",
-
+      width: 200,
       render: (endDate) => (
         <span className="md-font">
           {dayjs(new Date(endDate).toString()).format(dateFormat)}
@@ -220,11 +250,36 @@ const AllEvent = () => {
       ),
     },
     {
-      title: "Item", //Số lượng sp có trong evnt
-      dataIndex: "item",
-      key: "item",
+      title: "Item",
+      dataIndex: "products",
+      key: "products",
+      width: 80,
+      render: (products) => products?.length,
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.sold - b.sold,
+      sorter: (a, b) => a.products?.length - b.products?.length,
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: 100,
+      render: (isActive) =>
+        isActive ? (
+          <Tag color="green">Active</Tag>
+        ) : (
+          <Tag color="red">InActive</Tag>
+        ),
+      filters: [
+        {
+          text: "Active",
+          value: true,
+        },
+        {
+          text: "InActive",
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => record?.isActive === value,
     },
     {
       title: "Action",
@@ -233,7 +288,7 @@ const AllEvent = () => {
       fixed: "right",
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleViewCoupon(_id)}
+          onClick={() => handleViewEvent(_id)}
           menu={{
             items: items.map((item) => ({
               ...item,
@@ -247,6 +302,11 @@ const AllEvent = () => {
       ),
     },
   ];
+
+  // Số lượng sản phẩm trên mỗi trang
+  const paginationConfig = {
+    pageSize: 10,
+  };
 
   return (
     <HelmetProvider>
@@ -292,11 +352,12 @@ const AllEvent = () => {
 
         <Table
           className="table"
-          //   columns={columns}
-          //   dataSource={event.map((event) => ({
-          //     ...event,
-          //     key: event._id,
-          //   }))}
+          pagination={paginationConfig}
+          columns={columns}
+          dataSource={promotions.map((promotion) => ({
+            ...promotion,
+            key: promotion._id,
+          }))}
           onChange={onChange}
           scroll={{ x: 1200 }}
           showSorterTooltip={{

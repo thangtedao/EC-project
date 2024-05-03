@@ -19,6 +19,7 @@ import { loader as editUserLoader } from "./pages/EditUser";
 import { loader as allOrderLoader } from "./pages/AllOrder";
 import { loader as editOrderLoader } from "./pages/EditOrder";
 import { loader as addEventLoader } from "./pages/AddEvent";
+import { loader as allEventLoader } from "./pages/AllEvent";
 import { loader as editEventLoader } from "./pages/EditEvent";
 import { loader as editBlogLoader } from "./pages/EditBlog";
 import { loader as detailProductLoader } from "./pages/DetailProduct";
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
       {
         path: "all-event",
         element: <AllEvent />,
+        loader: allEventLoader,
       },
       {
         path: "add-event",

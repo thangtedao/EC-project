@@ -234,7 +234,6 @@ const AllCoupon = () => {
       title: "End",
       dataIndex: "endDate",
       key: "endDate",
-
       render: (endDate) => (
         <span className="md-font">
           {dayjs(new Date(endDate).toString()).format(dateFormat)}
@@ -276,6 +275,11 @@ const AllCoupon = () => {
   // onChange của sorter và filter data cột
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
+  };
+
+  // Số lượng sản phẩm trên mỗi trang
+  const paginationConfig = {
+    pageSize: 10,
   };
 
   return (
@@ -322,6 +326,7 @@ const AllCoupon = () => {
 
         <Table
           className="table"
+          pagination={paginationConfig}
           columns={columns}
           dataSource={coupons.map((coupon) => ({
             ...coupon,

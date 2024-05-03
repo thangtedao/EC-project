@@ -80,10 +80,7 @@ const AllBlogs = () => {
                 title={<a>{blog.title}</a>}
                 description={
                   <div>
-                    dể 1 đoạn đầu trong blog hiện ở đây cho bớt trống một này nọ
-                    ta cùng ta vui vui vui vui vuiiiiiiii cmn
-                    ahahahahahahahahahahahaaaaaaaaaaaaaaaaaaaaaaaaaa
-                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa....
+                    {blog.description}
                     <br />
                     <Typography.Text>
                       Ngày đăng:{" "}

@@ -52,7 +52,8 @@ const EditOrder = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    console.log(values);
+    if (order.isCancel && values.status === "Cancelled")
+      values.isCancel = false;
     const updatedOrder = await customFetch.patch(
       `/order/update/${order._id}`,
       values
@@ -337,6 +338,16 @@ const EditOrder = () => {
                     }
                   })()}
                 </Space>
+
+                <Divider />
+
+                {order.isCancel && (
+                  <Space wrap size={16}>
+                    <Typography.Text strong style={{ color: "red" }}>
+                      Customer requests order cancellation for translation
+                    </Typography.Text>
+                  </Space>
+                )}
               </Card>
               <Card className="col-2-item" size="large" title={`Change Status`}>
                 {/* <Typography.Title className="input-title">

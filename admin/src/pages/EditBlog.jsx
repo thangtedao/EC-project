@@ -158,7 +158,8 @@ const EditBlog = () => {
         `/blog/update/${blog._id}`,
         data
       );
-      if (response.data) navigate("/all-blogs");
+      console.log(response.data);
+      if (response.data.updatedBlog) navigate("/all-blogs");
     } catch (error) {
       console.log(error);
     }

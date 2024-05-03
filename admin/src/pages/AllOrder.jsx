@@ -220,7 +220,7 @@ const AllOrder = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: 200,
+      width: 120,
       render: (status) => {
         let color = "";
         if (status === "Cancelled") {
@@ -243,6 +243,20 @@ const AllOrder = () => {
         };
       }),
       onFilter: (value, record) => record?.status === value,
+    },
+    {
+      title: "Request",
+      dataIndex: "isCancel",
+      key: "isCancel",
+      width: 100,
+      render: (isCancel) => isCancel && <Tag color="red">Cancel Request</Tag>,
+      filters: [
+        {
+          text: "Cancel Request",
+          value: true,
+        },
+      ],
+      onFilter: (value, record) => record?.isCancel === value,
     },
     {
       title: "Action",
@@ -272,7 +286,7 @@ const AllOrder = () => {
   };
   // Số lượng sản phẩm trên mỗi trang
   const paginationConfig = {
-    pageSize: 5,
+    pageSize: 10,
   };
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);

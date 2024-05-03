@@ -89,7 +89,7 @@ export const createOrder = async (req, res) => {
       user: user._id,
       orderItem: orderItem,
       couponCode: coupon?.code,
-      discountAmount: coupon && discountAmount.toFixed(0),
+      discountAmount: coupon ? discountAmount.toFixed(0) : 0,
       shippingAddress:
         user.address.city +
         ", " +
@@ -129,7 +129,7 @@ export const createOrder = async (req, res) => {
     }
     await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
-    sendMail(user, order);
+    if (order && user) sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);

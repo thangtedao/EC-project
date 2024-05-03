@@ -3,16 +3,24 @@ import Wrapper from "../assets/wrapper/promotion/AddEvent.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import EventInfor from "../components/EventPage/EventInfor.jsx";
 import EventProduct from "../components/EventPage/EventProduct.jsx";
-// import EventCoupon from "../components/EventPage/EventCoupon.jsx";
 import EventCheck from "../components/EventPage/EventCheck.jsx";
 import { Button, message, Steps, Form, Breadcrumb } from "antd";
 import customFetch from "../utils/customFetch.js";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
-export const loader = async () => {
+export const loader = async ({ params }) => {
   try {
+    const { id } = params;
+    if (!id) {
+      return redirect("/all-event");
+    }
+
+    const promotion = await customFetch
+      .get(`/promotion/${id}`)
+      .then(({ data }) => data);
+
     const products = await customFetch
       .get(`/product/?populate=category`)
       .then(({ data }) => data);
@@ -27,14 +35,15 @@ export const loader = async () => {
 
     const orders = await customFetch.get(`/order/`).then(({ data }) => data);
 
-    return { products, categories, categoriesC, orders };
+    return { promotion, products, categories, categoriesC, orders };
   } catch (error) {
     return error;
   }
 };
 
 const EditEvent = () => {
-  let { products, categories, categoriesC, orders } = useLoaderData();
+  let { promotion, products, categories, categoriesC, orders } =
+    useLoaderData();
   const navigate = useNavigate();
 
   dayjs.extend(customParseFormat);
@@ -66,14 +75,22 @@ const EditEvent = () => {
     }, 0);
   });
 
+  promotion.selectedProducts = products.filter((product) => {
+    return promotion.products.includes(product._id);
+  });
+
   const [current, setCurrent] = useState(0);
 
   // Info
-  const [name, setName] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [discount, setDiscount] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [name, setName] = useState(promotion.name || null);
+  const [description, setDescription] = useState(promotion.description || null);
+  const [discount, setDiscount] = useState(promotion.discountValue || null);
+  const [startDate, setStartDate] = useState(
+    dayjs(new Date(promotion.startDate).toString()) || null
+  );
+  const [endDate, setEndDate] = useState(
+    dayjs(new Date(promotion.endDate).toString()) || null
+  );
 
   const handleDateRangeChange = (dates) => {
     if (dates) {
@@ -83,10 +100,14 @@ const EditEvent = () => {
   };
 
   // Product
-  const [selectedProductIds, setSelectedProductIds] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState(
+    promotion.products
+  );
+  const [selectedProducts, setSelectedProducts] = useState(
+    promotion.selectedProducts
+  );
 
-  const handleAddEvent = async () => {
+  const handleEditEvent = async () => {
     try {
       if (name && discount && startDate && endDate && selectedProductIds) {
         const data = {
@@ -97,9 +118,12 @@ const EditEvent = () => {
           endDate: endDate.format(dateFormat),
           products: selectedProductIds,
         };
-        const promotion = await customFetch.post("/promotion/create", data);
-        if (promotion) {
-          navigate("/");
+        const promotionData = await customFetch.patch(
+          `/promotion/update/${promotion._id}`,
+          data
+        );
+        if (promotionData) {
+          navigate("/all-event");
         }
       }
     } catch (error) {
@@ -171,7 +195,7 @@ const EditEvent = () => {
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>Edit Event</title>
+          <title>Add Event</title>
         </Helmet>
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
@@ -183,12 +207,12 @@ const EditEvent = () => {
               title: <a href="/all-event">Event</a>,
             },
             {
-              title: "Edit Event",
+              title: "Add Event",
             },
           ]}
         />
 
-        <div className="title">Edit Event</div>
+        <div className="title">Add Event</div>
         <Steps current={current} items={items} />
         <div
           style={{ lineHeight: "260px", textAlign: "center", marginTop: 16 }}
@@ -205,7 +229,7 @@ const EditEvent = () => {
             <Button
               size="large"
               type="primary"
-              onClick={() => handleAddEvent()}
+              onClick={() => handleEditEvent()}
             >
               Done
             </Button>

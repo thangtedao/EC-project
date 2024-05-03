@@ -317,6 +317,11 @@ const AllUser = () => {
     },
   ];
 
+  // Số lượng sản phẩm trên mỗi trang
+  const paginationConfig = {
+    pageSize: 10,
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -351,6 +356,7 @@ const AllUser = () => {
 
         <Table
           className="table"
+          pagination={paginationConfig}
           columns={columns}
           dataSource={users?.map((user) => ({
             ...user,

@@ -274,6 +274,11 @@ const AllCategory = () => {
     // console.log("params", pagination, filters, sorter, extra);
   };
 
+  // Số lượng sản phẩm trên mỗi trang
+  const paginationConfig = {
+    pageSize: 10,
+  };
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -318,6 +323,7 @@ const AllCategory = () => {
 
         <Table
           className="table"
+          pagination={paginationConfig}
           columns={columns}
           dataSource={categories}
           onChange={onChange}
