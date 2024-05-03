@@ -337,9 +337,6 @@ a[x-apple-data-detectors] {
                          </tr>
                        </table></td>
                      </tr>
-                     <tr>
-                      <td align="left" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#666666;font-size:14px">Jayden Miller<br>600 Montgomery St<br>San Francisco CA<br>94111<br>United States</p></td>
-                     </tr>
                    </table></td>
                  </tr>
                </table></td>
