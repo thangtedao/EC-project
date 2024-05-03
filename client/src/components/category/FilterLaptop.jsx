@@ -6,7 +6,7 @@ const FilterLaptop = ({ ram, rom, cpu }) => {
       <div className="filter-title">Chọn theo tiêu chí</div>
       <div className="filter-select">
         <select name="ram" defaultValue={ram}>
-          <option value="">RAM</option>
+          <option value="">Dung lượng RAM</option>
           <option value="4gb">4GB</option>
           <option value="8gb">8GB</option>
           <option value="12gb">12GB</option>

@@ -46,8 +46,16 @@ export const loader = async () => {
       .get("/promotion/")
       .then(({ data }) => data);
 
+    const bestSalerProduct = await customFetch
+      .get("/order/bestsalerproduct")
+      .then(({ data }) => data.products);
+
     window.scrollTo(0, 0);
+<<<<<<< HEAD
     return { productsArray, allEvent, bestSalerProduct};
+=======
+    return { productsArray, allEvent, bestSalerProduct };
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -87,6 +95,7 @@ const Home = () => {
     console.log("finished!");
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     try {
       const getProductIdList = async () => {
@@ -105,11 +114,43 @@ const Home = () => {
     const getRecommendProducts = async () => {
       try {
         const response = await customFetch.post("/product/recommend", {productIdList:productIdList});
+=======
+  // recommend
+  const [recommendPro, setRecommendPro] = useState([]);
+  const [productIdList, setProductIdList] = useState([]);
+
+  useEffect(() => {
+    try {
+      const getProductIdList = async () => {
+        const response = await fetch(
+          `https://recommendsys1-production-ba91.up.railway.app/recommendation/${user.fullName}`
+        );
+        const jsonData = await response.json();
+        setProductIdList(jsonData);
+      };
+      //sửa sau khi thêm trường productID vào model product
+      // user && getProductIdList();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const getRecommendProducts = async () => {
+      try {
+        const response = await customFetch.post("/product/recommend", {
+          productIdList: productIdList,
+        });
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
         setRecommendPro(response.data);
       } catch (error) {
         console.log(error);
       }
+<<<<<<< HEAD
     }
+=======
+    };
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
     getRecommendProducts();
   }, []);
 
@@ -207,7 +248,10 @@ const Home = () => {
             )}
           </div>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
           {/* products Recommended by AI */}
 
           <div className="block-hot-sale">
@@ -219,7 +263,10 @@ const Home = () => {
             )}
           </div>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
           {/* BEST SALER */}
           <div className="block-hot-sale">
             <div className="block-title">

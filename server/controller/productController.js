@@ -201,7 +201,7 @@ export const filterProduct = async (req, res) => {
     if (!isEmpty) {
       for (const key in queryObj) {
         filterAttributes.push({
-          // attributeName: new RegExp(key.replace(" ", "."), "i"),
+          attributeName: new RegExp(key.replace(" ", "."), "i"),
           attributeValue: new RegExp(queryObj[key].replace(" ", "."), "i"),
         });
       }

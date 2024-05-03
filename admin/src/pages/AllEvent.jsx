@@ -1,58 +1,46 @@
 import React, { useRef, useState } from "react";
+import Wrapper from "../assets/wrapper/promotion/AddEvent.js";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
-import Wrapper from "../assets/wrapper/coupon/AllCoupon.js";
-import { useNavigate, useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import {
   EditOutlined,
-  AudioOutlined,
   PlusOutlined,
   EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Button, Input, Dropdown, Space } from "antd";
+import {
+  Breadcrumb,
+  Table,
+  Image,
+  Button,
+  Input,
+  Dropdown,
+  Space,
+  Tag,
+} from "antd";
 import Highlighter from "react-highlight-words";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export const loader = async () => {
   try {
-    const coupons = await customFetch
-      .get(`/coupon/all-coupons`)
+    const promotions = await customFetch
+      .get(`/promotion/?admin=true`)
       .then(({ data }) => data);
-    return coupons;
+    return { promotions };
   } catch (error) {
     return error;
   }
 };
 
-const AllCoupon = () => {
-  const coupons = useLoaderData();
+const AllEvent = () => {
   const navigate = useNavigate();
+  const { promotions } = useLoaderData();
+  console.log(promotions);
 
   dayjs.extend(customParseFormat);
   const dateFormat = "HH:mm:ss DD-MM-YYYY";
-
-  //Dropdown
-  const items = [
-    {
-      label: "Edit",
-      key: "1",
-      icon: <EditOutlined />,
-      onClick: (_id) => handleEditCoupon(_id),
-    },
-  ];
-
-  const handleAddCoupon = () => {
-    navigate("/add-coupon");
-  };
-
-  const handleEditCoupon = (id) => {
-    navigate(`/edit-coupon/${id}`);
-  };
-  const handleViewCoupon = (id) => {
-    navigate(`/edit-coupon/${id}`);
-  };
 
   // Search
   const [searchText, setSearchText] = useState("");
@@ -170,30 +158,57 @@ const AllCoupon = () => {
       ),
   });
 
+  //Dropdown
+  const items = [
+    {
+      label: "Edit",
+      key: "1",
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditEvent(_id),
+    },
+  ];
+
+  const handleAddEvent = () => {
+    navigate("/add-event");
+  };
+
+  const handleEditEvent = (id) => {
+    navigate(`/edit-event/${id}`);
+  };
+
+  const handleViewEvent = (id) => {
+    console.log("view");
+  };
+
+  //Search
+  const onSearch = (value, _e, info) => console.log(info?.source, value);
+
+  // onChange của sorter và filter data cột
+  const onChange = (pagination, filters, sorter, extra) => {
+    // console.log("params", pagination, filters, sorter, extra);
+  };
+
   //Danh sách các cột
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      width: 200,
       ...getColumnSearchProps("name"),
-    },
-    {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      ...getColumnSearchProps("code"),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      width: 300,
       ...getColumnSearchProps("description"),
     },
     {
       title: "Discount",
       dataIndex: "discountValue",
       key: "discountValue",
+      width: 100,
       render: (discountValue, record) =>
         record.discountType === "percentage" ? (
           <p>{discountValue + "%"}</p>
@@ -212,18 +227,11 @@ const AllCoupon = () => {
       ],
       onFilter: (value, record) => record?.discountType === value,
     },
-    // {
-    //   title: "Start",
-    //   dataIndex: "startDate",
-    //   key: "startDate",
-    //   render: (startDate) => (
-    //     <span className="md-font">{startDate?.split("T")[0]}</span>
-    //   ),
-    // },
     {
       title: "Start",
       dataIndex: "startDate",
       key: "startDate",
+      width: 200,
       render: (startDate) => (
         <span className="md-font">
           {dayjs(new Date(startDate).toString()).format(dateFormat)}
@@ -234,6 +242,7 @@ const AllCoupon = () => {
       title: "End",
       dataIndex: "endDate",
       key: "endDate",
+      width: 200,
       render: (endDate) => (
         <span className="md-font">
           {dayjs(new Date(endDate).toString()).format(dateFormat)}
@@ -241,11 +250,36 @@ const AllCoupon = () => {
       ),
     },
     {
-      title: "Used",
-      dataIndex: "used",
-      key: "used",
+      title: "Item",
+      dataIndex: "products",
+      key: "products",
+      width: 80,
+      render: (products) => products?.length,
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.sold - b.sold,
+      sorter: (a, b) => a.products?.length - b.products?.length,
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: 100,
+      render: (isActive) =>
+        isActive ? (
+          <Tag color="green">Active</Tag>
+        ) : (
+          <Tag color="red">InActive</Tag>
+        ),
+      filters: [
+        {
+          text: "Active",
+          value: true,
+        },
+        {
+          text: "InActive",
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => record?.isActive === value,
     },
     {
       title: "Action",
@@ -254,7 +288,7 @@ const AllCoupon = () => {
       fixed: "right",
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleViewCoupon(_id)}
+          onClick={() => handleViewEvent(_id)}
           menu={{
             items: items.map((item) => ({
               ...item,
@@ -269,14 +303,6 @@ const AllCoupon = () => {
     },
   ];
 
-  //Search
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-  // onChange của sorter và filter data cột
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
-  };
-
   // Số lượng sản phẩm trên mỗi trang
   const paginationConfig = {
     pageSize: 10,
@@ -287,22 +313,22 @@ const AllCoupon = () => {
       <Wrapper>
         <Helmet>
           <meta charSet="utf-8" />
-          <title>All Coupon</title>
+          <title>All Event</title>
         </Helmet>
-
         <Breadcrumb
           style={{ paddingBottom: "1rem" }}
           items={[
             {
-              title: <a onClick={() => navigate("/")}>Dashboard</a>,
+              title: <a href="/">Dashboard</a>,
             },
+
             {
-              title: "Coupon",
+              title: "Event",
             },
           ]}
         />
 
-        <div className="title">Coupon</div>
+        <div className="title">Event</div>
 
         <div
           style={{
@@ -318,9 +344,9 @@ const AllCoupon = () => {
             icon={<PlusOutlined />}
             size="large"
             style={{ width: 150 }}
-            onClick={handleAddCoupon}
+            onClick={handleAddEvent}
           >
-            Add Coupon
+            Add Event
           </Button>
         </div>
 
@@ -328,9 +354,9 @@ const AllCoupon = () => {
           className="table"
           pagination={paginationConfig}
           columns={columns}
-          dataSource={coupons.map((coupon) => ({
-            ...coupon,
-            key: coupon._id,
+          dataSource={promotions.map((promotion) => ({
+            ...promotion,
+            key: promotion._id,
           }))}
           onChange={onChange}
           scroll={{ x: 1200 }}
@@ -343,4 +369,4 @@ const AllCoupon = () => {
   );
 };
 
-export default AllCoupon;
+export default AllEvent;

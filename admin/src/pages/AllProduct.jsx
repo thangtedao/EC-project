@@ -107,27 +107,16 @@ const AllProduct = () => {
     navigate(`/detail-product/${id}`);
   };
   const handleReloadClick = () => {
-    navigate("/add-product");
+    navigate("/all-product");
   };
-
-  //Search Product
-  const { Search } = Input;
-  const suffix = (
-    <AudioOutlined
-      style={{
-        fontSize: 16,
-        color: "#1677ff",
-      }}
-    />
-  );
 
   //Dropdown
   const items = [
     {
-      label: "View",
+      label: "Edit",
       key: "1",
-      icon: <EyeOutlined />,
-      onClick: (_id) => handleViewProduct(_id),
+      icon: <EditOutlined />,
+      onClick: (_id) => handleEditProduct(_id),
     },
   ];
 
@@ -356,7 +345,7 @@ const AllProduct = () => {
       width: 150,
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditProduct(_id)}
+          onClick={() => handleViewProduct(_id)}
           menu={{
             items: items.map((item) => ({
               ...item,
@@ -364,8 +353,8 @@ const AllProduct = () => {
             })),
           }}
         >
-          <EditOutlined />
-          Edit
+          <EyeOutlined />
+          View
         </Dropdown.Button>
       ),
     },
@@ -416,16 +405,13 @@ const AllProduct = () => {
             marginBottom: 20,
           }}
         >
-          <Search
+          <Button
             size="large"
-            placeholder="Enter search name"
-            allowClear
-            onSearch={onSearch}
-            style={{
-              width: "30%",
-              minWidth: 300,
-            }}
-          />
+            style={{ marginBottom: 20, width: 100 }}
+            onClick={handleReloadClick}
+          >
+            Reload
+          </Button>
 
           <Button
             type="primary"
@@ -437,14 +423,6 @@ const AllProduct = () => {
             Add Product
           </Button>
         </div>
-
-        <Button
-          size="large"
-          style={{ marginBottom: 20, width: 100 }}
-          onClick={handleReloadClick}
-        >
-          Reload
-        </Button>
 
         <Table
           className="table"

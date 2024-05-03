@@ -15,11 +15,11 @@ const Wrapper = styled.div`
     font-weight: 400;
   }
   .col-1 {
-    width: 60%;
+    width: 40%;
     height: fit-content;
   }
   .col-2 {
-    width: 40%;
+    width: 60%;
     height: fit-content;
   }
   .col-2-item {
@@ -43,21 +43,6 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  .ant-input-outlined[disabled] {
-    color: #000;
-    background-color: rgba(0, 0, 0, 0.02);
-  }
-  .ant-input-number-disabled {
-    color: #000;
-    background-color: rgba(0, 0, 0, 0.02);
-  }
-  .ant-select-outlined.ant-select-disabled .ant-select-selector {
-    background: rgba(0, 0, 0, 0.02);
-    color: rgb(0 0 0);
-  }
-  .ant-select-selection-item-content {
-    color: #000;
   }
 `;
 

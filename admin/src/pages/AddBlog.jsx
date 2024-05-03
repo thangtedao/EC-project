@@ -14,11 +14,20 @@ import {
   Breadcrumb,
   Upload,
 } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const AddBlog = () => {
+  const navigate = useNavigate();
+  const [blogContent, setBlogContent] = useState("");
+
   const editorRef = useRef(null);
-  const [form] = Form.useForm();
-  //
+  const blogChange = () => {
+    if (editorRef.current) {
+      const content = String(editorRef.current.getContent());
+      setBlogContent(content);
+    }
+  };
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -66,23 +75,19 @@ const AddBlog = () => {
   //
 
   const onFinish = async (values) => {
-    const blogContent = String(editorRef.current.getContent());
-    const data = {
-      title: values.title,
-      imageTitle: values.image,
-      description: values.description,
-      content: blogContent,
-      comments: [],
-    };
-    // console.log(data)
     try {
+      const data = {
+        title: values.title,
+        imageTitle: values.merelink,
+        description: values.description,
+        content: blogContent,
+        comments: [],
+      };
       const response = await customFetch.post(`/blog/create`, data);
-      // console.log(response)
-      form.resetFields();
+      if (response.data) return navigate("/all-blogs");
     } catch (error) {
       console.log(error);
     }
-    // console.log(response)
   };
 
   return (
@@ -108,7 +113,7 @@ const AddBlog = () => {
         </Helmet>
         <div className="title">Add Blog</div>
 
-        <Form form={form} name="basic" onFinish={onFinish}>
+        <Form name="basic" onFinish={onFinish}>
           <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
@@ -204,7 +209,7 @@ const AddBlog = () => {
                       content_style:
                         "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                     }}
-                    // onChange={blogChange}
+                    onChange={blogChange}
                   />
                 </Form.Item>
               </Card>

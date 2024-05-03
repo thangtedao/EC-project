@@ -39,16 +39,20 @@ export const createOrder = async (req, res) => {
     const { cartItem, coupon } = req.body;
     const { userId } = req.user;
 
+    if (!cartItem)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Lỗi khi tạo đơn hàng" });
+
     let discountAmount = 0;
 
     const orderItem = cartItem.map((item) => {
       let variantPrice = item.variant ? item.variant.price : 0;
-      let salePrice = item.product.salePrice + variantPrice;
+      let salePrice = item.product.salePrice * item.quantity + variantPrice;
 
       if (coupon)
         if (coupon.discountType === "percentage") {
-          discountAmount +=
-            (salePrice * item.quantity * coupon.discountValue) / 100;
+          discountAmount += (salePrice * coupon.discountValue) / 100;
 
           salePrice = (
             salePrice -
@@ -69,12 +73,15 @@ export const createOrder = async (req, res) => {
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
         priceAtOrder: item.product.salePrice + variantPrice,
-        subtotal: item.product.salePrice * item.quantity,
+        subtotal: salePrice,
       };
     });
 
     const totalAmount =
-      orderItem.reduce((acc, item) => acc + item.subtotal, 0) || 0;
+      orderItem.reduce(
+        (acc, item) => acc + item.priceAtOrder * item.quantity,
+        0
+      ) || 0;
 
     const user = await User.findById(userId);
 
@@ -82,7 +89,7 @@ export const createOrder = async (req, res) => {
       user: user._id,
       orderItem: orderItem,
       couponCode: coupon?.code,
-      discountAmount: coupon && discountAmount.toFixed(0),
+      discountAmount: coupon ? discountAmount.toFixed(0) : 0,
       shippingAddress:
         user.address.city +
         ", " +
@@ -96,6 +103,25 @@ export const createOrder = async (req, res) => {
 
     const order = await newOrder.save();
 
+    // Update rank user
+    const orders = await Order.find({ user: userId });
+    let totalSpent = 0;
+    orders.forEach((order) => {
+      totalSpent += order.totalAmount;
+    });
+    let rankToUpdate = "member";
+
+    if (totalSpent >= 20000000) {
+      rankToUpdate = "diamond";
+    } else if (totalSpent >= 10000000) {
+      rankToUpdate = "gold";
+    } else if (totalSpent >= 5000000) {
+      rankToUpdate = "silver";
+    }
+
+    await User.findByIdAndUpdate(userId, { $set: { rank: rankToUpdate } });
+
+    // descrease coupon's number of usage
     if (coupon) {
       await Coupon.findByIdAndUpdate(coupon._id, {
         $inc: { numberOfUses: -1 },
@@ -103,7 +129,7 @@ export const createOrder = async (req, res) => {
     }
     await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
-    sendMail(user, order);
+    if (order && user) sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);
@@ -238,9 +264,6 @@ export const showStats = async (req, res) => {
         },
       },
       {
-        $sort: { createdAt: 1 },
-      },
-      {
         $lookup: {
           from: "users",
           localField: "user",
@@ -277,19 +300,28 @@ export const showStats = async (req, res) => {
           },
         },
       },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+          "_id.day": -1,
+        },
+      },
     ]);
 
     const products = await Order.aggregate([
       {
         $match: {
-          status: "Delivered",
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         },
       },
       {
         $match: {
-          createdAt: {
-            $gte: startDate,
-            $lte: endDate,
+          status: {
+            $eq: "Delivered",
           },
         },
       },
@@ -303,10 +335,13 @@ export const showStats = async (req, res) => {
           price: { $first: "$orderItem.product.price" },
           image: { $first: "$orderItem.product.image" },
           totalRevenue: {
-            $sum: {
-              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
-            },
+            $sum: "$orderItem.subtotal",
           },
+          // totalRevenue: {
+          //   $sum: {
+          //     $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
+          //   },
+          // },
           totalSold: { $sum: "$orderItem.quantity" },
         },
       },
@@ -499,6 +534,12 @@ export const vnpayReturn = (req, res, next) => {
   try {
     let vnp_Params = req.query;
 
+    let vnp_TransactionStatus = vnp_Params["vnp_TransactionStatus"];
+    if (vnp_TransactionStatus === "02")
+      return res.status(StatusCodes.OK).json({ code: "02" });
+    else if (vnp_TransactionStatus === "01")
+      return res.status(StatusCodes.OK).json({ code: "01" });
+
     let secureHash = vnp_Params.vnp_SecureHash;
     delete vnp_Params["vnp_SecureHash"];
     delete vnp_Params["vnp_SecureHashType"];
@@ -511,8 +552,6 @@ export const vnpayReturn = (req, res, next) => {
     let signData = querystring.stringify(vnp_Params, { encode: false });
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
-    console.log("secureHash: ", secureHash);
-    console.log("signed: ", signed);
 
     if (secureHash === signed) {
       res.status(StatusCodes.OK).json({ code: "00" });
@@ -609,11 +648,15 @@ export const getBestSalerProduct = async (req, res) => {
       {
         $group: {
           _id: "$orderItem.product.id",
+<<<<<<< HEAD
           name: { $first: "$orderItem.product.name" },
+=======
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
           totalSold: { $sum: "$orderItem.quantity" },
         },
       },
       {
+<<<<<<< HEAD
         $sort: { totalSold: -1 } // Sort by totalSold descending
       },
       {
@@ -628,13 +671,30 @@ export const getBestSalerProduct = async (req, res) => {
     res.json({
       products
     });
+=======
+        $sort: { totalSold: -1 }, // Sort by totalSold descending
+      },
+      {
+        $limit: 10, // Limit to 10 products
+      },
+    ]);
+    // Get the IDs of the top 5 products
+    const topProductIds = productSoldStats.map((product) => product._id);
+
+    // Retrieve full product details of the top 5 products
+    const products = await Product.find({ _id: { $in: topProductIds } });
+    res.status(StatusCodes.OK).json({ products });
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
   } catch (error) {
     console.log(error);
     return error;
   }
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c821f109e461b82284d5039b2013cf53656751ca
 function sortObject(obj) {
   let sorted = {};
   let str = [];

@@ -1,10 +1,15 @@
 import React from "react";
 import customFetch from "../../utils/customFetch";
 import vnpay from "../../assets/logo/vnpay.png";
+import { useDispatch } from "react-redux";
+import { setCart } from "../../state/cartSlice";
 
-const VnPayButton = ({ totalPrice }) => {
+const VnPayButton = ({ totalPrice, cartItem, coupon }) => {
+  const dispatch = useDispatch();
+
   const handleCheckoutVnPay = async (totalPrice) => {
     try {
+      dispatch(setCart({ cartItem, coupon }));
       const paymentUrl = await customFetch
         .post("/order/create_payment_url", {
           amount: totalPrice,

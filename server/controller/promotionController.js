@@ -53,6 +53,11 @@ export const createPromotion = async (req, res) => {
 
 export const getPromotions = async (req, res) => {
   try {
+    if (req.query.admin) {
+      const promotions = await Promotion.find();
+      return res.status(StatusCodes.OK).json(promotions);
+    }
+
     const promotions = await Promotion.find({
       $or: [
         {
@@ -91,10 +96,7 @@ export const getPromotions = async (req, res) => {
 export const getPromotion = async (req, res) => {
   try {
     const { id } = req.params;
-    const promotion = await Promotion.findById(id).populate({
-      path: "products",
-      select: ["_id", "name", "price", "salePrice", "images"],
-    });
+    const promotion = await Promotion.findById(id);
     res.status(StatusCodes.OK).json(promotion);
   } catch (error) {
     console.log(error);

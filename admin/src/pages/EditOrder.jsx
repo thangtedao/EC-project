@@ -52,7 +52,8 @@ const EditOrder = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    console.log(values);
+    if (order.isCancel && values.status === "Cancelled")
+      values.isCancel = false;
     const updatedOrder = await customFetch.patch(
       `/order/update/${order._id}`,
       values
@@ -167,7 +168,23 @@ const EditOrder = () => {
                           {"x" + item.quantity}
                         </Typography.Text>
                       </div>
-                      <div style={{ textAlign: "right" }}>
+                      <div
+                        style={{
+                          textAlign: "right",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        {order.discountAmount > 0 && (
+                          <Typography.Text
+                            strong
+                            style={{ textDecoration: "line-through" }}
+                          >
+                            {(item.priceAtOrder * item.quantity)
+                              ?.toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
+                          </Typography.Text>
+                        )}
                         <Typography.Text strong>
                           {item.subtotal
                             ?.toString()
@@ -190,8 +207,7 @@ const EditOrder = () => {
                   </div>
                   <div style={{ marginLeft: "auto" }}>
                     <Typography.Text size="large">
-                      {order.orderItem
-                        ?.reduce((a, i) => a + i.subtotal, 0)
+                      {(order.discountAmount + order.totalAmount)
                         .toString()
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
                       ₫
@@ -200,7 +216,7 @@ const EditOrder = () => {
                 </div>
 
                 {/* TOTAL PRICE 2 */}
-                {order.discountAmount && (
+                {order.discountAmount > 0 && (
                   <div
                     style={{
                       width: "40%",
@@ -337,6 +353,16 @@ const EditOrder = () => {
                     }
                   })()}
                 </Space>
+
+                <Divider />
+
+                {order.isCancel && (
+                  <Space wrap size={16}>
+                    <Typography.Text strong style={{ color: "red" }}>
+                      Customer requests order cancellation for translation
+                    </Typography.Text>
+                  </Space>
+                )}
               </Card>
               <Card className="col-2-item" size="large" title={`Change Status`}>
                 {/* <Typography.Title className="input-title">
