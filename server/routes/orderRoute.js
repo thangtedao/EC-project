@@ -12,6 +12,7 @@ import {
   vnpayReturn,
   vnpayIpn,
   showStats2,
+  getBestSalerProduct,
 } from "../controller/orderController.js";
 import {
   authenticateUser,
@@ -52,6 +53,7 @@ router.get(
   authorizePermissions("admin"),
   showStats2
 );
+router.get("/bestsalerproduct", getBestSalerProduct)
 router.get("/:id", authenticateUser, getOrder);
 
 export default router;

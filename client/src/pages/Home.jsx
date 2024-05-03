@@ -42,8 +42,12 @@ export const loader = async () => {
       .get("/promotion/")
       .then(({ data }) => data);
 
+    const bestSalerProduct = await customFetch
+      .get("/order/bestsalerproduct")
+      .then(({ data }) => data.products);
+
     window.scrollTo(0, 0);
-    return { productsArray, allEvent };
+    return { productsArray, allEvent, bestSalerProduct };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -56,8 +60,7 @@ const Home = () => {
   const user = useSelector((state) => state.user.user);
 
   const { categories } = useMainLayoutContext();
-  const { productsArray, allEvent } = useLoaderData();
-
+  const { productsArray, allEvent, bestSalerProduct } = useLoaderData();
   const [event, setEvent] = useState(allEvent[0]);
 
   const { Countdown } = Statistic;
@@ -80,6 +83,40 @@ const Home = () => {
   const onFinish = () => {
     console.log("finished!");
   };
+
+  // recommend
+  const [recommendPro, setRecommendPro] = useState([]);
+  const [productIdList, setProductIdList] = useState([]);
+
+  useEffect(() => {
+    try {
+      const getProductIdList = async () => {
+        const response = await fetch(
+          `https://recommendsys1-production-ba91.up.railway.app/recommendation/${user.fullName}`
+        );
+        const jsonData = await response.json();
+        setProductIdList(jsonData);
+      };
+      //sửa sau khi thêm trường productID vào model product
+      // user && getProductIdList();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const getRecommendProducts = async () => {
+      try {
+        const response = await customFetch.post("/product/recommend", {
+          productIdList: productIdList,
+        });
+        setRecommendPro(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getRecommendProducts();
+  }, []);
 
   return (
     <HelmetProvider>
@@ -172,6 +209,27 @@ const Home = () => {
 
             {event?.products?.length > 0 && (
               <SlideProduct products={event.products} />
+            )}
+          </div>
+
+          {/* products Recommended by AI */}
+
+          <div className="block-hot-sale">
+            <div className="block-title">
+              <div className="sale-title">Đề xuất cho bạn</div>
+            </div>
+            {recommendPro.length > 0 && (
+              <SlideProduct products={recommendPro} />
+            )}
+          </div>
+
+          {/* BEST SALER */}
+          <div className="block-hot-sale">
+            <div className="block-title">
+              <div className="sale-title">Sản phẩm bạn chạy nhất</div>
+            </div>
+            {bestSalerProduct.length > 0 && (
+              <SlideProduct products={bestSalerProduct} />
             )}
           </div>
 

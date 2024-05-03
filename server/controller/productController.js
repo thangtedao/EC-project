@@ -479,3 +479,21 @@ export const searchProduct = async (req, res) => {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
+
+export const getRecommendProducts = async (req, res) =>{
+  try {
+    const {productIdList} = req.body
+    let productIds = req.body.productIdList || []; // Lấy mảng các id sản phẩm từ request body, không có thì về rỗng
+    let products;
+    if (productIds.length > 0) {
+        products = await Product.find({ productId: { $in: productIds } });
+    } else {
+        products = await Product.aggregate([{ $sample: { size: 10 } }]);
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
