@@ -24,14 +24,14 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ConnectSocket } from "./config/socket/socket.js";
 import { createServer } from "http";
-
+import bodyParser from "body-parser";
 dotenv.config();
 
 const app = express();
 const server = createServer(app);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
 // app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));

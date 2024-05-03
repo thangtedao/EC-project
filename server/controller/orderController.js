@@ -594,6 +594,47 @@ export const vnpayIpn = (req, res, next) => {
       .json({ RspCode: "97", Message: "Checksum failed" });
   }
 };
+
+export const getBestSalerProduct = async (req, res) => {
+  try {
+    const productSoldStats = await Order.aggregate([
+      {
+        $match: {
+          status: "Delivered",
+        },
+      },
+      {
+        $unwind: "$orderItem",
+      },
+      {
+        $group: {
+          _id: "$orderItem.product.id",
+          name: { $first: "$orderItem.product.name" },
+          totalSold: { $sum: "$orderItem.quantity" },
+        },
+      },
+      {
+        $sort: { totalSold: -1 } // Sort by totalSold descending
+      },
+      {
+        $limit: 10 // Limit to 10 products
+      }
+    ]);
+    // Get the IDs of the top 5 products
+    const topProductIds = productSoldStats.map(product => product._id);
+
+    // Retrieve full product details of the top 5 products
+    const products = await Product.find({ _id: { $in: topProductIds } });
+    res.json({
+      products
+    });
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+
 function sortObject(obj) {
   let sorted = {};
   let str = [];

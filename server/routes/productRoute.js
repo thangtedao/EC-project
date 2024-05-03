@@ -9,6 +9,7 @@ import {
   searchProduct,
   getRelateModelProduct,
   filterProduct,
+  getRecommendProducts,
 } from "../controller/productController.js";
 import {
   authenticateUser,
@@ -41,6 +42,7 @@ router.delete(
 router.get("/", getProducts);
 router.get("/search", searchProduct);
 router.get("/filter", filterProduct);
+router.post("/recommend", getRecommendProducts)
 router.get("/get-relate/:model", getRelateModelProduct);
 router.get("/:id", getProduct);
 
