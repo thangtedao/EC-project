@@ -52,7 +52,7 @@ function Contact(props) {
     conversation.seen = true;
   };
   return (
-    <div className="contact">
+    <div className="contact" style={{ width: "320px" }}>
       {conversationList ? (
         <ListConversation
           conversationList={conversationList}
