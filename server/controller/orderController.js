@@ -648,30 +648,10 @@ export const getBestSalerProduct = async (req, res) => {
       {
         $group: {
           _id: "$orderItem.product.id",
-<<<<<<< HEAD
-          name: { $first: "$orderItem.product.name" },
-=======
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
           totalSold: { $sum: "$orderItem.quantity" },
         },
       },
       {
-<<<<<<< HEAD
-        $sort: { totalSold: -1 } // Sort by totalSold descending
-      },
-      {
-        $limit: 10 // Limit to 10 products
-      }
-    ]);
-    // Get the IDs of the top 5 products
-    const topProductIds = productSoldStats.map(product => product._id);
-
-    // Retrieve full product details of the top 5 products
-    const products = await Product.find({ _id: { $in: topProductIds } });
-    res.json({
-      products
-    });
-=======
         $sort: { totalSold: -1 }, // Sort by totalSold descending
       },
       {
@@ -684,17 +664,12 @@ export const getBestSalerProduct = async (req, res) => {
     // Retrieve full product details of the top 5 products
     const products = await Product.find({ _id: { $in: topProductIds } });
     res.status(StatusCodes.OK).json({ products });
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
   } catch (error) {
     console.log(error);
     return error;
   }
 };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
 function sortObject(obj) {
   let sorted = {};
   let str = [];

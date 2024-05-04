@@ -12,6 +12,7 @@ import { useMainLayoutContext } from "../pages/MainLayout";
 import AppChat from "../components/AppChat/AppChat";
 import { useSelector } from "react-redux";
 import { Statistic, ConfigProvider, Typography, Flex } from "antd";
+import BlogCard from "../components/blog/BlogCard.jsx"
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
@@ -38,10 +39,6 @@ export const loader = async () => {
       })
     );
 
-    const data = await fetch("http://localhost:3001/api/order/bestsalerproduct")
-    const { products } = await data.json();
-    const bestSalerProduct = products;
-
     const allEvent = await customFetch
       .get("/promotion/")
       .then(({ data }) => data);
@@ -50,12 +47,13 @@ export const loader = async () => {
       .get("/order/bestsalerproduct")
       .then(({ data }) => data.products);
 
+    const blogs = await customFetch
+      .get("/blog/homepageblogs")
+      .then(({ data }) => data);
+
+
     window.scrollTo(0, 0);
-<<<<<<< HEAD
-    return { productsArray, allEvent, bestSalerProduct};
-=======
-    return { productsArray, allEvent, bestSalerProduct };
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
+    return { productsArray, allEvent, bestSalerProduct, blogs };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -68,7 +66,7 @@ const Home = () => {
   const user = useSelector((state) => state.user.user);
 
   const { categories } = useMainLayoutContext();
-  const { productsArray, allEvent, bestSalerProduct } = useLoaderData();
+  const { productsArray, allEvent, bestSalerProduct, blogs } = useLoaderData();
   const [event, setEvent] = useState(allEvent[0]);
 
   const { Countdown } = Statistic;
@@ -82,9 +80,6 @@ const Home = () => {
   const [deadlineText, setDeadlineText] = useState(
     startDate <= now ? "Đang diễn ra:" : "Sắp diễn ra:"
   );
-  const [recommendPro, setRecommendPro] = useState([])
-  const [productIdList, setProductIdList] = useState([])
-
 
   useEffect(() => {
     setDeadline(startDate <= now ? endDate : startDate);
@@ -95,26 +90,6 @@ const Home = () => {
     console.log("finished!");
   };
 
-<<<<<<< HEAD
-  useEffect(() => {
-    try {
-      const getProductIdList = async () => {
-        const response = await fetch(`https://recommendsys1-production-ba91.up.railway.app/recommendation/${user.fullName}`)
-        const jsonData = await response.json();
-        setProductIdList(jsonData);
-      }
-      //sửa sau khi thêm trường productID vào model product
-      // user && getProductIdList();
-    } catch (error) {
-      console.log(error)
-    }
-  }, []);
-  
-  useEffect(() => {
-    const getRecommendProducts = async () => {
-      try {
-        const response = await customFetch.post("/product/recommend", {productIdList:productIdList});
-=======
   // recommend
   const [recommendPro, setRecommendPro] = useState([]);
   const [productIdList, setProductIdList] = useState([]);
@@ -141,16 +116,11 @@ const Home = () => {
         const response = await customFetch.post("/product/recommend", {
           productIdList: productIdList,
         });
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
         setRecommendPro(response.data);
       } catch (error) {
         console.log(error);
       }
-<<<<<<< HEAD
-    }
-=======
     };
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
     getRecommendProducts();
   }, []);
 
@@ -248,10 +218,6 @@ const Home = () => {
             )}
           </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
           {/* products Recommended by AI */}
 
           <div className="block-hot-sale">
@@ -263,10 +229,6 @@ const Home = () => {
             )}
           </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> c821f109e461b82284d5039b2013cf53656751ca
           {/* BEST SALER */}
           <div className="block-hot-sale">
             <div className="block-title">
@@ -294,7 +256,19 @@ const Home = () => {
                 )
               );
           })}
-
+          <div className="product-by-category">
+            <NavLink
+              className="product-by-category-title"
+              to={`/blogs`}
+            >
+              Điểm tin công nghệ
+            </NavLink>
+            {
+              blogs.map((blog) => (
+                <BlogCard key={blog._id} blog={blog} />
+                ))   
+            }
+          </div>
           {user && <AppChat />}
         </Wrapper>
       </HomeContext.Provider>
