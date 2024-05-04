@@ -1,0 +1,19 @@
+.chatuser-typemessage input[type="text"] {
+  font-size: 15px;
+  width: calc(100% - 20px);
+
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  resize: none;
+  margin-right: 10px;
+}
+.ant-btn.ant-btn-icon-only {
+  width: 60px;
+  height: auto;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+.ant-btn:hover {
+  background-color: red !important;
+}

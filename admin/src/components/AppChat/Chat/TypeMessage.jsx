@@ -1,5 +1,7 @@
-import React, {useState} from "react";
-
+import React, { useState } from "react";
+import "./TypeMessage.css";
+import { Button } from "antd";
+import { SendOutlined } from "@ant-design/icons";
 function TypeMessage(props) {
   const { onSubmit } = props;
   const [value, setValue] = useState("");
@@ -25,7 +27,8 @@ function TypeMessage(props) {
         value={value}
         onChange={handleValueChange}
       />
-      <button type="submit">Gửi</button>
+      {/* <button type="submit">Gửi</button> */}
+      <Button type="primary" htmlType="submit" icon={<SendOutlined />} />
     </form>
   );
 }
