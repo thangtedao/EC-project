@@ -21,6 +21,7 @@ import {
   Space,
   Checkbox,
 } from "antd";
+import { laptop, phone } from "../utils/attribute.js";
 
 export const loader = async () => {
   try {
@@ -152,6 +153,7 @@ const AddProduct = () => {
   };
 
   const [categoriesC, setCategoriesC] = useState([]);
+  const [categoryP, setCategoryP] = useState("6623da1d2ad63a5f8791b371");
 
   const handleChangeC = (value) => {
     let newCategoriesC = [];
@@ -161,6 +163,7 @@ const AddProduct = () => {
       }
     });
     setCategoriesC(newCategoriesC);
+    setCategoryP(value);
   };
 
   return (
@@ -344,7 +347,21 @@ const AddProduct = () => {
                               },
                             ]}
                           >
-                            <Input required size="large" placeholder="Name" />
+                            {/* <Input required size="large" placeholder="Name" /> */}
+                            <Select
+                              size="large"
+                              placeholder="Name"
+                              options={(() => {
+                                switch (categoryP) {
+                                  case "6623da1d2ad63a5f8791b371":
+                                    return laptop;
+                                  case "6623f234e14536afabb43126":
+                                    return phone;
+                                  default:
+                                    return laptop;
+                                }
+                              })()}
+                            />
                           </Form.Item>
                           <Form.Item
                             name={[name, "attributeValue"]}
