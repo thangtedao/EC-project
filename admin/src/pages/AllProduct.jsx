@@ -68,8 +68,6 @@ const AllProduct = () => {
   let { products, categories, categoriesC, stats } = useLoaderData();
   const navigate = useNavigate();
 
-  console.log(stats);
-
   categories = categories?.map((category) => {
     category.key = category._id;
     if (!category.parent) {

@@ -18,6 +18,9 @@ const couponSchema = mongoose.Schema({
   discountValue: {
     type: Number,
   },
+  maxDiscount: {
+    type: Number,
+  },
   numberOfUses: {
     type: Number,
     default: 99,

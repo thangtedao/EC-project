@@ -179,14 +179,14 @@ const EditProduct = () => {
   // const [categoryP, setCategoryP] = useState(product?.category[0]?._id);
   // const [categoryC, setCategoryC] = useState([]);
   const [categoriesC, setCategoriesC] = useState(
-    categoryChild.map((item) => {
+    categoryChild.filter((item) => {
       if (item.parent === product?.category[0]) return item;
     })
   );
 
   const handleChangeC = (value) => {
     let newCategoriesC = [];
-    categoryChild.map((item) => {
+    categoryChild.forEach((item) => {
       if (item.parent.toString() === value.toString()) {
         newCategoriesC.push(item);
       }
@@ -421,9 +421,7 @@ const EditProduct = () => {
                             name={[name, "mainAttribute"]}
                             {...restField}
                             valuePropName="checked"
-                            initialValue={
-                              restField.value?.mainAttribute || false
-                            }
+                            initialValue={restField.value?.mainAttribute}
                           >
                             <Checkbox />
                           </Form.Item>
@@ -578,18 +576,14 @@ const EditProduct = () => {
                   <Select
                     size="large"
                     placeholder="Select category"
-                    onChange={(value) => handleChangeC(value)}
+                    onChange={handleChangeC}
                     style={{
                       width: "100%",
                     }}
-                    options={
-                      categories?.map((category) => {
-                        return {
-                          value: category._id,
-                          label: category.name,
-                        };
-                      }) || []
-                    }
+                    options={categories.map((category) => ({
+                      value: category._id,
+                      label: category.name,
+                    }))}
                   />
                 </Form.Item>
 

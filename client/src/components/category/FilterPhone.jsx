@@ -10,6 +10,7 @@ const FilterLaptop = (props) => {
         <select name="ram" defaultValue={ram}>
           <option value="">Dung lượng Ram</option>
           <option value="4gb">4GB</option>
+          <option value="4gb">6GB</option>
           <option value="8gb">8GB</option>
           <option value="12gb">12GB</option>
           <option value="16gb">16GB</option>

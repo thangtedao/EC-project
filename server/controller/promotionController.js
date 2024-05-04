@@ -213,21 +213,36 @@ export const updatePromotion = async (req, res) => {
           },
         ]);
       }
+
+      await Promotion.findByIdAndUpdate(updatedPromotion._id, {
+        $set: { isActive: true },
+      });
+    } else if (
+      (updatedPromotion &&
+        updatedPromotion.endDate < Date.now() &&
+        updatedPromotion.isActive) ||
+      (updatedPromotion &&
+        updatedPromotion.startDate > Date.now() &&
+        updatedPromotion.isActive)
+    ) {
+      await Product.updateMany({ _id: { $in: updatedPromotion.products } }, [
+        {
+          $set: {
+            salePrice: "$oldSalePrice",
+          },
+        },
+      ]);
+
+      await Promotion.findByIdAndUpdate(updatedPromotion._id, {
+        $set: { isActive: false },
+      });
     }
 
-    // set old to null
     if (oldPromotion) {
+      // set old to null
       const productIds = oldPromotion.products.filter(
         (item) => !updatedPromotion.products.includes(item)
       );
-
-      // await Product.updateMany({ _id: { $in: productIds } }, [
-      //   {
-      //     $set: {
-      //       salePrice: null,
-      //     },
-      //   },
-      // ]);
 
       await Product.updateMany({ _id: { $in: productIds } }, [
         {
