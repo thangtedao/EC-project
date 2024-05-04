@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import customFetch from "../utils/customFetch.js";
 import Wrapper from "../assets/wrapper/coupon/AddCoupon.js";
@@ -15,8 +15,19 @@ import {
   Breadcrumb,
   DatePicker,
   InputNumber,
+  Table,
+  Image,
+  Dropdown,
+  Space,
 } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  EditOutlined,
+  AudioOutlined,
+  EyeOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -29,9 +40,37 @@ export const action = async ({ request }) => {
   }
 };
 
+export const loader = async () => {
+  try {
+    const orders = await customFetch
+      .get(`/order/?admin=true`)
+      .then(({ data }) => data);
+
+    const users = await customFetch
+      .get("/user/admin/all-users")
+      .then(({ data }) => data);
+
+    return { users, orders };
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 const AddCoupon = () => {
-  const [discountType, setDiscountType] = useState("percentage");
   const navigate = useNavigate();
+  const { users, orders } = useLoaderData();
+
+  users.forEach((user) => {
+    const userOrders = orders.filter((order) => order.user._id === user._id);
+    user.numOfOrder = userOrders.length;
+    user.totalSpent = userOrders.reduce(
+      (total, order) => total + order.totalAmount,
+      0
+    );
+  });
+
+  const [discountType, setDiscountType] = useState("percentage");
 
   dayjs.extend(customParseFormat);
   const dateFormat = "YYYY-MM-DD HH:mm:ss";
@@ -46,6 +85,268 @@ const AddCoupon = () => {
       setStartDate(dates[0]);
       setEndDate(dates[1]);
     }
+  };
+
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
+
+  const handleViewUser = (id) => {
+    navigate(`/edit-user/${id}`);
+  };
+
+  // Search
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
+  const columns = [
+    {
+      title: "Image",
+      dataIndex: "avatar",
+      key: "avatar",
+      width: 90,
+      fixed: "left",
+      render: (avatar) => (
+        <>
+          {avatar ? (
+            <Image width={45} height={45} src={avatar} />
+          ) : (
+            <Image
+              width={45}
+              height={45}
+              src={
+                "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+              }
+            />
+          )}
+        </>
+      ),
+    },
+    {
+      title: "Name",
+      width: 150,
+      // fixed: "left",
+      dataIndex: "fullName",
+      key: "fullName",
+      ...getColumnSearchProps("fullName"),
+    },
+    {
+      title: "Email",
+      width: 150,
+      dataIndex: "email",
+      key: "email",
+      ...getColumnSearchProps("email"),
+    },
+    {
+      title: "Phone",
+      width: 150,
+      dataIndex: "phone",
+      key: "phone",
+      ...getColumnSearchProps("phone"),
+    },
+    {
+      title: "Address",
+      width: 250,
+      dataIndex: "address",
+      key: "address",
+      render: (address) => {
+        if (address.city && address.district && address.ward && address.home)
+          return (
+            address.city +
+            ", " +
+            address.district +
+            ", " +
+            address.ward +
+            ", " +
+            address.home
+          );
+      },
+    },
+    {
+      title: "Order",
+      width: 80,
+      dataIndex: "numOfOrder",
+      key: "order",
+      sorter: (a, b) => a.numOfOrder - b.numOfOrder,
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Total spent",
+      width: 150,
+      dataIndex: "totalSpent",
+      key: "spent",
+      render: (totalSpent) =>
+        totalSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.totalSpent - b.totalSpent,
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Rank",
+      width: 110,
+      dataIndex: "rank",
+      key: "rank",
+      render: (rank) => rank?.toUpperCase(),
+      filters: [
+        {
+          text: "Member",
+          value: "member",
+        },
+        {
+          text: "Silver",
+          value: "silver",
+        },
+        {
+          text: "Gold",
+          value: "gold",
+        },
+        {
+          text: "Diamond",
+          value: "diamond",
+        },
+      ],
+      onFilter: (value, record) => record?.rank === value,
+    },
+    {
+      title: "Status",
+      dataIndex: "isBlocked",
+      key: "isBlocked",
+      width: 100,
+      render: (isBlocked) => (isBlocked ? "Disabled" : "Active"),
+    },
+    {
+      title: "Action",
+      key: "action",
+      fixed: "right",
+      width: 100,
+      render: ({ _id }) => (
+        <div style={{ cursor: "pointer" }} onClick={() => handleViewUser(_id)}>
+          <EyeOutlined style={{ marginRight: 5 }} />
+          View
+        </div>
+      ),
+    },
+  ];
+
+  const rowSelection = {
+    selectedRowKeys: selectedUserIds,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedUserIds(selectedRowKeys);
+    },
+  };
+
+  // Số lượng sản phẩm trên mỗi trang
+  const paginationConfig = {
+    pageSize: 10,
   };
 
   //Modal
@@ -71,6 +372,7 @@ const AddCoupon = () => {
     try {
       values.startDate = startDate.format(dateFormat);
       values.endDate = endDate.format(dateFormat);
+      values.users = selectedUserIds;
       const response = await customFetch.post("/coupon/create", values);
       if (response) navigate("/all-coupon");
     } catch (error) {
@@ -281,6 +583,21 @@ const AddCoupon = () => {
                   onChange={handleDateRangeChange}
                 />
               </Card>
+
+              <Table
+                className="table col-2-item"
+                pagination={paginationConfig}
+                columns={columns}
+                rowSelection={{ type: "checkbox", ...rowSelection }}
+                dataSource={users?.map((user) => ({
+                  ...user,
+                  key: user._id,
+                }))}
+                scroll={{ x: 1200 }}
+                showSorterTooltip={{
+                  target: "sorter-icon",
+                }}
+              />
             </div>
           </div>
 

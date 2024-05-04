@@ -58,6 +58,7 @@ const productSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  pid: Number,
   createdAt: { type: Date, default: timeStamp },
   updatedAt: { type: Date, default: timeStamp },
 });

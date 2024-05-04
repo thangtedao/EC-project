@@ -395,6 +395,20 @@ export const updateProduct = async (req, res) => {
       );
     }
 
+    // const products = await Product.find({ pid: { $exists: false } }).sort({
+    //   _id: 1,
+    // });
+    // let count = 1;
+    // for (const product of products) {
+    //   await Product.findByIdAndUpdate(product._id, { $set: { pid: count } });
+    //   count++;
+    // }
+
+    // await Product.updateMany(
+    //   { pid: { $exists: true } },
+    //   { $unset: { pid: "" } }
+    // );
+
     res.status(StatusCodes.OK).json({ msg: "Product's Updated" });
   } catch (error) {
     console.log(error);
@@ -480,20 +494,20 @@ export const searchProduct = async (req, res) => {
   }
 };
 
-export const getRecommendProducts = async (req, res) =>{
+export const getRecommendProducts = async (req, res) => {
   try {
-    const {productIdList} = req.body
+    const { productIdList } = req.body;
     let productIds = req.body.productIdList || []; // Lấy mảng các id sản phẩm từ request body, không có thì về rỗng
     let products;
     if (productIds.length > 0) {
-        products = await Product.find({ productId: { $in: productIds } });
+      products = await Product.find({ productId: { $in: productIds } });
     } else {
-        products = await Product.aggregate([{ $sample: { size: 10 } }]);
+      products = await Product.aggregate([{ $sample: { size: 10 } }]);
     }
 
     res.status(200).json(products);
   } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

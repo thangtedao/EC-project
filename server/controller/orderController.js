@@ -455,9 +455,7 @@ export const showStats2 = async (req, res) => {
         $group: {
           _id: "$orderItem.product.id",
           totalRevenue: {
-            $sum: {
-              $multiply: ["$orderItem.priceAtOrder", "$orderItem.quantity"],
-            },
+            $sum: "$orderItem.subtotal",
           },
           totalSold: { $sum: "$orderItem.quantity" },
         },

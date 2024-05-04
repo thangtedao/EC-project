@@ -10,11 +10,11 @@ function Chat(props) {
   const ENDPOINT = "http://localhost:3001";
   const [messages, setMessages] = useState([]);
   // const user = useSelector((state) => state.user.user);
-  const user ={
-    fullName:'Admin'
-  }
+  const user = {
+    fullName: "Admin",
+  };
   const idConversation = useSelector((state) => state.chat.idConversation);
-  const nameConversation = useSelector(state => state.chat.nameConversation)
+  const nameConversation = useSelector((state) => state.chat.nameConversation);
 
   useEffect(() => {
     if (!idConversation) return;
@@ -43,13 +43,11 @@ function Chat(props) {
   useEffect(() => {
     const scrollMessage = () => {
       var element = document.querySelector(".ad-chatuser-listmessage");
-      if(element)
-        element.scrollTop = element.scrollHeight;
-    }
-    
-      scrollMessage()
+      if (element) element.scrollTop = element.scrollHeight;
+    };
 
-  })
+    scrollMessage();
+  });
 
   const handleFormSubmit = async (message) => {
     const sender = user.fullName;
@@ -63,34 +61,29 @@ function Chat(props) {
       "http://localhost:3001/api/chat/save",
       payload
     );
-    socket.emit('chat', data);
+    socket.emit("chat", data);
   };
 
-
   return (
-   
-<div className="ad-chatuser">
-  {idConversation ? (
-    <>
-      <div className="ad-chatuser-user">
-        <span className="ad-chatuser-user-name">{nameConversation}</span>
-      </div>
+    <div className="ad-chatuser">
+      {idConversation ? (
+        <>
+          <div className="ad-chatuser-user">
+            <span className="ad-chatuser-user-name">{nameConversation}</span>
+          </div>
 
-      {messages ? (
-        <ListMessage messages={messages} user={user}></ListMessage>
+          {messages ? (
+            <ListMessage messages={messages} user={user}></ListMessage>
+          ) : (
+            ""
+          )}
+
+          <TypeMessage onSubmit={handleFormSubmit}></TypeMessage>
+        </>
       ) : (
-        ""
+        <div className="choose-user-message">Please select a user to begin</div>
       )}
-
-      <TypeMessage onSubmit={handleFormSubmit}></TypeMessage>
-    </>
-  ):
-  (
-    <div className="choose-user-message">Hãy chọn người dùng để chat</div>
-  ) }
-</div>
-      
-   
+    </div>
   );
 }
 
