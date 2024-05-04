@@ -11,6 +11,7 @@ import {
   deleteComment,
   deleteRepComment,
   getBlogsWithNewComent,
+  getNewestBlogs,
 } from "../controller/blogController.js";
 import { blogImgResize, uploadPhoto } from "../middleware/uploadImages.js";
 
@@ -25,6 +26,7 @@ router.patch(
 );
 router.patch("/update/:id", updateBlog);
 router.get("/all-blogs", getAllBlog);
+router.get("/homepageblogs", getNewestBlogs);
 router.get("/allblogswithnewcomment", getBlogsWithNewComent);
 router.delete("/:id", deleteBlog);
 router.post("/comment/:id", CommentBlog);

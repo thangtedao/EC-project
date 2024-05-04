@@ -80,6 +80,14 @@ export const getAllBlog = async (req, res) => {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
+export const getNewestBlogs = async (req, res) => {
+  try {
+    const newestBlogs = await Blog.find().sort({ createdAt: -1 }).limit(4);
+    res.status(StatusCodes.OK).json(newestBlogs);
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
 
 export const getBlogsWithNewComent = async (req, res) => {
   try {

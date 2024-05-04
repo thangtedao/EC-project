@@ -12,6 +12,7 @@ import { useMainLayoutContext } from "../pages/MainLayout";
 import AppChat from "../components/AppChat/AppChat";
 import { useSelector } from "react-redux";
 import { Statistic, ConfigProvider, Typography, Flex } from "antd";
+import BlogCard from "../components/blog/BlogCard.jsx";
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
@@ -46,8 +47,12 @@ export const loader = async () => {
       .get("/order/bestsalerproduct")
       .then(({ data }) => data.products);
 
+    const blogs = await customFetch
+      .get("/blog/homepageblogs")
+      .then(({ data }) => data);
+
     window.scrollTo(0, 0);
-    return { productsArray, allEvent, bestSalerProduct };
+    return { productsArray, allEvent, bestSalerProduct, blogs };
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -60,7 +65,7 @@ const Home = () => {
   const user = useSelector((state) => state.user.user);
 
   const { categories } = useMainLayoutContext();
-  const { productsArray, allEvent, bestSalerProduct } = useLoaderData();
+  const { productsArray, allEvent, bestSalerProduct, blogs } = useLoaderData();
   const [event, setEvent] = useState(allEvent[0]);
 
   const { Countdown } = Statistic;
@@ -250,6 +255,16 @@ const Home = () => {
                 )
               );
           })}
+
+          {/* Blog */}
+          <div className="product-by-category">
+            <NavLink className="product-by-category-title" to={`/blogs`}>
+              Điểm tin công nghệ
+            </NavLink>
+            {blogs.map((blog) => (
+              <BlogCard key={blog._id} blog={blog} />
+            ))}
+          </div>
 
           {user && <AppChat />}
         </Wrapper>
