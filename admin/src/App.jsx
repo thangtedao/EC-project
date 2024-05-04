@@ -12,6 +12,7 @@ import { loader as editCategoryLoader } from "./pages/EditCategory";
 import { loader as editCouponLoader } from "./pages/EditCoupon";
 import { loader as allProductLoader } from "./pages/AllProduct";
 import { loader as allCouponLoader } from "./pages/AllCoupon";
+import { loader as addCouponLoader } from "./pages/AddCoupon";
 import { loader as addCategoryLoader } from "./pages/AddCategory";
 import { loader as allCategoryLoader } from "./pages/AllCategory";
 import { loader as allUserLoader } from "./pages/AllUser";
@@ -128,6 +129,7 @@ const router = createBrowserRouter([
         path: "add-coupon",
         element: <AddCoupon />,
         action: addCouponAction,
+        loader: addCouponLoader,
       },
       {
         path: "all-coupon",

@@ -9,6 +9,8 @@ import customFetch from "../utils/customFetch.js";
 import NovaIcon from "../assets/logo/LogoNova.svg";
 import { PayPalButton } from "../components";
 import { VnPayButton } from "../components";
+import Logo from "../assets/logo/NovaCoupon.svg";
+import Avatar from "@mui/material/Avatar";
 import {
   Checkbox,
   FormControlLabel,
@@ -233,15 +235,27 @@ const Payment = () => {
 
         {coupon && (
           <div className="coupon-card">
-            <span style={{ fontWeight: 700 }}>{coupon.name}</span>
-            <span>{coupon.code}</span>
-            <span>
-              Discount{" "}
-              {coupon.discountValue
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-              {coupon.discountType === "percentage" ? "%" : "vnd"}
-            </span>
+            <Avatar
+              alt="Remy Sharp"
+              src={Logo}
+              sx={{
+                borderRadius: 0,
+                width: "70px",
+                height: "70px",
+                marginRight: "5px",
+              }}
+            />
+            <div className="coupon-info">
+              <span style={{ fontWeight: 700 }}>{coupon.name}</span>
+              <span>{coupon.code}</span>
+              <span>
+                Giảm{" "}
+                {coupon.discountValue
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                {coupon.discountType === "percentage" ? "%" : "vnd"}
+              </span>
+            </div>
           </div>
         )}
 

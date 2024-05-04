@@ -180,7 +180,9 @@ export const addCoupon = async (req, res) => {
     if (code) code = code.toString().toUpperCase();
     const validCoupon = await Coupon.findOne({ code: code });
     if (user.rank !== validCoupon.targetCustomers)
-      return res.status(StatusCodes.CONFLICT).json({ msg: "Not For You" });
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Bạn không đủ điều kiện" });
 
     const alreadyHave = user.coupon?.find(
       (item) => item.toString() === validCoupon._id.toString()
@@ -189,7 +191,7 @@ export const addCoupon = async (req, res) => {
     if (alreadyHave) {
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "You have saved this coupon" });
+        .json({ msg: "Bạn đã lưu mã giảm giá này rồi" });
     }
 
     user = await User.findByIdAndUpdate(

@@ -107,6 +107,10 @@ const Wrapper = styled.div`
     border: 1px solid lightgray;
     padding: 10px 1rem;
     display: flex;
+    gap: 1rem;
+  }
+  .coupon-info {
+    display: flex;
     flex-direction: column;
     gap: 15px;
   }

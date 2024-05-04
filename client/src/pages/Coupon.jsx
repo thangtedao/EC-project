@@ -84,95 +84,14 @@ const Coupon = () => {
             placeholder="Enter coupon"
             onChange={(event) => setCode(event.target.value)}
           />
-          <button onClick={() => saveCoupon()}>Lưu</button>
+          <button className="btn" onClick={() => saveCoupon()}>
+            Lưu
+          </button>
         </div>
 
         <div style={{ width: "100%" }}>
           <div className="list-coupon">
             <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={Logo}
-                    sx={{
-                      borderRadius: 0,
-                      width: "70px",
-                      height: "70px",
-                      marginRight: "5px",
-                    }}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary="SALE10"
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        sx={{ display: "block" }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                      >
-                        Giảm 100% giá trị mặt hàng ko bán nữa ok?
-                      </Typography>
-
-                      {"10/5/2024 - 25/5/2024  "}
-                    </React.Fragment>
-                  }
-                />
-                <div className="copy-button-container">
-                  <Button
-                    onClick={() => handleCopy("SALE10")}
-                    startIcon={<FileCopyOutlined />}
-                    variant="text"
-                  >
-                    Copy
-                  </Button>
-                </div>
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={Logo}
-                    sx={{
-                      borderRadius: 0,
-                      width: "70px",
-                      height: "70px",
-                      marginRight: "5px",
-                    }}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary="SALE05"
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        sx={{ display: "block" }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                      >
-                        Giảm 100% giá trị mặt hàng ko bán nữa ok?
-                      </Typography>
-
-                      {"10/5/2024 - 25/5/2024  "}
-                    </React.Fragment>
-                  }
-                />
-                <div className="copy-button-container">
-                  <Button
-                    onClick={() => handleCopy("SALE05")}
-                    startIcon={<FileCopyOutlined />}
-                    variant="text"
-                  >
-                    Copy
-                  </Button>
-                </div>
-              </ListItem>
-              <Divider variant="inset" component="li" />
-
               {coupons?.map((item, idx) => {
                 return (
                   <div key={idx}>

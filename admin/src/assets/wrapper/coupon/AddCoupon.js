@@ -20,6 +20,9 @@ const Wrapper = styled.div`
   .col-2 {
     width: 40%;
     height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
   .col-2-item {
     border: 1px solid lightgray;

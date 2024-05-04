@@ -6,7 +6,32 @@ import { StatusCodes } from "http-status-codes";
 
 export const createCoupon = async (req, res) => {
   try {
+    const users = req.body.users;
+    delete req.body.users;
+
     const newCoupon = await Coupon.create(req.body);
+
+    if (newCoupon && users.length > 0) {
+      // Lấy danh sách người dùng đã có mã giảm giá trong ví coupon của họ
+      const usersWithCoupon = await User.find({
+        _id: { $in: users },
+        coupon: newCoupon._id,
+      });
+
+      // Lọc ra các người dùng chưa có mã giảm giá trong ví coupon của họ
+      const usersToAddCoupon = users.filter(
+        (userId) => !usersWithCoupon.some((user) => user._id.equals(userId))
+      );
+
+      // Thêm mã giảm giá mới vào ví coupon của các người dùng chưa có
+      if (usersToAddCoupon.length > 0) {
+        await User.updateMany(
+          { _id: { $in: usersToAddCoupon } },
+          { $push: { coupon: newCoupon._id } }
+        );
+      }
+    }
+
     res.status(StatusCodes.CREATED).json(newCoupon);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
