@@ -12,11 +12,7 @@ import { useMainLayoutContext } from "../pages/MainLayout";
 import AppChat from "../components/AppChat/AppChat";
 import { useSelector } from "react-redux";
 import { Statistic, ConfigProvider, Typography, Flex } from "antd";
-<<<<<<< HEAD
-import BlogCard from "../components/blog/BlogCard.jsx"
-=======
 import BlogCard from "../components/blog/BlogCard.jsx";
->>>>>>> 14138155e474e3c45d3d7050d75d8948fbc71e0f
 
 import img1 from "../assets/data/image/asus.png";
 import img2 from "../assets/data/image/asus1.png";
@@ -55,10 +51,6 @@ export const loader = async () => {
       .get("/blog/homepageblogs")
       .then(({ data }) => data);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 14138155e474e3c45d3d7050d75d8948fbc71e0f
     window.scrollTo(0, 0);
     return { productsArray, allEvent, bestSalerProduct, blogs };
   } catch (error) {
@@ -263,21 +255,6 @@ const Home = () => {
                 )
               );
           })}
-<<<<<<< HEAD
-          <div className="product-by-category">
-            <NavLink
-              className="product-by-category-title"
-              to={`/blogs`}
-            >
-              Điểm tin công nghệ
-            </NavLink>
-            {
-              blogs.map((blog) => (
-                <BlogCard key={blog._id} blog={blog} />
-                ))   
-            }
-          </div>
-=======
 
           {/* Blog */}
           <div className="product-by-category">
@@ -289,7 +266,6 @@ const Home = () => {
             ))}
           </div>
 
->>>>>>> 14138155e474e3c45d3d7050d75d8948fbc71e0f
           {user && <AppChat />}
         </Wrapper>
       </HomeContext.Provider>

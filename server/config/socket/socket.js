@@ -6,11 +6,7 @@ import { ConversationModel } from "../../models/Conversation.js";
 export const ConnectSocket = (server) => {
   const io = new Server(server, {
     cors: {
-<<<<<<< HEAD
-      origin: ["http://localhost:5173","http://localhost:4000"],
-=======
       origin: ["http://localhost:5173", "http://localhost:4000"],
->>>>>>> 14138155e474e3c45d3d7050d75d8948fbc71e0f
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
       credentials: true,
