@@ -36,7 +36,7 @@ export const loader = async ({ params }) => {
     let { product, attribute, variation, productBlog } = await customFetch
       .get(`/product/${id}`)
       .then(({ data }) => data);
-
+    console.log(product)
     if (variation) {
       variation = variation.reduce((groups, item) => {
         const { variationName } = item;

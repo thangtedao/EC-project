@@ -500,7 +500,7 @@ export const getRecommendProducts = async (req, res) => {
     let productIds = req.body.productIdList || []; // Lấy mảng các id sản phẩm từ request body, không có thì về rỗng
     let products;
     if (productIds.length > 0) {
-      products = await Product.find({ productId: { $in: productIds } });
+      products = await Product.find({ pid: { $in: productIds } });
     } else {
       products = await Product.aggregate([{ $sample: { size: 10 } }]);
     }

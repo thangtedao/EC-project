@@ -98,18 +98,19 @@ const Home = () => {
   useEffect(() => {
     try {
       const getProductIdList = async () => {
+        const name=user.fullName
         const response = await fetch(
-          `https://recommendsys1-production-ba91.up.railway.app/recommendation/${user.fullName}`
+          `https://recommendsys1-production-ba91.up.railway.app/recommendation/${name}`
         );
         const jsonData = await response.json();
         setProductIdList(jsonData);
       };
       //sửa sau khi thêm trường productID vào model product
-      // user && getProductIdList();
+      user && getProductIdList();
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const getRecommendProducts = async () => {
@@ -123,7 +124,7 @@ const Home = () => {
       }
     };
     getRecommendProducts();
-  }, []);
+  }, [productIdList]);
 
   return (
     <HelmetProvider>

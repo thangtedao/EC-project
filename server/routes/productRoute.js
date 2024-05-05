@@ -45,5 +45,4 @@ router.get("/filter", filterProduct);
 router.post("/recommend", getRecommendProducts)
 router.get("/get-relate/:model", getRelateModelProduct);
 router.get("/:id", getProduct);
-
 export default router;

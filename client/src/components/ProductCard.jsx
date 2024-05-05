@@ -19,7 +19,6 @@ const ProductCard = ({ product }) => {
         toast.success("Added to wishlist");
       else 
         toast.warning("Already in wishlist");
-
     } catch (error) {
       if (error?.response?.status === 401) return toast.warning("Please Login");
       else return error;
