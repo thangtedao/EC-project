@@ -216,7 +216,7 @@ const Product = () => {
           ) : (
             <div className="top-container-column-2">
               {/* VARIANT */}
-              <div style={{ display: "flex", gap: 20 }}>
+              <div className="model-container">
                 {relateModel?.length > 1 &&
                   relateModel?.map((item) => {
                     return (

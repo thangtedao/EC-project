@@ -35,10 +35,14 @@ const Wrapper = styled.div`
     gap: 1rem;
   }
 
+  .model-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
   .model {
     position: relative;
-    width: 150px;
-    height: 50px;
+    height: 60px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     display: flex;
@@ -67,7 +71,9 @@ const Wrapper = styled.div`
     place-items: center;
   }
   .model-info {
+    width: 180px;
     display: flex;
+    justify-content: center;
     gap: 5px;
   }
 

@@ -111,12 +111,11 @@ const Payment = () => {
         .then(({ data }) => data);
 
       if (couponData) {
+        console.log(couponData);
         if (couponData.discountType === "percentage") {
-          const maxDiscount = couponData.maxDiscount
-            ? couponData.maxDiscount
-            : 0;
           let discount = (totalPrice * couponData.discountValue) / 100;
-          if (discount > maxDiscount) discount = maxDiscount;
+          if (couponData.maxDiscount && discount > couponData.maxDiscount)
+            discount = couponData.maxDiscount;
           const totalAfterDiscount = totalPrice - discount.toFixed(0);
           setTotalAmount(totalAfterDiscount);
         } else if (couponData.discountType === "fixed")
