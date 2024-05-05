@@ -20,7 +20,7 @@ const OrderItem = ({ order, cancelOrder }) => {
             </span>
           </div>
 
-          {order.discountAmount && (
+          {order.discountAmount > 0 && (
             <div>
               Mã giảm:{" "}
               <span className="normal-text">

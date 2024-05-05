@@ -82,7 +82,8 @@ export const createOrder = async (req, res) => {
         (acc, item) => acc + item.priceAtOrder * item.quantity,
         0
       ) || 0;
-    if (coupon.maxDiscount && discountAmount > coupon.maxDiscount)
+
+    if (coupon && coupon.maxDiscount && discountAmount > coupon.maxDiscount)
       discountAmount = coupon.maxDiscount;
 
     const user = await User.findById(userId);

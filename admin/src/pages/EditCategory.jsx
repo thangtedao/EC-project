@@ -108,7 +108,6 @@ const EditCategory = () => {
           initialValues={{
             name: category?.name,
             slug: category?.slug,
-            description: category?.description,
             parent: category?.parent,
           }}
           onFinish={onFinish}
@@ -149,7 +148,7 @@ const EditCategory = () => {
                       />
                     </Form.Item>
 
-                    <Typography.Title className="input-title">
+                    {/* <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
                     <Form.Item name="description">
@@ -161,7 +160,7 @@ const EditCategory = () => {
                           maxRows: 9,
                         }}
                       />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Typography.Title className="input-title">
                       Blog
