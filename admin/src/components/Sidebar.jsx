@@ -44,7 +44,6 @@ const items = [
     [
       getItem("All Category", "4", null, null, "/all-category"),
       getItem("Add Category", "5", null, null, "/add-category"),
-      getItem("Detail Category ", "6", null, null, null),
     ],
     null
   ),
