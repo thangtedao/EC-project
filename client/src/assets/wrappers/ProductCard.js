@@ -30,16 +30,18 @@ const Wrapper = styled.div`
     display: grid;
     place-items: center;
     img {
+      max-width: 190px;
       border-radius: 10px;
-      height: inherit;
+      max-height: 135px;
     }
   }
   .product-card-name {
     line-height: 1.5;
     height: 3rem;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #444;
+    margin-bottom: 10px;
   }
   .product-card-price {
     margin-top: 15px;

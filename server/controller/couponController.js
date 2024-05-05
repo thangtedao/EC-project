@@ -61,6 +61,7 @@ export const getCoupon = async (req, res) => {
 export const updateCoupon = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!req.body.maxDiscount) req.body.maxDiscount = null;
     const updatedCoupon = await Coupon.findByIdAndUpdate(id, req.body, {
       new: true,
     });

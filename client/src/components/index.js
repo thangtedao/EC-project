@@ -5,6 +5,7 @@ export { default as ProductReview } from "./product/ProductReview";
 export { default as ProductBlog } from "./product/ProductBlog";
 export { default as FilterLaptop } from "./category/FilterLaptop";
 export { default as FilterPhone } from "./category/FilterPhone";
+export { default as FilterScreen } from "./category/FilterScreen";
 export { default as PriceSlider } from "./category/PriceSlider";
 export { default as PayPalButton } from "./payment/PayPalButton";
 export { default as VnPayButton } from "./payment/VnPayButton";

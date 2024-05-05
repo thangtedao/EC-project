@@ -4,6 +4,7 @@ import { categoryData } from "../assets/data/categoryData.js";
 import {
   FilterLaptop,
   FilterPhone,
+  FilterScreen,
   PriceSlider,
   ProductBlog,
   ProductList,
@@ -63,7 +64,7 @@ const Category = () => {
     maxPrice = parseInt(maxPrice);
   } else {
     minPrice = 0;
-    maxPrice = 500000;
+    maxPrice = 50000000;
   }
 
   const onChangeSlider = (event, newValue) => {
@@ -88,6 +89,13 @@ const Category = () => {
     ({ ram, ["ổ cứng"]: rom, cpu } = searchParams);
   } else if (mainCategory.slug === "phone") {
     ({ ram, rom, chip } = searchParams);
+  } else if (mainCategory.slug === "screen") {
+    ({
+      ["tần số"]: ram,
+      ["kích thước"]: rom,
+      ["tấm nền"]: cpu,
+      ["phân giải"]: chip,
+    } = searchParams);
   }
 
   const [products, setProducts] = useState(productFilter);
@@ -136,6 +144,10 @@ const Category = () => {
                   return <FilterLaptop ram={ram} rom={rom} cpu={cpu} />;
                 case "phone":
                   return <FilterPhone ram={ram} rom={rom} chip={chip} />;
+                case "screen":
+                  return (
+                    <FilterScreen ram={ram} rom={rom} cpu={cpu} chip={chip} />
+                  );
                 default:
                   return null;
               }
