@@ -68,10 +68,6 @@ const Category = () => {
     maxPrice = 50000000;
   }
 
-  const onChangeSlider = (event, newValue) => {
-    setMinPrice(newValue[0]);
-  };
-
   const [mainCategory, setMainCategory] = useState(category);
 
   useEffect(() => {
@@ -103,6 +99,14 @@ const Category = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(2);
   const [MinPrice, setMinPrice] = useState(0);
+
+  const [minP, setMinP] = useState(minPrice);
+  const [maxP, setMaxP] = useState(maxPrice);
+  const onChangeSlider = (event, newValue) => {
+    setMinPrice(newValue[0]);
+    setMinP(newValue[0]);
+    setMaxP(newValue[1]);
+  };
 
   return (
     <HelmetProvider>
@@ -163,6 +167,10 @@ const Category = () => {
                 defaultValue={[minPrice, maxPrice]}
                 onChange={onChangeSlider}
               />
+              <div style={{ width: "50%", fontWeight: "500" }}>
+                {minP?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ -{" "}
+                {maxP?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+              </div>
             </div>
 
             <div>
