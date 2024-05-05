@@ -143,6 +143,9 @@ const EditProduct = () => {
       values.category = [values.category, ...values.categoryC];
       delete values.categoryC;
     }
+    values.attributes.forEach((item) => {
+      if (!item.mainAttribute) item.mainAttribute = false;
+    });
     if (values.attributes && Array.isArray(values.attributes)) {
       values.attributes.forEach((attribute, index) => {
         Object.entries(attribute).forEach(([key, value]) => {
