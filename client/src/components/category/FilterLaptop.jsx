@@ -26,18 +26,18 @@ const FilterLaptop = ({ ram, rom, cpu }) => {
 
         <select name="cpu" defaultValue={cpu}>
           <option value="">CPU</option>
-          <option value="intel core i9">Intel Core i9</option>
-          <option value="intel core i7">Intel Core i7</option>
-          <option value="intel core i5">Intel Core i5</option>
-          <option value="amd ryzen 7">AMD Ryzen 7</option>
-          <option value="amd ryzen 5">AMD Ryzen 5</option>
-          <option value="amd ryzen 3">AMD Ryzen 3</option>
-          <option value="apple m1">Apple M1</option>
-          <option value="apple m2">Apple M2</option>
-          <option value="apple m3">Apple M3</option>
-          <option value="apple m1 pro">Apple M1 Pro</option>
-          <option value="apple m2 pro">Apple M2 Pro</option>
-          <option value="apple m3 pro">Apple M3 Pro</option>
+          <option value="i9">Intel Core i9</option>
+          <option value="i7">Intel Core i7</option>
+          <option value="i5">Intel Core i5</option>
+          <option value="r7">AMD Ryzen 7</option>
+          <option value="r5">AMD Ryzen 5</option>
+          <option value="r3">AMD Ryzen 3</option>
+          <option value="m1">Apple M1</option>
+          <option value="m2">Apple M2</option>
+          <option value="m3">Apple M3</option>
+          <option value="m1 pro">Apple M1 Pro</option>
+          <option value="m2 pro">Apple M2 Pro</option>
+          <option value="m3 pro">Apple M3 Pro</option>
         </select>
       </div>
     </div>

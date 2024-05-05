@@ -26,6 +26,7 @@ const Wrapper = styled.div`
     grid-template-columns: 1fr 1fr;
     column-gap: 1rem;
     padding: 0.8rem 0.5rem;
+    line-height: 1.4;
   }
   .gray-background {
     background-color: #f2f2f2;
