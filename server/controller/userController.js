@@ -123,10 +123,15 @@ export const addToWishlist = async (req, res) => {
     const { userId } = req.user;
     const { productId } = req.body;
 
+    const user = await User.findById(userId);
+
+    if (user.wishlist.includes(productId)) {
+      return res.status(StatusCodes.OK).json({ msg: "0" });
+    }
     await User.findByIdAndUpdate(userId, {
       $push: { wishlist: productId },
     });
-    res.status(StatusCodes.OK).json({ msg: "Added" });
+    res.status(StatusCodes.OK).json({ msg: "1" });
   } catch (error) {
     console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

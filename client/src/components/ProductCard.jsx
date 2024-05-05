@@ -12,10 +12,14 @@ import percent from "../assets/logo/percent.svg";
 const ProductCard = ({ product }) => {
   const addToWishlist = async () => {
     try {
-      await customFetch.patch("/user/wishlist/add", {
+      const message = await customFetch.patch("/user/wishlist/add", {
         productId: product._id,
       });
-      toast.success("Added to wishlist");
+      if(message.data.msg=='1')
+        toast.success("Added to wishlist");
+      else 
+        toast.warning("Already in wishlist");
+
     } catch (error) {
       if (error?.response?.status === 401) return toast.warning("Please Login");
       else return error;
