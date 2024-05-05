@@ -63,7 +63,7 @@ const Category = () => {
     maxPrice = parseInt(maxPrice);
   } else {
     minPrice = 0;
-    maxPrice = 500000;
+    maxPrice = 50000000;
   }
 
   const onChangeSlider = (event, newValue) => {

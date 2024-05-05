@@ -55,8 +55,8 @@ const PriceSlider = ({ name, defaultValue, onChange }) => {
       getAriaLabel={(index) =>
         index === 0 ? "Minimum price" : "Maximum price"
       }
-      max={500000}
-      step={10000}
+      max={50000000}
+      step={100000}
       valueLabelDisplay="auto"
       defaultValue={defaultValue}
       onChange={onChange}

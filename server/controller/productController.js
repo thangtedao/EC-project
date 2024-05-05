@@ -269,7 +269,7 @@ export const filterProduct = async (req, res) => {
     });
 
     const page = 1;
-    const limit = 20;
+    const limit = 30;
     const skip = (page - 1) * limit;
 
     let products;
