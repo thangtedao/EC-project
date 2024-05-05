@@ -3,6 +3,7 @@ import Wrapper from "../assets/wrappers/Category.js";
 import { categoryData } from "../assets/data/categoryData.js";
 import {
   FilterLaptop,
+  FilterPC,
   FilterPhone,
   FilterScreen,
   PriceSlider,
@@ -85,7 +86,7 @@ const Category = () => {
 
   let ram, rom, cpu, chip;
 
-  if (mainCategory.slug === "laptop") {
+  if (mainCategory.slug === "laptop" || mainCategory.slug === "pc") {
     ({ ram, ["ổ cứng"]: rom, cpu } = searchParams);
   } else if (mainCategory.slug === "phone") {
     ({ ram, rom, chip } = searchParams);
@@ -142,6 +143,8 @@ const Category = () => {
               switch (mainCategory.slug) {
                 case "laptop":
                   return <FilterLaptop ram={ram} rom={rom} cpu={cpu} />;
+                case "pc":
+                  return <FilterPC ram={ram} rom={rom} cpu={cpu} />;
                 case "phone":
                   return <FilterPhone ram={ram} rom={rom} chip={chip} />;
                 case "screen":
