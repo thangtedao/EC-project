@@ -39,48 +39,18 @@ const ChartLine = () => {
       .reverse();
   }
 
-  // const month = [
-  //   "January",
-  //   "February",
-  //   "March",
-  //   "April",
-  //   "May",
-  //   "June",
-  //   "July",
-  //   "August",
-  //   "September",
-  //   "October",
-  //   "November",
-  //   "December",
-  // ];
-
-  // const data = month.map((item) => {
-  //   let totalRevenue = 0;
-  //   let found = false;
-  //   monthlyStats.forEach((element) => {
-  //     if (element.date === item && !found) {
-  //       totalRevenue += element.totalRevenue;
-  //       found = true;
-  //     }
-  //   });
-  //   return {
-  //     date: item,
-  //     revenue: totalRevenue,
-  //   };
-  // });
-
   const config = {
     data,
     height: 400,
     xField: "date",
     yField: "revenue",
     label: {
-      // Hiển thị giá trị của mỗi điểm dữ liệu trực tiếp trên đường
       style: {
-        fill: "#000", // Màu chữ của giá trị
-        fontSize: 10, // Kích thước chữ
-        fontWeight: "bold", // Độ đậm của chữ
+        fill: "#000",
+        fontSize: 13,
+        fontWeight: "bold",
       },
+      formatter: (value) => `${value.toLocaleString()}đ`,
     },
   };
 
