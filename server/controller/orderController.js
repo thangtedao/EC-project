@@ -73,7 +73,7 @@ export const createOrder = async (req, res) => {
         variant: item.variant && item.variant._id,
         quantity: item.quantity,
         priceAtOrder: item.product.salePrice + variantPrice,
-        subtotal: salePrice,
+        subtotal: item.product.salePrice * item.quantity,
       };
     });
 
@@ -82,6 +82,8 @@ export const createOrder = async (req, res) => {
         (acc, item) => acc + item.priceAtOrder * item.quantity,
         0
       ) || 0;
+    if (coupon.maxDiscount && discountAmount > coupon.maxDiscount)
+      discountAmount = coupon.maxDiscount;
 
     const user = await User.findById(userId);
 
@@ -129,7 +131,7 @@ export const createOrder = async (req, res) => {
     }
     await Cart.findOneAndUpdate({ user: userId }, { $set: { cartItem: [] } });
 
-    if (order && user) sendMail(user, order);
+    // if (order && user) sendMail(user, order);
     res.status(StatusCodes.OK).json({ msg: "Payment Successful" });
   } catch (error) {
     console.log(error);

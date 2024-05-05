@@ -7,13 +7,13 @@ const OrderItem = ({ order, cancelOrder }) => {
       <div className="order-header">
         <div className="order-header-info">
           <div>
-            Order ID <span className="normal-text">#{order._id.slice(18)}</span>
+            Đơn hàng <span className="normal-text">#{order._id.slice(18)}</span>
           </div>
 
           <div>
-            Total Amount:{" "}
+            Tổng tiền đơn hàng:{" "}
             <span className="normal-text">
-              {order.totalAmount
+              {(order.totalAmount + order.discountAmount)
                 .toString()
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
               ₫
@@ -22,8 +22,9 @@ const OrderItem = ({ order, cancelOrder }) => {
 
           {order.discountAmount && (
             <div>
-              Discount Amount:{" "}
+              Mã giảm:{" "}
               <span className="normal-text">
+                -
                 {order.discountAmount
                   ?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
@@ -33,13 +34,24 @@ const OrderItem = ({ order, cancelOrder }) => {
           )}
 
           <div>
-            Status: <span className="normal-text">{order.status}</span>
+            Tổng tiền phải trả:{" "}
+            <span className="normal-text">
+              {order.totalAmount
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              ₫
+            </span>
+          </div>
+
+          <div>
+            Trạng thái đơn hàng:{" "}
+            <span className="normal-text">{order.status}</span>
           </div>
         </div>
 
         {order.isCancel ? (
           <button onClick={() => cancelOrder(order._id, false)} className="btn">
-            Cancel Cancel Order
+            Hủy yêu cầu
           </button>
         ) : (
           order.status === "Pending" && (
@@ -47,7 +59,7 @@ const OrderItem = ({ order, cancelOrder }) => {
               onClick={() => cancelOrder(order._id, true)}
               className="btn"
             >
-              Cancel Order
+              Yêu cầu hủy đơn
             </button>
           )
         )}

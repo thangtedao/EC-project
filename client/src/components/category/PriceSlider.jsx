@@ -56,7 +56,7 @@ const PriceSlider = ({ name, defaultValue, onChange }) => {
         index === 0 ? "Minimum price" : "Maximum price"
       }
       max={50000000}
-      step={100000}
+      step={10000}
       valueLabelDisplay="auto"
       defaultValue={defaultValue}
       onChange={onChange}

@@ -128,6 +128,7 @@ const EditCoupon = () => {
             discountValue: coupon?.discountValue,
             targetCustomers: coupon?.targetCustomers,
             numberOfUses: coupon?.numberOfUses,
+            maxDiscount: coupon?.maxDiscount,
             description: coupon?.description,
           }}
           onFinish={onFinish}
@@ -175,8 +176,6 @@ const EditCoupon = () => {
                           <Select
                             size="large"
                             placeholder="Target Customer"
-                            value={discountType}
-                            onChange={(value) => setDiscountType(value)}
                             options={[
                               {
                                 value: "member",
@@ -198,6 +197,7 @@ const EditCoupon = () => {
                           />
                         </Form.Item>
                       </div>
+
                       <div className="customer-item-2">
                         <Typography.Title className="input-title">
                           Number of usage
@@ -211,6 +211,21 @@ const EditCoupon = () => {
                           />
                         </Form.Item>
                       </div>
+
+                      {discountType === "percentage" && (
+                        <div className="customer-item-3">
+                          <Typography.Title className="input-title">
+                            Maximum Discount
+                          </Typography.Title>
+                          <Form.Item name="maxDiscount">
+                            <InputNumber
+                              style={{ width: "100%" }}
+                              size="large"
+                              placeholder="Enter Number"
+                            />
+                          </Form.Item>
+                        </div>
+                      )}
                     </div>
 
                     <div className="discount">

@@ -87,14 +87,14 @@ export const applyCoupon = async (req, res) => {
     const { userId } = req.user;
     if (code) code = code.toString().toUpperCase();
     const validCoupon = await Coupon.findOne({ code: code });
-    if (!validCoupon) throw new NotFoundError("Coupon không hợp lệ");
+    if (!validCoupon) throw new NotFoundError("Mã giảm giá không hợp lệ");
 
     // check expired
     const now = new Date();
     if (validCoupon.endDate < now || validCoupon.startDate > now)
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "Coupon không hợp lệ" });
+        .json({ msg: "Mã giảm giá không hợp lệ" });
 
     // check rank
     const user = await User.findById(userId);
@@ -124,13 +124,13 @@ export const applyCoupon = async (req, res) => {
     if (isUse)
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "Coupon đã được sử dụng" });
+        .json({ msg: "Mã giảm giá đã được sử dụng" });
 
     // check number of use
     if (validCoupon.numberOfUses <= 0)
       return res
         .status(StatusCodes.CONFLICT)
-        .json({ msg: "Coupon đã hết lượt sử dụng" });
+        .json({ msg: "Mã giảm giá đã hết lượt sử dụng" });
 
     res.status(StatusCodes.OK).json(validCoupon);
   } catch (error) {

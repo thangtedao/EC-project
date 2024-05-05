@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/Home.js";
 import { SlideProduct } from "../components";
-import { NavLink, useLoaderData } from "react-router-dom";
+import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { IoIosArrowForward } from "react-icons/io";
@@ -62,6 +62,7 @@ export const loader = async () => {
 const HomeContext = createContext();
 
 const Home = () => {
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
 
   const { categories } = useMainLayoutContext();
@@ -86,6 +87,7 @@ const Home = () => {
   }, [startDate, endDate]);
 
   const onFinish = () => {
+    navigate("/");
     console.log("finished!");
   };
 

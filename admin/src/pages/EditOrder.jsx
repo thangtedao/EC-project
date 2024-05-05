@@ -175,7 +175,7 @@ const EditOrder = () => {
                           flexDirection: "column",
                         }}
                       >
-                        {order.discountAmount > 0 && (
+                        {/* {order.discountAmount > 0 && (
                           <Typography.Text
                             strong
                             style={{ textDecoration: "line-through" }}
@@ -184,7 +184,7 @@ const EditOrder = () => {
                               ?.toString()
                               .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"}
                           </Typography.Text>
-                        )}
+                        )} */}
                         <Typography.Text strong>
                           {item.subtotal
                             ?.toString()

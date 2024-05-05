@@ -157,7 +157,7 @@ const AddProduct = () => {
 
   const handleChangeC = (value) => {
     let newCategoriesC = [];
-    categoryChild.map((item) => {
+    categoryChild.forEach((item) => {
       if (item.parent.toString() === value.toString()) {
         newCategoriesC.push(item);
       }
