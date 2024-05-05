@@ -21,7 +21,7 @@ import {
   Space,
   Checkbox,
 } from "antd";
-import { laptop, phone } from "../utils/attribute.js";
+import { laptop, phone, screen } from "../utils/attribute.js";
 
 export const loader = async () => {
   try {
@@ -357,6 +357,8 @@ const AddProduct = () => {
                                     return laptop;
                                   case "6623f234e14536afabb43126":
                                     return phone;
+                                  case "66253e9a98b8275b6574fb39":
+                                    return screen;
                                   default:
                                     return laptop;
                                 }

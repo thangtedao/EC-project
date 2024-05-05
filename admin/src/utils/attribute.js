@@ -47,3 +47,30 @@ export const phone = [
     value: "Độ phân giải màn hình",
   },
 ];
+
+export const screen = [
+  {
+    label: "Kích thước màn hình",
+    value: "Kích thước màn hình",
+  },
+  {
+    label: "Tần số quét",
+    value: "Tần số quét",
+  },
+  {
+    label: "Thời gian phản hồi",
+    value: "Thời gian phản hồi",
+  },
+  {
+    label: "Tỉ lệ màn hình",
+    value: "Tỉ lệ màn hình",
+  },
+  {
+    label: "Tấm nền",
+    value: "Tấm nền",
+  },
+  {
+    label: "Độ phân giải màn hình",
+    value: "Độ phân giải màn hình",
+  },
+];
