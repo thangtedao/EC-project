@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
 import ListMessage from "./ListMessage";
 import TypeMessage from "./TypeMessage";
+import customFetch from "../../../utils/customFetch";
 
 function Chat(props) {
   let socket;
@@ -19,8 +19,8 @@ function Chat(props) {
   useEffect(() => {
     if (!idConversation) return;
     const getAllMessageByConversation = async () => {
-      const { data } = await axios.get(
-        `http://localhost:3001/api/chat/message?idConversation=${idConversation}`
+      const { data } = await customFetch.get(
+        `/chat/message?idConversation=${idConversation}`
       );
       setMessages(data.messageList);
     };
@@ -57,10 +57,7 @@ function Chat(props) {
       message,
       idConversation,
     };
-    const { data } = await axios.post(
-      "http://localhost:3001/api/chat/save",
-      payload
-    );
+    const { data } = await customFetch.post("/chat/save", payload);
     socket.emit("chat", data);
   };
 

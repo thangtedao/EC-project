@@ -6,7 +6,11 @@ import { ConversationModel } from "../../models/Conversation.js";
 export const ConnectSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:5173", "http://localhost:4000"],
+      // origin: ["http://localhost:5173", "http://localhost:4000"],
+      origin: [
+        "https://nova-store-uqza.onrender.com",
+        "https://nova-store-admin-ic4l.onrender.com/",
+      ],
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
       credentials: true,
