@@ -66,8 +66,14 @@ const AddProduct = () => {
   //Đóng Modal sau khi xác nhận
   //Đóng ReviewOpen sau khi xác nhận
   const handleCancel = () => {
-    setPreviewOpen(false);
-    setModalOpen(false);
+    Modal.confirm({
+      title: "Confirm",
+      content: "Do you want to cancel?",
+      onOk: () => {
+        // Xử lý khi đồng ý cancel
+        navigate('/all-product'); // Chuyển hướng trang về /allproduct
+      },
+    });
   };
 
   /* Upload Image and Preview */
@@ -165,7 +171,7 @@ const AddProduct = () => {
     setCategoriesC(newCategoriesC);
     setCategoryP(value);
   };
-
+  
   return (
     <HelmetProvider>
       <Wrapper>
@@ -597,18 +603,7 @@ const AddProduct = () => {
             <Button
               danger
               size="large"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want to cancel?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
+              onClick={handleCancel} // Sử dụng hàm handleCancel cho sự kiện click
             >
               Cancel
             </Button>
