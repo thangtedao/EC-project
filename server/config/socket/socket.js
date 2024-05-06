@@ -9,7 +9,7 @@ export const ConnectSocket = (server) => {
       // origin: ["http://localhost:5173", "http://localhost:4000"],
       origin: [
         "https://nova-store-uqza.onrender.com",
-        "https://nova-store-admin-ic4l.onrender.com/",
+        "https://nova-store-admin-ic4l.onrender.com",
       ],
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
