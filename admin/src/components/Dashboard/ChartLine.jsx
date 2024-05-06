@@ -78,9 +78,10 @@ const ChartLine = () => {
       // Hiển thị giá trị của mỗi điểm dữ liệu trực tiếp trên đường
       style: {
         fill: "#000", // Màu chữ của giá trị
-        fontSize: 10, // Kích thước chữ
+        fontSize: 13, // Kích thước chữ
         fontWeight: "bold", // Độ đậm của chữ
       },
+      formatter: (value) => `${value.toLocaleString()}đ`,
     },
   };
 

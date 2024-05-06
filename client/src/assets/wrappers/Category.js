@@ -95,7 +95,8 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 2rem;
-    width: 500px;
+    width: 70%;
+    min-width: 500px;
   }
 
   .buttons {

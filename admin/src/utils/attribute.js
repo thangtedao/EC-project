@@ -1,11 +1,15 @@
 export const laptop = [
   {
+    label: "Loại CPU",
+    value: "Loại CPU",
+  },
+  {
     label: "Dung lượng RAM",
     value: "Dung lượng RAM",
   },
   {
-    label: "Loại CPU",
-    value: "Loại CPU",
+    label: "Loại RAM",
+    value: "Loại RAM",
   },
   {
     label: "Ổ cứng",
@@ -14,6 +18,10 @@ export const laptop = [
   {
     label: "Loại card đồ họa",
     value: "Loại card đồ họa",
+  },
+  {
+    label: "Kích thước màn hình",
+    value: "Kích thước màn hình",
   },
 ];
 

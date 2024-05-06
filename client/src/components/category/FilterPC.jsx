@@ -1,6 +1,6 @@
 import React from "react";
 
-const FilterLaptop = ({ ram, rom, cpu }) => {
+const FilterPC = ({ ram, rom, cpu }) => {
   return (
     <div>
       <div className="filter-title">Chọn theo tiêu chí</div>
@@ -30,19 +30,14 @@ const FilterLaptop = ({ ram, rom, cpu }) => {
           <option value="i9">Intel Core i9</option>
           <option value="i7">Intel Core i7</option>
           <option value="i5">Intel Core i5</option>
+          <option value="i3">Intel Core i3</option>
           <option value="r7">AMD Ryzen 7</option>
           <option value="r5">AMD Ryzen 5</option>
           <option value="r3">AMD Ryzen 3</option>
-          <option value="m1">Apple M1</option>
-          <option value="m2">Apple M2</option>
-          <option value="m3">Apple M3</option>
-          <option value="m1 pro">Apple M1 Pro</option>
-          <option value="m2 pro">Apple M2 Pro</option>
-          <option value="m3 pro">Apple M3 Pro</option>
         </select>
       </div>
     </div>
   );
 };
 
-export default FilterLaptop;
+export default FilterPC;

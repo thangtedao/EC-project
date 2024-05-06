@@ -124,14 +124,16 @@ export const addToWishlist = async (req, res) => {
     const { productId } = req.body;
 
     const user = await User.findById(userId);
+    const isAlreadyAdd = user.wishlist.includes(productId);
+    if (isAlreadyAdd)
+      return res
+        .status(StatusCodes.OK)
+        .json({ msg: "Đã thêm vào danh sách yêu thích" });
 
-    if (user.wishlist.includes(productId)) {
-      return res.status(StatusCodes.OK).json({ msg: "0" });
-    }
     await User.findByIdAndUpdate(userId, {
       $push: { wishlist: productId },
     });
-    res.status(StatusCodes.OK).json({ msg: "1" });
+    res.status(StatusCodes.OK).json({ msg: "Đã thêm vào danh sách yêu thích" });
   } catch (error) {
     console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
@@ -146,7 +148,7 @@ export const removeFromWishlist = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $pull: { wishlist: productId },
     });
-    res.status(StatusCodes.OK).json({ msg: "Removed" });
+    res.status(StatusCodes.OK).json({ msg: "Đã xóa khỏi danh sách yêu thích" });
   } catch (error) {
     console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

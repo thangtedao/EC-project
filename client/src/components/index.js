@@ -4,6 +4,7 @@ export { default as ProductAttribute } from "./product/ProductAttribute";
 export { default as ProductReview } from "./product/ProductReview";
 export { default as ProductBlog } from "./product/ProductBlog";
 export { default as FilterLaptop } from "./category/FilterLaptop";
+export { default as FilterPC } from "./category/FilterPC";
 export { default as FilterPhone } from "./category/FilterPhone";
 export { default as FilterScreen } from "./category/FilterScreen";
 export { default as PriceSlider } from "./category/PriceSlider";

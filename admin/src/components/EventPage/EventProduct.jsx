@@ -335,26 +335,6 @@ const EventProduct = ({
 
   return (
     <Wrapper>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 20,
-        }}
-      >
-        <Search
-          size="large"
-          placeholder="Enter search name"
-          allowClear
-          onSearch={onSearch}
-          style={{
-            width: "30%",
-            minWidth: 300,
-          }}
-        />
-      </div>
       <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
         <Card className="col-1-item" size="large" title={`Add Product`}>
           <Table

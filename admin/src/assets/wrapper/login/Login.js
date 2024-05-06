@@ -94,6 +94,12 @@ const Wrapper = styled.div`
       max-width: 100%;
     }
   }
+  .illustration-wrapper {
+    background-color: rgb(255 255 255);
+  }
+  .illustration-wrapper img {
+    width: 90%;
+  }
 `;
 
 export default Wrapper;

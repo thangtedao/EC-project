@@ -271,7 +271,9 @@ const Product = () => {
                   className="btn-buynow"
                   onClick={() => [
                     addToCart(product, selectedVariants),
-                    navigate("/cart"),
+                    setTimeout(() => {
+                      navigate("/cart");
+                    }, 500),
                   ]}
                 >
                   Mua ngay
