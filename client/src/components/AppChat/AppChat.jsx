@@ -10,7 +10,7 @@ import { LineOutlined } from "@ant-design/icons";
 let socket;
 
 function AppChat(props) {
-  const ENDPOINT = "http://localhost:3001";
+  const ENDPOINT = "http://localhost:10000";
   const [messages, setMessages] = useState([]);
   const [openChat, setOpenChat] = useState(false);
   const user = useSelector((state) => state.user.user);
