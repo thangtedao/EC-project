@@ -13,6 +13,7 @@ import {
   Button,
   Breadcrumb,
   Upload,
+  Modal,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -89,7 +90,16 @@ const AddBlog = () => {
       console.log(error);
     }
   };
-
+  const handleCancel = () => {
+    Modal.confirm({
+      title: "Confirm",
+      content: "Do you want to cancel?",
+      onOk: () => {
+        // Xử lý khi đồng ý cancel
+        navigate('/all-blogs'); // Chuyển hướng trang về /allproduct
+      },
+    });
+  };
   return (
     <HelmetProvider>
       <Wrapper>
@@ -217,14 +227,18 @@ const AddBlog = () => {
 
             {/* BUTTON SUBMIT */}
             <div className="btn">
-              <Button danger size="large">
-                Cancel
-              </Button>
+            <Button
+              danger
+              size="large"
+              onClick={handleCancel} // Sử dụng hàm handleCancel cho sự kiện click
+            >
+              Cancel
+            </Button>
 
-              <Button size="large" type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </div>
+            <Button size="large" type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </div>
           </div>
         </Form>
       </Wrapper>

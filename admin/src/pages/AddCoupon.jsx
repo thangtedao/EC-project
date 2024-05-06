@@ -362,7 +362,14 @@ const AddCoupon = () => {
   //Đóng Modal sau khi xác nhận
   //Đóng ReviewOpen sau khi xác nhận
   const handleCancel = () => {
-    setModalOpen(false);
+    Modal.confirm({
+      title: "Confirm",
+      content: "Do you want to cancel?",
+      onOk: () => {
+        // Xử lý khi đồng ý cancel
+        navigate('/all-coupon'); // Chuyển hướng trang về /allproduct
+      },
+    });
   };
   const onChange = (date, dateString) => {
     console.log(date, dateString);
@@ -620,18 +627,7 @@ const AddCoupon = () => {
             <Button
               danger
               size="large"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want to cancel?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
+              onClick={handleCancel} // Sử dụng hàm handleCancel cho sự kiện click
             >
               Cancel
             </Button>
