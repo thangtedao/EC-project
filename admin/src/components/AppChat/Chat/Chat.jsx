@@ -7,7 +7,7 @@ import customFetch from "../../../utils/customFetch";
 
 function Chat(props) {
   let socket;
-  const ENDPOINT = "http://localhost:10000";
+  const ENDPOINT = "https://nova-store-admin-ic4l.onrender.com";
   const [messages, setMessages] = useState([]);
   // const user = useSelector((state) => state.user.user);
   const user = {
