@@ -210,7 +210,14 @@ const EditUser = () => {
                 extra={"ID: " + user?._id || "ID: 123"}
               >
                 <Space wrap size={16}>
-                  <Avatar size={64} icon={<UserOutlined />} />
+                  <Avatar
+                    size={64}
+                    icon={<UserOutlined />}
+                    src={
+                      user?.avatar ||
+                      "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                    }
+                  />
                   <Typography.Text>{user?.fullName}</Typography.Text>
                 </Space>
 
