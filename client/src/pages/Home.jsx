@@ -98,7 +98,7 @@ const Home = () => {
   useEffect(() => {
     try {
       const getProductIdList = async () => {
-        const name=user.fullName
+        const name = user.fullName;
         const response = await fetch(
           `https://recommendsys1-production-ba91.up.railway.app/recommendation/${name}`
         );
@@ -166,7 +166,7 @@ const Home = () => {
           {/* FLASH SALE */}
           <div className="block-hot-sale">
             <div className="block-title">
-              <div className="sale-title">{event?.name}</div>
+              <div className="baloo-tamma-2-sale-title">{event?.name}</div>
               <ConfigProvider
                 theme={{
                   components: {
@@ -224,7 +224,7 @@ const Home = () => {
 
           <div className="block-hot-sale">
             <div className="block-title">
-              <div className="sale-title">Đề xuất cho bạn</div>
+              <div className="baloo-tamma-2-sale-title">Đề xuất cho bạn</div>
             </div>
             {recommendPro.length > 0 && (
               <SlideProduct products={recommendPro} />
@@ -234,7 +234,9 @@ const Home = () => {
           {/* BEST SALER */}
           <div className="block-hot-sale">
             <div className="block-title">
-              <div className="sale-title">Sản phẩm bạn chạy nhất</div>
+              <div className="baloo-tamma-2-sale-title">
+                Sản phẩm bạn chạy nhất
+              </div>
             </div>
             {bestSalerProduct.length > 0 && (
               <SlideProduct products={bestSalerProduct} />
