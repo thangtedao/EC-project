@@ -54,7 +54,14 @@ const AddCategory = () => {
   //Đóng Modal sau khi xác nhận
   //Đóng ReviewOpen sau khi xác nhận
   const handleCancel = () => {
-    setModalOpen(false);
+    Modal.confirm({
+      title: "Confirm",
+      content: "Do you want to cancel?",
+      onOk: () => {
+        // Xử lý khi đồng ý cancel
+        navigate('/all-category'); // Chuyển hướng trang về /allproduct
+      },
+    });
   };
 
   const onFinish = async (values) => {
@@ -201,29 +208,18 @@ const AddCategory = () => {
 
           {/* BUTTON SUBMIT */}
           <div className="btn">
-            <Button
-              danger
-              size="large"
-              onClick={() => {
-                Modal.confirm({
-                  title: "Confirm",
-                  content: "Do you want to cancel?",
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn />
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-            >
-              Cancel
-            </Button>
+      <Button
+        danger
+        size="large"
+        onClick={handleCancel} // Sử dụng hàm handleCancel cho sự kiện click
+      >
+        Cancel
+      </Button>
 
-            <Button size="large" type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </div>
+      <Button size="large" type="primary" htmlType="submit">
+        Submit
+      </Button>
+    </div>
         </Form>
       </Wrapper>
     </HelmetProvider>

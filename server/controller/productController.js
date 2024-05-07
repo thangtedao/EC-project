@@ -269,7 +269,7 @@ export const filterProduct = async (req, res) => {
     });
 
     const page = 1;
-    const limit = 20;
+    const limit = 30;
     const skip = (page - 1) * limit;
 
     let products;
@@ -500,7 +500,7 @@ export const getRecommendProducts = async (req, res) => {
     let productIds = req.body.productIdList || []; // Lấy mảng các id sản phẩm từ request body, không có thì về rỗng
     let products;
     if (productIds.length > 0) {
-      products = await Product.find({ productId: { $in: productIds } });
+      products = await Product.find({ pid: { $in: productIds } });
     } else {
       products = await Product.aggregate([{ $sample: { size: 10 } }]);
     }
