@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import Review from "../models/Review.js";
 import ProductVariation from "../models/ProductVariation.js";
 import ProductAttribute from "../models/ProductAttribute.js";
 import ItemBlog from "../models/ItemBlog.js";
@@ -125,6 +126,15 @@ export const getProducts = async (req, res) => {
     }
 
     const products = await query;
+
+    const reviews = await Review.find();
+    products.forEach((product) => {
+      const listReview = reviews.filter((item) => item.product === product._id);
+      const totalStar = listReview.reduce((acc, review) => {
+        acc + review.rating;
+      }, 0);
+      if (listReview.length > 0) product.star = totalStar / listReview.length;
+    });
     res.status(StatusCodes.OK).json(products);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

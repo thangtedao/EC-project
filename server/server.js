@@ -45,7 +45,11 @@ app.use(
         "https://www.paypal.com",
         "https://www.sandbox.paypal.com",
       ],
-      "script-src": ["'self'", "https://www.paypal.com"],
+      "script-src": [
+        "'self'",
+        "https://www.paypal.com",
+        "https://cdn.tiny.cloud",
+      ],
       "frame-src": ["'self'", "https://www.sandbox.paypal.com"],
     },
   })
