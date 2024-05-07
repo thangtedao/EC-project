@@ -1,6 +1,18 @@
 import BlogCard from "../components/blog/BlogCard";
 import customFetch from "../utils/customFetch";
 import { useLoaderData } from "react-router-dom";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+  .title {
+    font-weight: bold;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 25px;
+  }
+`;
 
 export const loader = async () => {
   try {
@@ -18,11 +30,14 @@ const Blogs = () => {
   const { blogs } = useLoaderData();
 
   return (
-    <div>
-      {blogs.map((blog) => (
-        <BlogCard key={blog._id} blog={blog} />
-      ))}
-    </div>
+    <Wrapper>
+      <div>
+        <div className="title">Bản tin công nghệ</div>
+        {blogs.map((blog) => (
+          <BlogCard key={blog._id} blog={blog} />
+        ))}
+      </div>
+    </Wrapper>
   );
 };
 
