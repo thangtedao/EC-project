@@ -34,7 +34,6 @@ export const loader = async () => {
         const products = await customFetch
           .get(`/product/?category=${category._id}&limit=20&status=Available`)
           .then(({ data }) => data);
-
         return products;
       })
     );
@@ -270,7 +269,7 @@ const Home = () => {
             </NavLink>
             <div className="blog-container">
               {blogs.map((blog) => (
-                <div className="blog-card">
+                <div key={blog._id} className="blog-card">
                   <div className="blog-image">
                     <img src={blog.imageTitle} alt="Image" />
                   </div>

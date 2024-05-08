@@ -125,16 +125,24 @@ export const getProducts = async (req, res) => {
       }
     }
 
-    const products = await query;
+    let products = await query.lean();
 
     const reviews = await Review.find();
     products.forEach((product) => {
-      const listReview = reviews.filter((item) => item.product === product._id);
-      const totalStar = listReview.reduce((acc, review) => {
-        acc + review.rating;
-      }, 0);
-      if (listReview.length > 0) product.star = totalStar / listReview.length;
+      const listReview = reviews.filter(
+        (item) => item.product.toString() === product._id.toString()
+      );
+      if (listReview.length > 0) {
+        const totalStar = listReview.reduce(
+          (acc, review) => acc + review.rating,
+          0
+        );
+        product.star = totalStar / listReview.length;
+      } else {
+        product.star = 0;
+      }
     });
+
     res.status(StatusCodes.OK).json(products);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

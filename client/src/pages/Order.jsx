@@ -78,7 +78,7 @@ const Order = () => {
           <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
-        <div className="title">Order</div>
+        <div className="title">Lịch sử đơn hàng</div>
 
         <Tabs
           value={value}
