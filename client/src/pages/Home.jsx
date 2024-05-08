@@ -169,7 +169,7 @@ const Home = () => {
           {/* FLASH SALE */}
           <div className="block-hot-sale">
             <div className="block-title">
-              <div className="sale-title">{event?.name}</div>
+              <div className="baloo-tamma-2-sale-title">{event?.name}</div>
               <ConfigProvider
                 theme={{
                   components: {
