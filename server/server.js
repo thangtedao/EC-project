@@ -34,7 +34,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
-// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(
   helmet.contentSecurityPolicy({
     useDefaults: true,
@@ -49,7 +49,7 @@ app.use(
         "'self'",
         "https://www.paypal.com",
         "https://cdn.tiny.cloud",
-        "https://recommendsys1-production-ba91.up.railway.app",
+        // "https://recommendsys1-production-ba91.up.railway.app",
       ],
       "frame-src": ["'self'", "https://www.sandbox.paypal.com"],
     },
