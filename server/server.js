@@ -44,12 +44,12 @@ app.use(
         "'self'",
         "https://www.paypal.com",
         "https://www.sandbox.paypal.com",
+        "https://recommendsys1-production-ba91.up.railway.app",
       ],
       "script-src": [
         "'self'",
         "https://www.paypal.com",
         "https://cdn.tiny.cloud",
-        // "https://recommendsys1-production-ba91.up.railway.app",
       ],
       "frame-src": ["'self'", "https://www.sandbox.paypal.com"],
     },
