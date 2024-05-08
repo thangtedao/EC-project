@@ -96,7 +96,6 @@ const DashboardProduct = () => {
       dataIndex: "totalSold",
       key: "totalSold",
       width: 70,
-      defaultSortOrder: "descend",
       sorter: (a, b) => a.totalSold - b.totalSold,
     },
     {
@@ -145,10 +144,10 @@ const DashboardProduct = () => {
         <Table
           className="table"
           style={{ border: "none" }}
-          rowSelection={{
-            type: selectionType,
-            ...rowSelection,
-          }}
+          // rowSelection={{
+          //   type: selectionType,
+          //   ...rowSelection,
+          // }}
           pagination={paginationConfig}
           columns={columns}
           dataSource={monthlyProducts?.map((product) => ({
