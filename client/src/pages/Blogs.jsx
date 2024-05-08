@@ -19,6 +19,8 @@ const Blogs = () => {
 
   return (
     <div>
+    <br/>
+    <h1>Điểm tin công nghệ: </h1>
       {blogs.map((blog) => (
         <BlogCard key={blog._id} blog={blog} />
       ))}

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  width: 60vw;
+  width: 70vw;
   height: 25vh;
   position: relative;
   display: flex;
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
     height: 100%;
     background-color: var(--background-secondary-color);
     display: flex;
-    padding-top: 1.2rem;
+    padding-top: 0.6rem;
     overflow: hidden;
     gap: 1rem;
   }
