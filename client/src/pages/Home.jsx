@@ -32,7 +32,7 @@ export const loader = async () => {
     const productsArray = await Promise.all(
       categories.map(async (category) => {
         const products = await customFetch
-          .get(`/product/?category=${category._id}&limit=20&status=Available`)
+          .get(`/product/?category=${category._id}&limit=10&status=Available`)
           .then(({ data }) => data);
         return products;
       })
