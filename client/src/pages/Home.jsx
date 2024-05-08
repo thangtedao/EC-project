@@ -226,7 +226,7 @@ const Home = () => {
           {user && (
             <div className="block-hot-sale">
               <div className="block-title">
-                <div className="sale-title">Đề xuất cho bạn</div>
+                <div className="baloo-tamma-2-sale-title">Đề xuất cho bạn</div>
               </div>
               {recommendPro.length > 0 && (
                 <SlideProduct products={recommendPro} />

@@ -49,6 +49,7 @@ app.use(
         "'self'",
         "https://www.paypal.com",
         "https://cdn.tiny.cloud",
+        "https://recommendsys1-production-ba91.up.railway.app",
       ],
       "frame-src": ["'self'", "https://www.sandbox.paypal.com"],
     },
