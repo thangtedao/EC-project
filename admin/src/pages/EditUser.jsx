@@ -230,6 +230,13 @@ const EditUser = () => {
                 <Divider />
 
                 <Space wrap size={16}>
+                  <Typography.Text strong>Rank:</Typography.Text>
+                  <Typography.Text>{user?.rank?.toUpperCase()}</Typography.Text>
+                </Space>
+
+                <Divider />
+
+                <Space wrap size={16}>
                   <Typography.Text strong>Email: </Typography.Text>
                   <Typography.Text size="large">{user?.email}</Typography.Text>
                 </Space>

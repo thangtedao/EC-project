@@ -89,7 +89,9 @@ const DashboardProduct = () => {
       dataIndex: "name",
       key: "name",
       // fixed: "left",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <a onClick={() => navigate(`/detail-product/${record._id}`)}>{text}</a>
+      ),
     },
     {
       title: "Sold",

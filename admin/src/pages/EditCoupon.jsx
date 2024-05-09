@@ -159,6 +159,68 @@ const EditCoupon = () => {
                       />
                     </Form.Item>
 
+                    <div className="discount">
+                      <div className="discount-item-1">
+                        <Typography.Title className="input-title">
+                          Code
+                        </Typography.Title>
+                        <Form.Item name="code">
+                          <Input
+                            size="large"
+                            placeholder="Enter Coupon Code"
+                            required
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="discount-item-2">
+                        <Typography.Title className="input-title">
+                          Type
+                        </Typography.Title>
+                        <Form.Item
+                          name="discountType"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select discount type",
+                            },
+                          ]}
+                        >
+                          <Select
+                            size="large"
+                            placeholder="Discount Type"
+                            value={discountType}
+                            onChange={(value) => setDiscountType(value)}
+                            options={[
+                              {
+                                value: "percentage",
+                                label: "Percentage",
+                              },
+                              {
+                                value: "fixed",
+                                label: "Fixed",
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="discount-item-3">
+                        <Typography.Title className="input-title">
+                          Discount
+                        </Typography.Title>
+                        <Form.Item name="discountValue">
+                          <InputNumber
+                            required
+                            suffix={discountType === "percentage" ? "%" : "VND"}
+                            style={{ width: "100%" }}
+                            size="large"
+                            placeholder="eg. 10"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
+
                     <div className="customer">
                       <div className="customer-item-1">
                         <Typography.Title className="input-title">
@@ -226,68 +288,6 @@ const EditCoupon = () => {
                           </Form.Item>
                         </div>
                       )}
-                    </div>
-
-                    <div className="discount">
-                      <div className="discount-item-1">
-                        <Typography.Title className="input-title">
-                          Code
-                        </Typography.Title>
-                        <Form.Item name="code">
-                          <Input
-                            size="large"
-                            placeholder="Enter Coupon Code"
-                            required
-                          />
-                        </Form.Item>
-                      </div>
-
-                      <div className="discount-item-2">
-                        <Typography.Title className="input-title">
-                          Type
-                        </Typography.Title>
-                        <Form.Item
-                          name="discountType"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please select discount type",
-                            },
-                          ]}
-                        >
-                          <Select
-                            size="large"
-                            placeholder="Discount Type"
-                            value={discountType}
-                            onChange={(value) => setDiscountType(value)}
-                            options={[
-                              {
-                                value: "percentage",
-                                label: "Percentage",
-                              },
-                              {
-                                value: "fixed",
-                                label: "Fixed",
-                              },
-                            ]}
-                          />
-                        </Form.Item>
-                      </div>
-
-                      <div className="discount-item-3">
-                        <Typography.Title className="input-title">
-                          Discount
-                        </Typography.Title>
-                        <Form.Item name="discountValue">
-                          <InputNumber
-                            required
-                            suffix={discountType === "percentage" ? "%" : "VND"}
-                            style={{ width: "100%" }}
-                            size="large"
-                            placeholder="eg. 10"
-                          />
-                        </Form.Item>
-                      </div>
                     </div>
 
                     <Typography.Title className="input-title">

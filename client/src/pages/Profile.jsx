@@ -140,6 +140,15 @@ const Profile = () => {
                 readOnly: true,
               }}
             />
+            <TextField
+              size="small"
+              label="Rank"
+              defaultValue={user?.rank?.toUpperCase()}
+              sx={{ width: "75%" }}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
 
             <div className="address-title">Address</div>
             <TextField

@@ -114,11 +114,11 @@ export const createOrder = async (req, res) => {
     });
     let rankToUpdate = "member";
 
-    if (totalSpent >= 20000000) {
+    if (totalSpent >= 100000000) {
       rankToUpdate = "diamond";
-    } else if (totalSpent >= 10000000) {
+    } else if (totalSpent >= 50000000) {
       rankToUpdate = "gold";
-    } else if (totalSpent >= 5000000) {
+    } else if (totalSpent >= 25000000) {
       rankToUpdate = "silver";
     }
 
@@ -427,12 +427,15 @@ export const showStats = async (req, res) => {
       { $limit: 20 },
     ]);
 
+    const totalUser = await User.countDocuments();
+
     res.json({
       monthlyApplications,
       dailyApplications,
       totalRevenue,
       totalOrder,
       totalProduct,
+      totalUser,
       orders,
       products,
     });
