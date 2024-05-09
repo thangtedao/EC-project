@@ -8,7 +8,23 @@ import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
-import { Breadcrumb, Card, Segmented, DatePicker, Button, message } from "antd";
+import {
+  Breadcrumb,
+  Card,
+  Segmented,
+  DatePicker,
+  Button,
+  message,
+  Statistic,
+  Col,
+  Row,
+} from "antd";
+import {
+  LaptopOutlined,
+  DollarOutlined,
+  SnippetsOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
@@ -37,6 +53,7 @@ export const loader = async ({ request }) => {
       totalRevenue,
       totalOrder,
       totalProduct,
+      totalUser,
       orders,
       products,
     } = response.data;
@@ -56,6 +73,7 @@ export const loader = async ({ request }) => {
       totalRevenue,
       totalOrder,
       totalProduct,
+      totalUser,
     };
   } catch (error) {
     if (error?.response?.status === 403) return redirect("/login");
@@ -77,6 +95,7 @@ const Dashboard = () => {
     totalRevenue,
     totalOrder,
     totalProduct,
+    totalUser,
   } = useLoaderData();
 
   const [showWarningMessage, setShowWarningMessage] = useState(false);
@@ -207,6 +226,71 @@ const Dashboard = () => {
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
+              <div>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Card>
+                      <Statistic
+                        title="Total Revenue"
+                        value={
+                          totalRevenue
+                            ?.toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"
+                        }
+                        // precision={2}
+                        // valueStyle={{
+                        //   color: "#3f8600",
+                        // }}
+                        prefix={<DollarOutlined />}
+                        // suffix="%"
+                      />
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card>
+                      <Statistic
+                        title="Total Products Sold"
+                        value={totalProduct}
+                        // precision={2}
+                        // valueStyle={{
+                        //   color: "#3f8600",
+                        // }}
+                        prefix={<LaptopOutlined />}
+                        // suffix="%"
+                      />
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card>
+                      <Statistic
+                        title="Total Orders"
+                        value={totalOrder}
+                        // precision={2}
+                        // valueStyle={{
+                        //   color: "#3f8600",
+                        // }}
+                        prefix={<SnippetsOutlined />}
+                        // suffix="%"
+                      />
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card>
+                      <Statistic
+                        title="Total Users"
+                        value={totalUser}
+                        // precision={2}
+                        // valueStyle={{
+                        //   color: "#3f8600",
+                        // }}
+                        prefix={<UserOutlined />}
+                        // suffix="%"
+                      />
+                    </Card>
+                  </Col>
+                </Row>
+              </div>
+
               <Card className="col-2-item" size="large" title={"Order Status"}>
                 <ChartPie />
               </Card>

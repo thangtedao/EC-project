@@ -17,6 +17,10 @@ export const loader = async () => {
       .get(`/product/?populate=category`)
       .then(({ data }) => data);
 
+    const stats = await customFetch
+      .get(`/order/stats-product`)
+      .then(({ data }) => data.products);
+
     const categories = await customFetch
       .get("/category/all-categories")
       .then(({ data }) => data);
@@ -25,16 +29,14 @@ export const loader = async () => {
       .get(`/category/get/child`)
       .then(({ data }) => data);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
-
-    return { products, categories, categoriesC, orders };
+    return { products, stats, categories, categoriesC };
   } catch (error) {
     return error;
   }
 };
 
 const AddEvent = () => {
-  let { products, categories, categoriesC, orders } = useLoaderData();
+  let { products, stats, categories, categoriesC } = useLoaderData();
   const navigate = useNavigate();
 
   dayjs.extend(customParseFormat);
@@ -58,12 +60,14 @@ const AddEvent = () => {
   categories = categories?.filter((item) => item !== null);
 
   products.forEach((product) => {
-    product.sold = orders.reduce((total, order) => {
-      return (
-        total +
-        order.orderItem.filter((item) => product._id === item.product.id).length
-      );
-    }, 0);
+    const foundItem = stats.find((item) => item._id === product._id);
+    if (foundItem) {
+      product.sold = foundItem.totalSold;
+      product.revenue = foundItem.totalRevenue;
+    } else {
+      product.sold = 0;
+      product.revenue = 0;
+    }
   });
 
   const [current, setCurrent] = useState(0);

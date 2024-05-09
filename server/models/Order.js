@@ -53,6 +53,10 @@ const orderSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isSeen: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: timeStamp,

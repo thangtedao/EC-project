@@ -47,7 +47,7 @@ const ChartLine = () => {
     label: {
       style: {
         fill: "#000",
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: "bold",
       },
       formatter: (value) => `${value.toLocaleString()}đ`,

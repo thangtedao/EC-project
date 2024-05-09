@@ -89,14 +89,15 @@ const DashboardProduct = () => {
       dataIndex: "name",
       key: "name",
       // fixed: "left",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <a onClick={() => navigate(`/detail-product/${record._id}`)}>{text}</a>
+      ),
     },
     {
       title: "Sold",
       dataIndex: "totalSold",
       key: "totalSold",
       width: 70,
-      defaultSortOrder: "descend",
       sorter: (a, b) => a.totalSold - b.totalSold,
     },
     {
@@ -145,10 +146,10 @@ const DashboardProduct = () => {
         <Table
           className="table"
           style={{ border: "none" }}
-          rowSelection={{
-            type: selectionType,
-            ...rowSelection,
-          }}
+          // rowSelection={{
+          //   type: selectionType,
+          //   ...rowSelection,
+          // }}
           pagination={paginationConfig}
           columns={columns}
           dataSource={monthlyProducts?.map((product) => ({

@@ -25,6 +25,10 @@ export const loader = async ({ params }) => {
       .get(`/product/?populate=category`)
       .then(({ data }) => data);
 
+    const stats = await customFetch
+      .get(`/order/stats-product`)
+      .then(({ data }) => data.products);
+
     const categories = await customFetch
       .get("/category/all-categories")
       .then(({ data }) => data);
@@ -33,16 +37,14 @@ export const loader = async ({ params }) => {
       .get(`/category/get/child`)
       .then(({ data }) => data);
 
-    const orders = await customFetch.get(`/order/`).then(({ data }) => data);
-
-    return { promotion, products, categories, categoriesC, orders };
+    return { promotion, products, categories, categoriesC, stats };
   } catch (error) {
     return error;
   }
 };
 
 const EditEvent = () => {
-  let { promotion, products, categories, categoriesC, orders } =
+  let { promotion, products, categories, categoriesC, orders, stats } =
     useLoaderData();
   const navigate = useNavigate();
 
@@ -67,12 +69,14 @@ const EditEvent = () => {
   categories = categories?.filter((item) => item !== null);
 
   products.forEach((product) => {
-    product.sold = orders.reduce((total, order) => {
-      return (
-        total +
-        order.orderItem.filter((item) => product._id === item.product.id).length
-      );
-    }, 0);
+    const foundItem = stats.find((item) => item._id === product._id);
+    if (foundItem) {
+      product.sold = foundItem.totalSold;
+      product.revenue = foundItem.totalRevenue;
+    } else {
+      product.sold = 0;
+      product.revenue = 0;
+    }
   });
 
   promotion.selectedProducts = products.filter((product) => {

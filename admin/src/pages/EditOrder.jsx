@@ -134,25 +134,31 @@ const EditOrder = () => {
                             />
                           }
                           title={
-                            <Typography.Text strong>
-                              <a href="/">{item.product?.name}</a>
+                            <Typography.Text
+                              strong
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                navigate(`/detail-product/${item.product.id}`)
+                              }
+                            >
+                              {item.product?.name}
                             </Typography.Text>
                           }
-                          description={
-                            <div>
-                              {item.variant?.map((i) => {
-                                return (
-                                  <div key={i._id}>
-                                    <Typography.Text strong>
-                                      {i.name + ": "}
-                                    </Typography.Text>
-                                    {i.value}
-                                    <br />
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          }
+                          // description={
+                          //   <div>
+                          //     {item.variant?.map((i) => {
+                          //       return (
+                          //         <div key={i._id}>
+                          //           <Typography.Text strong>
+                          //             {i.name + ": "}
+                          //           </Typography.Text>
+                          //           {i.value}
+                          //           <br />
+                          //         </div>
+                          //       );
+                          //     })}
+                          //   </div>
+                          // }
                         />
                       </div>
 
@@ -278,14 +284,29 @@ const EditOrder = () => {
                       "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                     }
                   />
-                  <Typography.Text>{order.user?.fullName}</Typography.Text>
+                  <Typography.Text
+                    onClick={() => navigate(`/edit-user/${order.user?._id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {order.user?.fullName}
+                  </Typography.Text>
                 </Space>
 
                 <Divider />
+
                 <Space wrap size={16}>
                   <Typography.Text strong>ID:</Typography.Text>
                   <Typography.Text size="large">
                     {order.user?._id}
+                  </Typography.Text>
+                </Space>
+
+                <Divider />
+
+                <Space wrap size={16}>
+                  <Typography.Text strong>Rank:</Typography.Text>
+                  <Typography.Text>
+                    {order.user?.rank?.toUpperCase()}
                   </Typography.Text>
                 </Space>
 

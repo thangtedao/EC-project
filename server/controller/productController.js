@@ -504,7 +504,7 @@ export const searchProduct = async (req, res) => {
         }
       }
 
-      const products = await query;
+      const products = await query.lean();
       res.status(StatusCodes.OK).json(products);
     }
   } catch (error) {
@@ -514,18 +514,34 @@ export const searchProduct = async (req, res) => {
 
 export const getRecommendProducts = async (req, res) => {
   try {
-    const { productIdList } = req.body;
-    let productIds = req.body.productIdList || []; // Lấy mảng các id sản phẩm từ request body, không có thì về rỗng
+    let productIds = req.body.productIdList || [];
     let products;
     if (productIds.length > 0) {
-      products = await Product.find({ pid: { $in: productIds } });
+      products = await Product.find({ pid: { $in: productIds } }).lean();
     } else {
       products = await Product.aggregate([{ $sample: { size: 10 } }]);
     }
 
-    res.status(200).json(products);
+    // Get review
+    const reviews = await Review.find();
+    products.forEach((product) => {
+      const listReview = reviews.filter(
+        (item) => item.product.toString() === product._id.toString()
+      );
+      if (listReview.length > 0) {
+        const totalStar = listReview.reduce(
+          (acc, review) => acc + review.rating,
+          0
+        );
+        product.star = totalStar / listReview.length;
+      } else {
+        product.star = 0;
+      }
+    });
+
+    res.status(StatusCodes.OK).json(products);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

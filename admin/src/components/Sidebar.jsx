@@ -48,7 +48,7 @@ const items = [
     null
   ),
   getItem(
-    "Promotion",
+    "Promotional",
     "sub3",
     <DollarOutlined />,
     [
@@ -72,16 +72,16 @@ const items = [
     ],
     null
   ),
-  getItem(
-    "Notification",
-    "sub5",
-    <BellOutlined />,
-    [
-      getItem("Product comment", "16", null, null, "/commentproductmng"),
-      getItem("Blog comment", "17", null, null, "/commentblogmng"),
-    ],
-    null
-  ),
+  // getItem(
+  //   "Notification",
+  //   "sub5",
+  //   <BellOutlined />,
+  //   [
+  //     getItem("Product comment", "16", null, null, "/commentproductmng"),
+  //     getItem("Blog comment", "17", null, null, "/commentblogmng"),
+  //   ],
+  //   null
+  // ),
 ];
 
 const getLevelKeys = (items1) => {

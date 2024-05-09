@@ -190,7 +190,11 @@ const AllOrder = () => {
       key: "user",
       fixed: "left",
       ...getColumnSearchProps("user"),
-      render: (user) => <a>{user.fullName}</a>,
+      render: (user) => (
+        <a onClick={() => navigate(`/edit-user/${user._id}`)}>
+          {user.fullName}
+        </a>
+      ),
     },
     {
       title: "TotalAmount",
@@ -207,6 +211,7 @@ const AllOrder = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       width: 150,
+      ...getColumnSearchProps("createdAt"),
       render: (createdAt) => createdAt.split("T")[0],
     },
     {

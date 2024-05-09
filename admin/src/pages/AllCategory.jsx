@@ -217,7 +217,7 @@ const AllCategory = () => {
       title: "Sub Category",
       dataIndex: "children",
       key: "children",
-      width: 200,
+      width: 300,
       render: (_, { children }) => (
         <>
           {children?.map((category) => {
@@ -236,14 +236,14 @@ const AllCategory = () => {
       key: "itemPerCate",
       width: 150,
     },
-    {
-      title: "Total Sold",
-      dataIndex: "sold",
-      key: "sold",
-      width: 100,
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.sold - b.sold,
-    },
+    // {
+    //   title: "Total Sold",
+    //   dataIndex: "sold",
+    //   key: "sold",
+    //   width: 100,
+    //   defaultSortOrder: "descend",
+    //   sorter: (a, b) => a.sold - b.sold,
+    // },
     {
       title: "Action",
       key: "operation",
