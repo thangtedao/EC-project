@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import { NavLink } from "react-router-dom";
 
@@ -8,6 +9,13 @@ const OrderItem = ({ order, cancelOrder }) => {
         <div className="order-header-info">
           <div>
             Đơn hàng <span className="normal-text">#{order._id.slice(18)}</span>
+          </div>
+
+          <div>
+            Ngày tạo:{" "}
+            <span className="normal-text">
+              {moment(order.createdAt).format("HH:mm, DD/MM/YYYY")}
+            </span>
           </div>
 
           <div>

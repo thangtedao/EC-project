@@ -56,7 +56,7 @@ const Coupon = () => {
           .then(({ data }) => data.coupon);
 
         setCoupon(fetchCoupon);
-      } else toast.warning("Chưa nhập gì kìa");
+      } else toast.warning("Nhập coupon");
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
     }

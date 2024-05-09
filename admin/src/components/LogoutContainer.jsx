@@ -81,19 +81,11 @@ const LogoutContainer = () => {
 
   const items = [
     {
-      label: <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Logout</a>,
-      key: "0",
-    },
-    {
       label: <div onClick={() => logoutUser()}>Logout</div>,
       key: "1",
     },
     {
       type: "divider",
-    },
-    {
-      label: "3rd menu item",
-      key: "3",
     },
   ];
 

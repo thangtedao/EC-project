@@ -100,7 +100,7 @@ const Profile = () => {
           <link rel="icon" type="image/svg+xml" href={NovaIcon} />
         </Helmet>
 
-        <h3>Customer Information</h3>
+        <h3>Thông tin cá nhân</h3>
         <Form method="post" className="form-info" encType="multipart/form-data">
           <div className="form-image">
             <div className="avatar">

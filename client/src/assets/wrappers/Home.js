@@ -68,12 +68,23 @@ const Wrapper = styled.div`
     align-items: center;
     padding: 1rem 0;
   }
-  .sale-title {
+  /* .sale-title {
     font-size: 2rem;
     font-weight: 700;
     color: white;
     text-transform: uppercase;
+  } */
+
+  .baloo-tamma-2-sale-title {
+    font-family: "Baloo Tamma 2", system-ui;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    font-size: 2.5rem;
+    color: white;
+    text-transform: uppercase;
   }
+
   .tabs {
     display: flex;
     gap: 1rem;
@@ -81,10 +92,26 @@ const Wrapper = styled.div`
   .tab {
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #fff;
+    border: 2px solid #fff;
     cursor: pointer;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: bold;
   }
-
+  .tab:hover {
+    background-color: rgba(
+      224,
+      25,
+      25,
+      1
+    ); /* Adjust the color and transparency as needed */
+  }
+  .ant-typography {
+    font-size: 1.3rem;
+  }
+  .ant-statistic-content-value {
+    font-size: 1.3rem;
+  }
   /* PRODUCTS SALE  */
   .product-by-category {
     display: flex;
@@ -98,6 +125,40 @@ const Wrapper = styled.div`
     font-size: 1.5rem;
     font-weight: bold;
     text-transform: uppercase;
+  }
+
+  /* Blog */
+  .blog-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 0.8rem;
+  }
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 2px solid #dedede;
+    padding: 5px;
+    border-radius: 10px;
+  }
+  .blog-image {
+    width: 100%;
+    img {
+      max-width: 100%;
+      max-height: 150px;
+    }
+  }
+  .blog-title {
+    max-width: 100%;
+    line-height: 1.5;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    max-height: 3.6em;
   }
 
   /* MEDIA QUERIES */

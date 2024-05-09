@@ -94,7 +94,7 @@ const Cart = () => {
             <a onClick={() => navigate("/")}>
               <ArrowBackIcon />
             </a>
-            Cart
+            Giỏ hàng
           </div>
           {cartItem?.length <= 0 ? (
             <div className="cart-empty">

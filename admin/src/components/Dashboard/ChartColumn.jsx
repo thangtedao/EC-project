@@ -75,12 +75,12 @@ const ChartColumn = () => {
     xField: "date",
     yField: "revenue",
     label: {
-      // Hiển thị giá trị của mỗi điểm dữ liệu trực tiếp trên đường
       style: {
-        fill: "#000", // Màu chữ của giá trị
-        fontSize: 10, // Kích thước chữ
-        fontWeight: "bold", // Độ đậm của chữ
+        fill: "#000",
+        fontSize: 13,
+        fontWeight: "bold",
       },
+      formatter: (value) => `${value.toLocaleString()}đ`,
     },
   };
 

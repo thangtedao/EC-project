@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
 import ListMessage from "./ListMessage";
 import TypeMessage from "./TypeMessage";
+import customFetch from "../../../utils/customFetch";
 
 function Chat(props) {
   let socket;
-  const ENDPOINT = "http://localhost:3001";
+  const ENDPOINT = "https://nova-store-admin-ic4l.onrender.com";
   const [messages, setMessages] = useState([]);
   // const user = useSelector((state) => state.user.user);
   const user = {
@@ -19,8 +19,8 @@ function Chat(props) {
   useEffect(() => {
     if (!idConversation) return;
     const getAllMessageByConversation = async () => {
-      const { data } = await axios.get(
-        `http://localhost:3001/api/chat/message?idConversation=${idConversation}`
+      const { data } = await customFetch.get(
+        `/chat/message?idConversation=${idConversation}`
       );
       setMessages(data.messageList);
     };
@@ -57,10 +57,7 @@ function Chat(props) {
       message,
       idConversation,
     };
-    const { data } = await axios.post(
-      "http://localhost:3001/api/chat/save",
-      payload
-    );
+    const { data } = await customFetch.post("/chat/save", payload);
     socket.emit("chat", data);
   };
 

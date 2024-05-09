@@ -69,7 +69,7 @@ const ProductCard = ({ product }) => {
         <div className="product-rating">
           <Rating
             name="star"
-            value={product?.totalRating || 0}
+            value={product.star}
             size="small"
             icon={<FaStar />}
             emptyIcon={<FaRegStar />}
