@@ -9,7 +9,16 @@ import {
   EyeOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Table, Image, Button, Input, Dropdown, Space } from "antd";
+import {
+  Breadcrumb,
+  Table,
+  Image,
+  Button,
+  Input,
+  Dropdown,
+  Space,
+  Tag,
+} from "antd";
 import Highlighter from "react-highlight-words";
 
 export const loader = async () => {
@@ -267,7 +276,18 @@ const AllUser = () => {
       width: 110,
       dataIndex: "rank",
       key: "rank",
-      render: (rank) => rank?.toUpperCase(),
+      render: (rank) => {
+        switch (rank) {
+          case "silver":
+            return <Tag color="silver">{rank?.toUpperCase()}</Tag>;
+          case "gold":
+            return <Tag color="gold">{rank?.toUpperCase()}</Tag>;
+          case "diamond":
+            return <Tag color="cyan">{rank?.toUpperCase()}</Tag>;
+          default:
+            return <Tag color="lime">{rank?.toUpperCase()}</Tag>;
+        }
+      },
       filters: [
         {
           text: "Member",

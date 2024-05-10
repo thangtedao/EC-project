@@ -47,7 +47,11 @@ const DashboardOrder = () => {
       dataIndex: "user",
       key: "user",
       fixed: "left",
-      render: (user) => user.fullName,
+      render: (user) => (
+        <a onClick={() => navigate(`/edit-user/${user._id}`)}>
+          {user.fullName}
+        </a>
+      ),
     },
     {
       title: "Date",

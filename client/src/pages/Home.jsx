@@ -166,67 +166,69 @@ const Home = () => {
           </div>
 
           {/* FLASH SALE */}
-          <div className="block-hot-sale">
-            <div className="block-title">
-              <div className="baloo-tamma-2-sale-title">{event?.name}</div>
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Statistic: {
-                      contentFontSize: 18,
+          {event && (
+            <div className="block-hot-sale">
+              <div className="block-title">
+                <div className="baloo-tamma-2-sale-title">{event?.name}</div>
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Statistic: {
+                        contentFontSize: 18,
+                      },
                     },
-                  },
-                  token: {
-                    colorText: "#fff",
-                    fontSize: 18,
-                  },
-                }}
-              >
-                <div
-                  style={{
-                    width: "fit-content",
-                    display: "flex",
-                    gap: "1rem",
+                    token: {
+                      colorText: "#fff",
+                      fontSize: 18,
+                    },
                   }}
                 >
-                  <Typography>{deadlineText}</Typography>
-                  <Countdown
-                    value={deadline}
-                    format="DD : HH : mm : ss"
-                    onFinish={onFinish}
-                  />
-                </div>
-              </ConfigProvider>
-            </div>
-
-            <div className="tabs">
-              {allEvent.map((item) => {
-                return (
                   <div
-                    key={item._id}
-                    className="tab"
-                    onClick={() => [
-                      setEvent(item),
-                      setStartDate(new Date(item?.startDate)),
-                      setEndDate(new Date(item?.endDate)),
-                    ]}
+                    style={{
+                      width: "fit-content",
+                      display: "flex",
+                      gap: "1rem",
+                    }}
                   >
-                    {item.name}
+                    <Typography>{deadlineText}</Typography>
+                    <Countdown
+                      value={deadline}
+                      format="DD : HH : mm : ss"
+                      onFinish={onFinish}
+                    />
                   </div>
-                );
-              })}
-            </div>
+                </ConfigProvider>
+              </div>
 
-            {event?.products?.length > 0 && (
-              <SlideProduct products={event.products} />
-            )}
-          </div>
+              <div className="tabs">
+                {allEvent.map((item) => {
+                  return (
+                    <div
+                      key={item._id}
+                      className="tab"
+                      onClick={() => [
+                        setEvent(item),
+                        setStartDate(new Date(item?.startDate)),
+                        setEndDate(new Date(item?.endDate)),
+                      ]}
+                    >
+                      {item.name}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {event?.products?.length > 0 && (
+                <SlideProduct products={event.products} />
+              )}
+            </div>
+          )}
 
           {/* products Recommended by AI */}
           {user && (
             <div className="block-hot-sale">
               <div className="block-title">
-                <div className="sale-title">Đề xuất cho bạn</div>
+                <div className="baloo-tamma-2-sale-title">Đề xuất cho bạn</div>
               </div>
               {recommendPro.length > 0 && (
                 <SlideProduct products={recommendPro} />
@@ -269,12 +271,16 @@ const Home = () => {
             </NavLink>
             <div className="blog-container">
               {blogs.map((blog) => (
-                <div key={blog._id} className="blog-card">
+                <NavLink
+                  to={`/blog/${blog._id}`}
+                  key={blog._id}
+                  className="blog-card"
+                >
                   <div className="blog-image">
                     <img src={blog.imageTitle} alt="Image" />
                   </div>
                   <div className="blog-title">{blog.title}</div>
-                </div>
+                </NavLink>
               ))}
             </div>
           </div>

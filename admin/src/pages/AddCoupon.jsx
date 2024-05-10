@@ -19,6 +19,7 @@ import {
   Image,
   Dropdown,
   Space,
+  Tag,
 } from "antd";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import {
@@ -239,39 +240,42 @@ const AddCoupon = () => {
       dataIndex: "fullName",
       key: "fullName",
       ...getColumnSearchProps("fullName"),
+      render: (fullName, record) => (
+        <a onClick={() => navigate(`/edit-user/${record._id}`)}>{fullName}</a>
+      ),
     },
-    {
-      title: "Email",
-      width: 150,
-      dataIndex: "email",
-      key: "email",
-      ...getColumnSearchProps("email"),
-    },
-    {
-      title: "Phone",
-      width: 150,
-      dataIndex: "phone",
-      key: "phone",
-      ...getColumnSearchProps("phone"),
-    },
-    {
-      title: "Address",
-      width: 250,
-      dataIndex: "address",
-      key: "address",
-      render: (address) => {
-        if (address.city && address.district && address.ward && address.home)
-          return (
-            address.city +
-            ", " +
-            address.district +
-            ", " +
-            address.ward +
-            ", " +
-            address.home
-          );
-      },
-    },
+    // {
+    //   title: "Email",
+    //   width: 150,
+    //   dataIndex: "email",
+    //   key: "email",
+    //   ...getColumnSearchProps("email"),
+    // },
+    // {
+    //   title: "Phone",
+    //   width: 150,
+    //   dataIndex: "phone",
+    //   key: "phone",
+    //   ...getColumnSearchProps("phone"),
+    // },
+    // {
+    //   title: "Address",
+    //   width: 250,
+    //   dataIndex: "address",
+    //   key: "address",
+    //   render: (address) => {
+    //     if (address.city && address.district && address.ward && address.home)
+    //       return (
+    //         address.city +
+    //         ", " +
+    //         address.district +
+    //         ", " +
+    //         address.ward +
+    //         ", " +
+    //         address.home
+    //       );
+    //   },
+    // },
     {
       title: "Order",
       width: 80,
@@ -295,7 +299,18 @@ const AddCoupon = () => {
       width: 110,
       dataIndex: "rank",
       key: "rank",
-      render: (rank) => rank?.toUpperCase(),
+      render: (rank) => {
+        switch (rank) {
+          case "silver":
+            return <Tag color="silver">{rank?.toUpperCase()}</Tag>;
+          case "gold":
+            return <Tag color="gold">{rank?.toUpperCase()}</Tag>;
+          case "diamond":
+            return <Tag color="cyan">{rank?.toUpperCase()}</Tag>;
+          default:
+            return <Tag color="lime">{rank?.toUpperCase()}</Tag>;
+        }
+      },
       filters: [
         {
           text: "Member",
@@ -326,7 +341,6 @@ const AddCoupon = () => {
     {
       title: "Action",
       key: "action",
-      fixed: "right",
       width: 100,
       render: ({ _id }) => (
         <div style={{ cursor: "pointer" }} onClick={() => handleViewUser(_id)}>
@@ -346,7 +360,7 @@ const AddCoupon = () => {
 
   // Số lượng sản phẩm trên mỗi trang
   const paginationConfig = {
-    pageSize: 10,
+    pageSize: 7,
   };
 
   //Modal
@@ -367,7 +381,7 @@ const AddCoupon = () => {
       content: "Do you want to cancel?",
       onOk: () => {
         // Xử lý khi đồng ý cancel
-        navigate('/all-coupon'); // Chuyển hướng trang về /allproduct
+        navigate("/all-coupon"); // Chuyển hướng trang về /allproduct
       },
     });
   };
@@ -438,6 +452,68 @@ const AddCoupon = () => {
                       />
                     </Form.Item>
 
+                    <div className="discount">
+                      <div className="discount-item-1">
+                        <Typography.Title className="input-title">
+                          Code
+                        </Typography.Title>
+                        <Form.Item name="code">
+                          <Input
+                            required
+                            size="large"
+                            placeholder="Enter Coupon Code"
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="discount-item-2">
+                        <Typography.Title className="input-title">
+                          Type
+                        </Typography.Title>
+                        <Form.Item
+                          name="discountType"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select disount type",
+                            },
+                          ]}
+                        >
+                          <Select
+                            size="large"
+                            placeholder="Discount Type"
+                            value={discountType}
+                            onChange={(value) => setDiscountType(value)}
+                            options={[
+                              {
+                                value: "percentage",
+                                label: "Percentage",
+                              },
+                              {
+                                value: "fixed",
+                                label: "Fixed",
+                              },
+                            ]}
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="discount-item-3">
+                        <Typography.Title className="input-title">
+                          Discount
+                        </Typography.Title>
+                        <Form.Item name="discountValue">
+                          <InputNumber
+                            required
+                            suffix={discountType === "percentage" ? "%" : "VND"}
+                            style={{ width: "100%" }}
+                            size="large"
+                            placeholder="eg. 10"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
+
                     <div className="customer">
                       <div className="customer-item-1">
                         <Typography.Title className="input-title">
@@ -507,68 +583,6 @@ const AddCoupon = () => {
                       )}
                     </div>
 
-                    <div className="discount">
-                      <div className="discount-item-1">
-                        <Typography.Title className="input-title">
-                          Code
-                        </Typography.Title>
-                        <Form.Item name="code">
-                          <Input
-                            required
-                            size="large"
-                            placeholder="Enter Coupon Code"
-                          />
-                        </Form.Item>
-                      </div>
-
-                      <div className="discount-item-2">
-                        <Typography.Title className="input-title">
-                          Type
-                        </Typography.Title>
-                        <Form.Item
-                          name="discountType"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please select disount type",
-                            },
-                          ]}
-                        >
-                          <Select
-                            size="large"
-                            placeholder="Discount Type"
-                            value={discountType}
-                            onChange={(value) => setDiscountType(value)}
-                            options={[
-                              {
-                                value: "percentage",
-                                label: "Percentage",
-                              },
-                              {
-                                value: "fixed",
-                                label: "Fixed",
-                              },
-                            ]}
-                          />
-                        </Form.Item>
-                      </div>
-
-                      <div className="discount-item-3">
-                        <Typography.Title className="input-title">
-                          Discount
-                        </Typography.Title>
-                        <Form.Item name="discountValue">
-                          <InputNumber
-                            required
-                            suffix={discountType === "percentage" ? "%" : "VND"}
-                            style={{ width: "100%" }}
-                            size="large"
-                            placeholder="eg. 10"
-                          />
-                        </Form.Item>
-                      </div>
-                    </div>
-
                     <Typography.Title className="input-title">
                       Description
                     </Typography.Title>
@@ -614,7 +628,7 @@ const AddCoupon = () => {
                   ...user,
                   key: user._id,
                 }))}
-                scroll={{ x: 1200 }}
+                scroll={{ x: 800 }}
                 showSorterTooltip={{
                   target: "sorter-icon",
                 }}
