@@ -15,11 +15,11 @@ const Wrapper = styled.div`
     font-weight: 400;
   }
   .col-1 {
-    width: 60%;
+    width: 50%;
     height: fit-content;
   }
   .col-2 {
-    width: 40%;
+    width: 50%;
     height: fit-content;
   }
   .col-2-item {
@@ -29,6 +29,23 @@ const Wrapper = styled.div`
   .col-1-item {
     border: 1px solid lightgray;
     border-radius: 10px;
+  }
+  .revenue {
+    width: "100%";
+    margin-left: 10px;
+    margin-bottom: 20px;
+  }
+  .revenue-item {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+  }
+  .ant-card-body {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .ant-spin-container {
+    padding-left: 10px;
+    padding-right: 10px;
   }
 `;
 

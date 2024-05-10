@@ -8,7 +8,6 @@ import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
-import RevenueStatistics from "../components/Dashboard/RevenueStatistics.jsx";
 import {
   Breadcrumb,
   Card,
@@ -166,17 +165,92 @@ const Dashboard = () => {
           />
 
           <div className="title">Dashboard</div>
-          {/* REVENUE CARD */}
           <div className="revenue">
-            <RevenueStatistics
-              totalRevenue={totalRevenue}
-              totalProduct={totalProduct}
-              totalOrder={totalOrder}
-              totalUser={totalUser}
-            />
+            <Row gutter={16}>
+              <Col span={6}>
+                <Card className="revenue-item">
+                  <Statistic
+                    title={
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          color: "#000",
+                          fontSize: "18px",
+                        }}
+                      >
+                        Total Revenue
+                      </span>
+                    }
+                    value={
+                      totalRevenue
+                        ?.toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"
+                    }
+                    prefix={<DollarOutlined />}
+                  />
+                </Card>
+              </Col>
+              <Col span={6}>
+                <Card className="revenue-item">
+                  <Statistic
+                    title={
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          color: "#000",
+                          fontSize: "18px",
+                        }}
+                      >
+                        Total Products Sold
+                      </span>
+                    }
+                    value={totalProduct}
+                    prefix={<LaptopOutlined />}
+                  />
+                </Card>
+              </Col>
+              <Col span={6}>
+                <Card className="revenue-item">
+                  <Statistic
+                    title={
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          color: "#000",
+                          fontSize: "18px",
+                        }}
+                      >
+                        Total Orders
+                      </span>
+                    }
+                    value={totalOrder}
+                    prefix={<SnippetsOutlined />}
+                  />
+                </Card>
+              </Col>
+              <Col span={6}>
+                <Card className="revenue-item">
+                  <Statistic
+                    title={
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          color: "#000",
+                          fontSize: "18px",
+                        }}
+                      >
+                        Total Users
+                      </span>
+                    }
+                    value={totalUser}
+                    prefix={<UserOutlined />}
+                  />
+                </Card>
+              </Col>
+            </Row>
           </div>
-          {/* REVENUE CHART */}
-          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1rem" }}>
+
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
             <div
               className="col-1"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -197,13 +271,47 @@ const Dashboard = () => {
               >
                 <ChartLine />
               </Card>
+
+              <Card
+                className="col-1-item"
+                size="large"
+                title={"Overview"}
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
+              >
+                <ChartColumn />
+              </Card>
+
+              <Card
+                className="col-1-item"
+                size="large"
+                title={"Order"}
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
+              >
+                <DashboardOrder />
+              </Card>
             </div>
 
             <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {/* <Card className="col-2-item" size="large" title={"Order Status"}>
+              <Card className="col-2-item" size="large" title={"Order Status"}>
                 <ChartPie />
               </Card>
               <Card
@@ -221,41 +329,9 @@ const Dashboard = () => {
                 }
               >
                 <DashboardProduct />
-              </Card> */}
-              <Card
-                className="col-2-item"
-                size="large"
-                title={"Overview"}
-                extra={
-                  <div style={{ display: "flex", gap: 20 }}>
-                    <RangePicker
-                      value={[startDate, endDate]}
-                      onChange={handleDateRangeChange}
-                    />
-                    <Button onClick={() => applyDateChange()}>Apply</Button>
-                  </div>
-                }
-              >
-                <ChartColumn />
               </Card>
             </div>
           </div>
-          <Card
-            className="col-1-item"
-            size="large"
-            title={"Order"}
-            extra={
-              <div style={{ display: "flex", gap: 20 }}>
-                <RangePicker
-                  value={[startDate, endDate]}
-                  onChange={handleDateRangeChange}
-                />
-                <Button onClick={() => applyDateChange()}>Apply</Button>
-              </div>
-            }
-          >
-            <DashboardOrder />
-          </Card>
         </Wrapper>
       </HelmetProvider>
     </DashboardContext.Provider>

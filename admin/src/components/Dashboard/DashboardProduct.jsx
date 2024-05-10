@@ -78,7 +78,7 @@ const DashboardProduct = () => {
     {
       title: "Image",
       dataIndex: "image",
-      width: 80,
+      width: 75,
       key: "image",
       fixed: "left",
       render: (image) => <Image width={50} height={50} src={image} />,
@@ -104,27 +104,11 @@ const DashboardProduct = () => {
       title: "Revenue",
       dataIndex: "totalRevenue",
       key: "totalRevenue",
-      width: 150,
+      width: 110,
       render: (revenue) =>
         revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.totalRevenue - b.totalRevenue,
-    },
-    {
-      title: "Action",
-      key: "operation",
-      // fixed: "right",
-      render: ({ _id }) => (
-        <Dropdown.Button
-          onClick={() => handleEditProduct(_id)}
-          menu={{
-            items,
-          }}
-        >
-          <EditOutlined />
-          Edit
-        </Dropdown.Button>
-      ),
     },
   ];
 
@@ -157,7 +141,7 @@ const DashboardProduct = () => {
             key: product._id,
           }))}
           onChange={onChange}
-          scroll={{ x: 610 }}
+          scroll={{ x: 415 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

@@ -34,14 +34,6 @@ const DashboardOrder = () => {
 
   const columns = [
     {
-      title: "ID Order",
-      width: 90,
-      dataIndex: "_id",
-      key: "_id",
-      // fixed: "left",
-      render: (_id) => "#" + _id?.slice(18),
-    },
-    {
       title: "Customer",
       width: 150,
       dataIndex: "user",
@@ -106,9 +98,18 @@ const DashboardOrder = () => {
       onFilter: (value, record) => record?.status === value,
     },
     {
+      title: "ID Order",
+      width: 90,
+      dataIndex: "_id",
+      key: "_id",
+      // fixed: "left",
+      render: (_id) => "#" + _id?.slice(18),
+    },
+    {
       title: "Action",
       key: "operation",
       fixed: "right",
+      width: 160,
       render: ({ _id }) => (
         <Dropdown.Button
           onClick={() => handleEditOrder(_id)}
