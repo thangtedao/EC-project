@@ -11,6 +11,7 @@ import styled from "styled-components";
 const Wrapper = styled.div`
   .ant-statistic {
     margin-left: 20px;
+    margin-bottom: 20px;
   }
 `;
 const RevenueStatistics = ({

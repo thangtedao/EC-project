@@ -9,6 +9,9 @@ import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
 import RevenueStatistics from "../components/Dashboard/RevenueStatistics.jsx";
+import ChartOrder from "../components/Dashboard/ChartOrder.jsx";
+import DashboardCustomer from "../components/Dashboard/DashboardCustomer.jsx";
+import ChartPieCustomer from "../components/Dashboard/ChartPieCustomer.jsx";
 import {
   Breadcrumb,
   Card,
@@ -19,6 +22,7 @@ import {
   Statistic,
   Col,
   Row,
+  Divider,
 } from "antd";
 import {
   LaptopOutlined,
@@ -176,7 +180,7 @@ const Dashboard = () => {
             />
           </div>
           {/* REVENUE CHART */}
-          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1rem" }}>
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "2rem" }}>
             <div
               className="col-1"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -203,25 +207,6 @@ const Dashboard = () => {
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {/* <Card className="col-2-item" size="large" title={"Order Status"}>
-                <ChartPie />
-              </Card>
-              <Card
-                className="col-2-item"
-                size="large"
-                title={"Product"}
-                extra={
-                  <div style={{ display: "flex", gap: 20 }}>
-                    <RangePicker
-                      value={[startDate, endDate]}
-                      onChange={handleDateRangeChange}
-                    />
-                    <Button onClick={() => applyDateChange()}>Apply</Button>
-                  </div>
-                }
-              >
-                <DashboardProduct />
-              </Card> */}
               <Card
                 className="col-2-item"
                 size="large"
@@ -240,8 +225,10 @@ const Dashboard = () => {
               </Card>
             </div>
           </div>
+          <Divider />
+          {/* ORDER TABLE */}
+
           <Card
-            className="col-1-item"
             size="large"
             title={"Order"}
             extra={
@@ -256,6 +243,123 @@ const Dashboard = () => {
           >
             <DashboardOrder />
           </Card>
+
+          {/* ORDER CHART */}
+
+          <div
+            style={{
+              display: "flex",
+              gap: "1.5rem",
+              marginBottom: "2rem",
+              marginTop: "2rem",
+            }}
+          >
+            <div
+              className="col-3"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card
+                className="col-3-item"
+                size="large"
+                title={"Order Statistic "}
+                extra={
+                  <div style={{ display: "flex", gap: 20 }}>
+                    <RangePicker
+                      value={[startDate, endDate]}
+                      onChange={handleDateRangeChange}
+                    />
+                    <Button onClick={() => applyDateChange()}>Apply</Button>
+                  </div>
+                }
+              >
+                <ChartOrder />
+              </Card>
+            </div>
+
+            <div
+              className="col-4"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card
+                className="col-4-item"
+                size="large"
+                title={"All Order Status"}
+              >
+                <ChartPie />
+              </Card>
+            </div>
+          </div>
+          <Divider />
+
+          {/* PRODUCT TABLE*/}
+
+          <Card
+            size="large"
+            title={"Product"}
+            extra={
+              <div style={{ display: "flex", gap: 20 }}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  onChange={handleDateRangeChange}
+                />
+                <Button onClick={() => applyDateChange()}>Apply</Button>
+              </div>
+            }
+          >
+            <DashboardProduct />
+          </Card>
+          <Divider />
+
+          {/* USER TABLE*/}
+          <Card
+            size="large"
+            title={"Customer"}
+            extra={
+              <div style={{ display: "flex", gap: 20 }}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  onChange={handleDateRangeChange}
+                />
+                <Button onClick={() => applyDateChange()}>Apply</Button>
+              </div>
+            }
+          >
+            <DashboardCustomer />
+          </Card>
+          {/* ORDER CHART */}
+
+          <div
+            style={{
+              display: "flex",
+              gap: "1.5rem",
+              marginBottom: "2rem",
+              marginTop: "2rem",
+            }}
+          >
+            <div
+              className="col-1"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card className="col-1-item" size="large" title={"Customer Rank"}>
+                <ChartPieCustomer />
+              </Card>
+            </div>
+
+            <div
+              className="col-2"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              {/* Biểu đồ tròn Customer Rank */}
+              <Card
+                className="col-2-item"
+                size="large"
+                title={"Customer Status"}
+              >
+                <ChartPieCustomer />
+              </Card>
+            </div>
+          </div>
+          <Divider />
         </Wrapper>
       </HelmetProvider>
     </DashboardContext.Provider>

@@ -30,6 +30,22 @@ const Wrapper = styled.div`
     border: 1px solid lightgray;
     border-radius: 10px;
   }
+  .col-3 {
+    width: 65%;
+    height: fit-content;
+  }
+  .col-4 {
+    width: 35%;
+    height: fit-content;
+  }
+  .col-3-item {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+  }
+  .col-4-item {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+  }
   .revenue {
     width: "100%";
     margin-left: 10px;
@@ -42,6 +58,7 @@ const Wrapper = styled.div`
   .ant-card-body {
     padding-left: 2px;
     padding-right: 2px;
+    padding-bottom: 5px;
   }
   .ant-spin-container {
     padding-left: 10px;

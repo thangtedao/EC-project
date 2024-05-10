@@ -85,13 +85,41 @@ const DashboardProduct = () => {
     },
     {
       title: "Name",
-      width: 150,
+      width: 170,
       dataIndex: "name",
       key: "name",
       // fixed: "left",
       render: (text, record) => (
         <a onClick={() => navigate(`/detail-product/${record._id}`)}>{text}</a>
       ),
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      width: 150,
+      // render: (category) => {
+      //   return category?.map((item) => <div key={item._id}>{item?.name}</div>);
+      // },
+      // filters: categories?.map((category) => {
+      //   return {
+      //     text: category?.name,
+      //     value: category?._id,
+      //     children: category?.children.map((item) => {
+      //       return { text: item?.name, value: item?._id };
+      //     }),
+      //   };
+      // }),
+      // filterMode: "tree",
+      // onFilter: (value, record) =>
+      //   record?.category?.some((cat) => cat?._id === value),
+    },
+    {
+      title: "View",
+      dataIndex: "totalSold",
+      key: "totalSold",
+      width: 70,
+      sorter: (a, b) => a.totalSold - b.totalSold,
     },
     {
       title: "Sold",
@@ -109,6 +137,23 @@ const DashboardProduct = () => {
         revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.totalRevenue - b.totalRevenue,
+    },
+    {
+      title: "Action",
+      key: "operation",
+      fixed: "right",
+      width: 160,
+      render: ({ _id }) => (
+        <Dropdown.Button
+          onClick={() => handleEditOrder(_id)}
+          menu={{
+            items,
+          }}
+        >
+          <EditOutlined />
+          Edit
+        </Dropdown.Button>
+      ),
     },
   ];
 
