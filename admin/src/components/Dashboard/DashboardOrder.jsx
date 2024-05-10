@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { EditOutlined, FormOutlined } from "@ant-design/icons";
 import { Tag, Table, Dropdown } from "antd";
 import { useDashboardContext } from "../../pages/Dashboard";
+import { ORDER_STATUS } from "../../utils/constants";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -69,6 +70,8 @@ const DashboardOrder = () => {
       key: "totalAmount",
       render: (totalAmount) =>
         totalAmount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
+      sorter: (a, b) => a.totalAmount - b.totalAmount,
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Status",
@@ -90,6 +93,13 @@ const DashboardOrder = () => {
         }
         return <Tag color={color}>{status?.toUpperCase()}</Tag>;
       },
+      filters: Object.keys(ORDER_STATUS).map((key) => {
+        return {
+          text: ORDER_STATUS[key],
+          value: ORDER_STATUS[key],
+        };
+      }),
+      onFilter: (value, record) => record?.status === value,
     },
     {
       title: "Action",

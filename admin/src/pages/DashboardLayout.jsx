@@ -17,7 +17,11 @@ export const loader = async () => {
       .get("/user/current-user")
       .then(({ data }) => data.user);
 
-    return user;
+    const newOrders = await customFetch
+      .get("/order/?isSeen=false&&admin=true")
+      .then(({ data }) => data);
+
+    return { user, newOrders };
   } catch (error) {
     if (error?.response?.status === 403) return redirect("/login");
     else if (error?.response?.status === 401) return redirect("/login");
@@ -28,7 +32,7 @@ export const loader = async () => {
 const DashboardContext = createContext();
 
 const DashboardLayout = () => {
-  const user = useLoaderData();
+  const { user, newOrders } = useLoaderData();
   const navigation = useNavigation();
 
   const isPageLoading = navigation.state === "loading";
@@ -42,6 +46,7 @@ const DashboardLayout = () => {
     <DashboardContext.Provider
       value={{
         user,
+        newOrders,
         showSidebar,
         toggleSidebar,
       }}

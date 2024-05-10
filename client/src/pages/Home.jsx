@@ -32,9 +32,8 @@ export const loader = async () => {
     const productsArray = await Promise.all(
       categories.map(async (category) => {
         const products = await customFetch
-          .get(`/product/?category=${category._id}&limit=20&status=Available`)
+          .get(`/product/?category=${category._id}&limit=10&status=Available`)
           .then(({ data }) => data);
-
         return products;
       })
     );
@@ -150,6 +149,9 @@ const Home = () => {
                   </NavLink>
                 );
               })}
+              <NavLink className="nav-link" to={`/blogs`}>
+                Tin công nghệ <IoIosArrowForward />
+              </NavLink>
             </div>
 
             {/* SLIDE */}
@@ -221,27 +223,26 @@ const Home = () => {
           </div>
 
           {/* products Recommended by AI */}
-
-          <div className="block-hot-sale">
-            <div className="block-title">
-              <div className="baloo-tamma-2-sale-title">Đề xuất cho bạn</div>
+          {user && (
+            <div className="block-hot-sale">
+              <div className="block-title">
+                <div className="sale-title">Đề xuất cho bạn</div>
+              </div>
+              {recommendPro.length > 0 && (
+                <SlideProduct products={recommendPro} />
+              )}
             </div>
-            {recommendPro.length > 0 && (
-              <SlideProduct products={recommendPro} />
-            )}
-          </div>
+          )}
 
           {/* BEST SALER */}
-          <div className="block-hot-sale">
+          {/* <div className="block-hot-sale">
             <div className="block-title">
-              <div className="baloo-tamma-2-sale-title">
-                Sản phẩm bạn chạy nhất
-              </div>
+              <div className="sale-title">Sản phẩm bán chạy nhất</div>
             </div>
             {bestSalerProduct.length > 0 && (
               <SlideProduct products={bestSalerProduct} />
             )}
-          </div>
+          </div> */}
 
           {/* PRODUCTS SALE */}
           {categories.map((category, index) => {
@@ -266,9 +267,16 @@ const Home = () => {
             <NavLink className="product-by-category-title" to={`/blogs`}>
               Điểm tin công nghệ
             </NavLink>
-            {blogs.map((blog) => (
-              <BlogCard key={blog._id} blog={blog} />
-            ))}
+            <div className="blog-container">
+              {blogs.map((blog) => (
+                <div key={blog._id} className="blog-card">
+                  <div className="blog-image">
+                    <img src={blog.imageTitle} alt="Image" />
+                  </div>
+                  <div className="blog-title">{blog.title}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {user && <AppChat />}

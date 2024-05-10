@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import Review from "../models/Review.js";
 import ProductVariation from "../models/ProductVariation.js";
 import ProductAttribute from "../models/ProductAttribute.js";
 import ItemBlog from "../models/ItemBlog.js";
@@ -124,7 +125,24 @@ export const getProducts = async (req, res) => {
       }
     }
 
-    const products = await query;
+    let products = await query.lean();
+
+    const reviews = await Review.find();
+    products.forEach((product) => {
+      const listReview = reviews.filter(
+        (item) => item.product.toString() === product._id.toString()
+      );
+      if (listReview.length > 0) {
+        const totalStar = listReview.reduce(
+          (acc, review) => acc + review.rating,
+          0
+        );
+        product.star = totalStar / listReview.length;
+      } else {
+        product.star = 0;
+      }
+    });
+
     res.status(StatusCodes.OK).json(products);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });

@@ -104,7 +104,7 @@ const SearchBar = () => {
   const fetchData = debounce(async (name) => {
     if (name !== "") {
       const response = await customFetch.get(
-        `/product/search/?name=${name}&limit=10&status=Available`
+        `/product/search/?name=${name}&limit=5&status=Available`
       );
       setProducts(response.data || []);
     } else {
@@ -118,8 +118,6 @@ const SearchBar = () => {
   };
 
   const handleClick = (id) => {
-    console.log("hello");
-    console.log(id);
     navigate(`/product/${id}`);
   };
 

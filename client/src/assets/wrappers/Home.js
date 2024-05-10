@@ -127,6 +127,40 @@ const Wrapper = styled.div`
     text-transform: uppercase;
   }
 
+  /* Blog */
+  .blog-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 0.8rem;
+  }
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 2px solid #dedede;
+    padding: 5px;
+    border-radius: 10px;
+  }
+  .blog-image {
+    width: 100%;
+    img {
+      max-width: 100%;
+      max-height: 150px;
+    }
+  }
+  .blog-title {
+    max-width: 100%;
+    line-height: 1.5;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    max-height: 3.6em;
+  }
+
   /* MEDIA QUERIES */
   @media (max-width: 1100px) {
     width: 100%;

@@ -11,7 +11,7 @@ import io from "socket.io-client";
 
 function Contact(props) {
   let socket;
-  const ENDPOINT = "localhost:3001";
+  const ENDPOINT = "https://nova-store-admin-ic4l.onrender.com";
   const dispatch = useDispatch();
   const conversationList = useSelector((state) => state.chat.conversationList);
   // const idConversation = useSelector(state => state.chat.idConversation)
