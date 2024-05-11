@@ -8,6 +8,11 @@ import ChartColumn from "../components/Dashboard/ChartColumn.jsx";
 import ChartLine from "../components/Dashboard/ChartLine.jsx";
 import DashboardOrder from "../components/Dashboard/DashboardOrder.jsx";
 import DashboardProduct from "../components/Dashboard/DashboardProduct.jsx";
+import RevenueStatistics from "../components/Dashboard/RevenueStatistics.jsx";
+import ChartOrder from "../components/Dashboard/ChartOrder.jsx";
+import DashboardCustomer from "../components/Dashboard/DashboardCustomer.jsx";
+import ChartPieCustomer from "../components/Dashboard/ChartPieCustomer.jsx";
+import ConversionRateChart from "../components/Dashboard/ConversionRateChart.jsx";
 import {
   Breadcrumb,
   Card,
@@ -18,6 +23,7 @@ import {
   Statistic,
   Col,
   Row,
+  Divider,
 } from "antd";
 import {
   LaptopOutlined,
@@ -39,10 +45,7 @@ export const loader = async ({ request }) => {
     ]);
 
     const end = dayjs().startOf("day").format(dateFormat);
-    const start = dayjs()
-      .subtract(1, "month")
-      .startOf("day")
-      .format(dateFormat);
+    const start = dayjs().subtract(7, "day").startOf("day").format(dateFormat);
     const response = await customFetch.post("/order/stats", {
       startDate: start,
       endDate: end,
@@ -50,16 +53,23 @@ export const loader = async ({ request }) => {
     const {
       monthlyApplications,
       dailyApplications,
-      totalRevenue,
+      numOfOrdersPerMonth,
+      numOfOrdersPerDay,
+      compareRevenue,
       totalOrder,
       totalProduct,
       totalUser,
       orders,
       products,
+      users,
     } = response.data;
 
     const ordersData = await customFetch
       .get(`/order/?admin=true`)
+      .then(({ data }) => data);
+
+    const allUsers = await customFetch
+      .get("/user/admin/all-users")
       .then(({ data }) => data);
 
     return {
@@ -67,10 +77,14 @@ export const loader = async ({ request }) => {
       end,
       products,
       orders,
+      users,
+      allUsers,
       ordersData,
       monthlyApplications,
       dailyApplications,
-      totalRevenue,
+      numOfOrdersPerMonth,
+      numOfOrdersPerDay,
+      compareRevenue,
       totalOrder,
       totalProduct,
       totalUser,
@@ -89,10 +103,14 @@ const Dashboard = () => {
     end,
     products,
     orders,
+    users,
+    allUsers,
     ordersData,
     monthlyApplications,
     dailyApplications,
-    totalRevenue,
+    numOfOrdersPerMonth,
+    numOfOrdersPerDay,
+    compareRevenue,
     totalOrder,
     totalProduct,
     totalUser,
@@ -108,10 +126,15 @@ const Dashboard = () => {
 
   const [startDate, setStartDate] = useState(dayjs(start));
   const [endDate, setEndDate] = useState(dayjs(end));
+  // revenue chart
   const [monthlyStats, setMonthlyStats] = useState(monthlyApplications);
   const [dailyStats, setDailyStats] = useState(dailyApplications);
+  // order and product table
   const [monthlyOrders, setmonthlyOrders] = useState(orders);
   const [monthlyProducts, setMonthlyProducts] = useState(products);
+  // order statistic chart
+  const [ordersPerMonth, setOrdersPerMonth] = useState(numOfOrdersPerMonth);
+  const [ordersPerDay, setOrdersPerDay] = useState(numOfOrdersPerDay);
 
   const handleDateRangeChange = (dates) => {
     if (dates) {
@@ -131,6 +154,8 @@ const Dashboard = () => {
         setDailyStats(response.data.dailyApplications);
         setmonthlyOrders(response.data.orders);
         setMonthlyProducts(response.data.products);
+        setOrdersPerMonth(response.data.numOfOrdersPerMonth);
+        setOrdersPerDay(response.data.numOfOrdersPerDay);
       } else setShowWarningMessage(true);
     } catch (error) {
       return;
@@ -143,6 +168,10 @@ const Dashboard = () => {
         monthlyProducts,
         monthlyOrders,
         monthlyStats,
+        ordersPerMonth,
+        ordersPerDay,
+        users,
+        allUsers,
         dailyStats,
         startDate,
         endDate,
@@ -165,7 +194,17 @@ const Dashboard = () => {
           />
 
           <div className="title">Dashboard</div>
-          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "4rem" }}>
+          {/* REVENUE CARD */}
+          <div className="revenue">
+            <RevenueStatistics
+              totalRevenue={compareRevenue}
+              totalProduct={totalProduct}
+              totalOrder={totalOrder}
+              totalUser={totalUser}
+            />
+          </div>
+          {/* REVENUE CHART */}
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "2rem" }}>
             <div
               className="col-1"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -173,7 +212,7 @@ const Dashboard = () => {
               <Card
                 className="col-1-item"
                 size="large"
-                title={"Revenue"}
+                title={"Overview"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
                     <RangePicker
@@ -186,11 +225,16 @@ const Dashboard = () => {
               >
                 <ChartLine />
               </Card>
+            </div>
 
+            <div
+              className="col-2"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
               <Card
-                className="col-1-item"
+                className="col-2-item"
                 size="large"
-                title={"Revenue"}
+                title={"Overview"}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
                     <RangePicker
@@ -203,11 +247,44 @@ const Dashboard = () => {
               >
                 <ChartColumn />
               </Card>
+            </div>
+          </div>
+          <Divider />
+          {/* ORDER TABLE */}
 
+          <Card
+            size="large"
+            title={"Order"}
+            extra={
+              <div style={{ display: "flex", gap: 20 }}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  onChange={handleDateRangeChange}
+                />
+                <Button onClick={() => applyDateChange()}>Apply</Button>
+              </div>
+            }
+          >
+            <DashboardOrder />
+          </Card>
+
+          {/* ORDER CHART */}
+          <div
+            style={{
+              display: "flex",
+              gap: "1.5rem",
+              marginBottom: "2rem",
+              marginTop: "2rem",
+            }}
+          >
+            <div
+              className="col-3"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
               <Card
-                className="col-1-item"
+                className="col-3-item"
                 size="large"
-                title={"Order"}
+                title={"Order Statistic "}
                 extra={
                   <div style={{ display: "flex", gap: 20 }}>
                     <RangePicker
@@ -218,100 +295,91 @@ const Dashboard = () => {
                   </div>
                 }
               >
-                <DashboardOrder />
+                <ChartOrder />
               </Card>
             </div>
 
             <div
-              className="col-2"
+              className="col-4"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              <div>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Card>
-                      <Statistic
-                        title="Total Revenue"
-                        value={
-                          totalRevenue
-                            ?.toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"
-                        }
-                        // precision={2}
-                        // valueStyle={{
-                        //   color: "#3f8600",
-                        // }}
-                        prefix={<DollarOutlined />}
-                        // suffix="%"
-                      />
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card>
-                      <Statistic
-                        title="Total Products Sold"
-                        value={totalProduct}
-                        // precision={2}
-                        // valueStyle={{
-                        //   color: "#3f8600",
-                        // }}
-                        prefix={<LaptopOutlined />}
-                        // suffix="%"
-                      />
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card>
-                      <Statistic
-                        title="Total Orders"
-                        value={totalOrder}
-                        // precision={2}
-                        // valueStyle={{
-                        //   color: "#3f8600",
-                        // }}
-                        prefix={<SnippetsOutlined />}
-                        // suffix="%"
-                      />
-                    </Card>
-                  </Col>
-                  <Col span={12}>
-                    <Card>
-                      <Statistic
-                        title="Total Users"
-                        value={totalUser}
-                        // precision={2}
-                        // valueStyle={{
-                        //   color: "#3f8600",
-                        // }}
-                        prefix={<UserOutlined />}
-                        // suffix="%"
-                      />
-                    </Card>
-                  </Col>
-                </Row>
-              </div>
-
-              <Card className="col-2-item" size="large" title={"Order Status"}>
-                <ChartPie />
-              </Card>
               <Card
-                className="col-2-item"
+                className="col-4-item"
                 size="large"
-                title={"Product"}
-                extra={
-                  <div style={{ display: "flex", gap: 20 }}>
-                    <RangePicker
-                      value={[startDate, endDate]}
-                      onChange={handleDateRangeChange}
-                    />
-                    <Button onClick={() => applyDateChange()}>Apply</Button>
-                  </div>
-                }
+                title={"All Order Status"}
               >
-                <DashboardProduct />
+                <ChartPie />
               </Card>
             </div>
           </div>
+          <Divider />
+
+          {/* PRODUCT TABLE*/}
+
+          <Card
+            size="large"
+            title={"Product"}
+            extra={
+              <div style={{ display: "flex", gap: 20 }}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  onChange={handleDateRangeChange}
+                />
+                <Button onClick={() => applyDateChange()}>Apply</Button>
+              </div>
+            }
+          >
+            <DashboardProduct />
+          </Card>
+
+          {/* CONVERTION RATE CHART*/}
+          {/* <Card
+            style={{ marginTop: "20px" }}
+            size="large"
+            title={"Conversion rate"}
+          >
+            <ConversionRateChart />
+          </Card> */}
+
+          <Divider />
+
+          {/* USER TABLE*/}
+          <Card size="large" title={"Top User"}>
+            <DashboardCustomer />
+          </Card>
+
+          {/* CUSTOMER CHART */}
+          <div
+            style={{
+              display: "flex",
+              gap: "1.5rem",
+              marginBottom: "2rem",
+              marginTop: "2rem",
+            }}
+          >
+            <div
+              className="col-1"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card className="col-1-item" size="large" title={"Customer Rank"}>
+                <ChartPieCustomer />
+              </Card>
+            </div>
+
+            {/* <div
+              className="col-2"
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Card
+                className="col-2-item"
+                size="large"
+                title={"Customer Status"}
+              >
+                <ChartPieCustomer />
+              </Card>
+            </div> */}
+          </div>
+          <Divider />
         </Wrapper>
       </HelmetProvider>
     </DashboardContext.Provider>

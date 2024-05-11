@@ -13,6 +13,8 @@ import {
   vnpayIpn,
   showStats2,
   getBestSalerProduct,
+  createGhnOrder,
+  printGhnOrder,
 } from "../controller/orderController.js";
 import {
   authenticateUser,
@@ -40,6 +42,18 @@ router.patch(
   authorizePermissions("admin"),
   updateOrder
 );
+router.patch(
+  "/create-ghn-order/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  createGhnOrder
+);
+router.patch(
+  "/print-ghn-order/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  printGhnOrder
+);
 router.patch("/cancel/:id", authenticateUser, cancelOrder);
 router.post(
   "/stats",
@@ -53,7 +67,7 @@ router.get(
   authorizePermissions("admin"),
   showStats2
 );
-router.get("/bestsalerproduct", getBestSalerProduct)
+router.get("/bestsalerproduct", getBestSalerProduct);
 router.get("/:id", authenticateUser, getOrder);
 
 export default router;

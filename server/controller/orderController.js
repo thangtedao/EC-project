@@ -7,6 +7,7 @@ import { createPayPalOrder } from "../utils/paypal.js";
 import { sendMail } from "../utils/email.js";
 import { StatusCodes } from "http-status-codes";
 import day from "dayjs";
+import axios from "axios";
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";
@@ -105,24 +106,6 @@ export const createOrder = async (req, res) => {
     });
 
     const order = await newOrder.save();
-
-    // Update rank user
-    const orders = await Order.find({ user: userId });
-    let totalSpent = 0;
-    orders.forEach((order) => {
-      totalSpent += order.totalAmount;
-    });
-    let rankToUpdate = "member";
-
-    if (totalSpent >= 100000000) {
-      rankToUpdate = "diamond";
-    } else if (totalSpent >= 50000000) {
-      rankToUpdate = "gold";
-    } else if (totalSpent >= 25000000) {
-      rankToUpdate = "silver";
-    }
-
-    await User.findByIdAndUpdate(userId, { $set: { rank: rankToUpdate } });
 
     // descrease coupon's number of usage
     if (coupon) {
@@ -226,8 +209,159 @@ export const updateOrder = async (req, res) => {
     const updatedOrder = await Order.findByIdAndUpdate(id, req.body, {
       new: true,
     });
+
+    if (req.body.status && req.body.status === "Delivered") {
+      // Update rank user
+      const orders = await Order.find({
+        user: updatedOrder.user,
+        status: "Delivered",
+      });
+      let totalSpent = 0;
+      orders.forEach((order) => {
+        totalSpent += order.totalAmount;
+      });
+      let rankToUpdate = "member";
+
+      if (totalSpent >= 100000000) {
+        rankToUpdate = "diamond";
+      } else if (totalSpent >= 50000000) {
+        rankToUpdate = "gold";
+      } else if (totalSpent >= 25000000) {
+        rankToUpdate = "silver";
+      }
+
+      await User.findByIdAndUpdate(updatedOrder.user, {
+        $set: { rank: rankToUpdate },
+      });
+    }
+
     if (!updatedOrder) throw new NotFoundError(`This order does not exist`);
     res.status(StatusCodes.OK).json(updatedOrder);
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const createGhnOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let updatedOrder = await Order.findById(id).populate("user");
+
+    if (!updatedOrder) throw new NotFoundError(`This order does not exist`);
+
+    let items = [];
+    updatedOrder.orderItem.forEach((item) => {
+      let i = {};
+      i.name = item.product.name;
+      i.quantity = parseInt(item.quantity);
+      i.price = item.priceAtOrder;
+
+      items.push(i);
+    });
+
+    const orderGhn = {
+      payment_type_id: 1,
+      note: "",
+      required_note: "CHOXEMHANGKHONGTHU",
+      return_phone: "",
+      return_address: "",
+      return_district_id: null,
+      return_ward_code: "",
+      client_order_code: "",
+      from_name: "",
+      from_phone: "",
+      from_address: "",
+      from_ward_name: "",
+      from_district_name: "",
+      from_province_name: "",
+      to_name: updatedOrder.user.fullName || "Thanh Vy",
+      to_phone: "0909999999",
+      to_address:
+        updatedOrder.user.address.home +
+          updatedOrder.user.address.ward +
+          updatedOrder.user.address.district +
+          updatedOrder.user.address.city ||
+        "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
+      to_ward_name: updatedOrder.user.address.ward,
+      to_district_name: updatedOrder.user.address.district,
+      to_province_name: updatedOrder.user.address.city,
+      cod_amount: 0,
+      content: "",
+      weight: 200,
+      length: 1,
+      width: 19,
+      height: 10,
+      cod_failed_amount: 2000,
+      pick_station_id: null,
+      deliver_station_id: null,
+      insurance_value: 0,
+      service_id: 0,
+      service_type_id: 2,
+      coupon: null,
+      pickup_time: 1692840132,
+      pick_shift: null,
+      items: items,
+    };
+
+    const { data } = await axios.post(
+      "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create",
+      orderGhn,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          shop_id: process.env.SHOP_ID,
+          token: process.env.TOKEN_GHN,
+        },
+      }
+    );
+
+    console.log(data);
+
+    if (!data.data)
+      return res.status(StatusCodes.CONFLICT).json({ msg: data.message });
+
+    updatedOrder.orderCode = data.data.order_code;
+    updatedOrder.status = "Processing";
+    updatedOrder.isSeen = true;
+    updatedOrder = await updatedOrder.save();
+
+    res.status(StatusCodes.OK).json(updatedOrder);
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const printGhnOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+
+    if (order && order.orderCode) {
+      const { data } = await axios.get(
+        "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/a5/gen-token",
+        {
+          headers: {
+            Token: process.env.TOKEN_GHN,
+          },
+          params: {
+            order_codes: order.orderCode,
+          },
+        }
+      );
+
+      const token = data.data.token;
+
+      const result = await axios.get(
+        `https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token=${token}`,
+        {
+          headers: {
+            Token: process.env.TOKEN_GHN,
+          },
+        }
+      );
+      res.send(result.config.url);
+    } else throw new NotFoundError(`This order does not exist`);
   } catch (error) {
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
@@ -257,6 +391,8 @@ export const showStats = async (req, res) => {
     endDate.setDate(endDate.getDate() + 1);
 
     /* CALCULATE THE STATS */
+
+    // ORDER
     const orders = await Order.aggregate([
       {
         $match: {
@@ -312,6 +448,20 @@ export const showStats = async (req, res) => {
       },
     ]);
 
+    let totalOrder = 0;
+    let totalRevenue = 0;
+    let totalProduct = 0;
+    if (orders.length > 0) {
+      orders.forEach((item) => {
+        item.orders.forEach((order) => {
+          totalRevenue += order.totalAmount;
+          totalProduct += order.totalProduct;
+          totalOrder++;
+        });
+      });
+    }
+
+    // PRODUCT
     const products = await Order.aggregate([
       {
         $match: {
@@ -350,18 +500,42 @@ export const showStats = async (req, res) => {
       },
     ]);
 
-    let totalOrder = 0;
-    let totalRevenue = 0;
-    let totalProduct = 0;
-    if (orders.length > 0) {
-      orders.forEach((item) => {
-        item.orders.forEach((order) => {
-          totalRevenue += order.totalAmount;
-          totalProduct += order.totalProduct;
-          totalOrder++;
-        });
-      });
-    }
+    // USER
+    const users = await Order.aggregate([
+      {
+        $match: {
+          status: {
+            $eq: "Delivered",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          user: { $arrayElemAt: ["$userData", 0] },
+        },
+      },
+      {
+        $group: {
+          _id: "$user._id",
+          avatar: { $first: "$user.avatar" },
+          fullName: { $first: "$user.fullName" },
+          email: { $first: "$user.email" },
+          phone: { $first: "$user.phone" },
+          address: { $first: "$user.address" },
+          rank: { $first: "$user.rank" },
+          totalSpent: { $sum: "$totalAmount" },
+        },
+      },
+      { $limit: 10 },
+    ]);
 
     /* FORMAT DATA TO SHOW IN GRAPH */
     let monthlyApplications = await Order.aggregate([
@@ -427,17 +601,101 @@ export const showStats = async (req, res) => {
       { $limit: 20 },
     ]);
 
+    /* NUMBER OF ORDER PER MONTH AND DAY */
+    let numOfOrdersPerMonth = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          total: { $sum: 1 },
+          cancel: {
+            $sum: { $cond: [{ $eq: ["$status", "Cancelled"] }, 1, 0] },
+          },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1 },
+      },
+      { $limit: 12 },
+    ]);
+
+    let numOfOrdersPerDay = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          total: { $sum: 1 },
+          cancel: {
+            $sum: { $cond: [{ $eq: ["$status", "Cancelled"] }, 1, 0] },
+          },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 },
+      },
+      { $limit: 10 },
+    ]);
+
+    /* NUMBER OF USERS */
     const totalUser = await User.countDocuments();
+
+    /* COMPARE REVENUE WITH LAST MONTH */
+    let compareRevenue = await Order.aggregate([
+      {
+        $match: {
+          status: {
+            $eq: "Delivered",
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $sort: { "_id.year": -1, "_id.month": -1 },
+      },
+      { $limit: 2 },
+    ]);
 
     res.json({
       monthlyApplications,
       dailyApplications,
-      totalRevenue,
+      numOfOrdersPerMonth,
+      numOfOrdersPerDay,
+      compareRevenue,
       totalOrder,
       totalProduct,
       totalUser,
       orders,
       products,
+      users,
     });
   } catch (error) {
     console.log(error);

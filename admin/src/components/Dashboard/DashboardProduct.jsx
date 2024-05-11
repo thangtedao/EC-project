@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { PRODUCT_STATUS } from "../../utils/constants.js";
-
 import { EditOutlined, FormOutlined } from "@ant-design/icons";
 import { Table, Image, Dropdown, Tag } from "antd";
 import { useDashboardContext } from "../../pages/Dashboard.jsx";
@@ -21,7 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const DashboardProduct = () => {
-  const { monthlyProducts } = useDashboardContext();
+  let { monthlyProducts } = useDashboardContext();
   const navigate = useNavigate();
 
   // products.map((product) => {
@@ -78,14 +76,14 @@ const DashboardProduct = () => {
     {
       title: "Image",
       dataIndex: "image",
-      width: 80,
+      width: 75,
       key: "image",
       fixed: "left",
       render: (image) => <Image width={50} height={50} src={image} />,
     },
     {
       title: "Name",
-      width: 150,
+      width: 170,
       dataIndex: "name",
       key: "name",
       // fixed: "left",
@@ -104,7 +102,7 @@ const DashboardProduct = () => {
       title: "Revenue",
       dataIndex: "totalRevenue",
       key: "totalRevenue",
-      width: 150,
+      width: 110,
       render: (revenue) =>
         revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
       defaultSortOrder: "descend",
@@ -113,10 +111,11 @@ const DashboardProduct = () => {
     {
       title: "Action",
       key: "operation",
-      // fixed: "right",
+      fixed: "right",
+      width: 160,
       render: ({ _id }) => (
         <Dropdown.Button
-          onClick={() => handleEditProduct(_id)}
+          onClick={() => handleEditOrder(_id)}
           menu={{
             items,
           }}
@@ -157,7 +156,7 @@ const DashboardProduct = () => {
             key: product._id,
           }))}
           onChange={onChange}
-          scroll={{ x: 610 }}
+          scroll={{ x: 415 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

@@ -1,33 +1,25 @@
 import React from "react";
 import styled from "styled-components";
 import Chart from "react-apexcharts";
-import { ORDER_STATUS } from "../../utils/constants.js";
-import { useDashboardContext } from "../../pages/Dashboard";
+import { useDashboardContext } from "../../pages/Dashboard.jsx";
 
 const Wrapper = styled.div`
   min-width: 250px;
 `;
 
-const ChartPie = () => {
-  const { ordersData } = useDashboardContext();
+const ChartPieCustomer = () => {
+  const { allUsers } = useDashboardContext();
 
-  const series = Object.values(ORDER_STATUS).map((status) => {
-    return ordersData.reduce((total, order) => {
-      return total + (order.status === status ? 1 : 0);
-    }, 0);
-  });
+  const labels = ["member", "silver", "gold", "diamond"];
 
-  const labels = Object.keys(ORDER_STATUS).map((key) => {
-    return ORDER_STATUS[key];
-  });
+  const series = labels.map((item) =>
+    allUsers.reduce(
+      (count, user) => (user.rank === item ? count + 1 : count),
+      0
+    )
+  );
 
-  const colors = [
-    "rgb(254, 176, 25)",
-    "rgb(0, 143, 251)",
-    "rgb(119, 93, 208)",
-    "rgb(0, 227, 150)",
-    "rgb(255, 69, 96)",
-  ];
+  const colors = ["#acf3b8", "#C0C0C0", "#ece908", "#3fb9d4"];
 
   const options = {
     series: series,
@@ -81,4 +73,4 @@ const ChartPie = () => {
   );
 };
 
-export default ChartPie;
+export default ChartPieCustomer;

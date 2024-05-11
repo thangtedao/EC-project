@@ -105,10 +105,12 @@ const DashboardOrder = () => {
       }),
       onFilter: (value, record) => record?.status === value,
     },
+
     {
       title: "Action",
       key: "operation",
       fixed: "right",
+      width: 160,
       render: ({ _id }) => (
         <Dropdown.Button
           onClick={() => handleEditOrder(_id)}

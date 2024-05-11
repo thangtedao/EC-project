@@ -1,6 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import { Column } from "@ant-design/charts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { useDashboardContext } from "../../pages/Dashboard";
 
 const Wrapper = styled.div`
@@ -18,13 +27,13 @@ const ChartColumn = () => {
     data = dailyStats
       .map((item) => {
         return {
-          date:
+          name:
             item._id.day +
             "/" +
             item._id.month +
             "/" +
             item._id.year.toString().slice(2, 4),
-          revenue: item.totalRevenue,
+          Revenue: item.totalRevenue,
         };
       })
       .reverse();
@@ -32,61 +41,44 @@ const ChartColumn = () => {
     data = monthlyStats
       .map((item) => {
         return {
-          date: item._id.month + "/" + item._id.year,
-          revenue: item.totalRevenue,
+          name: item._id.month + "/" + item._id.year,
+          Revenue: item.totalRevenue,
         };
       })
       .reverse();
   }
 
-  // const month = [
-  //   "January",
-  //   "February",
-  //   "March",
-  //   "April",
-  //   "May",
-  //   "June",
-  //   "July",
-  //   "August",
-  //   "September",
-  //   "October",
-  //   "November",
-  //   "December",
-  // ];
-
-  // const data = month.map((item) => {
-  //   let totalRevenue = 0;
-  //   let found = false;
-  //   monthlyStats.forEach((element) => {
-  //     if (element.date === item && !found) {
-  //       totalRevenue += element.totalRevenue;
-  //       found = true;
-  //     }
-  //   });
-  //   return {
-  //     date: item,
-  //     revenue: totalRevenue,
-  //   };
-  // });
-
-  const config = {
-    data,
-    height: 400,
-    xField: "date",
-    yField: "revenue",
-    label: {
-      style: {
-        fill: "#000",
-        fontSize: 12,
-        fontWeight: "bold",
-      },
-      formatter: (value) => `${value.toLocaleString()}đ`,
-    },
-  };
-
   return (
     <Wrapper>
-      <Column {...config} />
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart
+          data={data}
+          margin={{
+            top: 8,
+            right: 30,
+            left: 20,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip formatter={(value) => `${value.toLocaleString()}đ`} />
+          <Legend />
+          <Bar
+            dataKey="Revenue"
+            fill="#0d00ff"
+            label={{
+              position: "top",
+              value: "Revenue",
+              fill: "#000",
+              fontSize: 13,
+              dy: -2,
+              formatter: (value) => `${value.toLocaleString()}₫`,
+            }}
+          />
+        </BarChart>
+      </ResponsiveContainer>
     </Wrapper>
   );
 };

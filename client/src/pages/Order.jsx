@@ -87,7 +87,12 @@ const Order = () => {
           indicatorColor="secondary"
           aria-label="secondary tabs example"
         >
-          {Object.keys(ORDER_STATUS).map((key, idx) => {
+          <Tab value="Pending" label="Chờ xác nhận" />
+          <Tab value="Processing" label="Đang xử lý" />
+          <Tab value="Delivering" label="Đang giao" />
+          <Tab value="Delivered" label="Đã giao" />
+          <Tab value="Cancelled" label="Đã Hủy" />
+          {/* {Object.keys(ORDER_STATUS).map((key, idx) => {
             return (
               <Tab
                 key={idx}
@@ -95,7 +100,7 @@ const Order = () => {
                 label={ORDER_STATUS[key]}
               />
             );
-          })}
+          })} */}
         </Tabs>
 
         {orders && orders.length > 0 ? (
