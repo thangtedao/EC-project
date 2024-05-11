@@ -12,6 +12,7 @@ import RevenueStatistics from "../components/Dashboard/RevenueStatistics.jsx";
 import ChartOrder from "../components/Dashboard/ChartOrder.jsx";
 import DashboardCustomer from "../components/Dashboard/DashboardCustomer.jsx";
 import ChartPieCustomer from "../components/Dashboard/ChartPieCustomer.jsx";
+import ChartProduct from "../components/Dashboard/ChartProduct.jsx";
 import {
   Breadcrumb,
   Card,
@@ -308,6 +309,15 @@ const Dashboard = () => {
           >
             <DashboardProduct />
           </Card>
+          {/* PRODUCT CHART*/}
+          <Card
+            style={{ marginTop: "10px" }}
+            size="large"
+            title={"Conversion rate"}
+          >
+            <ChartProduct />
+          </Card>
+
           <Divider />
 
           {/* USER TABLE*/}
@@ -326,7 +336,7 @@ const Dashboard = () => {
           >
             <DashboardCustomer />
           </Card>
-          {/* ORDER CHART */}
+          {/* CUSTOMER CHART */}
 
           <div
             style={{
