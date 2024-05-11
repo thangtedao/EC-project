@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import Chart from "react-apexcharts";
-import { ORDER_STATUS } from "../../utils/constants.js";
 import { useDashboardContext } from "../../pages/Dashboard.jsx";
 
 const Wrapper = styled.div`
@@ -9,17 +8,18 @@ const Wrapper = styled.div`
 `;
 
 const ChartPieCustomer = () => {
-  const { ordersData } = useDashboardContext();
+  const { allUsers } = useDashboardContext();
 
-  const series = Object.values(ORDER_STATUS).map((status) => {
-    return ordersData.reduce((total, order) => {
-      return total + (order.status === status ? 1 : 0);
-    }, 0);
-  });
+  const labels = ["member", "silver", "gold", "diamond"];
 
-  const labels = Object.keys(ORDER_STATUS).map((key) => {
-    return ORDER_STATUS[key];
-  });
+  const series = labels.map((item) =>
+    allUsers.reduce(
+      (count, user) => (user.rank === item ? count + 1 : count),
+      0
+    )
+  );
+
+  const colors = ["#acf3b8", "#C0C0C0", "#ece908", "#3fb9d4"];
 
   const options = {
     series: series,
@@ -27,6 +27,7 @@ const ChartPieCustomer = () => {
     chart: {
       type: "donut",
     },
+    colors: colors,
     dataLabels: {
       enabled: true,
       formatter: function (val) {

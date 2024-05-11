@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import customFetch from "../../utils/customFetch.js";
 import Wrapper from "../../assets/wrapper/user/AllUser.js";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { useDashboardContext } from "../../pages/Dashboard.jsx";
@@ -22,40 +21,14 @@ import {
 } from "antd";
 import Highlighter from "react-highlight-words";
 
-export const loader = async () => {
-  try {
-    const orders = await customFetch
-      .get(`/order/?admin=true`)
-      .then(({ data }) => data);
-
-    const users = await customFetch
-      .get("/user/admin/all-users")
-      .then(({ data }) => data);
-
-    return { users, orders };
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
 const AllUser = () => {
-  const { users, orders } = useLoaderData();
   const navigate = useNavigate();
-
+  const { users } = useDashboardContext();
   //
   if (!users) {
     return <div>Đang tải...</div>;
   }
   //
-  users.forEach((user) => {
-    const userOrders = orders.filter((order) => order.user._id === user._id);
-    user.numOfOrder = userOrders.length;
-    user.totalSpent = userOrders.reduce(
-      (total, order) => total + order.totalAmount,
-      0
-    );
-  });
 
   //Search
   const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -229,7 +202,7 @@ const AllUser = () => {
     },
     {
       title: "Email",
-      width: 150,
+      width: 180,
       dataIndex: "email",
       key: "email",
       ...getColumnSearchProps("email"),
@@ -242,14 +215,6 @@ const AllUser = () => {
       ...getColumnSearchProps("phone"),
     },
     {
-      title: "Order",
-      width: 80,
-      dataIndex: "numOfOrder",
-      key: "order",
-      sorter: (a, b) => a.numOfOrder - b.numOfOrder,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
       title: "Total spent",
       width: 150,
       dataIndex: "totalSpent",
@@ -257,6 +222,7 @@ const AllUser = () => {
       render: (totalSpent) =>
         totalSpent.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
       sorter: (a, b) => a.totalSpent - b.totalSpent,
+      defaultSortOrder: "descend",
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -297,13 +263,6 @@ const AllUser = () => {
       onFilter: (value, record) => record?.rank === value,
     },
     {
-      title: "Status",
-      dataIndex: "isBlocked",
-      key: "isBlocked",
-      width: 100,
-      render: (isBlocked) => (isBlocked ? "Disabled" : "Active"),
-    },
-    {
       title: "Action",
       key: "action",
       fixed: "right",
@@ -327,41 +286,12 @@ const AllUser = () => {
 
   // Số lượng sản phẩm trên mỗi trang
   const paginationConfig = {
-    pageSize: 10,
+    pageSize: 5,
   };
 
   return (
     <HelmetProvider>
       <Wrapper>
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>User</title>
-        </Helmet>
-
-        <Breadcrumb
-          style={{ paddingBottom: "1rem" }}
-          items={[
-            {
-              title: <a onClick={() => navigate("/")}>Dashboard</a>,
-            },
-            {
-              title: "Customer",
-            },
-          ]}
-        />
-
-        <div className="title">User</div>
-
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "right",
-            alignItems: "center",
-            marginBottom: 20,
-          }}
-        ></div>
-
         <Table
           className="table"
           pagination={paginationConfig}

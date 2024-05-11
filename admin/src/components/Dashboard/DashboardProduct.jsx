@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { PRODUCT_STATUS } from "../../utils/constants.js";
-
 import { EditOutlined, FormOutlined } from "@ant-design/icons";
 import { Table, Image, Dropdown, Tag } from "antd";
 import { useDashboardContext } from "../../pages/Dashboard.jsx";
@@ -21,7 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const DashboardProduct = () => {
-  const { monthlyProducts } = useDashboardContext();
+  let { monthlyProducts } = useDashboardContext();
   const navigate = useNavigate();
 
   // products.map((product) => {
@@ -92,34 +90,6 @@ const DashboardProduct = () => {
       render: (text, record) => (
         <a onClick={() => navigate(`/detail-product/${record._id}`)}>{text}</a>
       ),
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      width: 150,
-      // render: (category) => {
-      //   return category?.map((item) => <div key={item._id}>{item?.name}</div>);
-      // },
-      // filters: categories?.map((category) => {
-      //   return {
-      //     text: category?.name,
-      //     value: category?._id,
-      //     children: category?.children.map((item) => {
-      //       return { text: item?.name, value: item?._id };
-      //     }),
-      //   };
-      // }),
-      // filterMode: "tree",
-      // onFilter: (value, record) =>
-      //   record?.category?.some((cat) => cat?._id === value),
-    },
-    {
-      title: "View",
-      dataIndex: "totalSold",
-      key: "totalSold",
-      width: 70,
-      sorter: (a, b) => a.totalSold - b.totalSold,
     },
     {
       title: "Sold",

@@ -12,7 +12,7 @@ import RevenueStatistics from "../components/Dashboard/RevenueStatistics.jsx";
 import ChartOrder from "../components/Dashboard/ChartOrder.jsx";
 import DashboardCustomer from "../components/Dashboard/DashboardCustomer.jsx";
 import ChartPieCustomer from "../components/Dashboard/ChartPieCustomer.jsx";
-import ChartProduct from "../components/Dashboard/ChartProduct.jsx";
+import ConversionRateChart from "../components/Dashboard/ConversionRateChart.jsx";
 import {
   Breadcrumb,
   Card,
@@ -53,16 +53,23 @@ export const loader = async ({ request }) => {
     const {
       monthlyApplications,
       dailyApplications,
-      totalRevenue,
+      numOfOrdersPerMonth,
+      numOfOrdersPerDay,
+      compareRevenue,
       totalOrder,
       totalProduct,
       totalUser,
       orders,
       products,
+      users,
     } = response.data;
 
     const ordersData = await customFetch
       .get(`/order/?admin=true`)
+      .then(({ data }) => data);
+
+    const allUsers = await customFetch
+      .get("/user/admin/all-users")
       .then(({ data }) => data);
 
     return {
@@ -70,10 +77,14 @@ export const loader = async ({ request }) => {
       end,
       products,
       orders,
+      users,
+      allUsers,
       ordersData,
       monthlyApplications,
       dailyApplications,
-      totalRevenue,
+      numOfOrdersPerMonth,
+      numOfOrdersPerDay,
+      compareRevenue,
       totalOrder,
       totalProduct,
       totalUser,
@@ -92,10 +103,14 @@ const Dashboard = () => {
     end,
     products,
     orders,
+    users,
+    allUsers,
     ordersData,
     monthlyApplications,
     dailyApplications,
-    totalRevenue,
+    numOfOrdersPerMonth,
+    numOfOrdersPerDay,
+    compareRevenue,
     totalOrder,
     totalProduct,
     totalUser,
@@ -111,10 +126,15 @@ const Dashboard = () => {
 
   const [startDate, setStartDate] = useState(dayjs(start));
   const [endDate, setEndDate] = useState(dayjs(end));
+  // revenue chart
   const [monthlyStats, setMonthlyStats] = useState(monthlyApplications);
   const [dailyStats, setDailyStats] = useState(dailyApplications);
+  // order and product table
   const [monthlyOrders, setmonthlyOrders] = useState(orders);
   const [monthlyProducts, setMonthlyProducts] = useState(products);
+  // order statistic chart
+  const [ordersPerMonth, setOrdersPerMonth] = useState(numOfOrdersPerMonth);
+  const [ordersPerDay, setOrdersPerDay] = useState(numOfOrdersPerDay);
 
   const handleDateRangeChange = (dates) => {
     if (dates) {
@@ -134,6 +154,8 @@ const Dashboard = () => {
         setDailyStats(response.data.dailyApplications);
         setmonthlyOrders(response.data.orders);
         setMonthlyProducts(response.data.products);
+        setOrdersPerMonth(response.data.numOfOrdersPerMonth);
+        setOrdersPerDay(response.data.numOfOrdersPerDay);
       } else setShowWarningMessage(true);
     } catch (error) {
       return;
@@ -146,6 +168,10 @@ const Dashboard = () => {
         monthlyProducts,
         monthlyOrders,
         monthlyStats,
+        ordersPerMonth,
+        ordersPerDay,
+        users,
+        allUsers,
         dailyStats,
         startDate,
         endDate,
@@ -171,7 +197,7 @@ const Dashboard = () => {
           {/* REVENUE CARD */}
           <div className="revenue">
             <RevenueStatistics
-              totalRevenue={totalRevenue}
+              totalRevenue={compareRevenue}
               totalProduct={totalProduct}
               totalOrder={totalOrder}
               totalUser={totalUser}
@@ -243,7 +269,6 @@ const Dashboard = () => {
           </Card>
 
           {/* ORDER CHART */}
-
           <div
             style={{
               display: "flex",
@@ -306,44 +331,24 @@ const Dashboard = () => {
           >
             <DashboardProduct />
           </Card>
-          {/* PRODUCT CHART*/}
-          <Card
+
+          {/* CONVERTION RATE CHART*/}
+          {/* <Card
             style={{ marginTop: "20px" }}
             size="large"
             title={"Conversion rate"}
-            extra={
-              <div style={{ display: "flex", gap: 20 }}>
-                <RangePicker
-                  value={[startDate, endDate]}
-                  onChange={handleDateRangeChange}
-                />
-                <Button onClick={() => applyDateChange()}>Apply</Button>
-              </div>
-            }
           >
-            <ChartProduct />
-          </Card>
+            <ConversionRateChart />
+          </Card> */}
 
           <Divider />
 
           {/* USER TABLE*/}
-          <Card
-            size="large"
-            title={"Customer"}
-            extra={
-              <div style={{ display: "flex", gap: 20 }}>
-                <RangePicker
-                  value={[startDate, endDate]}
-                  onChange={handleDateRangeChange}
-                />
-                <Button onClick={() => applyDateChange()}>Apply</Button>
-              </div>
-            }
-          >
+          <Card size="large" title={"Top User"}>
             <DashboardCustomer />
           </Card>
-          {/* CUSTOMER CHART */}
 
+          {/* CUSTOMER CHART */}
           <div
             style={{
               display: "flex",
@@ -361,11 +366,10 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            <div
+            {/* <div
               className="col-2"
               style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
             >
-              {/* Biểu đồ tròn Customer Rank */}
               <Card
                 className="col-2-item"
                 size="large"
@@ -373,7 +377,7 @@ const Dashboard = () => {
               >
                 <ChartPieCustomer />
               </Card>
-            </div>
+            </div> */}
           </div>
           <Divider />
         </Wrapper>

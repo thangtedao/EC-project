@@ -5,6 +5,8 @@ import {
   DollarOutlined,
   SnippetsOutlined,
   UserOutlined,
+  ArrowDownOutlined,
+  ArrowUpOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 
@@ -20,6 +22,13 @@ const RevenueStatistics = ({
   totalOrder,
   totalUser,
 }) => {
+  let rate = 0;
+  if (totalRevenue[1].totalRevenue > 0)
+    rate =
+      ((totalRevenue[0].totalRevenue - totalRevenue[1].totalRevenue) /
+        totalRevenue[1].totalRevenue) *
+      100;
+
   return (
     <Wrapper>
       <Row gutter={16}>
@@ -34,14 +43,24 @@ const RevenueStatistics = ({
                     fontSize: "18px",
                   }}
                 >
-                  Total Revenue
+                  Revenue{" "}
+                  <span style={{ fontSize: "0.8rem", fontWeight: "500" }}>
+                    {"(Compare with last month)"}
+                  </span>
                 </span>
               }
-              value={
-                totalRevenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
-                "đ"
-              }
-              prefix={<DollarOutlined />}
+              valueStyle={{
+                color: rate > 0 ? "#3f8600" : "#cf1322",
+              }}
+              // value={
+              //   totalRevenue[0].totalRevenue
+              //     ?.toString()
+              //     .replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ"
+              // }
+              value={Math.abs(rate).toFixed(2)}
+              // prefix={<DollarOutlined />}
+              prefix={rate > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+              suffix="%"
             />
           </Card>
         </Col>

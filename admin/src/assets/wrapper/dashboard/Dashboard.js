@@ -48,7 +48,6 @@ const Wrapper = styled.div`
   }
   .revenue {
     width: "100%";
-    margin-left: 10px;
     margin-bottom: 20px;
   }
   .revenue-item {

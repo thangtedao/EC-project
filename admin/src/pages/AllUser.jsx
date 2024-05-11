@@ -24,7 +24,7 @@ import Highlighter from "react-highlight-words";
 export const loader = async () => {
   try {
     const orders = await customFetch
-      .get(`/order/?admin=true`)
+      .get(`/order/?status=Delivered&&admin=true`)
       .then(({ data }) => data);
 
     const users = await customFetch
