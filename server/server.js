@@ -45,6 +45,7 @@ app.use(
         "https://www.paypal.com",
         "https://www.sandbox.paypal.com",
         "https://recommendsys1-production-ba91.up.railway.app",
+        "https://dev-online-gateway.ghn.vn",
       ],
       "script-src": [
         "'self'",

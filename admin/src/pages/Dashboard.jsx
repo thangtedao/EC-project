@@ -39,10 +39,7 @@ export const loader = async ({ request }) => {
     ]);
 
     const end = dayjs().startOf("day").format(dateFormat);
-    const start = dayjs()
-      .subtract(1, "month")
-      .startOf("day")
-      .format(dateFormat);
+    const start = dayjs().subtract(7, "day").startOf("day").format(dateFormat);
     const response = await customFetch.post("/order/stats", {
       startDate: start,
       endDate: end,

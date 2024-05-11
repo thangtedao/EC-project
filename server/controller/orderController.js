@@ -7,6 +7,7 @@ import { createPayPalOrder } from "../utils/paypal.js";
 import { sendMail } from "../utils/email.js";
 import { StatusCodes } from "http-status-codes";
 import day from "dayjs";
+import axios from "axios";
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";
@@ -229,6 +230,95 @@ export const updateOrder = async (req, res) => {
     if (!updatedOrder) throw new NotFoundError(`This order does not exist`);
     res.status(StatusCodes.OK).json(updatedOrder);
   } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
+export const createGhnOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let updatedOrder = await Order.findById(id).populate("user");
+
+    if (!updatedOrder) throw new NotFoundError(`This order does not exist`);
+
+    let items = [];
+    updatedOrder.orderItem.forEach((item) => {
+      let i = {};
+      i.name = item.product.name;
+      i.quantity = parseInt(item.quantity);
+      i.price = item.priceAtOrder;
+
+      items.push(i);
+    });
+
+    const orderGhn = {
+      payment_type_id: 1,
+      note: "",
+      required_note: "CHOXEMHANGKHONGTHU",
+      return_phone: "",
+      return_address: "",
+      return_district_id: null,
+      return_ward_code: "",
+      client_order_code: "",
+      from_name: "",
+      from_phone: "",
+      from_address: "",
+      from_ward_name: "",
+      from_district_name: "",
+      from_province_name: "",
+      to_name: updatedOrder.user.fullName || "Thanh Vy",
+      to_phone: "0909999999",
+      to_address:
+        updatedOrder.user.address.home +
+          updatedOrder.user.address.ward +
+          updatedOrder.user.address.district +
+          updatedOrder.user.address.city ||
+        "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
+      to_ward_name: updatedOrder.user.address.ward,
+      to_district_name: updatedOrder.user.address.district,
+      to_province_name: updatedOrder.user.address.city,
+      cod_amount: 0,
+      content: "",
+      weight: 200,
+      length: 1,
+      width: 19,
+      height: 10,
+      cod_failed_amount: 2000,
+      pick_station_id: null,
+      deliver_station_id: null,
+      insurance_value: 0,
+      service_id: 0,
+      service_type_id: 2,
+      coupon: null,
+      pickup_time: 1692840132,
+      pick_shift: null,
+      items: items,
+    };
+
+    const { data } = await axios.post(
+      "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create",
+      orderGhn,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          shop_id: process.env.SHOP_ID,
+          token: process.env.TOKEN_GHN,
+        },
+      }
+    );
+
+    console.log(data);
+
+    if (!data.data)
+      return res.status(StatusCodes.CONFLICT).json({ msg: data.message });
+
+    updatedOrder.orderCode = data.data.order_code;
+    updatedOrder.status = "Processing";
+    updatedOrder = await updatedOrder.save();
+
+    res.status(StatusCodes.OK).json(updatedOrder);
+  } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
