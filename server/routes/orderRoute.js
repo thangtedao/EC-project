@@ -14,6 +14,7 @@ import {
   showStats2,
   getBestSalerProduct,
   createGhnOrder,
+  printGhnOrder,
 } from "../controller/orderController.js";
 import {
   authenticateUser,
@@ -46,6 +47,12 @@ router.patch(
   authenticateUser,
   authorizePermissions("admin"),
   createGhnOrder
+);
+router.patch(
+  "/print-ghn-order/:id",
+  authenticateUser,
+  authorizePermissions("admin"),
+  printGhnOrder
 );
 router.patch("/cancel/:id", authenticateUser, cancelOrder);
 router.post(

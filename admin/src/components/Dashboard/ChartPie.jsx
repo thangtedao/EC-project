@@ -21,12 +21,21 @@ const ChartPie = () => {
     return ORDER_STATUS[key];
   });
 
+  const colors = [
+    "rgb(254, 176, 25)",
+    "rgb(0, 143, 251)",
+    "rgb(119, 93, 208)",
+    "rgb(0, 227, 150)",
+    "rgb(255, 69, 96)",
+  ];
+
   const options = {
     series: series,
     labels: labels,
     chart: {
       type: "donut",
     },
+    colors: colors,
     dataLabels: {
       enabled: true,
       formatter: function (val) {

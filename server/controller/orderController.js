@@ -332,6 +332,41 @@ export const createGhnOrder = async (req, res) => {
   }
 };
 
+export const printGhnOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+
+    if (order && order.orderCode) {
+      const { data } = await axios.get(
+        "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/a5/gen-token",
+        {
+          headers: {
+            Token: process.env.TOKEN_GHN,
+          },
+          params: {
+            order_codes: order.orderCode,
+          },
+        }
+      );
+
+      const token = data.data.token;
+
+      const result = await axios.get(
+        `https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token=${token}`,
+        {
+          headers: {
+            Token: process.env.TOKEN_GHN,
+          },
+        }
+      );
+      res.send(result.config.url);
+    } else throw new NotFoundError(`This order does not exist`);
+  } catch (error) {
+    res.status(StatusCodes.CONFLICT).json({ msg: error.message });
+  }
+};
+
 export const cancelOrder = async (req, res) => {
   try {
     const { id } = req.params;

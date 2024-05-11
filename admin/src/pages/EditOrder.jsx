@@ -56,7 +56,18 @@ const EditOrder = () => {
       const updatedOrder = await customFetch.patch(
         `/order/create-ghn-order/${order._id}`
       );
-      if (updatedOrder) navigate("/all-order");
+      if (updatedOrder) navigate(`/edit-order/${order._id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePrint = async () => {
+    try {
+      const { data } = await customFetch.patch(
+        `/order/print-ghn-order/${order._id}`
+      );
+      if (data) window.open(data);
     } catch (error) {
       console.log(error);
     }
@@ -68,7 +79,7 @@ const EditOrder = () => {
         `/order/update/${order._id}`,
         { status: "Cancelled", isCancel: false }
       );
-      if (updatedOrder) navigate("/all-order");
+      if (updatedOrder) navigate(`/edit-order/${order._id}`);
     } catch (error) {
       console.log(error);
     }
@@ -82,7 +93,7 @@ const EditOrder = () => {
         `/order/update/${order._id}`,
         values
       );
-      if (updatedOrder) navigate("/all-order");
+      if (updatedOrder) navigate(`/edit-order/${order._id}`);
     } catch (error) {
       console.log(error);
     }
@@ -415,7 +426,13 @@ const EditOrder = () => {
 
               {order.status === "Pending" && !order.isCancel && (
                 <Button onClick={handleConfirm} size="large">
-                  Confirm
+                  Confirm Order
+                </Button>
+              )}
+
+              {order.status === "Processing" && (
+                <Button onClick={handlePrint} size="large">
+                  Print Order
                 </Button>
               )}
 
@@ -425,30 +442,24 @@ const EditOrder = () => {
                 </Button>
               )}
 
-              {!(
-                order.status === "Cancelled" || order.status === "Pending"
-              ) && (
-                <Card
-                  className="col-2-item"
-                  size="large"
-                  title={`Change Status`}
-                >
-                  {/* <Typography.Title className="input-title">
+              {/* {(order.status === "Cancelled" || order.status === "Pending") && ( */}
+              <Card className="col-2-item" size="large" title={`Change Status`}>
+                {/* <Typography.Title className="input-title">
                   Change Status
                 </Typography.Title> */}
 
-                  <Form.Item name="status">
-                    <Select
-                      size="large"
-                      placeholder="Select Status"
-                      options={Object.keys(ORDER_STATUS).map((key) => ({
-                        value: ORDER_STATUS[key],
-                        label: ORDER_STATUS[key],
-                      }))}
-                    />
-                  </Form.Item>
-                </Card>
-              )}
+                <Form.Item name="status">
+                  <Select
+                    size="large"
+                    placeholder="Select Status"
+                    options={Object.keys(ORDER_STATUS).map((key) => ({
+                      value: ORDER_STATUS[key],
+                      label: ORDER_STATUS[key],
+                    }))}
+                  />
+                </Form.Item>
+              </Card>
+              {/* )} */}
             </div>
           </div>
           {/* BUTTON SUBMIT */}
