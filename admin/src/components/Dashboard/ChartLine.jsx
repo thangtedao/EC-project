@@ -1,6 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import { Line } from "@ant-design/charts";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 import { useDashboardContext } from "../../pages/Dashboard";
 
 const Wrapper = styled.div`
@@ -18,13 +27,13 @@ const ChartLine = () => {
     data = dailyStats
       .map((item) => {
         return {
-          date:
+          name:
             item._id.day +
             "/" +
             item._id.month +
             "/" +
             item._id.year.toString().slice(2, 4),
-          revenue: item.totalRevenue,
+          Revenue: item.totalRevenue,
         };
       })
       .reverse();
@@ -32,31 +41,46 @@ const ChartLine = () => {
     data = monthlyStats
       .map((item) => {
         return {
-          date: item._id.month + "/" + item._id.year,
-          revenue: item.totalRevenue,
+          name: item._id.month + "/" + item._id.year,
+          Revenue: item.totalRevenue,
         };
       })
       .reverse();
   }
 
-  const config = {
-    data,
-    height: 400,
-    xField: "date",
-    yField: "revenue",
-    label: {
-      style: {
-        fill: "#000",
-        fontSize: 12,
-        fontWeight: "bold",
-      },
-      formatter: (value) => `${value.toLocaleString()}đ`,
-    },
-  };
-
   return (
     <Wrapper>
-      <Line {...config} />
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart
+          data={data}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {/* <YAxis tickFormatter={(value) => `${value.toLocaleString()}₫`} /> */}
+          <Tooltip formatter={(value) => `${value.toLocaleString()}đ`} />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="Revenue"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+            label={{
+              position: "right",
+              value: "Revenue",
+              dy: -5,
+              fontSize: 13,
+              formatter: (value) => `${value.toLocaleString()}₫`,
+            }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </Wrapper>
   );
 };
