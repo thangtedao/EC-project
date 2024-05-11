@@ -311,9 +311,18 @@ const Dashboard = () => {
           </Card>
           {/* PRODUCT CHART*/}
           <Card
-            style={{ marginTop: "10px" }}
+            style={{ marginTop: "20px" }}
             size="large"
             title={"Conversion rate"}
+            extra={
+              <div style={{ display: "flex", gap: 20 }}>
+                <RangePicker
+                  value={[startDate, endDate]}
+                  onChange={handleDateRangeChange}
+                />
+                <Button onClick={() => applyDateChange()}>Apply</Button>
+              </div>
+            }
           >
             <ChartProduct />
           </Card>
