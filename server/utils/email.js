@@ -4,14 +4,14 @@ import moment from "moment";
 const transporter = nodemailer.createTransport({
   service: "hotmail",
   auth: {
-    user: "xuanthang369@outlook.com",
-    pass: "thangtedao123",
+    user: "vy19110142@outlook.com.vn",
+    pass: "hcmute19110142",
   },
 });
 
 export const sendMail = (user, order) => {
   const mailOptions = {
-    from: '"Nova Shop" <xuanthang369@outlook.com>',
+    from: '"Nova Shop" <vy19110142@outlook.com.vn>',
     to: user.email,
     subject: "Thanks for your purchase...",
     html: `
