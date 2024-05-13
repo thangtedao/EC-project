@@ -43,6 +43,7 @@
     "nodemailer": "^6.9.7",
     "nodemon": "^2.0.22",
     "qs": "^6.12.0",
+    "request": "^2.88.2",
     "sharp": "^0.32.6",
     "slugify": "^1.6.6",
     "socket.io": "^4.7.5",

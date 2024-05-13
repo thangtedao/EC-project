@@ -18,14 +18,10 @@ const VnPay_return = () => {
       try {
         const vnp_Params = new URLSearchParams(window.location.search);
 
-        const code = await customFetch
-          .get("/order/vnpay_return?" + vnp_Params.toString())
-          .then(({ data }) => data.code);
-
-        setCode(code);
-
+        const response = await customFetch.get("/order/vnpay_return?" + vnp_Params.toString());
+        const { code, orderId, paymentMethod } = response.data;
         if (code === "00") {
-          await customFetch.post("/order/create-order", { cartItem, coupon });
+          await customFetch.post("/order/create-order", { cartItem, coupon, orderId, paymentMethod });
           dispatch(removeCart());
           return navigate("/order");
         } else {

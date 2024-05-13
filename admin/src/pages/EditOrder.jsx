@@ -50,7 +50,7 @@ export const loader = async ({ params }) => {
 const EditOrder = () => {
   const order = useLoaderData();
   const navigate = useNavigate();
-
+  console.log(order)
   const handleConfirm = async () => {
     try {
       const updatedOrder = await customFetch.patch(
@@ -84,7 +84,9 @@ const EditOrder = () => {
       console.log(error);
     }
   };
-
+const handleRefund = ()=>{
+  navigate("/refund/"+order._id)
+}
   const onFinish = async (values) => {
     try {
       if (order.isCancel && values.status === "Cancelled")
@@ -437,11 +439,28 @@ const EditOrder = () => {
               )}
 
               {order.isCancel && (
-                <Button onClick={handleCancel} danger size="large">
-                  Cancel Order
-                </Button>
+                <div className="cancel-area">
+                  <Button onClick={handleCancel} danger size="large">
+                    Cancel Order
+                  </Button>
+                  <Button onClick={handleRefund} danger size="large">
+                    Refund Order
+                  </Button>
+                </div>
               )}
+              {order.status=='Cancelled' && !order.isRefund && (
+                <Button onClick={handleRefund} danger size="large">
+                    Refund Order
+                  </Button>
+              )}
+              {
+                order.status=='Cancelled' && order.isRefund  ?
+                <Button onClick={handleRefund} danger size="large" disabled={true}>
+                    Refunded
+                </Button>
 
+                :('')
+              }
               {/* {(order.status === "Cancelled" || order.status === "Pending") && ( */}
               <Card className="col-2-item" size="large" title={`Change Status`}>
                 {/* <Typography.Title className="input-title">

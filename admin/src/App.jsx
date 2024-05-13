@@ -25,7 +25,7 @@ import { loader as editEventLoader } from "./pages/EditEvent";
 import { loader as editBlogLoader } from "./pages/EditBlog";
 import { loader as detailProductLoader } from "./pages/DetailProduct";
 import { loader as detailCategoryLoader } from "./pages/DetailCategory";
-
+import { loader as refundOrder} from "./pages/RefundOrder"
 /* PAGE */
 import AllProduct from "./pages/AllProduct";
 import AddProduct from "./pages/AddProduct";
@@ -56,6 +56,7 @@ import DetailProduct from "./pages/DetailProduct";
 import DetailCategory from "./pages/DetailCategory";
 import AllEvent from "./pages/AllEvent";
 import EditEvent from "./pages/EditEvent";
+import RefundOrder from "./pages/RefundOrder";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -186,6 +187,11 @@ const router = createBrowserRouter([
         path: "commentproductmng",
         element: <CommentProductMng />,
       },
+      {
+        path:"refund/:id",
+        element: <RefundOrder/>,
+        loader: refundOrder
+      }
     ],
   },
   {
