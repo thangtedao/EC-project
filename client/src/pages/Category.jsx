@@ -85,7 +85,7 @@ const Category = () => {
   if (mainCategory.slug === "laptop" || mainCategory.slug === "pc") {
     ({ ram, ["ổ cứng"]: rom, cpu } = searchParams);
   } else if (mainCategory.slug === "phone") {
-    ({ ram, rom, chip } = searchParams);
+    ({ ram, ["bộ nhớ"]: rom, chip } = searchParams);
   } else if (mainCategory.slug === "screen") {
     ({
       ["tần số"]: ram,

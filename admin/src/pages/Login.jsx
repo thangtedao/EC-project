@@ -11,14 +11,18 @@ const Login = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    await customFetch
-      .post("/auth/login", values)
-      .catch(() => console.log("Login Failed"));
-    const user = await customFetch
-      .get("/user/current-user")
-      .then(({ data }) => data.user)
-      .catch(() => console.log("Login Failed"));
-    if (user) navigate("/");
+    try {
+      await customFetch
+        .post("/auth/login", values)
+        .catch(() => console.log("Login Failed"));
+      const user = await customFetch
+        .get("/user/current-user")
+        .then(({ data }) => data.user)
+        .catch(() => console.log("Login Failed"));
+      if (user) navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {

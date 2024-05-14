@@ -66,6 +66,16 @@ const orderSchema = mongoose.Schema({
     type: Date,
     default: timeStamp,
   },
+  vnpTxnRef: {
+    type: String
+  },
+  vnpTransactionDate:{
+    type:String
+  },
+  isRefund: {
+    type:Boolean,
+    default:false
+  }
 });
 
 export default mongoose.model("Order", orderSchema);

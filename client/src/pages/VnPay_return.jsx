@@ -8,7 +8,7 @@ import { removeCart } from "../state/cartSlice";
 const VnPay_return = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [code, setCode] = useState(null);
+  const [codes, setCodes] = useState(null);
 
   const cartItem = useSelector((state) => state.cart.cartItem);
   const coupon = useSelector((state) => state.cart.coupon);
@@ -19,17 +19,19 @@ const VnPay_return = () => {
       try {
         const vnp_Params = new URLSearchParams(window.location.search);
 
-        const code = await customFetch
-          .get("/order/vnpay_return?" + vnp_Params.toString())
-          .then(({ data }) => data.code);
-
-        setCode(code);
+        const response = await customFetch.get(
+          "/order/vnpay_return?" + vnp_Params.toString()
+        );
+        const { code, orderId, paymentMethod } = response.data;
+        setCodes(code);
 
         if (code === "00") {
           await customFetch.post("/order/create-order", {
             cartItem,
             coupon,
             address,
+            orderId,
+            paymentMethod,
           });
           dispatch(removeCart());
           return navigate("/order");
@@ -49,7 +51,7 @@ const VnPay_return = () => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      {code === "00" ? (
+      {codes === "00" ? (
         <p>Giao dịch thành công</p>
       ) : (
         <p style={{ color: "red" }}>GD thất bại thất bại</p>

@@ -84,7 +84,9 @@ const EditOrder = () => {
       console.log(error);
     }
   };
-
+  const handleRefund = () => {
+    navigate("/refund/" + order._id);
+  };
   const onFinish = async (values) => {
     try {
       if (order.isCancel && values.status === "Cancelled")
@@ -437,8 +439,30 @@ const EditOrder = () => {
               )}
 
               {order.isCancel && (
-                <Button onClick={handleCancel} danger size="large">
-                  Cancel Order
+                <div className="cancel-area">
+                  <Button onClick={handleCancel} danger size="large">
+                    Cancel Order
+                  </Button>
+                  <Button onClick={handleRefund} danger size="large">
+                    Refund Order
+                  </Button>
+                </div>
+              )}
+              {order.status == "Cancelled" &&
+                !order.isRefund &&
+                order.vnpTxnRef && (
+                  <Button onClick={handleRefund} danger size="large">
+                    Refund Order
+                  </Button>
+                )}
+              {order.status == "Cancelled" && order.isRefund && (
+                <Button
+                  onClick={handleRefund}
+                  danger
+                  size="large"
+                  disabled={true}
+                >
+                  Refunded
                 </Button>
               )}
 

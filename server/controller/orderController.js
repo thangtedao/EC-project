@@ -37,7 +37,7 @@ export const paypalCaptureOrder = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { cartItem, coupon, address } = req.body;
+    const { cartItem, coupon, address, orderId, paymentMethod } = req.body;
     const { userId } = req.user;
 
     if (!cartItem)
@@ -108,6 +108,9 @@ export const createOrder = async (req, res) => {
         ", " +
         address.home,
       totalAmount: totalAmount - discountAmount.toFixed(0),
+      paymentMethod: paymentMethod,
+      vnpTxnRef: orderId,
+      vnpTransactionDate: orderId.slice(-14),
     });
 
     const order = await newOrder.save();
@@ -797,7 +800,7 @@ export const createPaymentUrl = (req, res, next) => {
     let secretKey = process.env.VNP_HASHSECRET;
     let vnpUrl = process.env.VNP_URL;
     let returnUrl = process.env.VNP_RETURNURL;
-    let orderId = moment(date).format("DDHHmmss");
+    let orderId = moment(date).format("DDHHmmss") + createDate;
 
     let amount = req.body.amount;
     let bankCode = req.body.bankCode;
@@ -841,7 +844,8 @@ export const createPaymentUrl = (req, res, next) => {
 export const vnpayReturn = (req, res, next) => {
   try {
     let vnp_Params = req.query;
-
+    const orderId = req.query.vnp_TxnRef;
+    let transactionTime = vnp_Params["vnp_CreateDate"];
     let vnp_TransactionStatus = vnp_Params["vnp_TransactionStatus"];
     if (vnp_TransactionStatus === "02")
       return res.status(StatusCodes.OK).json({ code: "02" });
@@ -862,7 +866,9 @@ export const vnpayReturn = (req, res, next) => {
     let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
 
     if (secureHash === signed) {
-      res.status(StatusCodes.OK).json({ code: "00" });
+      res
+        .status(StatusCodes.OK)
+        .json({ code: "00", orderId: orderId, paymentMethod: "vnpay" });
     } else {
       res.status(StatusCodes.OK).json({ code: "97" });
     }
@@ -975,6 +981,109 @@ export const getBestSalerProduct = async (req, res) => {
   } catch (error) {
     console.log(error);
     return error;
+  }
+};
+
+export const refundOrder = async (req, res) => {
+  process.env.TZ = "Asia/Ho_Chi_Minh";
+  let date = new Date();
+
+  // let config = require('config');
+  // let crypto = require("crypto");
+
+  let vnp_TmnCode = process.env.VNP_TMNCODE;
+  let secretKey = process.env.VNP_HASHSECRET;
+  let vnp_Api = process.env.VNP_API;
+
+  let vnp_TxnRef = req.body.vnpTxnRef;
+  let vnp_TransactionDate = req.body.transactionDate;
+  let vnp_Amount = req.body.tototalAmount * 100;
+  let vnp_TransactionType = req.body.transactionType;
+  let vnp_CreateBy = req.body.CreateBy;
+
+  let currCode = "VND";
+
+  let vnp_RequestId = moment(date).format("HHmmss");
+  let vnp_Version = "2.1.0";
+  let vnp_Command = "refund";
+  let vnp_OrderInfo = "Hoan tien GD ma:" + vnp_TxnRef;
+
+  let vnp_IpAddr =
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress;
+
+  let vnp_CreateDate = moment(date).format("YYYYMMDDHHmmss");
+
+  let vnp_TransactionNo = "0";
+
+  let data =
+    vnp_RequestId +
+    "|" +
+    vnp_Version +
+    "|" +
+    vnp_Command +
+    "|" +
+    vnp_TmnCode +
+    "|" +
+    vnp_TransactionType +
+    "|" +
+    vnp_TxnRef +
+    "|" +
+    vnp_Amount +
+    "|" +
+    vnp_TransactionNo +
+    "|" +
+    vnp_TransactionDate +
+    "|" +
+    vnp_CreateBy +
+    "|" +
+    vnp_CreateDate +
+    "|" +
+    vnp_IpAddr +
+    "|" +
+    vnp_OrderInfo;
+  let hmac = crypto.createHmac("sha512", secretKey);
+  let vnp_SecureHash = hmac.update(new Buffer(data, "utf-8")).digest("hex");
+
+  let dataObj = {
+    vnp_RequestId: vnp_RequestId,
+    vnp_Version: vnp_Version,
+    vnp_Command: vnp_Command,
+    vnp_TmnCode: vnp_TmnCode,
+    vnp_TransactionType: vnp_TransactionType,
+    vnp_TxnRef: vnp_TxnRef,
+    vnp_Amount: vnp_Amount,
+    vnp_TransactionNo: vnp_TransactionNo,
+    vnp_CreateBy: vnp_CreateBy,
+    vnp_OrderInfo: vnp_OrderInfo,
+    vnp_TransactionDate: vnp_TransactionDate,
+    vnp_CreateDate: vnp_CreateDate,
+    vnp_IpAddr: vnp_IpAddr,
+    vnp_SecureHash: vnp_SecureHash,
+  };
+  const { id } = req.params;
+  const order = await Order.findById(id);
+
+  try {
+    const response = await axios.post(vnp_Api, dataObj);
+    order.isRefund = true;
+    await order.save();
+    return res.status(200).json({ code: "00" });
+
+    // if (response.data.code === "00") {
+    //   order.isRefund = true;
+    //   await order.save();
+    //   return res.status(200).json({ code: "00" });
+    // } else {
+    //   // Handle unsuccessful response
+    //   console.error("Refund failed:", response.data);
+    //   return res.status(500).json({ message: "Refund failed" });
+    // }
+  } catch (error) {
+    console.log("Refund error:", error);
+    return res.status(500).json({ message: "Refund failed" });
   }
 };
 

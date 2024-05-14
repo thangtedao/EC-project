@@ -15,6 +15,7 @@ import {
   getBestSalerProduct,
   createGhnOrder,
   printGhnOrder,
+  refundOrder,
 } from "../controller/orderController.js";
 import {
   authenticateUser,
@@ -33,6 +34,7 @@ router.post(
 router.post("/create_payment_url", authenticateUser, createPaymentUrl);
 router.get("/vnpay_return", authenticateUser, vnpayReturn);
 router.get("/vnpay_ipn", authenticateUser, vnpayIpn);
+router.post("/refund/:id", refundOrder)
 
 router.post("/create-order", authenticateUser, createOrder);
 router.get("/", authenticateUser, getOrders);

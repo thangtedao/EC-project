@@ -47,6 +47,10 @@ const Wrapper = styled.div`
   .ant-typography {
     size: "large";
   }
+  .cancel-area{
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 export default Wrapper;
