@@ -37,7 +37,7 @@ export const paypalCaptureOrder = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { cartItem, coupon } = req.body;
+    const { cartItem, coupon, address } = req.body;
     const { userId } = req.user;
 
     if (!cartItem)
@@ -46,6 +46,8 @@ export const createOrder = async (req, res) => {
         .json({ msg: "Lỗi khi tạo đơn hàng" });
 
     let discountAmount = 0;
+    let productIds = [];
+    let productQty = [];
 
     const orderItem = cartItem.map((item) => {
       let variantPrice = item.variant ? item.variant.price : 0;
@@ -63,6 +65,9 @@ export const createOrder = async (req, res) => {
           discountAmount += coupon.discountValue;
           salePrice = salePrice - coupon.discountValue;
         }
+
+      productIds.push(item.product._id.toString());
+      productQty.push(item.quantity);
 
       return {
         product: {
@@ -95,17 +100,34 @@ export const createOrder = async (req, res) => {
       couponCode: coupon?.code,
       discountAmount: coupon ? discountAmount.toFixed(0) : 0,
       shippingAddress:
-        user.address.city +
+        address.city +
         ", " +
-        user.address.district +
+        address.district +
         ", " +
-        user.address.ward +
+        address.ward +
         ", " +
-        user.address.home,
+        address.home,
       totalAmount: totalAmount - discountAmount.toFixed(0),
     });
 
     const order = await newOrder.save();
+
+    // decrease stockQty
+    if (productIds.length > 0 && productQty.length > 0) {
+      const products = await Product.find({ _id: { $in: productIds } });
+      for (const product of products) {
+        const index = productIds.indexOf(product._id.toString());
+        const quantity = productQty[index];
+
+        if (product.stockQuantity - quantity <= 0) {
+          product.stockQuantity = 0;
+          product.status = PRODUCT_STATUS.OUT_OF_STOCK;
+        } else {
+          product.stockQuantity -= quantity;
+        }
+        await product.save();
+      }
+    }
 
     // descrease coupon's number of usage
     if (coupon) {
@@ -210,6 +232,29 @@ export const updateOrder = async (req, res) => {
       new: true,
     });
 
+    if (req.body.status && req.body.status === "Cancelled") {
+      const productIds = updatedOrder.orderItem.map((item) =>
+        item.product.id.toString()
+      );
+      const productQty = updatedOrder.orderItem.map((item) => item.quantity);
+
+      // increase stockQty
+      const products = await Product.find({ _id: { $in: productIds } });
+
+      for (const product of products) {
+        const index = productIds.indexOf(product._id.toString());
+        const quantity = productQty[index];
+
+        if (product.stockQuantity <= 0) {
+          product.stockQuantity += quantity;
+          product.status = PRODUCT_STATUS.AVAILABLE;
+        } else {
+          product.stockQuantity += quantity;
+        }
+        await product.save();
+      }
+    }
+
     if (req.body.status && req.body.status === "Delivered") {
       // Update rank user
       const orders = await Order.find({
@@ -238,6 +283,7 @@ export const updateOrder = async (req, res) => {
     if (!updatedOrder) throw new NotFoundError(`This order does not exist`);
     res.status(StatusCodes.OK).json(updatedOrder);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

@@ -108,16 +108,23 @@ export const increaseQuantity = async (req, res) => {
         .populate("cartItem.product")
         .populate("cartItem.variant");
     } else {
-      cart = await Cart.findOneAndUpdate(
-        {
-          user: userId,
-          "cartItem.product": cartItem.product._id,
-        },
-        { $inc: { "cartItem.$.quantity": 1 } },
-        { new: true }
-      )
-        .populate("cartItem.product")
-        .populate("cartItem.variant");
+      const checkQty = cartItem.quantity + 1 > cartItem.product.stockQuantity;
+      if (checkQty) {
+        cart = await Cart.findOne({ user: userId })
+          .populate("cartItem.product")
+          .populate("cartItem.variant");
+      } else {
+        cart = await Cart.findOneAndUpdate(
+          {
+            user: userId,
+            "cartItem.product": cartItem.product._id,
+          },
+          { $inc: { "cartItem.$.quantity": 1 } },
+          { new: true }
+        )
+          .populate("cartItem.product")
+          .populate("cartItem.variant");
+      }
     }
 
     res.status(StatusCodes.OK).json(cart);
@@ -224,10 +231,29 @@ export const removeFromCart = async (req, res) => {
 export const getUserCart = async (req, res) => {
   try {
     const { userId } = req.user;
-    const cart = await Cart.findOne({ user: userId }).populate({
+    let cart = await Cart.findOne({ user: userId }).populate({
       path: "cartItem",
       populate: [{ path: "product" }, { path: "variant" }],
     });
+
+    let isChange = false;
+    cart.cartItem.forEach((item) => {
+      if (item.product.stockQuantity <= 0) {
+        cart.cartItem.pull(item);
+        isChange = true;
+      }
+      if (item.quantity > item.product.stockQuantity) {
+        item.quantity = item.product.stockQuantity;
+        isChange = true;
+      }
+    });
+    if (isChange) {
+      await cart.save();
+      cart = await Cart.findOne({ user: userId })
+        .populate("cartItem.product")
+        .populate("cartItem.variant");
+    }
+
     res.status(StatusCodes.OK).json(cart);
   } catch (error) {
     console.log(error);

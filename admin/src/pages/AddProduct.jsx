@@ -71,7 +71,7 @@ const AddProduct = () => {
       content: "Do you want to cancel?",
       onOk: () => {
         // Xử lý khi đồng ý cancel
-        navigate('/all-product'); // Chuyển hướng trang về /allproduct
+        navigate("/all-product"); // Chuyển hướng trang về /allproduct
       },
     });
   };
@@ -171,7 +171,7 @@ const AddProduct = () => {
     setCategoriesC(newCategoriesC);
     setCategoryP(value);
   };
-  
+
   return (
     <HelmetProvider>
       <Wrapper>
@@ -524,6 +524,18 @@ const AddProduct = () => {
                     style={{ width: "100%" }}
                     size="large"
                     placeholder="eg. 100000"
+                  />
+                </Form.Item>
+
+                <Typography.Title className="input-title">
+                  Stock Quantity
+                </Typography.Title>
+                <Form.Item name="stockQuantity">
+                  <InputNumber
+                    required
+                    style={{ width: "100%" }}
+                    size="large"
+                    placeholder="eg. 10"
                   />
                 </Form.Item>
               </Card>

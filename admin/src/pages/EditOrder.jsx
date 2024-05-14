@@ -442,24 +442,28 @@ const EditOrder = () => {
                 </Button>
               )}
 
-              {/* {(order.status === "Cancelled" || order.status === "Pending") && ( */}
-              <Card className="col-2-item" size="large" title={`Change Status`}>
-                {/* <Typography.Title className="input-title">
+              {!(order.status === "Cancelled") && (
+                <Card
+                  className="col-2-item"
+                  size="large"
+                  title={`Change Status`}
+                >
+                  {/* <Typography.Title className="input-title">
                   Change Status
                 </Typography.Title> */}
 
-                <Form.Item name="status">
-                  <Select
-                    size="large"
-                    placeholder="Select Status"
-                    options={Object.keys(ORDER_STATUS).map((key) => ({
-                      value: ORDER_STATUS[key],
-                      label: ORDER_STATUS[key],
-                    }))}
-                  />
-                </Form.Item>
-              </Card>
-              {/* )} */}
+                  <Form.Item name="status">
+                    <Select
+                      size="large"
+                      placeholder="Select Status"
+                      options={Object.keys(ORDER_STATUS).map((key) => ({
+                        value: ORDER_STATUS[key],
+                        label: ORDER_STATUS[key],
+                      }))}
+                    />
+                  </Form.Item>
+                </Card>
+              )}
             </div>
           </div>
           {/* BUTTON SUBMIT */}

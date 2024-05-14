@@ -12,6 +12,7 @@ const VnPay_return = () => {
 
   const cartItem = useSelector((state) => state.cart.cartItem);
   const coupon = useSelector((state) => state.cart.coupon);
+  const address = useSelector((state) => state.cart.address);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +26,11 @@ const VnPay_return = () => {
         setCode(code);
 
         if (code === "00") {
-          await customFetch.post("/order/create-order", { cartItem, coupon });
+          await customFetch.post("/order/create-order", {
+            cartItem,
+            coupon,
+            address,
+          });
           dispatch(removeCart());
           return navigate("/order");
         } else {

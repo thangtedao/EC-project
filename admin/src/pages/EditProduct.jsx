@@ -233,6 +233,7 @@ const EditProduct = () => {
             specifications: product?.specifications,
             price: product?.price,
             salePrice: product?.salePrice,
+            stockQuantity: product?.stockQuantity,
             status: product?.status,
             variations: variation,
             attributes: attribute,
@@ -561,6 +562,18 @@ const EditProduct = () => {
                     style={{ width: "100%" }}
                     size="large"
                     placeholder="eg. 100000"
+                  />
+                </Form.Item>
+
+                <Typography.Title className="input-title">
+                  Stock Quantity
+                </Typography.Title>
+                <Form.Item name="stockQuantity">
+                  <InputNumber
+                    required
+                    style={{ width: "100%" }}
+                    size="large"
+                    placeholder="eg. 10"
                   />
                 </Form.Item>
               </Card>

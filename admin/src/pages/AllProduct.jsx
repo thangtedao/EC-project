@@ -295,6 +295,17 @@ const AllProduct = () => {
       sortDirections: ["descend", "ascend"],
     },
     {
+      title: "Stock Quantity",
+      dataIndex: "stockQuantity",
+      key: "stockQuantity",
+      width: 140,
+      render: (value) => (
+        <span style={{ color: value <= 3 ? "red" : "black" }}>{value}</span>
+      ),
+      sorter: (a, b) => a.stockQuantity - b.stockQuantity,
+      sortDirections: ["descend", "ascend"],
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -333,14 +344,14 @@ const AllProduct = () => {
       width: 150,
       render: (revenue) =>
         revenue?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ",
-      defaultSortOrder: "descend",
+      // defaultSortOrder: "descend",
       sorter: (a, b) => a.revenue - b.revenue,
     },
     {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 150,
+      width: 160,
       render: ({ _id }) => (
         <Dropdown.Button
           onClick={() => handleViewProduct(_id)}
@@ -435,7 +446,7 @@ const AllProduct = () => {
             key: product._id,
           }))}
           onChange={onChange}
-          scroll={{ x: 1350 }}
+          scroll={{ x: 1500 }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

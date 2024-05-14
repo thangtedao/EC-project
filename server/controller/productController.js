@@ -422,6 +422,8 @@ export const updateProduct = async (req, res) => {
     //   count++;
     // }
 
+    // await Product.updateMany({}, { $set: { stockQuantity: 10 } });
+
     // await Product.updateMany(
     //   { pid: { $exists: true } },
     //   { $unset: { pid: "" } }

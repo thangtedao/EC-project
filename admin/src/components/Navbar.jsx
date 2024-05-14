@@ -53,6 +53,29 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [orders, setOrders] = useState(newOrders);
 
+  // fetch đơn hàng mới
+  const fetchNewOrders = async () => {
+    try {
+      const newOrdersFetch = await customFetch
+        .get("/order/?isSeen=false&&admin=true")
+        .then(({ data }) => data);
+      setOrders(newOrdersFetch);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchNewOrders();
+    }, 10000);
+
+    // Cleanup để ngăn chặn việc gọi fetch khi component bị hủy
+    return () => clearInterval(interval);
+  }, []);
+
+  // ---------------------------------------
+
   const showDrawer = () => {
     setOpen(true);
   };

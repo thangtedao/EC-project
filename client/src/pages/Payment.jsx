@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/Payment.js";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ListItem } from "../components";
@@ -20,6 +20,7 @@ import {
   InputLabel,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -97,12 +98,6 @@ const Payment = () => {
   const [code, setCode] = useState();
   const [paypalButtonKey, setPaypalButtonKey] = useState(0);
 
-  // Change address
-  const [isCheck, setIsCheck] = useState(false);
-  const changeAddress = (event) => {
-    setIsCheck(event.target.checked);
-  };
-
   // Apply coupon
   const applyCoupon = async (code) => {
     try {
@@ -125,6 +120,136 @@ const Payment = () => {
       setPaypalButtonKey((prevKey) => prevKey + 1);
     } catch (error) {
       return toast.error(error?.response?.data?.msg);
+    }
+  };
+
+  /* Address */
+  const [isCheck, setIsCheck] = useState(false);
+
+  const changeAddress = (event) => {
+    setIsCheck(event.target.checked);
+  };
+
+  const [address, setAddress] = useState({
+    city: user?.address.city,
+    district: user?.address.district,
+    ward: user?.address.ward,
+    home: user?.address.home,
+  });
+  const [cities, setCities] = useState([]);
+  const [city, setCity] = useState(null);
+  const [districts, setDistricts] = useState([]);
+  const [district, setDistrict] = useState(null);
+  const [wards, setWards] = useState([]);
+  const [ward, setWard] = useState(null);
+  const [home, setHome] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const citiesResponse = await axios.get(
+          "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Token: "b1e1bbcb-ef7f-11eb-9388-d6e0030cbbb7",
+            },
+          }
+        );
+        setCities(citiesResponse.data.data);
+        setCity(citiesResponse.data.data[0] || {});
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    isCheck && fetchData();
+  }, [isCheck]);
+
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        if (city) {
+          const districtsResponse = await axios.get(
+            `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${city.ProvinceID}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Token: "b1e1bbcb-ef7f-11eb-9388-d6e0030cbbb7",
+              },
+            }
+          );
+          const fetchedDistricts = districtsResponse.data.data || [];
+          setDistricts(fetchedDistricts);
+          setDistrict(fetchedDistricts.length > 0 ? fetchedDistricts[0] : {});
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    isCheck && fetchDistricts();
+  }, [city]);
+
+  useEffect(() => {
+    const fetchWards = async () => {
+      try {
+        if (city && district) {
+          const wardsResponse = await axios.get(
+            `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${district.DistrictID}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Token: "b1e1bbcb-ef7f-11eb-9388-d6e0030cbbb7",
+              },
+            }
+          );
+          const fetchedWards = wardsResponse.data.data || [];
+          setWards(fetchedWards);
+          setWard(fetchedWards.length > 0 ? fetchedWards[0] : {});
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    isCheck && fetchWards();
+  }, [district]);
+
+  const handleChange = (event) => {
+    const selectedCityName = event.target.value;
+    const selectedCity =
+      cities.find((city) => city.ProvinceName === selectedCityName) || {};
+    setCity(selectedCity);
+  };
+
+  const handleChange02 = (event) => {
+    const selectedDistrictName = event.target.value;
+    const selectedDistrict =
+      districts.find(
+        (district) => district.DistrictName === selectedDistrictName
+      ) || {};
+    setDistrict(selectedDistrict);
+  };
+
+  const handleChange03 = (event) => {
+    const selectedWardName = event.target.value;
+    const selectedWard =
+      wards.find((ward) => ward.WardName === selectedWardName) || {};
+    setWard(selectedWard);
+  };
+
+  const handleUpdateAddress = (event) => {
+    if (city && district && ward && home) {
+      setAddress({
+        city: city.ProvinceName,
+        district: district.DistrictName,
+        ward: ward.WardName,
+        home: home,
+      });
+      setIsCheck(false);
+    } else {
+      toast.warning("Địa chỉ không hợp lện");
     }
   };
 
@@ -190,13 +315,13 @@ const Payment = () => {
               readOnly: true,
             }}
             value={
-              user?.address &&
-              `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
+              address &&
+              `${address.home} ${address.ward} ${address.district} ${address.city}`
             }
             sx={{ width: "100%", background: "white" }}
           />
 
-          {/* <FormControlLabel
+          <FormControlLabel
             control={
               <Checkbox
                 checked={isCheck}
@@ -204,19 +329,109 @@ const Payment = () => {
                 inputProps={{ "aria-label": "controlled" }}
               />
             }
-            label="Change Address"
+            label="Thay đổi địa chỉ"
           />
 
           {isCheck && (
-            <div className="form-address">
-              <TextField
-                required
-                size="small"
-                name="home"
-                label="Home Number"
-              />
+            <div>
+              <div className="form-info-select">
+                <FormControl variant="standard">
+                  <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
+                  <Select
+                    labelId="city-select-label"
+                    name="city"
+                    value={city?.ProvinceName || ""}
+                    // value={user?.address.city || ""}
+                    label="Tỉnh/Thành phố"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
+                      },
+                    }}
+                    onChange={handleChange}
+                  >
+                    {cities.map((city) => (
+                      <MenuItem key={city.ProvinceID} value={city.ProvinceName}>
+                        {city.ProvinceName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl variant="standard">
+                  <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
+                  <Select
+                    labelId="district-select-label"
+                    name="district"
+                    value={district?.DistrictName || ""}
+                    // value={user?.address.district || ""}
+                    label="Quận/Huyện"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
+                      },
+                    }}
+                    onChange={handleChange02}
+                  >
+                    {districts.map((district) => (
+                      <MenuItem
+                        key={district.DistrictID}
+                        value={district.DistrictName}
+                      >
+                        {district.DistrictName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl variant="standard">
+                  <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
+                  <Select
+                    labelId="ward-select-label"
+                    name="ward"
+                    value={ward?.WardName || ""}
+                    // defaultValue={user?.address.ward || ""}
+                    label="Phường/Xã"
+                    sx={{ width: "300px" }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: "200px",
+                        },
+                      },
+                    }}
+                    onChange={handleChange03}
+                  >
+                    {wards.map((ward) => (
+                      <MenuItem key={ward.WardCode} value={ward.WardName}>
+                        {ward.WardName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  required
+                  name="home"
+                  label="Số nhà, tên đường"
+                  variant="standard"
+                  sx={{ width: "300px" }}
+                  onChange={(e) => {
+                    setHome(e.target.value);
+                  }}
+                />
+              </div>
+              <button className="btn" onClick={handleUpdateAddress}>
+                Cập nhật
+              </button>
             </div>
-          )} */}
+          )}
         </div>
 
         {/* COUPON FIELD */}
@@ -292,135 +507,14 @@ const Payment = () => {
           cartItem={cartItem}
           coupon={coupon}
           totalAmount={totalAmount}
+          address={address}
         />
         <VnPayButton
           totalPrice={totalAmount}
           cartItem={cartItem}
           coupon={coupon}
+          address={address}
         />
-
-        {/* <div className="form-info">
-          <p>Thông tin nhận hàng</p>
-          <input name="cityC" defaultValue={user?.address.city} hidden />
-          <input
-            name="districtC"
-            defaultValue={user?.address.district}
-            hidden
-          />
-          <input name="wardC" defaultValue={user?.address.ward} hidden />
-          <input name="homeC" defaultValue={user?.address.home} hidden />
-
-          <TextField
-            InputProps={{
-              readOnly: true,
-            }}
-            value={
-              user?.address &&
-              `${user?.address.city} ${user?.address.district} ${user?.address.ward} ${user?.address.home}`
-            }
-            variant="standard"
-            sx={{ width: "100%" }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isCheck}
-                onChange={changeAddress}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            }
-            label="Thay đổi địa chỉ"
-          />
-
-          {isCheck && (
-            <div className="form-address">
-              <FormControl variant="standard">
-                <InputLabel id="city-select-label">Tỉnh/Thành phố</InputLabel>
-                <Select
-                  required
-                  labelId="city-select-label"
-                  name="city"
-                  value={city?.name || ""}
-                  label="Tỉnh/Thành phố"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
-                      },
-                    },
-                  }}
-                  onChange={handleChange}
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city.code} value={city.name}>
-                      {city.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl variant="standard">
-                <InputLabel id="district-select-label">Quận/Huyện</InputLabel>
-                <Select
-                  required
-                  labelId="district-select-label"
-                  name="district"
-                  value={district?.name || ""}
-                  label="Quận/Huyện"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
-                      },
-                    },
-                  }}
-                  onChange={handleChange02}
-                >
-                  {districts.map((district) => (
-                    <MenuItem key={district.code} value={district.name}>
-                      {district.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl variant="standard">
-                <InputLabel id="ward-select-label">Phường/Xã</InputLabel>
-                <Select
-                  required
-                  name="ward"
-                  labelId="ward-select-label"
-                  value={ward?.name || ""}
-                  label="Phường/Xã"
-                  sx={{ width: "300px" }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: "200px",
-                      },
-                    },
-                  }}
-                  onChange={handleChange03}
-                >
-                  {wards.map((ward) => (
-                    <MenuItem key={ward.code} value={ward.name}>
-                      {ward.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <TextField
-                required
-                name="home"
-                label="Số nhà, tên đường"
-                variant="standard"
-              />
-            </div>
-          )}
-        </div> */}
       </Wrapper>
     </HelmetProvider>
   );

@@ -9,6 +9,7 @@ import uniqid from "uniqid";
 import fs from "fs";
 import Coupon from "../models/Coupon.js";
 import { NotFoundError } from "../errors/customErrors.js";
+import Order from "../models/Order.js";
 
 export const getUsers = async (req, res) => {
   try {
@@ -186,20 +187,58 @@ export const addCoupon = async (req, res) => {
     let user = await User.findById(userId);
     if (code) code = code.toString().toUpperCase();
     const validCoupon = await Coupon.findOne({ code: code });
-    if (user.rank !== validCoupon.targetCustomers)
+
+    // check expired
+    const now = new Date();
+    if (validCoupon.endDate < now || validCoupon.startDate > now)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Mã giảm giá không hợp lệ" });
+
+    // check rank
+    const requiredRanks = ["member"];
+    // Thêm các hạng khác nếu coupon yêu cầu
+    if (user.rank.includes("silver")) {
+      requiredRanks.push("silver");
+    } else if (user.rank.includes("gold")) {
+      requiredRanks.push("silver");
+      requiredRanks.push("gold");
+    } else if (user.rank.includes("diamond")) {
+      requiredRanks.push("silver");
+      requiredRanks.push("gold");
+      requiredRanks.push("diamond");
+    }
+    if (!requiredRanks.includes(validCoupon.targetCustomers)) {
       return res
         .status(StatusCodes.CONFLICT)
         .json({ msg: "Bạn không đủ điều kiện" });
+    }
 
+    // check is used
+    const isUse = await Order.findOne({
+      user: userId,
+      couponCode: validCoupon.code,
+    });
+    if (isUse)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Mã giảm giá đã được sử dụng" });
+
+    // check is already have
     const alreadyHave = user.coupon?.find(
       (item) => item.toString() === validCoupon._id.toString()
     );
-
     if (alreadyHave) {
       return res
         .status(StatusCodes.CONFLICT)
         .json({ msg: "Bạn đã lưu mã giảm giá này rồi" });
     }
+
+    // check number of use
+    if (validCoupon.numberOfUses <= 0)
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ msg: "Mã giảm giá đã hết lượt sử dụng" });
 
     user = await User.findByIdAndUpdate(
       userId,
@@ -211,6 +250,7 @@ export const addCoupon = async (req, res) => {
 
     res.status(StatusCodes.OK).json({ msg: "Add successfully" });
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };
@@ -219,15 +259,31 @@ export const getCoupons = async (req, res) => {
   try {
     const { userId } = req.user;
 
-    const user = await User.findById(userId).populate({
+    let user = await User.findById(userId).populate({
       path: "coupon",
       select: ["-numberOfUses", "-promotionId"],
     });
 
+    // check expired
     const expiredCoupons = user.coupon.filter(
-      (item) => item.endDate < Date.now()
+      (item) => item.endDate < Date.now() && item._id
     );
 
+    // check is used
+    if (user.coupon.length > 0) {
+      const couponCodes = user.coupon.map((i) => i.code);
+      const orders = await Order.find({
+        user: userId,
+        couponCode: { $in: couponCodes },
+      });
+
+      const filteredCoupons = user.coupon.filter((coupon) =>
+        orders.some((order) => order.couponCode === coupon.code)
+      );
+      filteredCoupons.forEach((i) => expiredCoupons.push(i._id));
+    }
+
+    // remove
     if (expiredCoupons.length > 0) {
       user = await User.findByIdAndUpdate(
         userId,
@@ -243,6 +299,7 @@ export const getCoupons = async (req, res) => {
 
     res.status(StatusCodes.OK).json(user);
   } catch (error) {
+    console.log(error);
     res.status(StatusCodes.CONFLICT).json({ msg: error.message });
   }
 };

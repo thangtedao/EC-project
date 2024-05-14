@@ -87,6 +87,19 @@ const Wrapper = styled.div`
     padding: 1.5rem 1rem 1.5rem 1rem;
     gap: 1.5rem;
   }
+  .form-info-select {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem 1rem 1.5rem 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .btn {
+    margin-top: 1rem;
+    max-width: 150px;
+    height: 2rem;
+  }
 
   .coupon-field {
     display: grid;

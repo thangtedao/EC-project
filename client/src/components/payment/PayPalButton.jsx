@@ -3,7 +3,7 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useNavigate } from "react-router-dom";
 import customFetch from "../../utils/customFetch";
 
-const PayPalPayment = ({ cartItem, coupon, totalAmount }) => {
+const PayPalPayment = ({ cartItem, coupon, totalAmount, address }) => {
   const navigate = useNavigate();
 
   const convertVNDToUSD = (vndAmount) => {
@@ -29,7 +29,11 @@ const PayPalPayment = ({ cartItem, coupon, totalAmount }) => {
 
   const onApprove = async (data, actions) => {
     const order = await actions.order.capture();
-    await customFetch.post("/order/create-order", { cartItem, coupon });
+    await customFetch.post("/order/create-order", {
+      cartItem,
+      coupon,
+      address,
+    });
     navigate("/order");
   };
 

@@ -24,6 +24,10 @@ const productSchema = mongoose.Schema({
     type: Number,
     default: null,
   },
+  stockQuantity: {
+    type: Number,
+    default: 0,
+  },
   model: {
     type: String,
     lowercase: true,
