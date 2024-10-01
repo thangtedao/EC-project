@@ -25,7 +25,8 @@ import path from "path";
 import { ConnectSocket } from "./config/socket/socket.js";
 import { createServer } from "http";
 import bodyParser from "body-parser";
-dotenv.config();
+// dotenv.config();
+dotenv.config({ path: '/etc/secrets/.env' });
 
 const app = express();
 const server = createServer(app);
